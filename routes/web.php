@@ -5,6 +5,8 @@ use App\Http\Controllers\Apps\RoleManagementController;
 use App\Http\Controllers\Apps\UserManagementController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\QuotesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,6 +31,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/user-management/roles', RoleManagementController::class);
         Route::resource('/user-management/permissions', PermissionManagementController::class);
     });
+
+    Route::resource('/contacts', ContactsController::class)->names([
+        'index' => 'contacts'
+    ]);
+
+    Route::resource('/quotes', QuotesController::class)->names([
+        'index' => 'quotes'
+    ]);
 
 });
 

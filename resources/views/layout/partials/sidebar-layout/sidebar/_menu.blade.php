@@ -5,37 +5,40 @@
 		<!--begin::Menu-->
 		<div class="menu menu-column menu-rounded menu-sub-indention px-3 fw-semibold fs-6" id="#kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
 			<!--begin:Menu item-->
-			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('dashboard') ? 'here show' : '' }}">
+			<div class="menu-item">
 				<!--begin:Menu link-->
 				<span class="menu-link">
 					<span class="menu-icon">{!! getIcon('element-11', 'fs-2') !!}</span>
-					<span class="menu-title">Dashboards</span>
-					<span class="menu-arrow"></span>
+					<span class="menu-title"><a class="menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a></span>
 				</span>
 				<!--end:Menu link-->
-				<!--begin:Menu sub-->
-				<div class="menu-sub menu-sub-accordion">
-					<!--begin:Menu item-->
-					<div class="menu-item">
-						<!--begin:Menu link-->
-						<a class="menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-							<span class="menu-bullet">
-								<span class="bullet bullet-dot"></span>
-							</span>
-							<span class="menu-title">Default</span>
-						</a>
-						<!--end:Menu link-->
-					</div>
-					<!--end:Menu item-->
-				</div>
-				<!--end:Menu sub-->
+			</div>
+			<!--end:Menu item-->
+			<!--begin:Menu item-->
+			<div class="menu-item">
+				<!--begin:Menu link-->
+				<span class="menu-link">
+					<span class="menu-icon">{!! getIcon('address-book', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link {{ request()->routeIs('contacts') ? 'active' : '' }}" href="{{ route('contacts') }}">Contacts</a></span>
+				</span>
+				<!--end:Menu link-->
+			</div>
+			<!--end:Menu item-->
+			<!--begin:Menu item-->
+			<div class="menu-item">
+				<!--begin:Menu link-->
+				<span class="menu-link">
+					<span class="menu-icon">{!! getIcon('file', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link {{ request()->routeIs('quotes') ? 'active' : '' }}" href="{{ route('quotes') }}">Quotes</a></span>
+				</span>
+				<!--end:Menu link-->
 			</div>
 			<!--end:Menu item-->
 			<!--begin:Menu item-->
 			<div class="menu-item pt-5">
 				<!--begin:Menu content-->
 				<div class="menu-content">
-					<span class="menu-heading fw-bold text-uppercase fs-7">Apps</span>
+					<span class="menu-heading fw-bold text-uppercase fs-7">Settings</span>
 				</div>
 				<!--end:Menu content-->
 			</div>
@@ -44,7 +47,7 @@
 			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('user-management.*') ? 'here show' : '' }}">
 				<!--begin:Menu link-->
 				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('abstract-28', 'fs-2') !!}</span>
+					<span class="menu-icon">{!! getIcon('add-user', 'fs-2') !!}</span>
 					<span class="menu-title">User Management</span>
 					<span class="menu-arrow"></span>
 				</span>
@@ -91,16 +94,6 @@
 				<!--end:Menu sub-->
 			</div>
 			<!--end:Menu item-->
-			<!--begin:Menu item-->
-			<div class="menu-item pt-5">
-				<!--begin:Menu content-->
-				<div class="menu-content">
-					<span class="menu-heading fw-bold text-uppercase fs-7">Help</span>
-				</div>
-				<!--end:Menu content-->
-			</div>
-			<!--end:Menu item-->
-			
 		</div>
 		<!--end::Menu-->
 	</div>

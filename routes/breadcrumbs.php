@@ -51,3 +51,15 @@ Breadcrumbs::for('user-management.permissions.index', function (BreadcrumbTrail 
     $trail->parent('user-management.index');
     $trail->push('Permissions', route('user-management.permissions.index'));
 });
+
+// Home > Contacts
+Breadcrumbs::for('contacts', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Contacts', route('contacts'));
+});
+
+// Home > Quotes
+Breadcrumbs::for('quotes', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Quotes', route('quotes'));
+});

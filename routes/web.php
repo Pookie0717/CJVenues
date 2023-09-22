@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\QuotesController;
+use App\Http\Controllers\VenuesManagementController;
+use App\Http\Controllers\AreasManagementController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +33,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/user-management/roles', RoleManagementController::class);
         Route::resource('/user-management/permissions', PermissionManagementController::class);
     });
+
+    // Routes for Venues Management
+    Route::resource('/venues-management/venues', VenuesManagementController::class)->names([
+        'index' => 'venues', // Rename the index route
+    ]);
+
+    // Routes for Areas Management
+    Route::resource('/venues-management/areas', AreasManagementController::class)->names([
+        'index' => 'areas', // Rename the index route
+    ]);
 
     Route::resource('/contacts', ContactsController::class)->names([
         'index' => 'contacts'

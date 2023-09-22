@@ -22,15 +22,27 @@
                     <!--begin::Scroll-->
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_contact_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_contact_header" data-kt-scroll-wrappers="#kt_modal_add_contact_scroll" data-kt-scroll-offset="300px">
                         <!--begin::Input group-->
-                        <div class="fv-row mb-7">
+                        <div class="row mb-7">
+                            <div class="col">
                             <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">Full Name</label>
+                            <label class="required fw-semibold fs-6 mb-2">First Name</label>
                             <!--end::Label-->
                             <!--begin::Input-->
-                            <input type="text" wire:model.defer="name" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name"/>
+                            <input type="text" wire:model.defer="first_name" name="first_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="First name"/>
                             <!--end::Input-->
-                            @error('name')
+                            @error('first_name')
                             <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2">Last Name</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" wire:model.defer="last_name" name="last_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Last name"/>
+                            <!--end::Input-->
+                            @error('last_name')
+                            <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                         <!--end::Input group-->
                         <!--begin::Input group-->
@@ -55,6 +67,66 @@
                             <!--end::Input-->
                             @error('phone')
                             <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="fv-row mb-7">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2">Address</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" wire:model.defer="address" name="address" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Address"/>
+                            <!--end::address-->
+                            @error('address')
+                            <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <div class="col">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2">City</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" wire:model.defer="city" name="city" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="City"/>
+                            <!--end::address-->
+                            @error('city')
+                            <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2">Postcode</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" wire:model.defer="postcode" name="postcode" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Postcode"/>
+                            <!--end::address-->
+                            @error('postcode')
+                            <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <div class="col">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2">State</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" wire:model.defer="state" name="state" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="State"/>
+                            <!--end::address-->
+                            @error('state')
+                            <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2">Country</label>
+                            <!--end::Label-->
+                            <!--begin::Input-->
+                            <input type="text" wire:model.defer="country" name="country" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Country"/>
+                            <!--end::address-->
+                            @error('country')
+                            <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                         <!--end::Input group-->
                         <!--begin::Input group-->

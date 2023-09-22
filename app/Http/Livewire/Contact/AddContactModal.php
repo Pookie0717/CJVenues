@@ -8,26 +8,45 @@ use Illuminate\Validation\Rule;
 
 class AddContactModal extends Component
 {
-    public $name;
+    public $first_name;
+    public $last_name;
     public $email;
     public $phone;
+    public $address;
+    public $city;
+    public $postcode;
+    public $state;
+    public $country;
     public $notes;
 
     public function submit()
     {
         // Validate the data
         $this->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('contacts')],
             'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'postcode' => 'required|string|max:20',
+            'state' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
             'notes' => 'nullable|string|max:500',
         ]);
 
         // Save the new contact to the database
         Contact::create([
-            'name' => $this->name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'name' => $this->first_name . ' ' . $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'address' => $this->address,
+            'city' => $this->city,
+            'postcode' => $this->postcode,
+            'state' => $this->state,
+            'country' => $this->country,
             'notes' => $this->notes,
         ]);
 
@@ -35,7 +54,7 @@ class AddContactModal extends Component
         $this->emit('success');
 
         // Reset the form fields
-        $this->reset(['name', 'email', 'phone', 'notes']);
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
     }
 
     public function render()

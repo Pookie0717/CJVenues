@@ -7,7 +7,6 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class QuotesDataTable extends DataTable
@@ -21,15 +20,27 @@ class QuotesDataTable extends DataTable
             ->addColumn('contact_name', function (Quote $quote) {
                 return $quote->contact ? $quote->contact->name : 'N/A';
             })
+            ->addColumn('area_name', function (Quote $quote) {
+                return $quote->area ? $quote->area->name : 'N/A'; // Assuming area has a name field
+            })
             ->editColumn('created_at', function (Quote $quote) {
                 return $quote->created_at->format('d M Y, h:i a');
             })
-            ->setRowId('id');
+            ->editColumn('date_from', function (Quote $quote) {
+                return $quote->date_from;
+            })
+            ->addColumn('id_version', function (Quote $quote) {
+                return $quote->id . '-' . $quote->version;
+            })
+            ->setRowId(function (Quote $quote) {
+                return $quote->id . '-' . $quote->version;
+            });
     }
+
 
     public function query(Quote $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->newQuery()->with(['contact', 'area']); // Load relations in the query
     }
 
 
@@ -39,18 +50,22 @@ class QuotesDataTable extends DataTable
             ->setTableId('quotes-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom('rt' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
+            ->dom('Bfrtip' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
             ->addTableClass('table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer text-gray-600 fw-semibold')
             ->setTableHeadClass('text-start text-muted fw-bold fs-7 text-uppercase gs-0')
-            ->orderBy(2);
+            ->orderBy(0);
     }
 
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('Quote #'),
-            Column::make('contact_name')->title('Contact Name'),  // New column for contact name
-            Column::make('content')->title('Content'),
+            Column::make('id_version')->title('Quote #')->addClass('text-nowrap'),
+            Column::make('contact_name')->title('Contact Name'),
+            Column::make('area_name')->title('Area Name'),
+            Column::make('status')->title('Status'),
+            Column::make('date_from')->title('Date'),
+            Column::make('time_from')->title('Time'),
+            Column::make('event_type')->title('Event Type'),
             Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')

@@ -63,3 +63,15 @@ Breadcrumbs::for('quotes', function ($trail) {
     $trail->parent('home');
     $trail->push('Quotes', route('quotes'));
 });
+
+// Home > Venues
+Breadcrumbs::for('venues', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Venues', route('venues'));
+});
+
+// Home > Areas
+Breadcrumbs::for('areas', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Areas', route('areas'));
+});

@@ -13,10 +13,18 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id(); // Auto-incremental ID
-            $table->string('name'); // Contact's name
-            $table->string('email')->unique(); // Contact's email
-            $table->string('phone')->nullable(); // Contact's phone number, nullable
-            $table->text('notes')->nullable(); // Additional notes, nullable
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('address');
+            $table->string('postcode');
+            $table->string('city');
+            $table->string('state');
+            $table->string('country');
+            $table->text('notes');
+            $table->rememberToken();
             $table->timestamps(); // Created at & Updated at timestamps
         });
     }

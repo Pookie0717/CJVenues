@@ -58,12 +58,7 @@
 
                     <!--begin::Text-->
                     <div class="d-none d-lg-block text-white fs-base text-center">
-                        In this kind of post, <a href="#" class="opacity-75-hover text-warning fw-bold me-1">the blogger</a>
-
-                        introduces a person they’ve interviewed <br/> and provides some background information about
-
-                        <a href="#" class="opacity-75-hover text-warning fw-bold me-1">the interviewee</a>
-                        and their <br/> work following this is a transcript of the interview.
+"Leave hours of planning, quoting, and bureaucracy in the rearview mirror!<br>Craft super fast quotes efficiently, access data instantly, and focus on what you do best, while we handle the boring part."
                     </div>
                     <!--end::Text-->
                 </div>

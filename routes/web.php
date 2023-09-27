@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\QuotesController;
+use App\Http\Controllers\PricesController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\VenuesManagementController;
 use App\Http\Controllers\AreasManagementController;
@@ -47,6 +48,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/contacts', ContactsController::class)->names([
         'index' => 'contacts'
+    ]);
+
+    Route::resource('/prices', PricesController::class)->names([
+        'index' => 'prices'
     ]);
 
     Route::resource('/seasons', SeasonsController::class)->names([

@@ -6,25 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * Class Quote
- *
- * @package App\Models
- * @property int id
- * @property int contact_id
- * @property string status
- * @property string version
- * @property string date_from
- * @property string date_to
- * @property string time_from
- * @property string time_to
- * @property int area_id
- * @property string event_type
- * @property-read Contact contact
- * @property-read Area area
- * @property-read \Illuminate\Support\Carbon created_at
- * @property-read \Illuminate\Support\Carbon updated_at
- */
 class Quote extends Model
 {
     use HasFactory;

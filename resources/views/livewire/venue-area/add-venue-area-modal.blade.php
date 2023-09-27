@@ -19,12 +19,26 @@
                             @enderror
                         </div>
 
-                        <div class="fv-row mb-7">
+                        <div class="row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Capacity</label>
-                            <input type="number" wire:model.defer="capacity" name="capacity" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Capacity"/>
-                            @error('capacity')
+                            <div class="col">
+                            <input type="number" wire:model.defer="capacity_noseating" name="capacity_noseating" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Standing Capacity"/>
+                            @error('capacity_noseating')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
+                            </div>
+                            <div class="col">
+                            <input type="number" wire:model.defer="capacity_seatingrows" name="capacity_seatingrows" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="In Rows Capacity"/>
+                            @error('capacity_seatingrows')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            </div>
+                            <div class="col">
+                            <input type="number" wire:model.defer="capacity_seatingtables" name="capacity_seatingtables" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="In Tables Capacity"/>
+                            @error('capacity_seatingtables')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            </div>
                         </div>
 
                         <div class="fv-row mb-7">

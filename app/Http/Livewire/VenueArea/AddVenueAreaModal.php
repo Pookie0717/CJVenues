@@ -5,6 +5,12 @@ namespace App\Http\Livewire\VenueArea;
 use Livewire\Component;
 use App\Models\VenueArea;
 use App\Models\Venue;
+use Illuminate\Support\Facades\Validator;
+
+Validator::extend('at_least_one_capacity', function ($attribute, $value, $parameters, $validator) {
+    $data = $validator->getData();
+    return isset($data['capacity_noseating']) || isset($data['capacity_seatingrows']) || isset($data['capacity_seatingtables']);
+});
 
 class AddVenueAreaModal extends Component
 {
@@ -20,10 +26,15 @@ class AddVenueAreaModal extends Component
         $this->validate([
             'venue_id' => 'required|exists:venues,id',
             'name' => 'required|string|max:255',
-            'capacity_noseating' => 'required|integer',
-            'capacity_seatingrows' => 'required|integer',
-            'capacity_seatingtables' => 'required|integer',
+            'capacity_noseating' => 'integer|nullable',
+            'capacity_seatingrows' => 'integer|nullable',
+            'capacity_seatingtables' => 'integer|nullable',
+            // Apply the custom rule to any of the capacity fields
+            'capacity_noseating' => 'at_least_one_capacity',
+        ], [
+            'at_least_one_capacity' => 'At least one of the capacity fields must be filled.',
         ]);
+
 
         // Save the new venue area to the database
         VenueArea::create([

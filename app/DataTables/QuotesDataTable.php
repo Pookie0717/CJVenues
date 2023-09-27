@@ -24,7 +24,7 @@ class QuotesDataTable extends DataTable
                 return $quote->area ? $quote->area->name : 'N/A'; // Assuming area has a name field
             })
             ->editColumn('created_at', function (Quote $quote) {
-                return $quote->created_at->format('d M Y, h:i a');
+                return $quote->created_at->format('d-m-Y H:i:s'); 
             })
             ->editColumn('date_from', function (Quote $quote) {
                 return $quote->date_from;
@@ -50,7 +50,7 @@ class QuotesDataTable extends DataTable
             ->setTableId('quotes-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom('Bfrtip' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
+            ->dom('Bfrti' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
             ->addTableClass('table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer text-gray-600 fw-semibold')
             ->setTableHeadClass('text-start text-muted fw-bold fs-7 text-uppercase gs-0')
             ->orderBy(0);

@@ -1,11 +1,11 @@
 <x-default-layout>
 
     @section('title')
-        Venues Areas
+        Seasons
     @endsection
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('areas') }}  <!-- Update breadcrumb -->
+        {{ Breadcrumbs::render('seasons') }}  <!-- Update breadcrumb -->
     @endsection
 
     <div class="card">
@@ -16,7 +16,7 @@
                 <!--begin::Search-->
                 <div class="d-flex align-items-center position-relative my-1">
                     {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search contact" id="mySearchInput"/>
+                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search season" id="mySearchInput"/>
                 </div>
                 <!--end::Search-->
             </div>
@@ -26,17 +26,17 @@
             <div class="card-toolbar">
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                    <!--begin::Add contact-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue_area">
+                    <!--begin::Add season-->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_season">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        Add Venue Area
+                        Add Season
                     </button>
-                    <!--end::Add contact-->
+                    <!--end::Add season-->
                 </div>
                 <!--end::Toolbar-->
 
                 <!--begin::Modal-->
-                <livewire:venue-area.add-venue-area-modal></livewire:venue-area.add-venue-area-modal>
+                <livewire:season.add-season-modal></livewire:season.add-season-modal>
                 <!--end::Modal-->
             </div>
             <!--end::Card toolbar-->
@@ -47,7 +47,7 @@
         <div class="card-body py-4">
             <!--begin::Table-->
             <div class="table-responsive">
-                {{ $dataTable->table() }}  <!-- Make sure you have a ContactsDataTable -->
+                {{ $dataTable->table() }}  <!-- Make sure you have a seasonsDataTable -->
             </div>
             <!--end::Table-->
         </div>
@@ -58,13 +58,19 @@
         {{ $dataTable->scripts() }}
         <script>
             document.getElementById('mySearchInput').addEventListener('keyup', function () {
-                window.LaravelDataTables['areas-table'].search(this.value).draw();  <!-- Update table name -->
+                window.LaravelDataTables['seasons-table'].search(this.value).draw();  <!-- Update table name -->
             });
             document.addEventListener('livewire:load', function () {
                 Livewire.on('success', function () {
-                    $('#kt_modal_add_venue_area').modal('hide');  <!-- Update modal ID -->
-                    window.LaravelDataTables['areas-table'].ajax.reload();  <!-- Update table name -->
+                    $('#kt_modal_add_season').modal('hide');  <!-- Update modal ID -->
+                    window.LaravelDataTables['seasons-table'].ajax.reload();  <!-- Update table name -->
                 });
+            });
+            new tempusDominus.TempusDominus(document.getElementById("date_from_picker"), {
+                //put your config here
+            });
+            new tempusDominus.TempusDominus(document.getElementById("date_to_picker"), {
+                //put your config here
             });
         </script>
     @endpush

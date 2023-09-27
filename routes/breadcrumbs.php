@@ -75,3 +75,9 @@ Breadcrumbs::for('areas', function ($trail) {
     $trail->parent('home');
     $trail->push('Areas', route('areas'));
 });
+
+// Home > Seasons
+Breadcrumbs::for('seasons', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Seasons', route('seasons'));
+});

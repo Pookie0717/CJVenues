@@ -22,7 +22,13 @@ class VenuesDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('action', function ($venue) {
-                return view('venues.actions', compact('venue'));
+                return view('pages.venues.columns._actions', compact('venue'));
+            })
+            ->editColumn('created_at', function ($venue) {
+            return $venue->created_at->format('d-m-Y H:i:s'); // Change the format as needed
+            })
+            ->editColumn('updated_at', function ($venue) {
+                return $venue->updated_at->format('d-m-Y H:i:s'); // Change the format as needed
             })
             ->rawColumns(['action']);
     }
@@ -49,10 +55,10 @@ class VenuesDataTable extends DataTable
             ->setTableId('venues-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom('Bfrtip' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
-            ->addTableClass('table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer text-gray-600 fw-semibold')
+            ->dom('Brti' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
+            ->addTableClass('table align-middle table-row-dashed fs-6 gy-5 no-footer text-gray-600 fw-semibold')
             ->setTableHeadClass('text-start text-muted fw-bold fs-7 text-uppercase gs-0')
-            ->orderBy(2);
+            ->orderBy(1);
     }
 
     /**

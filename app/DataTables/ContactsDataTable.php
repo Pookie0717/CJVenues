@@ -19,7 +19,7 @@ class ContactsDataTable extends DataTable
                 return view('pages.contacts.columns._actions', compact('contact'));
             })
             ->editColumn('created_at', function (Contact $contact) {
-                return $contact->created_at->format('d M Y, h:i a');
+                return $contact->created_at->format('d-m-Y H:i:s');
             })
             ->setRowId('id');
     }
@@ -35,7 +35,7 @@ public function html(): HtmlBuilder
             ->setTableId('contacts-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom('Bfrtip' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
+            ->dom('Bfrti' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
             ->addTableClass('table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer text-gray-600 fw-semibold')
             ->setTableHeadClass('text-start text-muted fw-bold fs-7 text-uppercase gs-0')
             ->orderBy(2);

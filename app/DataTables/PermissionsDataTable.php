@@ -27,7 +27,7 @@ class PermissionsDataTable extends DataTable
                 return view('pages.apps.user-management.permissions.columns._assign-to', compact('roles'));
             })
             ->editColumn('created_at', function (Permission $permission) {
-                return $permission->created_at->format('d M Y, h:i a');
+                return $permission->created_at->format('d-m-Y H:i:s');
             })
             ->addColumn('actions', function (Permission $permission) {
                 return view('pages.apps.user-management.permissions.columns._actions', compact('permission'));

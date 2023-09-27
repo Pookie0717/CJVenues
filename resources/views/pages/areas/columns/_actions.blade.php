@@ -6,7 +6,7 @@
 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
     <!--begin::Menu item-->
     <div class="menu-item px-3">
-        <a href="{{ route('contacts.show', $contact) }}" class="menu-link px-3">
+        <a href="{{ route('areas.show', $area) }}" class="menu-link px-3">
             View
         </a>
     </div>
@@ -14,7 +14,7 @@
 
     <!--begin::Menu item-->
     <div class="menu-item px-3">
-        <a href="#" class="menu-link px-3" data-kt-contact-id="{{ $contact->id }}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_contact" data-kt-action="update_row">
+        <a href="#" class="menu-link px-3" data-kt-area-id="{{ $area->id }}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue_area" data-kt-action="update_row">
             Edit
         </a>
     </div>
@@ -22,7 +22,7 @@
 
     <!--begin::Menu item-->
     <div class="menu-item px-3">
-        <a href="#" class="menu-link px-3" data-kt-contact-id="{{ $contact->id }}" data-kt-action="delete_row">
+        <a href="#" class="menu-link px-3" data-kt-area-id="{{ $area->id }}" data-kt-action="delete_row">
             Delete
         </a>
     </div>

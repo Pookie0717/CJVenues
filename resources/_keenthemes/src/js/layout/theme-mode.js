@@ -83,9 +83,14 @@ var KTThemeMode = function () {
     }
 
 	var initMode = function() {
-		setMode(getMode(), getMenuMode());
-		KTEventHandler.trigger(document.documentElement, 'kt.thememode.init', the);
-	}
+        var menuMode = getMenuMode();
+        if (!menuMode || menuMode === 'system') {
+            setMode(getSystemMode(), 'system');
+        } else {
+            setMode(getMode(), menuMode);
+        }
+        KTEventHandler.trigger(document.documentElement, 'kt.thememode.init', the);
+    }
 
 	var getActiveMenuItem = function() {
 		return menu.querySelector('[data-kt-element="mode"][data-kt-value="' + getMenuMode() + '"]');

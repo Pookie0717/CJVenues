@@ -18,6 +18,10 @@ class AddVenueModal extends Component
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'postcode' => 'required|string|max:20',
+            'state' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
         ]);
 
         // Save the new venue to the database
@@ -31,7 +35,7 @@ class AddVenueModal extends Component
         $this->emit('success');
 
         // Reset the form fields
-        $this->reset(['name', 'type', 'address']);
+        $this->reset(['name', 'type', 'address', 'city', 'postcode', 'state', 'country',]);
     }
 
     public function render()

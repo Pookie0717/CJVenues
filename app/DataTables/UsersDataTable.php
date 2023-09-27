@@ -30,7 +30,7 @@ class UsersDataTable extends DataTable
                 return sprintf('<div class="badge badge-light fw-bold">%s</div>', $user->last_login_at ? $user->last_login_at->diffForHumans() : $user->updated_at->diffForHumans());
             })
             ->editColumn('created_at', function (User $user) {
-                return $user->created_at->format('d M Y, h:i a');
+                return $user->created_at->format('d-m-Y H:i:s');
             })
             ->addColumn('action', function (User $user) {
                 return view('pages.apps.user-management.users.columns._actions', compact('user'));

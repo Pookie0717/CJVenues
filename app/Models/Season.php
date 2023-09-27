@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Venue extends Model
+class Season extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'type',
-        'address',
-        'postcode',
-        'city',
-        'state',
-        'country',
+        'date_from',
+        'date_to',
+        'priority',
+        'overwrite_weekday',
     ];
 }

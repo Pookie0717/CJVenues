@@ -34,17 +34,6 @@
 				<!--end:Menu link-->
 			</div>
 			<!--end:Menu item-->
-
-			<!--begin:Menu item-->
-			<div class="menu-item">
-				<!--begin:Menu link-->
-				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('file', 'fs-2') !!}</span>
-					<span class="menu-title"><a class="menu-link {{ request()->routeIs('prices') ? 'active' : '' }}" href="{{ route('prices') }}">Prices</a></span>
-				</span>
-				<!--end:Menu link-->
-			</div>
-			<!--end:Menu item-->
 			<!--begin:Menu item-->
 			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('venues.*') || request()->routeIs('areas.*') ? 'here show' : '' }}">
 				<!--begin:Menu link-->
@@ -76,6 +65,18 @@
 								<span class="bullet bullet-dot"></span>
 							</span>
 							<span class="menu-title">Areas</span>
+						</a>
+						<!--end:Menu link-->
+					</div>
+					<!--end:Menu item-->
+					<!--begin:Menu item-->
+					<div class="menu-item">
+						<!--begin:Menu link-->
+						<a class="menu-link {{ request()->routeIs('prices') ? 'active' : '' }}" href="{{ route('prices') }}">
+							<span class="menu-bullet">
+								<span class="bullet bullet-dot"></span>
+							</span>
+							<span class="menu-title">Prices</span>
 						</a>
 						<!--end:Menu link-->
 					</div>

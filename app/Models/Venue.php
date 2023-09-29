@@ -18,4 +18,9 @@ class Venue extends Model
         'state',
         'country',
     ];
+
+    public function areas()
+        {
+            return $this->hasMany(VenueArea::class);
+        }
 }

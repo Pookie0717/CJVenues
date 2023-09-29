@@ -7,7 +7,7 @@
                     {!! getIcon('cross','fs-1') !!}
                 </div>
             </div>
-            <div class="modal-body px-5 my-7">
+            <div class="modal-body flex-center  px-5 my-7">
                 <form id="kt_modal_add_season_form" class="form" wire:submit.prevent="submit">
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_season_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_season_header" data-kt-scroll-wrappers="#kt_modal_add_season_scroll" data-kt-scroll-offset="300px">
                         

@@ -20,6 +20,13 @@ class AddVenueAreaModal extends Component
     public $capacity_seatingrows;
     public $capacity_seatingtables;
 
+    public $edit_mode = false;
+
+    protected $listeners = [
+        'delete_area' => 'deleteArea',
+        'update_area' => 'updateArea',
+    ];
+
     public function submit()
     {
         // Validate the data
@@ -46,7 +53,7 @@ class AddVenueAreaModal extends Component
         ]);
 
         // Emit an event to notify that the venue area was created successfully
-        $this->emit('success');
+        $this->emit('success', 'Area successfully Added');
 
         // Reset the form fields
         $this->reset(['venue_id', 'name', 'capacity_noseating', 'capacity_seatingrows', 'capacity_seatingtables']);
@@ -58,5 +65,21 @@ class AddVenueAreaModal extends Component
         $venues = Venue::all();
         
         return view('livewire.venue-area.add-venue-area-modal', compact('venues'));
+    }
+
+    public function deleteArea($id)
+    {
+        // Delete the user record with the specified ID
+        VenueArea::destroy($id);
+
+        // Emit a success event with a message
+        $this->emit('success', 'Area successfully deleted');
+    }
+
+    public function updateArea($id)
+    {
+        $this->edit_mode = true;
+
+        $venue = VenueArea::find($id);
     }
 }

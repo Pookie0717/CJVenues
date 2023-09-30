@@ -66,12 +66,6 @@
                     window.LaravelDataTables['seasons-table'].ajax.reload();  <!-- Update table name -->
                 });
             });
-            new tempusDominus.TempusDominus(document.getElementById("date_from_picker"), {
-                //put your config here
-            });
-            new tempusDominus.TempusDominus(document.getElementById("date_to_picker"), {
-                //put your config here
-            });
         </script>
     @endpush
 

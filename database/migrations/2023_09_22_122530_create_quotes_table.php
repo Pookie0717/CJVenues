@@ -6,12 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
@@ -25,25 +20,16 @@ return new class extends Migration
             $table->unsignedBigInteger('area_id');  // Foreign key to associate with an area
             $table->string('event_type');
             $table->timestamps();
-
-            $table->foreign('contact_id')->references('id')->on('contacts');
-            $table->foreign('area_id')->references('id')->on('venue_areas');
         });
     }
 
 
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('quotes');
-        Schema::table('quotes', function (Blueprint $table) {
-            $table->dropForeign(['contact_id']);
-            $table->dropForeign(['area_id']);
-
-        });
     }
 };
+

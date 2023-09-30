@@ -12,8 +12,15 @@ class AddSeasonModal extends Component
     public $date_to;
     public $priority;
     public $overwrite_weekday;
+
+    public $edit_mode = false;
+
+    protected $listeners = [
+        'delete_season' => 'deleteSeason',
+        'update_season' => 'updateSeason',
+    ];
     
-    public function submit()
+   public function submit()
     {
         // Validate the data
         $this->validate([
@@ -23,20 +30,62 @@ class AddSeasonModal extends Component
             'priority' => 'required|max:255',
         ]);
 
-        // Save the new season to the database
-        Season::create([
-            'name' => $this->name,
-            'date_from' => $this->date_from,
-            'date_to' => $this->date_to,
-            'priority' => $this->priority,
-            'overwrite_weekday' => $this->overwrite_weekday,
-        ]);
+        if ($this->edit_mode) {
+            // If in edit mode, update the existing season record
+            $season = Season::find($this->seasonId);
+            $season->update([
+                'name' => $this->name,
+                'date_from' => $this->date_from,
+                'date_to' => $this->date_to,
+                'priority' => $this->priority,
+                'overwrite_weekday' => $this->overwrite_weekday,
+            ]);
 
-        // Emit an event to notify that the season was created successfully
-        $this->emit('success');
+            // Emit an event to notify that the season was updated successfully
+            $this->emit('success', 'Season successfully updated');
+        } else {
+            // If not in edit mode, create a new season record
+            Season::create([
+                'name' => $this->name,
+                'date_from' => $this->date_from,
+                'date_to' => $this->date_to,
+                'priority' => $this->priority,
+                'overwrite_weekday' => $this->overwrite_weekday,
+            ]);
 
-        // Reset the form fields
-        $this->reset(['name', 'date_from', 'date_to', 'priority', 'overwrite_weekday']);
+            // Emit an event to notify that the season was created successfully
+            $this->emit('success', 'Season successfully added');
+        }
+
+        // Reset the form fields and exit edit mode
+        $this->reset(['name', 'date_from', 'date_to', 'priority', 'overwrite_weekday', 'edit_mode']);
+    }
+
+
+    public function deleteSeason($id)
+    {
+        // Find the venue by ID
+        $season = Season::find($id);
+
+        // If no associated areas, proceed with deletion
+        $season->delete();
+
+        // Emit a success event with a message
+        $this->emit('success', 'Season successfully deleted');
+    }
+
+    public function updateSeason($id)
+    {
+        $this->edit_mode = true;
+
+        $season = Season::find($id);
+        
+        $this->seasonId = $id;
+        $this->name = $season->name;
+        $this->date_from = $season->date_from;
+        $this->date_to = $season->date_to;
+        $this->priority = $season->priority;
+        $this->overwrite_weekday = $season->overwrite_weekday;
     }
 
     public function render()

@@ -54,19 +54,21 @@ class SeasonsDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('season-table')
+            ->setTableId('seasons-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Brti' . "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-7'p>>",)
             ->addTableClass('table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer text-gray-600 fw-semibold')
             ->setTableHeadClass('text-start text-muted fw-bold fs-7 text-uppercase gs-0')
-            ->orderBy(0);
+            ->orderBy(0)
+            ->drawCallback("function() {" . file_get_contents(resource_path('views/pages//seasons/columns/_draw-scripts.js')) . "}");
     }
 
     public function getColumns(): array
     {
         return [
             Column::make('id')->title('ID')->addClass('text-nowrap'),
+            Column::make('name')->title('Name')->addClass('text-nowrap'),
             Column::make('date_from')->title('Date From'),
             Column::make('date_to')->title('Date To'),
             Column::make('priority')->title('Priority'),

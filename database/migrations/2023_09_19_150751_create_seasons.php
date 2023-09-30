@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('date_from');
             $table->string('date_to');
             $table->string('priority');
-            $table->string('overwrite_weekday');
+            $table->string('overwrite_weekday')->nullable();
             $table->timestamps();
         });    
     }

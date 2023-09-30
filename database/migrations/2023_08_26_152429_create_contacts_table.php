@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('country');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->rememberToken();
             $table->timestamps(); // Created at & Updated at timestamps
         });

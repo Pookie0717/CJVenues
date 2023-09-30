@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-//use App\DataTables\PricesDataTable;
+use App\DataTables\PricesDataTable;
 
 class PricesController extends Controller
 {
-    public function index()
+    public function index(PricesDataTable $dataTable)
     {
-        return view('pages.prices.prices');;
+        return $dataTable->render('pages.prices.prices');
     }
     // ... other methods
 }

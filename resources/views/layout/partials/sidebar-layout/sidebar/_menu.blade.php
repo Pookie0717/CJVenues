@@ -38,8 +38,8 @@
 			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('venues.*') || request()->routeIs('areas.*') ? 'here show' : '' }}">
 				<!--begin:Menu link-->
 				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('element-7', 'fs-2') !!}</span>
-					<span class="menu-title"><a class="menu-link">Venues Settings</a></span>
+					<span class="menu-icon">{!! getIcon('abstract-13', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link">Venues</a></span>
 					<span class="menu-arrow"></span>
 				</span>
 				<!--end:Menu link-->
@@ -72,6 +72,18 @@
 					<!--begin:Menu item-->
 					<div class="menu-item">
 						<!--begin:Menu link-->
+						<a class="menu-link {{ request()->routeIs('seasons') ? 'active' : '' }}" href="{{ route('seasons') }}">
+							<span class="menu-bullet">
+								<span class="bullet bullet-dot"></span>
+							</span>
+							<span class="menu-title">Seasons</span>
+						</a>
+						<!--end:Menu link-->
+					</div>
+					<!--end:Menu item-->
+					<!--begin:Menu item-->
+					<div class="menu-item">
+						<!--begin:Menu link-->
 						<a class="menu-link {{ request()->routeIs('prices') ? 'active' : '' }}" href="{{ route('prices') }}">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot"></span>
@@ -81,16 +93,17 @@
 						<!--end:Menu link-->
 					</div>
 					<!--end:Menu item-->
+
 				</div>
 				<!--end:Menu sub-->
 			</div>
 			<!--end:Menu item-->
 			<!--begin:Menu item-->
-			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('seasons.*') ? 'here show' : '' }}">
+			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('event-types') || request()->routeIs('event-types') ? 'here show' : '' }}">
 				<!--begin:Menu link-->
 				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('abstract-13', 'fs-2') !!}</span>
-					<span class="menu-title"><a class="menu-link">Settings</a></span>
+					<span class="menu-icon">{!! getIcon('calendar-8', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link">Events</a></span>
 					<span class="menu-arrow"></span>
 				</span>
 				<!--end:Menu link-->
@@ -99,11 +112,11 @@
 					<!--begin:Menu item-->
 					<div class="menu-item">
 						<!--begin:Menu link-->
-						<a class="menu-link {{ request()->routeIs('seasons') ? 'active' : '' }}" href="{{ route('seasons') }}">
+						<a class="menu-link {{ request()->routeIs('event-types') ? 'active' : '' }}" href="{{ route('event-types') }}">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot"></span>
 							</span>
-							<span class="menu-title">Seasons</span>
+							<span class="menu-title">Events Type</span>
 						</a>
 						<!--end:Menu link-->
 					</div>

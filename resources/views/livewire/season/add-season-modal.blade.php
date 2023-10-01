@@ -25,7 +25,7 @@
                             <label class="required fw-semibold fs-6 mb-2">Date From</label>
                             <div class="input-group" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
                                 <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker"/>
-                                <span class="input-group-text" data-td-target="#date_from_picker" data-td-toggle="datepicker">
+                                <span class="input-group-text" data-td-target="#date_from_picker" data-td-toggle="datetimepicker">
                                     <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
                                 </span>
                             </div>
@@ -38,7 +38,7 @@
                             <label class="required fw-semibold fs-6 mb-2">Date To</label>
                             <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
                                 <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker"/>
-                                <span class="input-group-text" data-td-target="#date_to_picker" data-td-toggle="datepicker">
+                                <span class="input-group-text" data-td-target="#date_to_picker" data-td-toggle="datetimepicker">
                                     <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
                                 </span>
                             </div>

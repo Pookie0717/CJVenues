@@ -66,6 +66,44 @@
                     window.LaravelDataTables['seasons-table'].ajax.reload();  <!-- Update table name -->
                 });
             });
+            new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
+                display: {
+                    viewMode: "calendar",
+                    components: {
+                        decades: true,
+                        year: true,
+                        month: true,
+                        date: true,
+                        hours: false,
+                        minutes: false,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    startOfTheWeek: 1,
+                    format: "dd-MM-yyyy"
+                }
+            });
+            new tempusDominus.TempusDominus(document.getElementById("date_to_picker_basic"), {
+                display: {
+                    viewMode: "calendar",
+                    components: {
+                        decades: true,
+                        year: true,
+                        month: true,
+                        date: true,
+                        hours: false,
+                        minutes: false,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    startOfTheWeek: 1,
+                    format: "dd-MM-yyyy"
+                }
+            });
         </script>
     @endpush
 

@@ -81,6 +81,80 @@
             stepper.on("kt.stepper.previous", function (stepper) {
                 stepper.goPrevious(); // go previous step
             });
+            new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic"), {
+                display: {
+                    viewMode: "clock",
+                    components: {
+                        decades: false,
+                        year: false,
+                        month: false,
+                        date: false,
+                        hours: true,
+                        minutes: true,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    format: "HH:ss"
+                }
+            });
+            new tempusDominus.TempusDominus(document.getElementById("time_from_picker_basic"), {
+                display: {
+                    viewMode: "clock",
+                    components: {
+                        decades: false,
+                        year: false,
+                        month: false,
+                        date: false,
+                        hours: true,
+                        minutes: true,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    format: "HH:ss"
+                }
+            });
+            new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
+                display: {
+                    viewMode: "calendar",
+                    components: {
+                        decades: true,
+                        year: true,
+                        month: true,
+                        date: true,
+                        hours: false,
+                        minutes: false,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    startOfTheWeek: 1,
+                    format: "dd-MM-yyyy"
+                }
+            });
+            new tempusDominus.TempusDominus(document.getElementById("date_to_picker_basic"), {
+                display: {
+                    viewMode: "calendar",
+                    components: {
+                        decades: true,
+                        year: true,
+                        month: true,
+                        date: true,
+                        hours: false,
+                        minutes: false,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    startOfTheWeek: 1,
+                    format: "dd-MM-yyyy"
+                }
+            });
         </script>
     @endpush
 

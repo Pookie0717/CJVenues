@@ -19,6 +19,13 @@ class AddContactModal extends Component
     public $country;
     public $notes;
 
+    public $edit_mode = false;
+
+    protected $listeners = [
+        'delete_contact' => 'deleteContact',
+        'update_contact' => 'updateContact',
+    ];
+
     public function submit()
     {
         // Validate the data
@@ -35,26 +42,84 @@ class AddContactModal extends Component
             'notes' => 'nullable|string|max:500',
         ]);
 
-        // Save the new contact to the database
-        Contact::create([
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'name' => $this->first_name . ' ' . $this->last_name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'address' => $this->address,
-            'city' => $this->city,
-            'postcode' => $this->postcode,
-            'state' => $this->state,
-            'country' => $this->country,
-            'notes' => $this->notes,
-        ]);
+        if ($this->edit_mode) {
+            // If in edit mode, update the existing contact record
+            $contact = Contact::find($this->contactId);
+            $contact->update([
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'name' => $this->first_name . ' ' . $this->last_name,
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'address' => $this->address,
+                'city' => $this->city,
+                'postcode' => $this->postcode,
+                'state' => $this->state,
+                'country' => $this->country,
+                'notes' => $this->notes,
+            ]);
+
+            // Emit an event to notify that the contact was updated successfully
+            $this->emit('success', 'Contact successfully updated');
+        } else {
+            // Save the new contact to the database
+            Contact::create([
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'name' => $this->first_name . ' ' . $this->last_name,
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'address' => $this->address,
+                'city' => $this->city,
+                'postcode' => $this->postcode,
+                'state' => $this->state,
+                'country' => $this->country,
+                'notes' => $this->notes,
+            ]);
+
+            // Emit an event to notify that the contact was created successfully
+            $this->emit('success', 'Contact successfully added');
+        }
+
+        
 
         // Emit an event to notify that the contact was created successfully
         $this->emit('success');
 
         // Reset the form fields
         $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
+    }
+
+    public function deleteContact($id)
+    {
+        // Find the contact by ID
+        $contact = Contact::find($id);
+
+        // Delete the contact
+        $contact->delete();
+
+        // Emit a success event with a message
+        $this->emit('success', 'Contact successfully deleted');
+    }
+
+    public function updateContact($id)
+    {
+        $this->edit_mode = true;
+
+        $contact = Contact::find($id);
+
+        $this->first_name = $contact->first_name;
+        $this->last_name = $contact->last_name;
+        $this->name = $contact->name;
+        $this->email = $contact->email;
+        $this->phone = $contact->phone;
+        $this->address = $contact->address;
+        $this->contact = $contact->contact;
+        $this->city = $contact->city;
+        $this->postcode = $contact->postcode;
+        $this->state = $contact->state;
+        $this->country = $contact->country;
+        $this->notes = $contact->notes;
     }
 
     public function render()

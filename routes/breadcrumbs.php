@@ -88,6 +88,13 @@ Breadcrumbs::for('seasons', function ($trail) {
     $trail->push('Seasons', route('seasons'));
 });
 
+
+// Home > Options
+Breadcrumbs::for('options', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Options', route('options'));
+});
+
 // Home > Event Types
 Breadcrumbs::for('event-types', function ($trail) {
     $trail->parent('home');

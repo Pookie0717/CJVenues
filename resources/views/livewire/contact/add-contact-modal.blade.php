@@ -132,7 +132,7 @@
                         <!--begin::Input group-->
                         <div class="mb-7">
                             <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-5">Notes</label>
+                            <label class="fw-semibold fs-6 mb-5">Notes</label>
                             <textarea class="form-control form-control-solid mb-3 mb-lg-0" id="notes" rows="3" wire:model.defer="notes" placeholder="Enter notes"></textarea>
                             <!--end::Label-->
                             @error('notes')

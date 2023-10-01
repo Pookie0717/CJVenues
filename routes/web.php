@@ -9,6 +9,7 @@ use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\QuotesController;
 use App\Http\Controllers\PricesController;
 use App\Http\Controllers\SeasonsController;
+use App\Http\Controllers\OptionsController;
 use App\Http\Controllers\EventTypesController;
 use App\Http\Controllers\VenuesManagementController;
 use App\Http\Controllers\AreasManagementController;
@@ -57,6 +58,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/seasons', SeasonsController::class)->names([
         'index' => 'seasons'
+    ]);
+
+    Route::resource('/options', OptionsController::class)->names([
+        'index' => 'options'
     ]);
 
     Route::resource('/event-types', EventTypesController::class)->names([

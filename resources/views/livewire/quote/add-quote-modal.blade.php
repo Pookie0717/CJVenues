@@ -1,163 +1,21 @@
 <div class="modal fade" id="kt_modal_add_quote" tabindex="-1" aria-hidden="true" wire:ignore.self>
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-fullscreen">
-        <!--begin::Modal content-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
-            <!--begin::Modal header-->
             <div class="modal-header" id="kt_modal_add_quote_header">
-                <!--begin::Modal title-->
                 <h2 class="fw-bold">Add Quote</h2>
-                <!--end::Modal title-->
-                <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     {!! getIcon('cross','fs-1') !!}
                 </div>
-                <!--end::Close-->
             </div>
-            <!--end::Modal header-->
-            <!--begin::Modal body-->
-            <div class="modal-body px-5 my-7 d-flex justify-content-center align-items-center">
-                <!--begin::Stepper-->
-<div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row" id="kt_stepper_quotes_vertical">
-    <!--begin::Aside-->
-    <div class="d-flex flex-row-auto w-100 w-lg-200px">
-<!--begin::Nav-->
-                <div class="stepper-nav flex-center mb-10">
-                    <!--begin::Step 1-->
-                    <div class="stepper-item mx-8 my-4 current" data-kt-stepper-element="nav">
-                        <!--begin::Wrapper-->
-                        <div class="stepper-wrapper d-flex align-items-center">
-                            <!--begin::Icon-->
-                            <div class="stepper-icon w-40px h-40px">
-                                <i class="stepper-check ki-solid ki-check fs-1"></i>
-                                <span class="stepper-number">1</span>
-                            </div>
-                            <!--end::Icon-->
-
-                            <!--begin::Label-->
-                            <div class="stepper-label">
-                                <h3 class="stepper-title">
-                                    Step 1
-                                </h3>
-
-                                <div class="stepper-desc">
-                                    Contact and Event
-                                </div>
-                            </div>
-                            <!--end::Label-->
-                        </div>
-                        <!--end::Wrapper-->
-
-                        <!--begin::Line-->
-                        <div class="stepper-line h-40px"></div>
-                        <!--end::Line-->
-                    </div>
-                    <!--end::Step 1-->
-
-                    <!--begin::Step 2-->
-                    <div class="stepper-item mx-8 my-4" data-kt-stepper-element="nav">
-                        <!--begin::Wrapper-->
-                        <div class="stepper-wrapper d-flex align-items-center">
-                             <!--begin::Icon-->
-                            <div class="stepper-icon w-40px h-40px">
-                                <i class="stepper-check ki-solid ki-check fs-1"></i>
-                                <span class="stepper-number">2</span>
-                            </div>
-                            <!--begin::Icon-->
-
-                            <!--begin::Label-->
-                            <div class="stepper-label">
-                                <h3 class="stepper-title">
-                                    Step 2
-                                </h3>
-
-                                <div class="stepper-desc">
-                                    Location
-                                </div>
-                            </div>
-                            <!--end::Label-->
-                        </div>
-                        <!--end::Wrapper-->
-
-                        <!--begin::Line-->
-                        <div class="stepper-line h-40px"></div>
-                        <!--end::Line-->
-                    </div>
-                    <!--end::Step 2-->
-
-                    <!--begin::Step 3-->
-                    <div class="stepper-item mx-8 my-4" data-kt-stepper-element="nav" >
-                       <!--begin::Wrapper-->
-                        <div class="stepper-wrapper d-flex align-items-center">
-                            <!--begin::Icon-->
-                            <div class="stepper-icon w-40px h-40px">
-                                <i class="stepper-check ki-solid ki-check fs-1"></i>
-                                <span class="stepper-number">3</span>
-                            </div>
-                            <!--begin::Icon-->
-
-                            <!--begin::Label-->
-                            <div class="stepper-label">
-                                <h3 class="stepper-title">
-                                    Step 3
-                                </h3>
-
-                                <div class="stepper-desc">
-                                    Date / Time
-                                </div>
-                            </div>
-                            <!--end::Label-->
-                        </div>
-                        <!--end::Wrapper-->
-
-                        <!--begin::Line-->
-                        <div class="stepper-line h-40px"></div>
-                        <!--end::Line-->
-                    </div>
-                    <!--end::Step 3-->
-
-                    <!--begin::Step 4-->
-                    <div class="stepper-item mx-8 my-4" data-kt-stepper-element="nav" >
-                        <!--begin::Wrapper-->
-                        <div class="stepper-wrapper d-flex align-items-center">
-                            <!--begin::Icon-->
-                            <div class="stepper-icon w-40px h-40px">
-                                <i class="stepper-check ki-solid ki-check fs-1"></i>
-                                <span class="stepper-number">4</span>
-                            </div>
-                            <!--begin::Icon-->
-
-                            <!--begin::Label-->
-                            <div class="stepper-label">
-                                <h3 class="stepper-title">
-                                    Step 4
-                                </h3>
-
-                                <div class="stepper-desc">
-                                    Extras
-                                </div>
-                            </div>
-                            <!--end::Label-->
-                        </div>
-                        <!--end::Wrapper-->
-                    </div>
-                    <!--end::Step 4-->
-                </div>
-                <!--end::Nav-->
-    </div>
-
-    <!--begin::Content-->
-    <div class="flex-row w-lg-500px ">
-        <!--begin::Form-->
-        <form class="form w-lg-500px mx-auto" novalidate="novalidate">
-<!--begin::Group-->
-                        <div class="mb-5">
-                            <!--begin::Step 1-->
-                            <div class="flex-column current" data-kt-stepper-element="content">
+            <div class="modal-body flex-center  px-5 my-7">
+                <form id="kt_modal_add_quote_form" class="form" wire:submit.prevent="submit">
+                    <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_quote_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_quote_header" data-kt-scroll-wrappers="#kt_modal_add_quote_scroll" data-kt-scroll-offset="300px">
+                        
+                        <!--begin::Step 1-->
                                 <!-- Contact Selection -->
                                 <div class="mb-3">
                                     <label for="contactSelect" class="form-label">Select Contact:</label>
-                                    <select class="form-select" id="contactSelect">
+                                    <select class="form-select" id="contactSelect" wire:model="contact_id">
                                         <option value="">Select a contact</option>
                                         @foreach ($contacts as $contact)
                                             <option value="{{ $contact->id }}">{{ $contact->name }}</option>
@@ -166,23 +24,19 @@
                                 </div>
                                 <!-- Event Selection -->
                                 <div class="mb-3">
-                                    <label for="contactSelect" class="form-label">Select Event:</label>
-                                    <select class="form-select" id="contactSelect">
+                                    <label for="eventSelect" class="form-label">Select Event:</label>
+                                    <select class="form-select" id="eventSelect" wire:model="event_type">
                                         <option value="">Select an event</option>
                                         @foreach ($eventTypes as $event)
                                             <option value="{{ $event->id }}">{{ $event->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
                             <!--begin::Step 1-->
-
-                            <!--begin::Step 2-->
-                            <div class="flex-column" data-kt-stepper-element="content">
-                                <!-- Venue Selection -->
+                            <!-- Venue Selection -->
                                 <div class="mb-3">
                                     <label for="venueSelect" class="form-label">Select Venue:</label>
-                                    <select class="form-select" id="venueSelect">
+                                    <select class="form-select" id="venueSelect" >
                                         <option value="">Select a venue</option>
                                         @foreach ($venues as $venue)
                                             <option value="{{ $venue->id }}">{{ $venue->name }}</option>
@@ -200,11 +54,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
-                            <!--begin::Step 2-->
 
-                            <!--begin::Step 3-->
-                            <div class="flex-column" data-kt-stepper-element="content">
                                 <div class="row mb-7">
                                 <div class="col">
                                     <label class="required fw-semibold fs-6 mb-2">Date From</label>
@@ -232,6 +82,7 @@
                                     @enderror
                                 </div>
                                 </div>
+
                                 <div class="row mb-7">
                                 <div class="col">
                                     <label class="required fw-semibold fs-6 mb-2">Time From</label>
@@ -259,54 +110,24 @@
                                     @enderror
                                 </div>
                                 </div>
-                            </div>
-                            <!--begin::Step 3-->
 
-                            <!--begin::Step 4-->
-                            <div class="flex-column" data-kt-stepper-element="content">
-                                
-                            </div>
-                            <!--begin::Step 4-->
-                        </div>
-                        <!--end::Group-->
 
-            <!--begin::Actions-->
-            <div class="d-flex flex-stack">
-                <!--begin::Wrapper-->
-                <div class="me-2">
-                    <button type="button" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
-                        Back
-                    </button>
-                </div>
-                <!--end::Wrapper-->
+                            
 
-                <!--begin::Wrapper-->
-                <div>
-                    <button type="button" class="btn btn-primary" data-kt-stepper-action="submit">
-                        <span class="indicator-label">
-                            Submit
-                        </span>
-                        <span class="indicator-progress">
-                            Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                        </span>
-                    </button>
-
-                    <button type="button" class="btn btn-primary" data-kt-stepper-action="next">
-                        Continue
-                    </button>
-                </div>
-                <!--end::Wrapper-->
+                    </div>
+                    
+                    <div class="text-center pt-15">
+                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="indicator-label" wire:loading.remove>Submit</span>
+                            <span class="indicator-progress" wire:loading wire:target="submit">
+                                Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <!--end::Actions-->
-        </form>
-        <!--end::Form-->
-    </div>
-</div>
-<!--end::Stepper-->
-            </div>
-            <!--end::Modal body-->
         </div>
-        <!--end::Modal content-->
     </div>
-    <!--end::Modal dialog-->
 </div>

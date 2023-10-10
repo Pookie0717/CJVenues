@@ -25,7 +25,7 @@ class UsersSeeder extends Seeder
         $demoUser2 = User::create([
             'name'              => 'Georg Schufft',
             'email'             => 'georg@cocoandjay.com',
-            'password'          => Hash::make('g'),
+            'password'          => Hash::make('r'),
             'email_verified_at' => now(),
          ]);
     }

@@ -1,6 +1,6 @@
 <div class="modal fade" id="kt_modal_add_venue" tabindex="-1" aria-hidden="true" wire:ignore.self>
     <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-fullscreen">
+    <div class="modal-dialog modal-dialog-centered mw-650px">
         <!--begin::Modal content-->
         <div class="modal-content">
             <!--begin::Modal header-->
@@ -63,64 +63,64 @@
             <!--end::Input group-->
 
             <!--begin::Input group for Venue Postcode -->
-            <div class="fv-row mb-7">
-                <!--begin::Label-->
-                <label class="required fw-semibold fs-6 mb-2">Postcode</label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input type="text" wire:model.defer="postcode" name="postcode" class="form-control form-control-solid mb-3" placeholder="Postcode"/>
-                <!--end::Input-->
-                @error('postcode')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
+            <div class="row">
+                <div class="col">
+                    <!--begin::Label-->
+                    <label class="required fw-semibold fs-6 mb-2">Postcode</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input type="text" wire:model.defer="postcode" name="postcode" class="form-control form-control-solid mb-7" placeholder="Postcode"/>
+                    <!--end::Input-->
+                    @error('postcode')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                <!--end::Input group-->
+                </div>
+                <div class="col">
+                <!--begin::Input group for Venue City -->
+                    <!--begin::Label-->
+                    <label class="required fw-semibold fs-6 mb-2">City</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input type="text" wire:model.defer="city" name="city" class="form-control form-control-solid mb-7" placeholder="City"/>
+                    <!--end::Input-->
+                    @error('city')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             <!--end::Input group-->
-
-            <!--begin::Input group for Venue City -->
-            <div class="fv-row mb-7">
-                <!--begin::Label-->
-                <label class="required fw-semibold fs-6 mb-2">City</label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input type="text" wire:model.defer="city" name="city" class="form-control form-control-solid mb-3" placeholder="City"/>
-                <!--end::Input-->
-                @error('city')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
             </div>
-            <!--end::Input group-->
 
             <!--begin::Input group for Venue State -->
-            <div class="fv-row mb-7">
+            <div class="row">
+                <div class="col">
                 <!--begin::Label-->
                 <label class="required fw-semibold fs-6 mb-2">State</label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input type="text" wire:model.defer="state" name="state" class="form-control form-control-solid mb-3" placeholder="State"/>
+                <input type="text" wire:model.defer="state" name="state" class="form-control form-control-solid mb-7" placeholder="State"/>
                 <!--end::Input-->
                 @error('state')
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
-            </div>
-            <!--end::Input group-->
-
+                </div>
+            <div class="col">
             <!--begin::Input group for Venue Country -->
-            <div class="fv-row mb-7">
                 <!--begin::Label-->
                 <label class="required fw-semibold fs-6 mb-2">Country</label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <input type="text" wire:model.defer="country" name="country" class="form-control form-control-solid mb-3" placeholder="Country"/>
+                <input type="text" wire:model.defer="country" name="country" class="form-control form-control-solid mb-7" placeholder="Country"/>
                 <!--end::Input-->
                 @error('country')
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
+                </div>
+            <!--end::Input group-->
             </div>
-
            <!-- Dynamic Area Input Fields -->
             @foreach ($areas as $index => $area)
             <div class="fv-row mb-7" wire:key="area-{{ $index }}">
-                <div class="row">
                     <div class="col">
                         <!-- Area Name Input -->
                         <label class="required fw-semibold fs-6 mb-2">Area Name</label>
@@ -129,6 +129,7 @@
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                <div class="row">
                     <div class="col">
                         <!-- Area Capacity Input (No Seating) -->
                         <label class="required fw-semibold fs-6 mb-2">Capacity (No Seating)</label>

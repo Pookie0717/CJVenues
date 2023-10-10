@@ -72,6 +72,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'index' => 'quotes'
     ]);
 
+    Route::get('quotes/{quote}', [QuotesController::class, 'show'])->name('quotes.show');
+
+
 });
 
 Route::get('/error', function () {

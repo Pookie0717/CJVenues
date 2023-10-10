@@ -66,21 +66,7 @@
                     window.LaravelDataTables['quotes-table'].ajax.reload();  <!-- Update table name -->
                 });
             });
-            // Stepper lement
-            var element = document.querySelector("#kt_stepper_quotes_vertical");
 
-            // Initialize Stepper
-            var stepper = new KTStepper(element);
-
-            // Handle next step
-            stepper.on("kt.stepper.next", function (stepper) {
-                stepper.goNext(); // go next step
-            });
-
-            // Handle previous step
-            stepper.on("kt.stepper.previous", function (stepper) {
-                stepper.goPrevious(); // go previous step
-            });
             new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic"), {
                 display: {
                     viewMode: "clock",

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Quote;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 use Spatie\Permission\Models\Role;
@@ -67,7 +68,13 @@ Breadcrumbs::for('prices', function ($trail) {
 // Home > Quotes
 Breadcrumbs::for('quotes', function ($trail) {
     $trail->parent('home');
-    $trail->push('Quotes', route('quotes'));
+    $trail->push('Quotes', route('quotes')); 
+});
+
+// Home > Quotes > [Quote]
+Breadcrumbs::for('quotes.show', function (BreadcrumbTrail $trail, Quote $quote) {
+    $trail->parent('quotes'); // Refers to the 'quotes' breadcrumb defined earlier
+    $trail->push($quote->id, route('quotes.show', $quote));
 });
 
 // Home > Venues

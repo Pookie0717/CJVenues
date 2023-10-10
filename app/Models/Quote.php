@@ -18,6 +18,7 @@ class Quote extends Model
     protected $fillable = [
         'contact_id',
         'status',
+        'quote_number',
         'version',
         'date_from',
         'date_to',
@@ -32,9 +33,9 @@ class Quote extends Model
      *
      * @return BelongsTo
      */
-    public function contact(): BelongsTo
+    public function eventContact(): BelongsTo
     {
-        return $this->belongsTo(Contact::class);
+        return $this->belongsTo(Contact::class, 'contact_id');
     }
 
     /**
@@ -42,8 +43,17 @@ class Quote extends Model
      *
      * @return BelongsTo
      */
-    public function area(): BelongsTo
+    public function eventArea(): BelongsTo
     {
-        return $this->belongsTo(Area::class); // Adjust the namespace if Area is in a different namespace
+        return $this->belongsTo(VenueArea::class, 'area_id');
+    }
+    /**
+     * Get the event associated with the quote.
+     *
+     * @return BelongsTo
+     */
+    public function eventType(): BelongsTo
+    {
+        return $this->belongsTo(EventType::class, 'event_type');
     }
 }

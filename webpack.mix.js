@@ -126,10 +126,10 @@ mix.webpackConfig({
 (glob.sync(`${dir}/plugins/**/*.+(woff|woff2|eot|ttf|svg)`) || []).forEach(file => {
     mix.copy(file, `public/assets/plugins/global/fonts/${path.parse(file).name}/${path.basename(file)}`);
 });
-// glob.sync('node_modules/+(@fortawesome|socicon|line-awesome|bootstrap-icons)/**/*.+(woff|woff2|eot|ttf)').forEach(file => {
-//     const [, folder] = file.match(/node_modules\/(.*?)\//);
-//     mix.copy(file, `public/assets/plugins/global/fonts/${folder}/${path.basename(file)}`);
-// });
+ glob.sync('node_modules/+(@fortawesome|socicon|line-awesome|bootstrap-icons)/**/*.+(woff|woff2|eot|ttf)').forEach(file => {
+     const [, folder] = file.match(/node_modules\/(.*?)\//);
+     mix.copy(file, `public/assets/plugins/global/fonts/${folder}/${path.basename(file)}`);
+});
 (glob.sync('node_modules/jstree/dist/themes/default/*.+(png|gif)') || []).forEach(file => {
     mix.copy(file, `public/assets/plugins/custom/jstree/${path.basename(file)}`);
 });

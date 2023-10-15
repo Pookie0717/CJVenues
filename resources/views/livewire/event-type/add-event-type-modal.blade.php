@@ -96,7 +96,6 @@
                                 <!-- Add a select field for the season (you can use Livewire select2 component or native select) -->
                                 <select wire:model.defer="season_id" name="season_id" class="form-select form-select-solid">
                                     <option value="">Select</option>
-                                    <option value="0">All</option>
                                     @foreach($seasons as $season)
                                         <option value="{{ $season->id }}">{{ $season->name }}</option>
                                     @endforeach

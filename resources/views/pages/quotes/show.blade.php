@@ -60,7 +60,7 @@
                                     <!--end::Info-->
                                     <div
                                         class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
-                                        <span class="pe-2">02 May 2021</span>
+                                        <span class="pe-2">dd/mm/yyyy</span>
 
                                         <span class="fs-7 text-danger d-flex align-items-center">
                                             <span class="bullet bullet-dot bg-danger me-2"></span>
@@ -82,16 +82,20 @@
                                     <div class="fw-semibold fs-7 text-gray-600 mb-1">Issue For:</div>
                                     <!--end::Label-->
 
-                                    <!--end::Text-->
-                                    <div class="fw-bold fs-6 text-gray-800">KeenThemes Inc.</div>
+                                    @foreach ($associatedContact as $contact)
+                                    <!--start::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $contact->name }}</div>
                                     <!--end::Text-->
 
-                                    <!--end::Description-->
+                                    <!--start::Description-->
                                     <div class="fw-semibold fs-7 text-gray-600">
-                                        8692 Wild Rose Drive <br>
-                                        Livonia, MI 48150
+                                        {{$contact->address}} <br>
+                                        {{$contact->postcode}} {{$contact->city}} <br>
+                                        {{$contact->state}}, {{$contact->country}}
                                     </div>
                                     <!--end::Description-->
+                                    @endforeach
+
                                 </div>
                                 <!--end::Col-->
 
@@ -102,13 +106,14 @@
                                     <!--end::Label-->
 
                                     <!--end::Text-->
-                                    <div class="fw-bold fs-6 text-gray-800">CodeLab Inc.</div>
+                                    <div class="fw-bold fs-6 text-gray-800">Coco and Jay LLC</div>
                                     <!--end::Text-->
 
                                     <!--end::Description-->
                                     <div class="fw-semibold fs-7 text-gray-600">
-                                        9858 South 53rd Ave.<br>
-                                        Matthews, NC 28104
+                                        30 N Gold St Ste R <br>
+                                        28104 Sheridan <br>
+                                        WY, United States
                                     </div>
                                     <!--end::Description-->
                                 </div>
@@ -136,8 +141,8 @@
                                                     {{ $quote->eventType ? $quote->eventType->name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
                                                 </td>
 
-                                                <td class="pt-6">80</td>
-                                                <td class="pt-6 text-dark fw-bolder">$3200.00</td>
+                                                <td class="pt-6">N/A</td>
+                                                <td class="pt-6 text-dark fw-bolder">${{ $quote->price_venue }}</td>
                                             </tr>
                                             
                                         </tbody>
@@ -156,7 +161,7 @@
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->
-                                            <div class="text-end fw-bold fs-6 text-gray-800">$ 20,600.00</div>
+                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ $quote->price }}</div>
                                             <!--end::Label-->
                                         </div>
                                         <!--end::Item-->
@@ -168,7 +173,7 @@
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->
-                                            <div class="text-end fw-bold fs-6 text-gray-800">0.00</div>
+                                            <div class="text-end fw-bold fs-6 text-gray-800">0</div>
                                             <!--end::Label-->
                                         </div>
                                         <!--end::Item-->
@@ -180,7 +185,7 @@
                                             <!--end::Code-->
 
                                             <!--begin::Label-->
-                                            <div class="text-end fw-bold fs-6 text-gray-800">$ 20,600.00</div>
+                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ $quote->price }}</div>
                                             <!--end::Label-->
                                         </div>
                                         <!--end::Item-->
@@ -234,20 +239,32 @@
                                         <thead>
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
                                                 <th class="pb-2">Version</th>
-                                                <th class="text-end pb-2">Date</th>
+                                                <th class="text-center pb-2">Date</th>
+                                                <th class="text-end pb-2">Action</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
-                                           @foreach($relatedQuotes as $quote)
-                                                <tr class="fw-bold text-gray-700 fs-5 text-end">
-                                                    <td class="d-flex align-items-center pt-6">
-                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                        {{ $quote->version }}
-                                                    </td>
-                                                    <td class="pt-6 text-dark fw-bolder">{{ $quote->created_at->format('d-m-Y H:i') }}</td>
-                                                </tr>
-                                            @endforeach
+                                          @foreach($relatedQuotes as $key => $quoteHistory)
+                                            <tr class="fw-bold text-gray-700 fs-5 text-end">
+                                                <td class="d-flex align-items-center pt-6">
+                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                    {{ $quoteHistory->version }}
+                                                </td>
+                                                <td class="pt-6 text-dark text-center fw-bolder">
+                                                    @if ($key == 0)
+                                                        <!-- Handle the first item (shifted from the last) -->
+                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d-m-Y H:i:s') }}
+                                                    @else
+                                                        {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y H:i:s') }}
+                                                    @endif
+                                                </td>
+                                                <td class="pt-6 text-dark fw-bolder">
+                                                    <a href="{{ route('quotes.show', $quoteHistory) }}">View</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+
                                         </tbody>
                                     </table>
                                 </div>

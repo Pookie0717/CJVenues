@@ -5,6 +5,7 @@ namespace App\DataTables;
 use App\Models\Price;
 use App\Models\Venue;
 use App\Models\VenueArea;
+use App\Models\Option;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -32,6 +33,8 @@ class PricesDataTable extends DataTable
                     return Venue::find($price->venue_id)->name ?? 'N/A';
                 } elseif ($price->area_id != 0) {
                     return VenueArea::find($price->area_id)->name ?? 'N/A';
+                } elseif ($price->option_id != 0) {
+                    return Option::find($price->option_id)->name ?? 'N/A';
                 } else {
                     return 'N/A';
                 }
@@ -39,11 +42,8 @@ class PricesDataTable extends DataTable
             ->editColumn('price', function ($price) {
                 return $price->price;
             })
-            ->editColumn('tier_type', function ($price) {
-                return $price->tier_type;
-            })
-            ->editColumn('tier_value', function ($price) {
-                return $price->tier_value;
+            ->editColumn('multiplier', function ($price) {
+                return $price->multiplier;
             })
             ->rawColumns(['action']);
     }
@@ -52,7 +52,7 @@ class PricesDataTable extends DataTable
     {
         return $model->newQuery()->select([
             'id', 'name', 'type',
-            'venue_id', 'area_id', 'option_id', 'price', 'tier_type', 'tier_value'
+            'venue_id', 'area_id', 'option_id', 'price', 'multiplier',
         ]);
     }
 
@@ -61,6 +61,7 @@ class PricesDataTable extends DataTable
         $labels = [
             'area' => 'Area',
             'venue' => 'Venue',
+            'option' => 'Option',
         ];
 
         return $labels[$type] ?? $type;
@@ -87,8 +88,7 @@ class PricesDataTable extends DataTable
             Column::make('type')->title('Type'),
             Column::computed('property_id')->title('Property'),
             Column::make('price')->title('Amount'),
-            //Column::make('tier_type')->title('Tier Type'),
-            //Column::make('tier_value')->title('Tier Value'),
+            Column::make('multiplier')->title('Multiplier'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

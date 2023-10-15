@@ -13,6 +13,7 @@ class AddVenueModal extends Component
     public $venueName;
     public $venueType;
     public $venueAddress;
+    public $venueId;
     public $city;
     public $postcode;
     public $state;
@@ -89,34 +90,52 @@ class AddVenueModal extends Component
         // Validate venue data and areas
         $this->validate();
 
-        // Save venue to the database
-        $venue = Venue::create([
-            'name' => $this->venueName,
-            'type' => $this->venueType,
-            'address' => $this->venueAddress,
-        ]);
+        if ($this->edit_mode) {
 
-        // Save associated areas if available
-        if (!empty($this->areas)) {
-            foreach ($this->areas as $area) {
-                $venue->areas()->create([
-                    'name' => $area['name'],
-                    'capacity_noseating' => $area['capacity_noseating'],
-                    'capacity_seatingrows' => $area['capacity_seatingrows'],
-                    'capacity_seatingtables' => $area['capacity_seatingtables'],
-                ]);
+            \Log::info('Venue ID before find:', [$this->venueId]);
+            $venue = Venue::find($this->venueId);
+            \Log::info('Resulting Venue:', [$venue]);
+
+            $venue->update([
+                'name' => $this->venueName,
+                'type' => $this->venueType,
+                'address' => $this->venueAddress,
+            ]);
+
+            $this->emit('success', 'Venue successfully updated');
+
+        } else {
+
+            // Save venue to the database
+            $venue = Venue::create([
+                'name' => $this->venueName,
+                'type' => $this->venueType,
+                'address' => $this->venueAddress,
+            ]);
+
+            // Save associated areas if available
+            if (!empty($this->areas)) {
+                foreach ($this->areas as $area) {
+                    $venue->areas()->create([
+                        'name' => $area['name'],
+                        'capacity_noseating' => $area['capacity_noseating'],
+                        'capacity_seatingrows' => $area['capacity_seatingrows'],
+                        'capacity_seatingtables' => $area['capacity_seatingtables'],
+                    ]);
+                }
             }
+
+            // Reset form fields and areas array
+            $this->resetFields();
+            $this->resetAreas();
+
+            // Close the modal (you can emit an event to handle this in your JavaScript)
+            $this->emit('success', 'Venue successfully Added');
+
+            // Display success message (you can emit an event to display this in your JavaScript)
+            $this->emit('showSuccessMessage', 'Venue and venue areas added successfully!');
+
         }
-
-        // Reset form fields and areas array
-        $this->resetFields();
-        $this->resetAreas();
-
-        // Close the modal (you can emit an event to handle this in your JavaScript)
-        $this->emit('success', 'Venue successfully Added');
-
-        // Display success message (you can emit an event to display this in your JavaScript)
-        $this->emit('showSuccessMessage', 'Venue and venue areas added successfully!');
     }
 
     public function deleteVenue($id)
@@ -143,6 +162,11 @@ class AddVenueModal extends Component
         $this->edit_mode = true;
 
         $venue = Venue::find($id);
+        $this->venueId = $id;;
+        $this->venueName  = $venue->name;
+        $this->venueType  = $venue->type;
+        $this->venueAddress  = $venue->address;
+
     }
 
     public function hydrate()

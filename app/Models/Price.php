@@ -17,8 +17,8 @@ class Price extends Model
         'area_id',
         'option_id',
         'price',
-        'tier_type',
-        'tier_value',
+        'multiplier',
+        'season_id',
     ];
 
     // Define relationships with other models if needed
@@ -36,5 +36,9 @@ class Price extends Model
     public function option()
     {
         return $this->belongsTo(Option::class, 'option_id');
+    }
+    public function season()
+    {
+        return $this->belongsTo(Season::class, 'season_id');
     }
 }

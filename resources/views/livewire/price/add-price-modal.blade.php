@@ -26,7 +26,7 @@
                             <select wire:model="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">Select</option>
                                 <option value="area">Area</option>
-                                <!--<option value="option">Option</option>-->
+                                <option value="option">Option</option>
                                 <option value="venue">Venue</option>
                             </select>
                             @error('type')
@@ -67,9 +67,39 @@
                         </div>
                         @endif
 
-
-                        <!-- Price -->
+                        <!-- Option Dropdown (conditional) -->
+                        @if($type === 'option')
                         <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Option</label>
+                            <select wire:model.defer="option_id" name="option_id" class="form-select form-select-solid mb-3 mb-lg-0">
+                                <option value="">Select Option</option>
+                                @foreach($options as $option)
+                                    <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('option_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        @endif
+
+                        <!-- Season Dropdown -->
+                        <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Season</label>
+                            <select wire:model.defer="season_id" name="season_id" class="form-select form-select-solid mb-3 mb-lg-0">
+                                <option value="">Select Season</option>
+                                @foreach($seasons as $season)
+                                    <option value="{{ $season->id }}">{{ $season->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('season_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="row fv-row mb-7">
+                        <!-- Price -->
+                        <div class="col mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Price</label>
                             <input type="text" wire:model="price" name="price" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Price"/>
                             @error('price')
@@ -77,22 +107,19 @@
                             @enderror
                         </div>
 
-                        <!-- Tier Type -->
-                        <div class="fv-row mb-7">
-                            <label class="fw-semibold fs-6 mb-2">Tier Type</label>
-                            <input type="text" wire:model.defer="tier_type" name="tier_type" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Tier Type"/>
-                            @error('tier_type')
+                         <!-- Multiplier -->
+                        <div class="col mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Multiplier</label>
+                            <select wire:model="multiplier" name="multiplier" class="form-select form-select-solid mb-3 mb-lg-0">
+                                <option value="">Select</option>
+                                <option value="daily">Daily</option>
+                                <option value="hourly">Hourly</option>
+                                <option value="event">Per Event</option>
+                            </select>
+                            @error('multiplier')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        <!-- Tier Value -->
-                        <div class="fv-row mb-7">
-                            <label class="fw-semibold fs-6 mb-2">Tier Value</label>
-                            <input type="text" wire:model.defer="tier_value" name="tier_value" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Tier Value"/>
-                            @error('tier_value')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
                         </div>
 
                     </div>

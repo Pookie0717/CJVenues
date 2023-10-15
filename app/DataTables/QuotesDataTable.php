@@ -64,7 +64,7 @@ public function dataTable(QueryBuilder $query): EloquentDataTable
 
 public function query(Quote $model)
 {
-        return $model->newQuery()->select(['id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at']);
+        return $model->newQuery()->select(['id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at'])->where('status', '<>', 'Archived');
 
 }
 

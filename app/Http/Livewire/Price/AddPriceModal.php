@@ -6,6 +6,8 @@ use Livewire\Component;
 use App\Models\Price;
 use App\Models\VenueArea;
 use App\Models\Venue;
+use App\Models\Season;
+use App\Models\Option;
 use Illuminate\Validation\Rule;
 
 class AddPriceModal extends Component
@@ -18,9 +20,9 @@ class AddPriceModal extends Component
     public $area_id;
     public $option_id;
     public $price;
-    public $tier_type;
-    public $tier_value;
+    public $multiplier;
     public $priceId;
+    public $season_id;
 
     public $edit_mode = false;
 
@@ -38,8 +40,7 @@ class AddPriceModal extends Component
             'area_id' => 'nullable|integer',
             'option_id' => 'nullable|integer',
             'price' => 'required|numeric',
-            'tier_type' => 'nullable|string|max:255',
-            'tier_value' => 'nullable|integer',
+            'multiplier' => 'nullable|string|max:255',
         ];
 
         $this->validate($rules);
@@ -52,10 +53,10 @@ class AddPriceModal extends Component
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
                 'area_id' => ($this->type === 'area') ? $this->area_id : null,
-                //'option_id' => ($this->type === 'option') ? $this->option_id : null,
+                'option_id' => ($this->type === 'option') ? $this->option_id : null,
                 'price' => $this->price,
-                'tier_type' => $this->tier_type,
-                'tier_value' => $this->tier_value,
+                'multiplier' => $this->multiplier,
+                'season_id' => $this->season_id,
             ]);
 
             // Emit an event to notify that the price was updated successfully
@@ -67,10 +68,10 @@ class AddPriceModal extends Component
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
                 'area_id' => ($this->type === 'area') ? $this->area_id : null,
-                //'option_id' => ($this->type === 'option') ? $this->option_id : null,
+                'option_id' => ($this->type === 'option') ? $this->option_id : null,
                 'price' => $this->price,
-                'tier_type' => $this->tier_type,
-                'tier_value' => $this->tier_value,
+                'multiplier' => $this->multiplier,
+                'season_id' => $this->season_id,
             ]);
 
             // Emit an event to notify that the price was created successfully
@@ -79,8 +80,7 @@ class AddPriceModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name',
-            'type', 'venue_id', 'area_id', 'option_id', 'price', 'tier_type', 'tier_value', 'edit_mode'
+            'name', 'type', 'venue_id', 'area_id', 'option_id', 'price', 'multiplier', 'edit_mode'
         ]);
     }
 
@@ -109,15 +109,15 @@ class AddPriceModal extends Component
         $this->type = $price->type;
         $this->venue_id = $price->venue_id;
         $this->area_id = $price->area_id;
-        //$this->option_id = $price->option_id;
+        $this->option_id = $price->option_id;
         $this->price = $price->price;
-        $this->tier_type = $price->tier_type;
-        $this->tier_value = $price->tier_value;
+        $this->multiplier = $price->multiplier;
+        $this->season_id = $price->season_id;
     }
 
     public function selectedType($type)
     {
-        $this->reset(['area_id', 'venue_id']);
+        $this->reset(['area_id', 'venue_id', 'option_id']);
     }
 
     public function render()
@@ -125,7 +125,9 @@ class AddPriceModal extends Component
         // Load venues for selection
         $venues = Venue::all();
         $venueAreas = VenueArea::all();
+        $seasons = Season::all();
+        $options = Option::all();
 
-    return view('livewire.price.add-price-modal', compact('venues', 'venueAreas'));
+    return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options'));
     }
 }

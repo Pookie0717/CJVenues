@@ -88,3 +88,15 @@
         </div>
     </div>
 </div>
+<script>
+        
+document.getElementById('date_from_picker_input').addEventListener('change', function () {
+    @this.set('date_from', this.value);
+});
+
+document.getElementById('date_to_picker_input').addEventListener('change', function () {
+    @this.set('date_to', this.value);
+});
+
+
+        </script>

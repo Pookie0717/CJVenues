@@ -16,4 +16,8 @@ class Season extends Model
         'priority',
         'overwrite_weekday',
     ];
+    public function prices()
+    {
+        return $this->hasMany(Price::class);
+    }
 }

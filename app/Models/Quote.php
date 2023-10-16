@@ -32,6 +32,8 @@ class Quote extends Model
         'price',
         'price_options',
         'price_venue',
+        'options_ids',
+        'options_values',
     ];
 
     /**

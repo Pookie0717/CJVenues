@@ -135,14 +135,31 @@
                                         </thead>
 
                                         <tbody>
-                                            <tr class="fw-bold text-gray-700 fs-5 text-end">
-                                                <td class="d-flex align-items-center pt-6">
+                                            <tr class="fw-bold text-gray-700 fs-5">
+                                                <td class="d-flex align-items-center text-left pt-6">
                                                     <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                     {{ $quote->eventType ? $quote->eventType->name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
                                                 </td>
 
-                                                <td class="pt-6">N/A</td>
-                                                <td class="pt-6 text-dark fw-bolder">${{ $quote->price_venue }}</td>
+                                                <td class="pt-6 text-end">N/A</td>
+                                                <td class="pt-6 text-dark fw-bolder text-end">${{ $quote->price_venue }}</td>
+                                            </tr>
+                                            <!-- Additional row for options and priceOption -->
+                                            <tr class="fw-bold text-gray-700 fs-5">
+                                                <td class="d-flex align-items-center text-left pt-6">
+                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                    @foreach($optionsWithValues as $optionWithValue)
+                                                        @if( $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
+                                                            {{ $optionWithValue['option']->name }}<br>
+                                                        @elseif( $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no')
+                                                        @else
+                                                            {{ $optionWithValue['option']->name }} - {{ $optionWithValue['value'] }}<br>
+                                                        @endif
+                                                    @endforeach
+
+                                                </td>
+                                                <td class="pt-6 text-end">N/A</td>
+                                                <td class="pt-6 text-dark fw-bolder text-end">${{ $quote->price_options ?? 'N/A' }}</td>
                                             </tr>
                                             
                                         </tbody>

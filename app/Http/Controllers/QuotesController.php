@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quote;
 use App\Models\Contact;
 use App\Models\Season;
+use App\Models\Option;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +22,7 @@ class QuotesController extends Controller
   /**
      * Display the specified resource.
      */
-    public function show(Quote $quote, Contact $contact, Season $season)
+    public function show(Quote $quote, Contact $contact, Season $season, Option $option)
     {
         // Get the quote_number from the current $quote object
         $quote_number = $quote->quote_number;
@@ -38,6 +39,27 @@ class QuotesController extends Controller
 
         $associatedContact = Contact::where('id', $contact_id)
             ->get();
+
+        // Extract option IDs and values
+        $optionIds = explode('|', $quote->options_ids);
+        $optionValues = explode('|', $quote->options_values);
+
+        // Fetch the selected options based on the extracted IDs
+        $selectedOptions = Option::whereIn('id', $optionIds)->get();
+
+        // Combine the selected options with their values
+        $optionsWithValues = [];
+
+        foreach ($selectedOptions as $index => $selectedOption) {
+            $optionsWithValues[] = [
+                'option' => $selectedOption,
+                'value'  => $optionValues[$index] ?? null, // Using null as a default if there's no corresponding value
+                'type'   => $selectedOption->type
+            ];
+        }
+
+        Log::info('Options with Values:', ['data' => $optionsWithValues]);
+
 
         $allSeasons = Season::orderBy('priority', 'desc')->get();
 
@@ -69,7 +91,7 @@ class QuotesController extends Controller
 
         view()->share('quote', $quote);
 
-        return view('pages.quotes.show', compact('relatedQuotes', 'associatedContact', 'associatedSeason'));
+        return view('pages.quotes.show', compact('relatedQuotes', 'associatedContact', 'associatedSeason', 'optionsWithValues'));
     }
 
 

@@ -30,6 +30,8 @@ class OptionsDataTable extends DataTable
                     'yes_no' => 'Yes / No',
                     'check' => 'Check',
                     'radio' => 'Radio',
+                    'number' => 'Number',
+                    'dropdown' => 'Dropdown',
                 ];
 
                 return $typeLabels[$option->type] ?? $option->type;

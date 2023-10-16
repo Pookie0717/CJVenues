@@ -26,7 +26,7 @@ class AddOptionModal extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'position' => 'required|integer',
-            'type' => 'required|in:yes_no,check,radio',
+            'type' => 'required|in:yes_no,check,radio,number,dropdown',
             'values' => 'nullable|string', // You may need to adjust this validation based on the format of the values
         ]);
 

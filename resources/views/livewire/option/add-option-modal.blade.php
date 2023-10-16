@@ -39,6 +39,7 @@
                                 <option value="yes_no">Yes/No</option>
                                 <option value="check">Check</option>
                                 <option value="radio">Radio</option>
+                                <option value="number">Number</option>
                             </select>
                             @error('type')
                                 <span class="text-danger">{{ $message }}</span>
@@ -47,7 +48,7 @@
                         
                         <!-- Values -->
                         <div class="fv-row mb-7">
-                            <label class="fw-semibold fs-6 mb-2">Values (Separated by '|')</label>
+                            <label class="fw-semibold fs-6 mb-2">Values (Separated by '|' if necessary)</label>
                             <textarea wire:model.defer="values" name="values" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Value1|Value2|Value3"></textarea>
                             @error('values')
                                 <span class="text-danger">{{ $message }}</span>

@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Quote;
 use Livewire\Component;
 use App\Models\Quote;
 use App\Models\Contact;
+use App\Models\Option;
 use App\Models\VenueArea;
 use App\Models\Venue;
 use App\Models\Season;
@@ -28,6 +29,9 @@ class AddQuoteModal extends Component
     public $event_type;
     public $quoteId;
     public $quote_number;
+    public $selectedOptions = [];
+    public $options_ids;
+    public $options_values;
     public $calculated_price;
     public $discount_type;
     public $discount;
@@ -41,6 +45,82 @@ class AddQuoteModal extends Component
         'delete_quote' => 'deleteQuote',
         'update_quote' => 'updateQuote',
     ];
+
+    public function updateSelectedOption($optionId, $value)
+    {
+        $this->selectedOptions[$optionId] = $value;
+    }
+
+    public function updateCheckboxOption($optionId, $value, $checked)
+    {
+        if (!isset($this->selectedOptions[$optionId])) {
+            $this->selectedOptions[$optionId] = [];
+        }
+
+        if ($checked) {
+            $this->selectedOptions[$optionId][] = $value;
+        } else {
+            $key = array_search($value, $this->selectedOptions[$optionId]);
+            if ($key !== false) {
+                unset($this->selectedOptions[$optionId][$key]);
+            }
+        }
+    }
+
+    
+    public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues)
+    {
+        // Convert the date strings to Carbon instances
+        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
+        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
+
+        // Get all seasons from the database
+        $allSeasons = Season::orderBy('priority', 'desc')->get();
+
+        // Convert the option IDs to an array
+        $optionIdsArray = explode('|', $optionIds);
+
+        // Initialize the total price for options
+        $totalPrice = 0;
+
+        // Iterate through the seasons to find a matching price for each option
+        foreach ($optionIdsArray as $optionId) {
+            foreach ($allSeasons as $season) {
+                // Check if there is a price associated with the option for this season
+                $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+
+                if ($optionPrice) {
+                    // Get the multiplier type (daily, hourly, per event) and value
+                    $multiplierType = $optionPrice->multiplier;
+                    $multiplierValue = (float)$optionPrice->price;
+
+                    // Calculate the price based on the multiplier type
+                    switch ($multiplierType) {
+                        case 'daily':
+                            $totalPrice += $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
+                            break;
+                        case 'hourly':
+                            $totalPrice += $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                            break;
+                        case 'event':
+                            $totalPrice += $multiplierValue;
+                            break;
+                    }
+                }
+            }
+        }
+
+        return $totalPrice;
+    }
+
+    private function getOptionPriceForSeason($optionId, $seasonId)
+    {
+        return Option::find($optionId)->prices()
+            ->where('type', 'option')
+            ->where('season_id', $seasonId)
+            ->first();
+    }
+
 
     public function calculatePriceVenue($dateFrom, $dateTo, $timeFrom, $timeTo, $areaId)
     {
@@ -159,7 +239,12 @@ class AddQuoteModal extends Component
             $newVersion = $quote->version + 1;
 
             $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);;
-            $priceOptions = 0;
+            // Convert selected options to a comma-separated string format
+            $optionIds = implode('|', array_keys($this->selectedOptions));
+            $optionValues = implode('|', array_values($this->selectedOptions));
+            
+            $priceOptions = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds,$optionValues);
+;
             $calculatedPrice = $priceVenue + $priceOptions;
            
             $price = $calculatedPrice;
@@ -182,6 +267,8 @@ class AddQuoteModal extends Component
                 'price' => $quote->price,
                 'price_venue' => $quote->price_venue,
                 'price_options' => $quote->price_options,
+                'options_ids' => $quote->options_ids,
+                'options_values' => $quote->options_values,
             ]);
 
             $quote->update([
@@ -200,6 +287,8 @@ class AddQuoteModal extends Component
                 'price' => $price,
                 'price_venue' => $priceVenue,
                 'price_options' => $priceOptions,
+                'options_ids' => $optionIds,
+                'options_values' => $optionValues,
             ]);
 
             // Emit an event to notify that the quote was updated successfully
@@ -209,8 +298,16 @@ class AddQuoteModal extends Component
             $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
             $newQuoteNumber = $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
 
+            // Convert selected options to a comma-separated string format
+            $optionIds = implode('|', array_keys($this->selectedOptions));
+            $optionValues = implode('|', array_values($this->selectedOptions));
+
+            Log::info('Selected Options:', ['data' => $this->selectedOptions]);
+            Log::info('Option IDs:', ['data' => $optionIds]);
+            Log::info('Option Values:', ['data' => $optionValues]);
+
             $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);;
-            $priceOptions = 0;
+            $priceOptions = $this->calculatePriceOptions($optionIds,$optionValues);
             $calculatedPrice = $priceVenue + $priceOptions;
             $price = $calculatedPrice;
 
@@ -232,6 +329,8 @@ class AddQuoteModal extends Component
                 'price' => $price,
                 'price_venue' => $priceVenue,
                 'price_options' => $priceOptions,
+                'options_ids' => $optionIds,
+                'options_values' => $optionValues,
             ]);
 
             // Update the current quote number in the system_information table
@@ -243,7 +342,7 @@ class AddQuoteModal extends Component
         }
 
         // Reset the form fields
-        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type', 'edit_mode', 'quoteId', 'calculated_price', 'discount_type', 'discount', 'price', 'price_venue', 'price_options']);
+        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type', 'edit_mode', 'quoteId', 'calculated_price', 'discount_type', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
     }
 
     public function deleteQuote($id)
@@ -297,8 +396,9 @@ class AddQuoteModal extends Component
         $venues = Venue::all();
         $venueAreas = VenueArea::all();
         $eventTypes = EventType::all();
+        $options = Option::all();
 
-        return view('livewire.quote.add-quote-modal', compact('contacts', 'venueAreas', 'venues', 'eventTypes'));
+        return view('livewire.quote.add-quote-modal', compact('contacts', 'venueAreas', 'venues', 'eventTypes', 'options'));
     }
 
 }

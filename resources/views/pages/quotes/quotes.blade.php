@@ -58,7 +58,7 @@
         {{ $dataTable->scripts() }}
         <script>
             document.getElementById('mySearchInput').addEventListener('keyup', function () {
-                window.LaravelDataTables['quotes-table'].search(this.value).draw();  <!-- Update table name -->
+                window.LaravelDataTables['quotes-table'].search(this.value).draw();
             });
             document.addEventListener('livewire:load', function () {
                 Livewire.on('success', function () {

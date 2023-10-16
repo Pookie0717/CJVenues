@@ -15,4 +15,9 @@ class Option extends Model
         'type',
         'values',
     ];
+
+    public function prices()
+    {
+        return $this->hasMany(Price::class, 'option_id');
+    }
 }

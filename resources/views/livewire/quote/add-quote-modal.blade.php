@@ -301,9 +301,11 @@
                         @if($option->type === 'radio')
                             <label class="form-label">{{ $option->name }}:</label>
                             @foreach(explode('|', $option->values) as $value)
-                                <div>
-                                    <input id="selectedOptions{{ $option->id }}_{{ $value }}" type="radio" wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')">
-                                    <label for="selectedOptions{{ $option->id }}_{{ $value }}">{{ $value }}</label>
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}_{{ $value }}"/>
+                                    <label class="form-check-label" for="selectedOptions{{ $option->id }}_{{ $value }}">
+                                        {{ $value }}
+                                    </label>
                                 </div>
                             @endforeach
                         @endif

@@ -142,26 +142,33 @@
                                                 </td>
 
                                                 <td class="pt-6 text-end">N/A</td>
-                                                <td class="pt-6 text-dark fw-bolder text-end">${{ $quote->price_venue }}</td>
+                                                <td class="pt-6 text-dark fw-bolder text-end">${{ number_format($quote->price_venue, 2) }}</td>
                                             </tr>
                                             <!-- Additional row for options and priceOption -->
-                                            <tr class="fw-bold text-gray-700 fs-5">
-                                                <td class="d-flex align-items-center text-left pt-6">
-                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                    @foreach($optionsWithValues as $optionWithValue)
-                                                        @if( $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
-                                                            {{ $optionWithValue['option']->name }}<br>
-                                                        @elseif( $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no')
-                                                        @else
-                                                            {{ $optionWithValue['option']->name }} - {{ $optionWithValue['value'] }}<br>
-                                                        @endif
-                                                    @endforeach
+                                            @php
+                                                // Convert the price_options string into an array
+                                                $priceOptionsArray = explode('|', $quote->price_options);
+                                            @endphp
 
-                                                </td>
-                                                <td class="pt-6 text-end">N/A</td>
-                                                <td class="pt-6 text-dark fw-bolder text-end">${{ $quote->price_options ?? 'N/A' }}</td>
-                                            </tr>
-                                            
+                                            @foreach($optionsWithValues as $index => $optionWithValue)
+                                                @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
+                                                    <tr class="fw-bold text-gray-700 fs-5">
+                                                        <td class="d-flex align-items-center text-left pt-6">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
+                                                                {{ $optionWithValue['option']->name }}
+                                                            @else
+                                                                {{ $optionWithValue['option']->name }} - {{ $optionWithValue['value'] }}
+                                                            @endif
+                                                        </td>
+                                                        <td class="pt-6 text-end">N/A</td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end">
+                                                            $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -178,7 +185,7 @@
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->
-                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ $quote->price }}</div>
+                                            <div class="text-end fw-bold fs-6 text-gray-800">${{ number_format($quote->price, 2) }}</div>
                                             <!--end::Label-->
                                         </div>
                                         <!--end::Item-->
@@ -202,7 +209,7 @@
                                             <!--end::Code-->
 
                                             <!--begin::Label-->
-                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ $quote->price }}</div>
+                                            <div class="text-end fw-bold fs-6 text-gray-800">${{ number_format($quote->price, 2) }}</div>
                                             <!--end::Label-->
                                         </div>
                                         <!--end::Item-->
@@ -301,15 +308,21 @@
                 <!--end::Modal-->
     </div>
     @push('scripts')
+    
         <script>
-
+            
             // Add click event listener to update buttons
             document.querySelectorAll('[data-kt-action="update_row"]').forEach(function (element) {
                 element.addEventListener('click', function () {
                     Livewire.emit('update_quote', this.getAttribute('data-kt-quote-id'));
                 });
             });
-
+            document.addEventListener('livewire:load', function () {
+                Livewire.on('success', function () {
+                    $('#kt_modal_add_quote').modal('hide');  <!-- Update modal ID -->
+                    window.LaravelDataTables['quotes-table'].ajax.reload();  <!-- Update table name -->
+                });
+            });
             new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic"), {
                 display: {
                     viewMode: "clock",

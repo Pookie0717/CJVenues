@@ -138,50 +138,72 @@ class AddQuoteModal extends Component
         return 0;
     }
 
-    public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues)
-    {
-        // Convert the date strings to Carbon instances
-        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
-        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
+   public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues)
+{
+    // Convert the date strings to Carbon instances
+    $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
+    $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
 
-        // Get all seasons from the database
-        $allSeasons = Season::orderBy('priority', 'desc')->get();
+    // Get all seasons from the database
+    $allSeasons = Season::orderBy('priority', 'desc')->get();
 
-        // Convert the option IDs to an array
-        $optionIdsArray = explode('|', $optionIds);
+    // Convert the option IDs and values to arrays
+    $optionIdsArray = explode('|', $optionIds);
+    $optionValuesArray = explode('|', $optionValues);
 
-        // Initialize the total price for options
-        $totalPrice = 0;
+    // Initialize an array to store individual prices for options
+    $individualPrices = [];
 
-        // Iterate through the seasons to find a matching price for each option
-        foreach ($optionIdsArray as $optionId) {
-            foreach ($allSeasons as $season) {
-                // Check if there is a price associated with the option for this season
-                $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+    // Iterate through the option IDs to calculate prices for each option
+    foreach ($optionIdsArray as $index => $optionId) {
+        $optionTotalPrice = 0;  // Initialize price for the current option
 
-                if ($optionPrice) {
-                    // Get the multiplier type (daily, hourly, per event) and value
-                    $multiplierType = $optionPrice->multiplier;
-                    $multiplierValue = (float)$optionPrice->price;
+        foreach ($allSeasons as $season) {
+            // Check if there is a price associated with the option for this season
+            $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
 
-                    // Calculate the price based on the multiplier type
-                    switch ($multiplierType) {
-                        case 'daily':
-                            $totalPrice += $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
-                            break;
-                        case 'hourly':
-                            $totalPrice += $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-                            break;
-                        case 'event':
-                            $totalPrice += $multiplierValue;
-                            break;
-                    }
+            if ($optionPrice) {
+                // Get the multiplier type (daily, hourly, per event) and value
+                $multiplierType = $optionPrice->multiplier;
+                $multiplierValue = (float)$optionPrice->price;
+                Log::info('Option Values Array:', $multiplierValue);
+
+                // Calculate the price based on the multiplier type and option value
+                switch ($multiplierType) {
+                    case 'daily':
+                        if ($optionValuesArray[$index] === 'yes') {
+                            $optionTotalPrice += $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
+                        } elseif (is_numeric($optionValuesArray[$index])) {
+                            $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfDays($dateFrom, $dateTo);
+                        }
+                        break;
+                    case 'hourly':
+                        if ($optionValuesArray[$index] === 'yes') {
+                            $optionTotalPrice += $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                        } elseif (is_numeric($optionValuesArray[$index])) {
+                            $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                        }
+                        break;
+                    case 'event':
+                        if ($optionValuesArray[$index] === 'yes') {
+                            $optionTotalPrice += $multiplierValue;
+                        } elseif (is_numeric($optionValuesArray[$index])) {
+                            $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                        }
+                        break;
                 }
             }
         }
 
-        return $totalPrice;
+        // Add the calculated price for the current option to the individual prices array
+        $individualPrices[] = $optionTotalPrice;
     }
+
+    // Convert the individual prices array to a string separated by '|'
+    return implode('|', $individualPrices);
+}
+
+
 
     private function getOptionPriceForSeason($optionId, $seasonId)
     {
@@ -242,8 +264,15 @@ class AddQuoteModal extends Component
             $optionIds = implode('|', array_keys($this->selectedOptions));
             $optionValues = implode('|', array_values($this->selectedOptions));
             
-            $priceOptions = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds,$optionValues);
-            
+            $priceOptionsString = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds, $optionValues);
+
+            $priceOptionsArray = explode('|', $priceOptionsString);
+
+            // Calculate the total of all the option prices
+            $priceOptions = array_sum(array_map(function($price) {
+                return (float) $price;
+            }, $priceOptionsArray));
+
             $calculatedPrice = $priceVenue + $priceOptions;
            
             $price = $calculatedPrice;
@@ -285,13 +314,14 @@ class AddQuoteModal extends Component
                 'discount' => $this->discount,
                 'price' => $price,
                 'price_venue' => $priceVenue,
-                'price_options' => $priceOptions,
+                'price_options' => $priceOptionsString,
                 'options_ids' => $optionIds,
                 'options_values' => $optionValues,
             ]);
 
             // Emit an event to notify that the quote was updated successfully
             $this->emit('success', 'Quote successfully updated');
+
         } else {
             // Retrieve the current quote number
             $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
@@ -301,12 +331,17 @@ class AddQuoteModal extends Component
             $optionIds = implode('|', array_keys($this->selectedOptions));
             $optionValues = implode('|', array_values($this->selectedOptions));
 
-            Log::info('Selected Options:', ['data' => $this->selectedOptions]);
-            Log::info('Option IDs:', ['data' => $optionIds]);
-            Log::info('Option Values:', ['data' => $optionValues]);
-
             $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);;
-            $priceOptions = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds,$optionValues);
+            
+            $priceOptionsString = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds, $optionValues);
+
+            $priceOptionsArray = explode('|', $priceOptionsString);
+
+            // Calculate the total of all the option prices
+            $priceOptions = array_sum(array_map(function($price) {
+                return (float) $price;
+            }, $priceOptionsArray));
+
             $calculatedPrice = $priceVenue + $priceOptions;
             $price = $calculatedPrice;
 
@@ -327,7 +362,7 @@ class AddQuoteModal extends Component
                 'discount' => $this->discount,
                 'price' => $price,
                 'price_venue' => $priceVenue,
-                'price_options' => $priceOptions,
+                'price_options' => $priceOptionsString,
                 'options_ids' => $optionIds,
                 'options_values' => $optionValues,
             ]);

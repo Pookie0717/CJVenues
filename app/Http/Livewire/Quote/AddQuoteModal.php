@@ -166,7 +166,6 @@ class AddQuoteModal extends Component
                 // Get the multiplier type (daily, hourly, per event) and value
                 $multiplierType = $optionPrice->multiplier;
                 $multiplierValue = (float)$optionPrice->price;
-                Log::info('Option Values Array:', $multiplierValue);
 
                 // Calculate the price based on the multiplier type and option value
                 switch ($multiplierType) {

@@ -307,7 +307,7 @@ class AddQuoteModal extends Component
             Log::info('Option Values:', ['data' => $optionValues]);
 
             $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);;
-            $priceOptions = $this->calculatePriceOptions($optionIds,$optionValues);
+            $priceOptions = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds,$optionValues);
             $calculatedPrice = $priceVenue + $priceOptions;
             $price = $calculatedPrice;
 

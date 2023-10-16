@@ -67,60 +67,6 @@ class AddQuoteModal extends Component
         }
     }
 
-    
-    public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues)
-    {
-        // Convert the date strings to Carbon instances
-        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
-        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
-
-        // Get all seasons from the database
-        $allSeasons = Season::orderBy('priority', 'desc')->get();
-
-        // Convert the option IDs to an array
-        $optionIdsArray = explode('|', $optionIds);
-
-        // Initialize the total price for options
-        $totalPrice = 0;
-
-        // Iterate through the seasons to find a matching price for each option
-        foreach ($optionIdsArray as $optionId) {
-            foreach ($allSeasons as $season) {
-                // Check if there is a price associated with the option for this season
-                $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
-
-                if ($optionPrice) {
-                    // Get the multiplier type (daily, hourly, per event) and value
-                    $multiplierType = $optionPrice->multiplier;
-                    $multiplierValue = (float)$optionPrice->price;
-
-                    // Calculate the price based on the multiplier type
-                    switch ($multiplierType) {
-                        case 'daily':
-                            $totalPrice += $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
-                            break;
-                        case 'hourly':
-                            $totalPrice += $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-                            break;
-                        case 'event':
-                            $totalPrice += $multiplierValue;
-                            break;
-                    }
-                }
-            }
-        }
-
-        return $totalPrice;
-    }
-
-    private function getOptionPriceForSeason($optionId, $seasonId)
-    {
-        return Option::find($optionId)->prices()
-            ->where('type', 'option')
-            ->where('season_id', $seasonId)
-            ->first();
-    }
-
 
     public function calculatePriceVenue($dateFrom, $dateTo, $timeFrom, $timeTo, $areaId)
     {
@@ -192,6 +138,59 @@ class AddQuoteModal extends Component
         return 0;
     }
 
+    public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues)
+    {
+        // Convert the date strings to Carbon instances
+        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
+        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
+
+        // Get all seasons from the database
+        $allSeasons = Season::orderBy('priority', 'desc')->get();
+
+        // Convert the option IDs to an array
+        $optionIdsArray = explode('|', $optionIds);
+
+        // Initialize the total price for options
+        $totalPrice = 0;
+
+        // Iterate through the seasons to find a matching price for each option
+        foreach ($optionIdsArray as $optionId) {
+            foreach ($allSeasons as $season) {
+                // Check if there is a price associated with the option for this season
+                $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+
+                if ($optionPrice) {
+                    // Get the multiplier type (daily, hourly, per event) and value
+                    $multiplierType = $optionPrice->multiplier;
+                    $multiplierValue = (float)$optionPrice->price;
+
+                    // Calculate the price based on the multiplier type
+                    switch ($multiplierType) {
+                        case 'daily':
+                            $totalPrice += $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
+                            break;
+                        case 'hourly':
+                            $totalPrice += $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                            break;
+                        case 'event':
+                            $totalPrice += $multiplierValue;
+                            break;
+                    }
+                }
+            }
+        }
+
+        return $totalPrice;
+    }
+
+    private function getOptionPriceForSeason($optionId, $seasonId)
+    {
+        return Option::find($optionId)->prices()
+            ->where('type', 'option')
+            ->where('season_id', $seasonId)
+            ->first();
+    }
+
 
     // Helper method to calculate the number of days between date_from and date_to
     private function calculateNumberOfDays($dateFrom, $dateTo)
@@ -244,7 +243,7 @@ class AddQuoteModal extends Component
             $optionValues = implode('|', array_values($this->selectedOptions));
             
             $priceOptions = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds,$optionValues);
-;
+            
             $calculatedPrice = $priceVenue + $priceOptions;
            
             $price = $calculatedPrice;

@@ -2,31 +2,26 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Faker\Generator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class UsersSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run(Generator $faker)
+    public function run()
     {
-        $demoUser = User::create([
-            'name'              => 'Emanuele Nicolella',
-            'email'             => 'em@cocoandjay.com',
-            'password'          => Hash::make('12Pineapple!'),
-            'email_verified_at' => now(),
-        ]);
-        $demoUser2 = User::create([
-            'name'              => 'Georg Schufft',
-            'email'             => 'georg@cocoandjay.com',
-            'password'          => Hash::make('r'),
-            'email_verified_at' => now(),
-         ]);
+        $user = new User();
+        $user->name = 'Emanuele Nicolella';
+        $user->email = 'em@cocoandjay.com';
+        $user->password = Hash::make('12Pineapple!');
+        $user->email_verified_at = now();
+        $user->save();
+
+        $user2 = new User();
+        $user2->name = 'Georg Schufft';
+        $user2->email = 'georg@cocoandjay.com';
+        $user2->password = Hash::make('r');
+        $user2->email_verified_at = now();
+        $user2->save();
     }
 }

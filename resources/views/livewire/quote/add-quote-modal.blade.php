@@ -299,11 +299,11 @@
 
                         <!-- For 'radio', show radio buttons for each value -->
                         @if($option->type === 'radio')
-                            <label class="form-label">{{ $option->name }}:</label>
+                            <label class="form-label mb-5">{{ $option->name }}:</label>
                             @foreach(explode('|', $option->values) as $value)
-                                <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}_{{ $value }}"/>
-                                    <label class="form-check-label" for="selectedOptions{{ $option->id }}_{{ $value }}">
+                                <div class="form-check form-check-custom form-check-solid mb-5">
+                                    <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}" name="selectedOptions{{ $option->id }}"/>
+                                    <label class="form-check-label" for="selectedOptions{{ $option->id }}">
                                         {{ $value }}
                                     </label>
                                 </div>

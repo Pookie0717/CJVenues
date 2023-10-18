@@ -39,7 +39,7 @@ class AddPriceModal extends Component
             'venue_id' => 'nullable|integer',
             'area_id' => 'nullable|integer',
             'option_id' => 'nullable|integer',
-            'price' => 'required|numeric',
+            'price' => 'required|string',
             'multiplier' => 'nullable|string|max:255',
         ];
 

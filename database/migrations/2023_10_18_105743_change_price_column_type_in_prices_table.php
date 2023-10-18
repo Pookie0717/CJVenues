@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('quotes', function (Blueprint $table) {
-            $table->string('price_options', 255)->nullable()->change();
+        Schema::table('prices', function (Blueprint $table) {
+            $table->string('price')->change();
         });
     }
 
@@ -21,8 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('quotes', function (Blueprint $table) {
-            $table->decimal('price_options', 10, 2)->nullable()->change();
+        Schema::table('prices', function (Blueprint $table) {
+            // To revert the change, you can change the data type back to decimal.
+            $table->decimal('price', 10, 2)->change();
         });
     }
 };

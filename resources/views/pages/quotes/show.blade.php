@@ -310,7 +310,6 @@
     @push('scripts')
     
         <script>
-            
             // Add click event listener to update buttons
             document.querySelectorAll('[data-kt-action="update_row"]').forEach(function (element) {
                 element.addEventListener('click', function () {
@@ -319,8 +318,8 @@
             });
             document.addEventListener('livewire:load', function () {
                 Livewire.on('success', function () {
-                    $('#kt_modal_add_quote').modal('hide');  <!-- Update modal ID -->
-                    window.LaravelDataTables['quotes-table'].ajax.reload();  <!-- Update table name -->
+                    $('#kt_modal_add_quote').modal('hide'); 
+                    location.reload();
                 });
             });
             new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic"), {

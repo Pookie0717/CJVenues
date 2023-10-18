@@ -139,71 +139,164 @@ class AddQuoteModal extends Component
     }
 
    public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues)
-{
-    // Convert the date strings to Carbon instances
-    $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
-    $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
+    {
+        // Convert the date strings to Carbon instances
+        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
+        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
 
-    // Get all seasons from the database
-    $allSeasons = Season::orderBy('priority', 'desc')->get();
+        // Get all seasons from the database
+        $allSeasons = Season::orderBy('priority', 'desc')->get();
 
-    // Convert the option IDs and values to arrays
-    $optionIdsArray = explode('|', $optionIds);
-    $optionValuesArray = explode('|', $optionValues);
+        // Convert the option IDs and values to arrays
+        $optionIdsArray = explode('|', $optionIds);
+        $optionValuesArray = explode('|', $optionValues);
 
-    // Initialize an array to store individual prices for options
-    $individualPrices = [];
+        // Initialize an array to store individual prices for options
+        $individualPrices = [];
 
-    // Iterate through the option IDs to calculate prices for each option
-    foreach ($optionIdsArray as $index => $optionId) {
-        $optionTotalPrice = 0;  // Initialize price for the current option
+        // Iterate through the option IDs to calculate prices for each option
+        foreach ($optionIdsArray as $index => $optionId) {
+            $optionTotalPrice = 0;  // Initialize price for the current option
 
-        foreach ($allSeasons as $season) {
-            // Check if there is a price associated with the option for this season
-            $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+            foreach ($allSeasons as $season) {
+                // Check if there is a price associated with the option for this season
+                $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+                $optionType = $this->getOptionType($optionId);
 
-            if ($optionPrice) {
-                // Get the multiplier type (daily, hourly, per event) and value
-                $multiplierType = $optionPrice->multiplier;
-                $multiplierValue = (float)$optionPrice->price;
+                if ($optionPrice) {
+                    // Get the multiplier type (daily, hourly, per event) and value
+                    $multiplierType = $optionPrice->multiplier;
+                    $multiplierValue = (float)$optionPrice->price;
 
-                // Calculate the price based on the multiplier type and option value
-                switch ($multiplierType) {
-                    case 'daily':
-                        if ($optionValuesArray[$index] === 'yes') {
-                            $optionTotalPrice += $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
-                        } elseif (is_numeric($optionValuesArray[$index])) {
-                            $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfDays($dateFrom, $dateTo);
-                        }
-                        break;
-                    case 'hourly':
-                        if ($optionValuesArray[$index] === 'yes') {
-                            $optionTotalPrice += $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-                        } elseif (is_numeric($optionValuesArray[$index])) {
-                            $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-                        }
-                        break;
-                    case 'event':
-                        if ($optionValuesArray[$index] === 'yes') {
-                            $optionTotalPrice += $multiplierValue;
-                        } elseif (is_numeric($optionValuesArray[$index])) {
-                            $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-                        }
-                        break;
+                    // Calculate the price based on the multiplier type and option value
+                    switch ($multiplierType) {
+                        case 'daily':
+                            if ($optionType === 'yes_no') {
+                                if ($optionValuesArray[$index] === 'yes') {
+                                    $optionTotalPrice += $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
+                                } else {
+                                    $optionTotalPrice += 0;
+                                }
+                            } elseif ($optionType === 'number') {
+                                $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfDays($dateFrom, $dateTo);
+                            } elseif ($optionType === 'radio' || $optionType === 'checkbox') {
+                                $optionTotalPrice = 0;
+                                $optionValues = explode('|', $this->getOptionValues($optionId));
+                                $selectedValue = $optionValuesArray[$index];
+
+                                // Split the prices string into an array
+                                $prices = explode('|', $optionPrice->price);
+
+                                // Find the index of the selected value in the option values array
+                                $selectedValueIndex = array_search($selectedValue, $optionValues);
+
+                                if ($selectedValueIndex !== false) {
+                                    // Check if there is a corresponding price for the selected value
+                                    if (isset($prices[$selectedValueIndex])) {
+                                        // Extract the price for the selected value
+                                        $selectedPrice = (float)$prices[$selectedValueIndex];
+                                        $optionTotalPrice += $selectedPrice * $this->calculateNumberOfDays($dateFrom, $dateTo);
+                                    }
+                                }
+                            } 
+                            break;
+                        case 'hourly':
+                            if ($optionType === 'yes_no') {
+                                if ($optionValuesArray[$index] === 'yes') {
+                                    $optionTotalPrice += $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                                } else {
+                                    $optionTotalPrice += 0;
+                                }
+                            } elseif ($optionType === 'number') {
+                                $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index] * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                            } elseif ($optionType === 'radio' || $optionType === 'checkbox') {
+
+                                $optionTotalPrice = 0;
+                                $optionValues = explode('|', $this->getOptionValues($optionId));
+                                $selectedValue = $optionValuesArray[$index];
+
+                                // Split the prices string into an array
+                                $prices = explode('|', $optionPrice->price);
+
+                                // Find the index of the selected value in the option values array
+                                $selectedValueIndex = array_search($selectedValue, $optionValues);
+
+                                if ($selectedValueIndex !== false) {
+                                    // Check if there is a corresponding price for the selected value
+                                    if (isset($prices[$selectedValueIndex])) {
+                                        // Extract the price for the selected value
+                                        $selectedPrice = (float)$prices[$selectedValueIndex];
+                                        $optionTotalPrice += $selectedPrice * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+                                    }
+                                }
+                            } 
+                            break;
+                        case 'event':
+                            if ($optionType === 'yes_no') {
+                                if ($optionValuesArray[$index] === 'yes') {
+                                    $optionTotalPrice += $multiplierValue;
+                                } else {
+                                    $optionTotalPrice += 0;
+                                }
+                            }  elseif ($optionType === 'number') {
+                                $optionTotalPrice += $multiplierValue * (float)$optionValuesArray[$index];
+                            }  elseif ($optionType === 'radio' || $optionType === 'checkbox') {
+                                $optionTotalPrice = 0;
+                                $optionValues = explode('|', $this->getOptionValues($optionId));
+                                $selectedValue = $optionValuesArray[$index];
+
+                                // Split the prices string into an array
+                                $prices = explode('|', $optionPrice->price);
+
+                                // Find the index of the selected value in the option values array
+                                $selectedValueIndex = array_search($selectedValue, $optionValues);
+
+                                if ($selectedValueIndex !== false) {
+                                    // Check if there is a corresponding price for the selected value
+                                    if (isset($prices[$selectedValueIndex])) {
+                                        // Extract the price for the selected value
+                                        $selectedPrice = (float)$prices[$selectedValueIndex];
+                                        $optionTotalPrice += $selectedPrice;
+                                    }
+                                }
+                            }
+                            break;
+                    }
                 }
             }
+
+            // Add the calculated price for the current option to the individual prices array
+            $individualPrices[] = $optionTotalPrice;
         }
 
-        // Add the calculated price for the current option to the individual prices array
-        $individualPrices[] = $optionTotalPrice;
+        // Convert the individual prices array to a string separated by '|'
+        return implode('|', $individualPrices);
     }
 
-    // Convert the individual prices array to a string separated by '|'
-    return implode('|', $individualPrices);
-}
+    private function getOptionValues($optionId)
+    {
+        $option = Option::find($optionId);
 
+        if ($option) {
+            return $option->values;
+        }
 
+        return null; // Return null or handle the case where the option is not found
+    }
 
+    private function getOptionType($optionId)
+    {
+        // Retrieve the option by ID from your database
+        $option = Option::find($optionId);
+
+        // Check if the option exists and has a valid type
+        if ($option && in_array($option->type, ['yes_no', 'number', 'radio', 'checkbox'])) {
+            return $option->type;
+        }
+
+        // Default to a suitable option type if not found
+        return 'unknown';
+    }
     private function getOptionPriceForSeason($optionId, $seasonId)
     {
         return Option::find($optionId)->prices()
@@ -391,7 +484,6 @@ class AddQuoteModal extends Component
             foreach ($quotesToDelete as $quoteToDelete) {
                 $quoteToDelete->delete();
             }
-
             // Emit a success event with a message
             $this->emit('success', 'Quote successfully deleted');
         } else {
@@ -429,7 +521,7 @@ class AddQuoteModal extends Component
         $venues = Venue::all();
         $venueAreas = VenueArea::all();
         $eventTypes = EventType::all();
-        $options = Option::all();
+        $options = Option::orderBy('position')->get();
 
         return view('livewire.quote.add-quote-modal', compact('contacts', 'venueAreas', 'venues', 'eventTypes', 'options'));
     }

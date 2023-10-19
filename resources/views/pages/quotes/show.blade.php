@@ -304,11 +304,10 @@
         </div>
         <!--end::Body-->
         <!--begin::Modal-->
-                <livewire:quote.add-quote-modal></livewire:quote.add-quote-modal>
-                <!--end::Modal-->
+        <livewire:quote.edit-quote-modal></livewire:quote.edit-quote-modal>
+        <!--end::Modal-->
     </div>
     @push('scripts')
-    
         <script>
             // Add click event listener to update buttons
             document.querySelectorAll('[data-kt-action="update_row"]').forEach(function (element) {
@@ -318,7 +317,7 @@
             });
             document.addEventListener('livewire:load', function () {
                 Livewire.on('success', function () {
-                    $('#kt_modal_add_quote').modal('hide'); 
+                    $('#kt_modal_edit_quote').modal('hide'); 
                     location.reload();
                 });
             });

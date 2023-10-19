@@ -59,6 +59,12 @@ Breadcrumbs::for('contacts', function ($trail) {
     $trail->push('Contacts', route('contacts'));
 });
 
+// Home > Bookings
+Breadcrumbs::for('bookings', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Bookings', route('bookings'));
+});
+
 // Home > Prices
 Breadcrumbs::for('prices', function ($trail) {
     $trail->parent('home');

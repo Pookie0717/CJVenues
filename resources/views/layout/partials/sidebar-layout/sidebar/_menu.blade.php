@@ -18,8 +18,8 @@
 			<div class="menu-item">
 				<!--begin:Menu link-->
 				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('address-book', 'fs-2') !!}</span>
-					<span class="menu-title"><a class="menu-link {{ request()->routeIs('contacts') ? 'active' : '' }}" href="{{ route('contacts') }}">Contacts</a></span>
+					<span class="menu-icon">{!! getIcon('file', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link {{ request()->routeIs('quotes') ? 'active' : '' }}" href="{{ route('quotes') }}">Quotes</a></span>
 				</span>
 				<!--end:Menu link-->
 			</div>
@@ -28,8 +28,18 @@
 			<div class="menu-item">
 				<!--begin:Menu link-->
 				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('file', 'fs-2') !!}</span>
-					<span class="menu-title"><a class="menu-link {{ request()->routeIs('quotes') ? 'active' : '' }}" href="{{ route('quotes') }}">Quotes</a></span>
+					<span class="menu-icon">{!! getIcon('book', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link {{ request()->routeIs('bookings') ? 'active' : '' }}" href="{{ route('bookings') }}">Bookings</a></span>
+				</span>
+				<!--end:Menu link-->
+			</div>
+			<!--end:Menu item-->
+			<!--begin:Menu item-->
+			<div class="menu-item">
+				<!--begin:Menu link-->
+				<span class="menu-link">
+					<span class="menu-icon">{!! getIcon('address-book', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link {{ request()->routeIs('contacts') ? 'active' : '' }}" href="{{ route('contacts') }}">Contacts</a></span>
 				</span>
 				<!--end:Menu link-->
 			</div>
@@ -39,12 +49,24 @@
 				<!--begin:Menu link-->
 				<span class="menu-link">
 					<span class="menu-icon">{!! getIcon('abstract-13', 'fs-2') !!}</span>
-					<span class="menu-title"><a class="menu-link">Venues</a></span>
+					<span class="menu-title"><a class="menu-link">Configuration</a></span>
 					<span class="menu-arrow"></span>
 				</span>
 				<!--end:Menu link-->
 				<!--begin:Menu sub-->
 				<div class="menu-sub menu-sub-accordion">
+					<!--begin:Menu item-->
+					<div class="menu-item">
+						<!--begin:Menu link-->
+						<a class="menu-link {{ request()->routeIs('prices') ? 'active' : '' }}" href="{{ route('prices') }}">
+							<span class="menu-bullet">
+								<span class="bullet bullet-dot"></span>
+							</span>
+							<span class="menu-title">Prices</span>
+						</a>
+						<!--end:Menu link-->
+					</div>
+					<!--end:Menu item-->
 					<!--begin:Menu item-->
 					<div class="menu-item">
 						<!--begin:Menu link-->
@@ -81,18 +103,7 @@
 						<!--end:Menu link-->
 					</div>
 					<!--end:Menu item-->
-					<!--begin:Menu item-->
-					<div class="menu-item">
-						<!--begin:Menu link-->
-						<a class="menu-link {{ request()->routeIs('prices') ? 'active' : '' }}" href="{{ route('prices') }}">
-							<span class="menu-bullet">
-								<span class="bullet bullet-dot"></span>
-							</span>
-							<span class="menu-title">Prices</span>
-						</a>
-						<!--end:Menu link-->
-					</div>
-					<!--end:Menu item-->
+
 					<!--begin:Menu item-->
 					<div class="menu-item">
 						<!--begin:Menu link-->
@@ -105,23 +116,6 @@
 						<!--end:Menu link-->
 					</div>
 					<!--end:Menu item-->
-
-				</div>
-				<!--end:Menu sub-->
-			</div>
-			<!--end:Menu item-->
-			<!--begin:Menu item-->
-			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('event-types') || request()->routeIs('event-types') ? 'here show' : '' }}">
-				<!--begin:Menu link-->
-				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('calendar-8', 'fs-2') !!}</span>
-					<span class="menu-title"><a class="menu-link">Events</a></span>
-					<span class="menu-arrow"></span>
-				</span>
-				<!--end:Menu link-->
-				<!--begin:Menu sub-->
-				<div class="menu-sub menu-sub-accordion">
-					<!--begin:Menu item-->
 					<div class="menu-item">
 						<!--begin:Menu link-->
 						<a class="menu-link {{ request()->routeIs('event-types') ? 'active' : '' }}" href="{{ route('event-types') }}">
@@ -132,7 +126,6 @@
 						</a>
 						<!--end:Menu link-->
 					</div>
-					<!--end:Menu item-->
 				</div>
 				<!--end:Menu sub-->
 			</div>
@@ -141,7 +134,7 @@
 			<div class="menu-item pt-5">
 				<!--begin:Menu content-->
 				<div class="menu-content">
-					<span class="menu-heading fw-bold text-uppercase fs-7">Settings</span>
+					<span class="menu-heading fw-bold text-uppercase fs-7">System</span>
 				</div>
 				<!--end:Menu content-->
 			</div>
@@ -150,8 +143,8 @@
 			<div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ request()->routeIs('user-management.*') ? 'here show' : '' }}">
 				<!--begin:Menu link-->
 				<span class="menu-link">
-					<span class="menu-icon">{!! getIcon('add-user', 'fs-2') !!}</span>
-					<span class="menu-title">User Management</span>
+					<span class="menu-icon">{!! getIcon('profile-user', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link">Users</a></span>
 					<span class="menu-arrow"></span>
 				</span>
 				<!--end:Menu link-->
@@ -195,6 +188,16 @@
 					<!--end:Menu item-->
 				</div>
 				<!--end:Menu sub-->
+			</div>
+			<!--end:Menu item-->
+			<!--begin:Menu item-->
+			<div class="menu-item">
+				<!--begin:Menu link-->
+				<span class="menu-link">
+					<span class="menu-icon">{!! getIcon('setting-3', 'fs-2') !!}</span>
+					<span class="menu-title"><a class="menu-link" href="#">Settings</a></span>
+				</span>
+				<!--end:Menu link-->
 			</div>
 			<!--end:Menu item-->
 		</div>

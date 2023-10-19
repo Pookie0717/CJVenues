@@ -7,36 +7,39 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
+use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Illuminate\Support\HtmlString; // Add this import statement
+
+use Illuminate\Support\HtmlString;
 
 class QuotesDataTable extends DataTable
 {
-public function dataTable(QueryBuilder $query): EloquentDataTable
+    public function dataTable(QueryBuilder $query): EloquentDataTable
 {
-    return (new EloquentDataTable($query))
-        ->addColumn('action', function (Quote $quote) {
+        return datatables()
+            ->eloquent($query)
+        ->addColumn('action', function ($quote) {
             return view('pages.quotes.columns._actions', compact('quote'));
         })
-        ->addColumn('id_version', function (Quote $quote) {
+        ->addColumn('id_version', function ($quote) {
             return $quote->quote_number . '.' . $quote->version;
         })
-         ->addColumn('event_type', function (Quote $quote) {
+         ->addColumn('event_type', function ( $quote) {
             $eventType = $quote->eventType;
             return $eventType ? $eventType->name : 'N/A';
         })
-        ->addColumn('contact_id', function (Quote $quote) {
+        ->addColumn('contact_id', function ($quote) {
             $eventContact = $quote->eventContact;
             return $eventContact ? $eventContact->first_name.' '.$eventContact->last_name : 'N/A';
         })
-        ->addColumn('area_id', function (Quote $quote) {
+        ->addColumn('area_id', function ($quote) {
             $area = $quote->eventArea;
             return $area ? $area->name : 'N/A';
         })
-        ->addColumn('updated_at', function (Quote $quote) {
+        ->addColumn('updated_at', function ( $quote) {
             return max($quote->updated_at, $quote->created_at)->format('d-m-Y H:i:s');
         })
-        ->addColumn('status', function (Quote $quote) {
+        ->addColumn('status', function ( $quote) {
             $status = $quote->status;
             $badgeClass = '';
 

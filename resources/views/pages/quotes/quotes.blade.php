@@ -62,8 +62,8 @@
             });
             document.addEventListener('livewire:load', function () {
                 Livewire.on('success', function () {
-                    $('#kt_modal_add_quote').modal('hide');  <!-- Update modal ID -->
-                    window.LaravelDataTables['quotes-table'].ajax.reload();  <!-- Update table name -->
+                    $('#kt_modal_add_quote').modal('hide'); 
+                    window.LaravelDataTables['quotes-table'].ajax.reload(); 
                 });
             });
 

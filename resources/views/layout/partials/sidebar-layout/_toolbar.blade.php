@@ -7,7 +7,7 @@
 		<div class="d-flex align-items-center gap-2 gap-lg-3">
 			@if(request()->route()->getName() === 'quotes.show')
                 <!-- HTML to include only in the 'quotes.show' view -->
-                <button type="button" class="btn btn-primary" data-kt-quote-id="{{ $quote->id }}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_quote" data-kt-action="update_row">
+                <button type="button" class="btn btn-primary" data-kt-quote-id="{{ $quote->id }}" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_quote" data-kt-action="update_row">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                         Edit Quote
                 </button>

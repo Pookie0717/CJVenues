@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 
 
-class AddQuoteModal extends Component
+class EditQuoteModal extends Component
 {
     public $contact_id;
     public $status;
@@ -38,11 +38,11 @@ class AddQuoteModal extends Component
     public $price;
     public $price_venue;
     public $price_options;
+    public $selectedVenue;
 
-    public $edit_mode = false;
+    public $edit_mode = true;
 
     protected $listeners = [
-        'delete_quote' => 'deleteQuote',
         'update_quote' => 'updateQuote',
     ];
 
@@ -346,16 +346,15 @@ class AddQuoteModal extends Component
             'event_type' => 'required',
         ]);
 
-        
-            // Retrieve the current quote number
-            $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
-            $newQuoteNumber = $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
+        if ($this->edit_mode) {
+            // If in edit mode, create a new quote record the existing quote record
+            $quote = Quote::find($this->quoteId);
+            $newVersion = $quote->version + 1;
 
+            $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);;
             // Convert selected options to a comma-separated string format
             $optionIds = implode('|', array_keys($this->selectedOptions));
             $optionValues = implode('|', array_values($this->selectedOptions));
-
-            $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);;
             
             $priceOptionsString = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds, $optionValues);
 
@@ -367,21 +366,42 @@ class AddQuoteModal extends Component
             }, $priceOptionsArray));
 
             $calculatedPrice = $priceVenue + $priceOptions;
+           
             $price = $calculatedPrice;
 
-            // Save the new quote to the database
+            // Save the old quote to the database
             Quote::create([
+                'contact_id' => $quote->contact_id,
+                'status' => 'Archived',
+                'version' => $quote->version,
+                'date_from' => $quote->date_from,
+                'date_to' => $quote->date_to,
+                'time_from' => $quote->time_from,
+                'time_to' => $quote->time_to,
+                'area_id' => $quote->area_id,
+                'event_type' => $quote->event_type,
+                'quote_number' => $quote->quote_number,
+                'calculated_price' =>  $quote->calculated_price,
+                'discount_type' => $quote->discount_type,
+                'discount' => $quote->discount,
+                'price' => $quote->price,
+                'price_venue' => $quote->price_venue,
+                'price_options' => $quote->price_options,
+                'options_ids' => $quote->options_ids,
+                'options_values' => $quote->options_values,
+            ]);
+
+            $quote->update([
                 'contact_id' => $this->contact_id,
-                'status' => 'Unsent',
-                'version' => '1',
+                'status' => 'Edited',
+                'version' => $newVersion,
                 'date_from' => $this->date_from,
                 'date_to' => $this->date_to,
                 'time_from' => $this->time_from,
                 'time_to' => $this->time_to,
                 'area_id' => $this->area_id,
                 'event_type' => $this->event_type,
-                'quote_number' => $newQuoteNumber, // Assign the new quote number
-                'calculated_price' =>$calculatedPrice,
+                'calculated_price' => $calculatedPrice,
                 'discount_type' => $this->discount_type,
                 'discount' => $this->discount,
                 'price' => $price,
@@ -391,37 +411,13 @@ class AddQuoteModal extends Component
                 'options_values' => $optionValues,
             ]);
 
-            // Update the current quote number in the system_information table
-            DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
+            // Emit an event to notify that the quote was updated successfully
+            $this->emit('success', 'Quote successfully updated');
 
-            // Emit an event to notify that the quote was created successfully
-            $this->emit('success', 'Quote successfully added');
-
-        
+        }
 
         // Reset the form fields
         $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type', 'edit_mode', 'quoteId', 'calculated_price', 'discount_type', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
-    }
-
-    public function deleteQuote($id)
-    {
-        // Find the quote by ID
-        $quote = Quote::find($id);
-
-        if ($quote) {
-            // Find all quotes with the same quote_number
-            $quotesToDelete = Quote::where('quote_number', $quote->quote_number)->get();
-
-            // Delete all quotes with the same quote_number
-            foreach ($quotesToDelete as $quoteToDelete) {
-                $quoteToDelete->delete();
-            }
-            // Emit a success event with a message
-            $this->emit('success', 'Quote successfully deleted');
-        } else {
-            $this->emit('error', 'Quote not found');
-
-        }
     }
 
     public function updateQuote($id)
@@ -437,12 +433,21 @@ class AddQuoteModal extends Component
         $this->time_from = $quote->time_from;
         $this->time_to = $quote->time_to;
         $this->area_id = $quote->area_id;
+        $this->area_id = $quote->area_id;
         $this->event_type = $quote->event_type;
         $this->quoteId = $quote->id;
         $this->calculated_price = $quote->calculated_price;
         $this->discount_type = $quote->discount_type;
         $this->discount = $quote->discount;
         $this->price = $quote->price;
+
+         // Fetch the associated venue for the selected area
+        $selectedArea = VenueArea::find($this->area_id);
+        if ($selectedArea) {
+            $this->selectedVenue = $selectedArea->venue_id;
+        } else {
+            $this->selectedVenue = null;
+        }
     }
 
     public function render()
@@ -455,7 +460,7 @@ class AddQuoteModal extends Component
         $eventTypes = EventType::all();
         $options = Option::orderBy('position')->get();
 
-        return view('livewire.quote.add-quote-modal', compact('contacts', 'venueAreas', 'venues', 'eventTypes', 'options'));
+        return view('livewire.quote.edit-quote-modal', compact('contacts', 'venueAreas', 'venues', 'eventTypes', 'options'));
     }
 
 }

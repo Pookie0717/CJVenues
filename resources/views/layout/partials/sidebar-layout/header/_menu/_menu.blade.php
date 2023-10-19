@@ -17,12 +17,12 @@
 				
 		<!--begin:Menu item-->
 		<div data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
-			<!--begin:Menu link-->
+			<!--begin:Menu link
 			<span class="menu-link">
 				<span class="menu-title">Help</span>
 				<span class="menu-arrow d-lg-none"></span>
 			</span>
-			<!--end:Menu link-->
+			end:Menu link-->
 			<!--begin:Menu sub-->
 			<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-200px">
 				<!--begin:Menu item-->

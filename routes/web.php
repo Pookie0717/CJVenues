@@ -10,6 +10,7 @@ use App\Http\Controllers\QuotesController;
 use App\Http\Controllers\PricesController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\OptionsController;
+use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\EventTypesController;
 use App\Http\Controllers\VenuesManagementController;
 use App\Http\Controllers\AreasManagementController;
@@ -50,6 +51,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/contacts', ContactsController::class)->names([
         'index' => 'contacts'
+    ]);
+
+    Route::resource('/bookings', BookingsController::class)->names([
+        'index' => 'bookings'
     ]);
 
     Route::resource('/prices', PricesController::class)->names([

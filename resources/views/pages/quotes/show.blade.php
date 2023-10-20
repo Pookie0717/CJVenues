@@ -129,7 +129,7 @@
                                         <thead>
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
                                                 <th class="min-w-175px pb-2">Description</th>
-                                                <th class="min-w-100px text-end pb-2">Amount</th>
+                                                <!--<th class="min-w-100px text-end pb-2">Amount</th>-->
                                                 <th class="min-w-100px text-end pb-2">Price</th>
                                             </tr>
                                         </thead>
@@ -141,7 +141,7 @@
                                                     {{ $quote->eventType ? $quote->eventType->name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
                                                 </td>
 
-                                                <td class="pt-6 text-end">N/A</td>
+                                                <!--<td class="pt-6 text-end">N/A</td>-->
                                                 <td class="pt-6 text-dark fw-bolder text-end">${{ number_format($quote->price_venue, 2) }}</td>
                                             </tr>
                                             <!-- Additional row for options and priceOption -->
@@ -161,7 +161,7 @@
                                                                 {{ $optionWithValue['option']->name }} - {{ $optionWithValue['value'] }}
                                                             @endif
                                                         </td>
-                                                        <td class="pt-6 text-end">N/A</td>
+                                                        <!--<td class="pt-6 text-end">N/A</td>-->
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>

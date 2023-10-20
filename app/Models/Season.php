@@ -20,4 +20,8 @@ class Season extends Model
     {
         return $this->hasMany(Price::class);
     }
+    public function options()
+    {
+        return $this->hasMany(Option::class, 'season_id');
+    }
 }

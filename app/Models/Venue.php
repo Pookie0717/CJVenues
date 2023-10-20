@@ -27,4 +27,8 @@ class Venue extends Model
     {
         return $this->hasMany(Price::class, 'venue_id');
     }
+    public function options()
+    {
+        return $this->hasMany(Option::class, 'venue_id');
+    }
 }

@@ -23,6 +23,7 @@ class AddPriceModal extends Component
     public $multiplier;
     public $priceId;
     public $season_id;
+    public $tier_type;
 
     public $edit_mode = false;
 
@@ -54,6 +55,7 @@ class AddPriceModal extends Component
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
                 'area_id' => ($this->type === 'area') ? $this->area_id : null,
                 'option_id' => ($this->type === 'option') ? $this->option_id : null,
+                'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
                 'season_id' => $this->season_id,
@@ -69,6 +71,7 @@ class AddPriceModal extends Component
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
                 'area_id' => ($this->type === 'area') ? $this->area_id : null,
                 'option_id' => ($this->type === 'option') ? $this->option_id : null,
+                'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
                 'season_id' => $this->season_id,
@@ -80,7 +83,7 @@ class AddPriceModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id', 'option_id', 'price', 'multiplier', 'edit_mode'
+            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'edit_mode'
         ]);
     }
 
@@ -110,6 +113,7 @@ class AddPriceModal extends Component
         $this->venue_id = $price->venue_id;
         $this->area_id = $price->area_id;
         $this->option_id = $price->option_id;
+        $this->tier_type = $price->tier_type;
         $this->price = $price->price;
         $this->multiplier = $price->multiplier;
         $this->season_id = $price->season_id;
@@ -117,7 +121,7 @@ class AddPriceModal extends Component
 
     public function selectedType($type)
     {
-        $this->reset(['area_id', 'venue_id', 'option_id']);
+        $this->reset(['area_id', 'venue_id', 'option_id', 'tier_type']);
     }
 
     public function render()

@@ -28,11 +28,24 @@
                                 <option value="area">Area</option>
                                 <option value="option">Option</option>
                                 <option value="venue">Venue</option>
+                                <!--<option value="per_person">Per Person</option>
+                                <option value="pp_tier">Per Tier</option>-->
                             </select>
                             @error('type')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        <!-- Tier Dropdown (conditional) -->
+                        @if($type === 'pp_tier')
+                        <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Tier</label>
+                            <input type="text" id="tier_type_input" class="form-select form-select-solid mb-3 mb-lg-0" name="tier_type" wire:model="tier_type" placeholder="i.e. 1-100" class="form-control">
+                            @error('pp_tier')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        @endif
 
                         <!-- Area Dropdown (conditional) -->
                         @if($type === 'area')
@@ -112,9 +125,12 @@
                             <label class="required fw-semibold fs-6 mb-2">Multiplier</label>
                             <select wire:model="multiplier" name="multiplier" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">Select</option>
-                                <option value="daily">Daily</option>
-                                <option value="hourly">Hourly</option>
                                 <option value="event">Per Event</option>
+                                <option value="event_pp">Per Person</option>
+                                <option value="daily">Per Day</option>
+                                <option value="daily_pp">Per Day Per Person</option>
+                                <option value="hourly">Per Hour</option>
+                                <option value="hourly_pp">Per Hour Per Person</option>
                             </select>
                             @error('multiplier')
                                 <span class="text-danger">{{ $message }}</span>

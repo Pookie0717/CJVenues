@@ -30,6 +30,37 @@
                             </div>
                         </div>
                         <!--end::Input group-->
+
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <div class="col">
+                            <!-- Name -->
+                            <label class="required fw-semibold fs-6 mb-2">Season</label>
+                            <select wire:model.defer="season_id" name="season_id" class="form-select form-select-solid mb-3 mb-lg-0">
+                                <option value="">Select Season</option>
+                                @foreach($seasons as $season)
+                                    <option value="{{ $season->id }}">{{ $season->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('season_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            </div>
+                            <div class="col">
+                            <!--begin::Label-->
+                            <label class="required fw-semibold fs-6 mb-2">Venue</label>
+                            <select wire:model.defer="venue_id" name="venue_id" class="form-select form-select-solid mb-3 mb-lg-0">
+                                <option value="">Select Venue</option>
+                                @foreach($venues as $venue)
+                                    <option value="{{ $venue->id }}">{{ $venue->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('venue_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            </div>
+                        </div>
+                        <!--end::Input group-->
                         
                         <!-- Type -->
                         <div class="fv-row mb-7">

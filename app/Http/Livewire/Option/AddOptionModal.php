@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Option;
 
 use Livewire\Component;
 use App\Models\Option;
+use App\Models\Season;
+use App\Models\Venue;
 
 class AddOptionModal extends Component
 {
@@ -11,6 +13,8 @@ class AddOptionModal extends Component
     public $position;
     public $type;
     public $values;
+    public $venue_id;
+    public $season_id;
 
     public $edit_mode = false;
     public $optionId;
@@ -38,6 +42,8 @@ class AddOptionModal extends Component
                 'position' => $this->position,
                 'type' => $this->type,
                 'values' => $this->values,
+                'venue_id' => $this->venue_id,
+                'season_id' => $this->season_id,
             ]);
 
             // Emit an event to notify that the option was updated successfully
@@ -49,6 +55,8 @@ class AddOptionModal extends Component
                 'position' => $this->position,
                 'type' => $this->type,
                 'values' => $this->values,
+                'venue_id' => $this->venue_id,
+                'season_id' => $this->season_id,
             ]);
 
             // Emit an event to notify that the option was created successfully
@@ -56,7 +64,7 @@ class AddOptionModal extends Component
         }
 
         // Reset the form fields
-        $this->reset(['name', 'position', 'type', 'values', 'edit_mode', 'optionId']);
+        $this->reset(['name', 'position', 'type', 'values', 'edit_mode', 'optionId', 'season_id', 'venue_id']);
     }
 
     public function deleteOption($id)
@@ -81,11 +89,15 @@ class AddOptionModal extends Component
         $this->type = $option->type;
         $this->values = $option->values;
         $this->optionId = $option->id;
+        $this->venue_id = $option->venue_id;
+        $this->season_id = $option->season_id;
     }
 
     public function render()
     {
-        return view('livewire.option.add-option-modal');
+        $seasons = Season::all();
+        $venues = Venue::all();
+        return view('livewire.option.add-option-modal', compact('seasons', 'venues'));
     }
 }
 

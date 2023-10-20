@@ -64,6 +64,15 @@
                                     </select>
                 </div>
                 <!--end::Input group-->
+
+                <!--begin::Input group-->
+                <div class="fv-row mb-10">
+                    <label for="people" class="form-label">How many people will attend?</label>
+                    <input type="number" wire:model.defer="people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number of people"/>
+
+                </div>
+                <!--end::Input group-->
+                
             </div>
             <!--begin::Step 1-->
 

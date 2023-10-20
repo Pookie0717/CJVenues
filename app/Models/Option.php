@@ -14,10 +14,21 @@ class Option extends Model
         'position',
         'type',
         'values',
+        'season_id',
+        'venue_id',
     ];
 
     public function prices()
     {
         return $this->hasMany(Price::class, 'option_id');
+    }
+    public function season()
+    {
+        return $this->belongsTo(Season::class, 'season_id');
+    }
+
+    public function venue()
+    {
+        return $this->belongsTo(Venue::class, 'venue_id');
     }
 }

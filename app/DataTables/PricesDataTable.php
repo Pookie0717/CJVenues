@@ -43,7 +43,7 @@ class PricesDataTable extends DataTable
                 return $price->price;
             })
             ->editColumn('multiplier', function ($price) {
-                return $price->multiplier;
+                return $this->getMultiLabel($price->multiplier);
             })
             ->rawColumns(['action']);
     }
@@ -65,6 +65,20 @@ class PricesDataTable extends DataTable
         ];
 
         return $labels[$type] ?? $type;
+    }
+
+    public function getMultiLabel($Multi)
+    {
+        $labels = [
+            'event' => 'Per Event',
+            'event_pp' => 'Per Person',
+            'daily' => 'Per Day',
+            'daily_pp' => 'Per Day / PP',
+            'hourly' => 'Per Hour',
+            'hourly_pp' => 'Per Hour / PP',
+        ];
+
+        return $labels[$Multi] ?? $Multi;
     }
 
     public function html(): HtmlBuilder

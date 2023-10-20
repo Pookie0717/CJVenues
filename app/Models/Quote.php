@@ -34,6 +34,7 @@ class Quote extends Model
         'price_venue',
         'options_ids',
         'options_values',
+        'people',
     ];
 
     /**

@@ -36,37 +36,52 @@
     
 	<!--begin::Menu item-->
 	<div class="menu-item px-5" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="left-start" data-kt-menu-offset="-15px, 0">
-		<a href="#" class="menu-link px-5">
-            <span class="menu-title position-relative">Language
-                <span class="fs-8 rounded bg-light px-3 py-2 position-absolute translate-middle-y top-50 end-0">English
-                    <img class="w-15px h-15px rounded-1 ms-2" src="{{ image('flags/united-states.svg') }}" alt="" /></span>
+    <a href="#" class="menu-link px-5">
+        <span class="menu-title position-relative">{{ trans('general.language') }}
+            <span class="fs-8 rounded bg-light px-3 py-2 position-absolute translate-middle-y top-50 end-0">
+                {{ __(config('languages.' . app()->getLocale())) }}
+                <img class="w-15px h-15px rounded-1 ms-2" src="{{ image('flags/' . config('locales.' . app()->getLocale()) . '.svg') }}" alt="" />
             </span>
-        </a>
-        <!--begin::Menu sub-->
-        <div class="menu-sub menu-sub-dropdown w-175px py-4">
-            <!--begin::Menu item-->
-            <div class="menu-item px-3">
-                <a href="#" class="menu-link d-flex px-5 active">
-                    <span class="symbol symbol-20px me-4">
-                        <img class="rounded-1" src="{{ image('flags/united-states.svg') }}" alt=""/>
-                    </span>
-                    English</a>
-            </div>
-            <!--end::Menu item-->
-            
-            <!--begin::Menu item-->
-            <div class="menu-item px-3">
-                <a href="#" class="menu-link d-flex px-5">
-                    <span class="symbol symbol-20px me-4">
-                        <img class="rounded-1" src="{{ image('flags/germany.svg') }}" alt=""/>
-                    </span>
-                    German</a>
-            </div>
-            <!--end::Menu item-->
-            
+        </span>
+    </a>
+    <!--begin::Menu sub-->
+    <div class="menu-sub menu-sub-dropdown w-175px py-4">
+        <!--begin::Menu item for English-->
+        <div class="menu-item px-3">
+            <a href="{{ route('setlocale', 'en') }}" class="menu-link d-flex px-5 @if(app()->getLocale() == 'en') active @endif">
+                <span class="symbol symbol-20px me-4">
+                    <img class="rounded-1" src="{{ image('flags/united-kingdom.svg') }}" alt=""/>
+                </span>
+                English
+            </a>
         </div>
-        <!--end::Menu sub-->
+        <!--end::Menu item-->
+
+        <!--begin::Menu item for German-->
+        <div class="menu-item px-3">
+            <a href="{{ route('setlocale', 'de') }}" class="menu-link d-flex px-5 @if(app()->getLocale() == 'de') active @endif">
+                <span class="symbol symbol-20px me-4">
+                    <img class="rounded-1" src="{{ image('flags/germany.svg') }}" alt=""/>
+                </span>
+                German
+            </a>
+        </div>
+        <!--end::Menu item-->
+
+        <!--begin::Menu item for Italian-->
+        <div class="menu-item px-3">
+            <a href="{{ route('setlocale', 'it') }}" class="menu-link d-flex px-5 @if(app()->getLocale() == 'it') active @endif">
+                <span class="symbol symbol-20px me-4">
+                    <img class="rounded-1" src="{{ image('flags/italy.svg') }}" alt=""/>
+                </span>
+                Italian
+            </a>
+        </div>
+        <!--end::Menu item-->
     </div>
+    <!--end::Menu sub-->
+</div>
+
     <!--end::Menu item-->
     <!--begin::Menu item-->
     <div class="menu-item px-5 my-1">

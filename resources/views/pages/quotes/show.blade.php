@@ -8,13 +8,14 @@
     {{ Breadcrumbs::render('quotes') }}
     @endsection
 <!--begin::Card toolbar-->
-    <div class="card">
+    <div class="d-flex flex-column flex-xl-row gap-10">
+    <div class="card flex-grow-1">
         <!--begin::Body-->
         <div class="card-body p-lg-20">
             <!--begin::Layout-->
             <div class="d-flex flex-column flex-xl-row">
                 <!--begin::Content-->
-                <div class="flex-lg-row-fluid me-xl-18 mb-10 mb-xl-0">
+                <div class="flex-lg-row-fluid">
                     <!--begin::Invoice 2 content-->
                     <div class="mt-n1">
                         <!--begin::Top-->
@@ -26,7 +27,7 @@
                             <!--end::Logo-->
 
                             <!--begin::Action-->
-                            <a href="#" class="btn btn-sm btn-success disabled">Invoice</a>
+                            <a href="#" class="btn btn-sm btn-success disabled">{{ trans('quote.invoice') }}</a>
                             <!--end::Action-->
                         </div>
                         <!--end::Top-->
@@ -225,11 +226,18 @@
                     <!--end::Invoice 2 content-->
                 </div>
                 <!--end::Content-->
-
+            </div>
+        </div>
+    </div>
+    <div class="card h-lg-100 min-w-md-350px">
+         <!--begin::Body-->
+        <div class="card-body">
+            <!--begin::Layout-->
+            <div class="d-flex flex-column flex-xl-row">
                 <!--begin::Sidebar-->
                 <div class="m-0">
                     <!--begin::Invoice 2 sidebar-->
-                    <div class="d-print-none border border-dashed border-gray-300 card-rounded h-lg-100 min-w-md-350px p-9 bg-lighten">
+                    <div class="d-print-none border border-dashed border-gray-300 card-rounded p-9 bg-lighten">
                         <!--begin::Title-->
                         <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">STATUS</h6>
                         <!--end::Title-->
@@ -306,6 +314,7 @@
         <!--begin::Modal-->
         <livewire:quote.edit-quote-modal></livewire:quote.edit-quote-modal>
         <!--end::Modal-->
+    </div>
     </div>
     @push('scripts')
         <script>

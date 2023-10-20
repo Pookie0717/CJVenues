@@ -14,6 +14,7 @@ use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\EventTypesController;
 use App\Http\Controllers\VenuesManagementController;
 use App\Http\Controllers\AreasManagementController;
+use App\Http\Controllers\LocalizationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+Route::get('setlocale/{locale}', 'App\Http\Controllers\LocalizationController@setLocale')->name('setlocale');
 
     Route::get('/', [DashboardController::class, 'index']);
 

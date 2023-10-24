@@ -80,7 +80,7 @@ Breadcrumbs::for('quotes', function ($trail) {
 // Home > Quotes > [Quote]
 Breadcrumbs::for('quotes.show', function (BreadcrumbTrail $trail, Quote $quote) {
     $trail->parent('quotes'); // Refers to the 'quotes' breadcrumb defined earlier
-    $trail->push($quote->id, route('quotes.show', $quote));
+    $trail->push($quote->quote_number.'.'.$quote->version, route('quotes.show', $quote));
 });
 
 // Home > Venues

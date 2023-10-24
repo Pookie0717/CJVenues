@@ -5,7 +5,7 @@
 
     <!--begin::Breadcrumb-->
     @section('breadcrumbs')
-    {{ Breadcrumbs::render('quotes') }}
+        {{ Breadcrumbs::render('quotes.show', $quote) }}
     @endsection
 <!--begin::Card toolbar-->
     <div class="d-flex flex-column flex-xl-row gap-10">

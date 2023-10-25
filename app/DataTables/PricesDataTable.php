@@ -12,6 +12,7 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Session;
 
 class PricesDataTable extends DataTable
 {
@@ -50,10 +51,16 @@ class PricesDataTable extends DataTable
 
     public function query(Price $model)
     {
-        return $model->newQuery()->select([
-            'id', 'name', 'type',
-            'venue_id', 'area_id', 'option_id', 'price', 'multiplier',
-        ]);
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records, filter by tenant_id, and select specific columns
+        return $model->newQuery()
+            ->where('tenant_id', $currentTenantId)
+            ->select([
+                'id', 'name', 'type',
+                'venue_id', 'area_id', 'option_id', 'price', 'multiplier',
+            ]);
     }
 
     public function getTypeLabel($type)

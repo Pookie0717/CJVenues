@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Option;
 use App\Models\Season;
 use App\Models\Venue;
+use Illuminate\Support\Facades\Session;
 
 class AddOptionModal extends Component
 {
@@ -95,8 +96,9 @@ class AddOptionModal extends Component
 
     public function render()
     {
-        $seasons = Season::all();
-        $venues = Venue::all();
+        $currentTenantId = Session::get('current_tenant_id');
+        $seasons = Season::where('tenant_id', $currentTenantId)->get();
+        $venues = Venue::where('tenant_id', $currentTenantId)->get();
         return view('livewire.option.add-option-modal', compact('seasons', 'venues'));
     }
 }

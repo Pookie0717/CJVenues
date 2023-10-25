@@ -9,6 +9,7 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Session;
 
 class SeasonsDataTable extends DataTable
 {
@@ -47,7 +48,15 @@ class SeasonsDataTable extends DataTable
      */
     public function query(Season $model)
     {
-        return $model->newQuery()->select(['id', 'name', 'priority', 'date_from', 'date_to', 'overwrite_weekday']);
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records, filter by tenant_id, and select specific columns
+        return $model->newQuery()
+            ->where('tenant_id', $currentTenantId)
+            ->select([
+                'id', 'name', 'priority', 'date_from', 'date_to', 'overwrite_weekday'
+            ]);
     }
 
 

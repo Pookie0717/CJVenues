@@ -15,6 +15,7 @@ use App\Http\Controllers\EventTypesController;
 use App\Http\Controllers\VenuesManagementController;
 use App\Http\Controllers\AreasManagementController;
 use App\Http\Controllers\LocalizationController;
+use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,5 +91,7 @@ Route::get('/error', function () {
 });
 
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
+
+Route::post('/set-tenant', 'App\Http\Controllers\TenantController@setTenant')->name('set-tenant');
 
 require __DIR__ . '/auth.php';

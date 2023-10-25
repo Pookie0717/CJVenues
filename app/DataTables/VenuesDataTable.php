@@ -7,6 +7,7 @@ use App\Models\VenueArea;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
@@ -41,7 +42,11 @@ class VenuesDataTable extends DataTable
      */
     public function query(Venue $model)
     {
-        return $model->newQuery()->select(['id', 'name', 'type', 'address', 'created_at', 'updated_at']);
+        $currentTenantId = Session::get('current_tenant_id');
+
+        return $model->newQuery()
+            ->where('tenant_id', $currentTenantId) // Filter by tenant_id
+            ->select(['id', 'name', 'type', 'address', 'created_at', 'updated_at']);
     }
 
     /**

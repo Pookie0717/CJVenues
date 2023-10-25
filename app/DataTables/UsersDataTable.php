@@ -6,6 +6,7 @@ use App\Models\User;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
@@ -44,7 +45,12 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery();
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records, filter by tenant_id
+        return $model->newQuery()
+            ->where('tenant_id', $currentTenantId);
     }
 
     /**

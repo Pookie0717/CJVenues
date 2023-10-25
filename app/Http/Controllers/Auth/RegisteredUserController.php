@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rules;
@@ -38,6 +39,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'company' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -49,6 +51,12 @@ class RegisteredUserController extends Controller
             'last_login_at' => \Illuminate\Support\Carbon::now()->toDateTimeString(),
             'last_login_ip' => $request->getClientIp()
         ]);
+
+        $tenant = Tenant::create([
+            'name' => $request->company
+        ]);
+
+        $tenant->users()->attach($user->id);
 
         event(new Registered($user));
 

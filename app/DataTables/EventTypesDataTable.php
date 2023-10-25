@@ -9,6 +9,7 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Session;
 
 class EventTypesDataTable extends DataTable
 {
@@ -73,7 +74,13 @@ class EventTypesDataTable extends DataTable
 
     public function query(EventType $model): QueryBuilder
     {
-        return $model->newQuery()->select(['id', 'name', 'typical_seating', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability', 'created_at', 'updated_at']);
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records, filter by tenant_id, and select specific columns
+        return $model->newQuery()
+            ->where('tenant_id', $currentTenantId)
+            ->select(['id', 'name', 'typical_seating', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability', 'created_at', 'updated_at']);    
     }
 
     public function html(): HtmlBuilder

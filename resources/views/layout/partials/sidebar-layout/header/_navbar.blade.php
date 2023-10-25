@@ -3,7 +3,17 @@
     <!--begin::User menu-->
 	<div class="app-navbar-item ms-1 ms-md-4" id="kt_header_user_menu_toggle">
         <!--begin::Menu wrapper-->
-		<div class="cursor-pointer symbol symbol-35px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
+        <form method="post" action="{{ route('set-tenant') }}" id="tenant-form">
+            @csrf
+            <select class="form-select form-select-transparent" name="tenant" id="tenant" data-placeholder="Select an organization">
+                <option>Select an Organisation</option>
+                @foreach (auth()->user()->tenants as $tenant)
+                                <option value="{{ $tenant->id }}" {{ session('current_tenant_id') == $tenant->id ? 'selected' : '' }}>
+{{ $tenant->name }}</option>
+                @endforeach
+            </select>
+        </form>
+		<div class="cursor-pointer symbol symbol-35px ms-1" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
             @if(Auth::user()->profile_photo_url)
                 <img src="{{ \Auth::user()->profile_photo_url }}" class="rounded-3" alt="user" />
             @else
@@ -25,3 +35,11 @@
 	<!--end::Header menu toggle-->
 </div>
 <!--end::Navbar-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tenantSelect = document.getElementById('tenant');
+        tenantSelect.addEventListener('change', function () {
+            document.getElementById('tenant-form').submit();
+        });
+    });
+</script>

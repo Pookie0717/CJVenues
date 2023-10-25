@@ -9,8 +9,8 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Session;
 
 class QuotesDataTable extends DataTable
 {
@@ -67,7 +67,19 @@ class QuotesDataTable extends DataTable
 
 public function query(Quote $model)
 {
-        return $model->newQuery()->select(['id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at'])->where('status', '<>', 'Archived');
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records, filter by tenant_id, and select specific columns
+        return $model->newQuery()
+            ->where('tenant_id', $currentTenantId)
+            ->where('status', '<>', 'Archived')
+            ->select([
+                'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at'
+            ]);
 
 }
 

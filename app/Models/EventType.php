@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Model;
 
 class EventType extends Model
@@ -20,4 +21,12 @@ class EventType extends Model
         'season_id',
         'availability',
     ];
+    protected static function boot() {
+        parent::boot();
+
+        self::creating(function($model) {
+            $currentTenantId = Session::get('current_tenant_id');
+            $model->tenant_id = $currentTenantId;
+        });
+    }
 }

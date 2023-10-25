@@ -26,6 +26,14 @@
             <!--end::Name-->
         </div>
 
+        <!--end::Input group--->
+        <div class="fv-row mb-8">
+            <!--begin::Repeat Company-->
+            <input placeholder="Company Name" name="company" type="text" autocomplete="off" class="form-control bg-transparent"/>
+            <!--end::Repeat Company-->
+        </div>
+        <!--end::Input group--->
+
         <!--begin::Input group--->
         <div class="fv-row mb-8">
             <!--begin::Email-->

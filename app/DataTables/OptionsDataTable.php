@@ -9,6 +9,7 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Session;
 
 class OptionsDataTable extends DataTable
 {
@@ -44,7 +45,13 @@ class OptionsDataTable extends DataTable
 
     public function query(Option $model)
     {
-        return $model->newQuery()->select(['id', 'name', 'position', 'type', 'values']);
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records, filter by tenant_id, and select specific columns
+        return $model->newQuery()
+            ->where('tenant_id', $currentTenantId)
+            ->select(['id', 'name', 'position', 'type', 'values']);
     }
 
     public function html(): HtmlBuilder

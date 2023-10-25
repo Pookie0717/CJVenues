@@ -9,6 +9,7 @@ use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Session;
 
 class ContactsDataTable extends DataTable
 {
@@ -26,7 +27,11 @@ class ContactsDataTable extends DataTable
 
     public function query(Contact $model): QueryBuilder
     {
-        return $model->newQuery();
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records and filter by tenant_id
+        return $model->newQuery()->where('tenant_id', $currentTenantId);
     }
 
 public function html(): HtmlBuilder

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Model;
 
 class Option extends Model
@@ -30,5 +31,13 @@ class Option extends Model
     public function venue()
     {
         return $this->belongsTo(Venue::class, 'venue_id');
+    }
+    protected static function boot() {
+        parent::boot();
+
+        self::creating(function($model) {
+            $currentTenantId = Session::get('current_tenant_id');
+            $model->tenant_id = $currentTenantId;
+        });
     }
 }

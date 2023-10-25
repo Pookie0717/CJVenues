@@ -8,6 +8,7 @@ use App\Models\VenueArea;
 use App\Models\Venue;
 use App\Models\Season;
 use App\Models\Option;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 
 class AddPriceModal extends Component
@@ -126,12 +127,13 @@ class AddPriceModal extends Component
 
     public function render()
     {
-        // Load venues for selection
-        $venues = Venue::all();
-        $venueAreas = VenueArea::all();
-        $seasons = Season::all();
-        $options = Option::all();
 
-    return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options'));
+        $currentTenantId = Session::get('current_tenant_id');
+        $venues = Venue::where('tenant_id', $currentTenantId)->get();
+        $venueAreas = VenueArea::where('tenant_id', $currentTenantId)->get();
+        $seasons = Season::where('tenant_id', $currentTenantId)->get();
+        $options = Option::where('tenant_id', $currentTenantId)->get();
+
+        return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options'));
     }
 }

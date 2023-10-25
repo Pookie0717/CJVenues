@@ -6,6 +6,7 @@ use App\Models\VenueArea; // Import the VenueArea model
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Session;
 
 class AreasDataTable extends DataTable
 {
@@ -38,7 +39,15 @@ class AreasDataTable extends DataTable
      */
     public function query(VenueArea $model)
     {
-        return $model->newQuery()->with('venue');
+        // Get the current tenant_id from the session
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query the VenueArea records with the associated Venue and filter by tenant_id
+        return $model->newQuery()
+            ->whereHas('venue', function ($query) use ($currentTenantId) {
+                $query->where('tenant_id', $currentTenantId);
+            })
+            ->with('venue');
     }
 
     /**

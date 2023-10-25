@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\VenueArea;
 use App\Models\Venue;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
 
 Validator::extend('at_least_one_capacity', function ($attribute, $value, $parameters, $validator) {
     $data = $validator->getData();
@@ -61,8 +62,9 @@ class AddVenueAreaModal extends Component
 
     public function render()
     {
-        // Load venues for selection
-        $venues = Venue::all();
+        
+        $currentTenantId = Session::get('current_tenant_id');
+        $venues = Venue::where('tenant_id', $currentTenantId)->get();
         
         return view('livewire.venue-area.add-venue-area-modal', compact('venues'));
     }
@@ -80,6 +82,8 @@ class AddVenueAreaModal extends Component
     {
         $this->edit_mode = true;
 
-        $venue = VenueArea::find($id);
+        $currentTenantId = Session::get('current_tenant_id');
+        $venue = VenueArea::where('id', $id)
+            ->where('tenant_id', $currentTenantId);
     }
 }

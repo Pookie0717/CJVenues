@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Session;
 use App\Models\Venue; // Ensure the Venue model is imported
 
 class VenueArea extends Model
@@ -27,6 +28,14 @@ class VenueArea extends Model
     public function prices()
     {
         return $this->hasMany(Price::class, 'area_id');
+    }
+    protected static function boot() {
+        parent::boot();
+
+        self::creating(function($model) {
+            $currentTenantId = Session::get('current_tenant_id');
+            $model->tenant_id = $currentTenantId;
+        });
     }
 
 }

@@ -4,11 +4,13 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Session;
 
 class User extends Authenticatable
 {
@@ -56,5 +58,9 @@ class User extends Authenticatable
         }
 
         return $this->profile_photo_path;
+    }
+    public function tenants(): BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class);
     }
 }

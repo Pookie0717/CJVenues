@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Session;
 
 class Venue extends Model
 {
@@ -30,5 +31,13 @@ class Venue extends Model
     public function options()
     {
         return $this->hasMany(Option::class, 'venue_id');
+    }
+    protected static function boot() {
+        parent::boot();
+
+        self::creating(function($model) {
+            $currentTenantId = Session::get('current_tenant_id');
+            $model->tenant_id = $currentTenantId;
+        });
     }
 }

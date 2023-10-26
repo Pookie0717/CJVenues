@@ -77,6 +77,10 @@ Route::get('setlocale/{locale}', 'App\Http\Controllers\LocalizationController@se
         'index' => 'event-types'
     ]);
 
+    Route::resource('/organizations', TenantController::class)->names([
+        'index' => 'organizations'
+    ]);
+
     Route::resource('/quotes', QuotesController::class)->names([
         'index' => 'quotes'
     ]);

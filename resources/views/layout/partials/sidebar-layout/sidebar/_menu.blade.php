@@ -177,6 +177,18 @@
 					<!--begin:Menu item-->
 					<div class="menu-item">
 						<!--begin:Menu link-->
+						<a class="menu-link {{ request()->routeIs('organizations') ? 'active' : '' }}" href="{{ route('organizations') }}">
+							<span class="menu-bullet">
+								<span class="bullet bullet-dot"></span>
+							</span>
+							<span class="menu-title">Organizations</span>
+						</a>
+						<!--end:Menu link-->
+					</div>
+					<!--end:Menu item-->
+					<!--begin:Menu item-->
+					<div class="menu-item">
+						<!--begin:Menu link-->
 						<a class="menu-link {{ request()->routeIs('user-management.permissions.*') ? 'active' : '' }}" href="{{ route('user-management.permissions.index') }}">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot"></span>

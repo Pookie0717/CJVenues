@@ -113,3 +113,9 @@ Breadcrumbs::for('event-types', function ($trail) {
     $trail->parent('home');
     $trail->push('Event Types', route('event-types'));
 });
+
+// Home > Organizations
+Breadcrumbs::for('tenants', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Organizations', route('organizations'));
+});

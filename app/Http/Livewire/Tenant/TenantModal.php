@@ -4,7 +4,16 @@ namespace App\Http\Livewire\Tenant;
 
 use Livewire\Component;
 use App\Models\Tenant;
+use App\Models\Booking;
+use App\Models\Contact;
+use App\Models\EventType;
+use App\Models\Option;
+use App\Models\Price;
+use App\Models\Quote;
 use App\Models\Season;
+use App\Models\User;
+use App\Models\Venue;
+use App\Models\VenueArea;
 use Illuminate\Support\Facades\Auth;
 
 class TenantModal extends Component
@@ -93,12 +102,23 @@ class TenantModal extends Component
                 ->delete();
 
         // Delete the tenant if it's not associated with any users
-        if ($tenant->users->isEmpty()) {
+        if (!$tenant->users->isEmpty()||
+            Season::where('tenant_id', $tenant->id)->exists() ||
+            Contact::where('tenant_id', $tenant->id)->exists() ||
+            EventType::where('tenant_id', $tenant->id)->exists() ||
+            Option::where('tenant_id', $tenant->id)->exists() ||
+            Price::where('tenant_id', $tenant->id)->exists() ||
+            Quote::where('tenant_id', $tenant->id)->exists() ||
+            Venue::where('tenant_id', $tenant->id)->exists() ||
+            VenueArea::where('tenant_id', $tenant->id)->exists()
+        ) {
+            $this->emit('error', 'Cannot delete organisation. Records are associated with it.');
+        } else {
             $tenant->delete();
+            $this->emit('success', 'Tenant successfully deleted');
         }
 
         // Emit a success event with a message
-        $this->emit('success', 'Tenant successfully deleted');
     }
 
     public function updateTenant($id)
@@ -112,8 +132,8 @@ class TenantModal extends Component
             $this->tenantId = $id;
             $this->name = $tenant->name;
         } else {
-            // Handle the case where the user does not have access to edit this tenant
-            // You can show an error message or perform some other action
+            $this->emit('error', 'You cdo not have access to edit this Organization');
+
         }
     }
 

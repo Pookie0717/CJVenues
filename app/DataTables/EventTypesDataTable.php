@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\EventType;
+use App\Models\Season;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -56,8 +57,7 @@ class EventTypesDataTable extends DataTable
                 if ($event_type->season_id === 0) {
                     return 'All';
                 } else {
-                    // Replace 'SeasonModel' with your actual Season model
-                    $season = SeasonModel::find($event_type->season_id);
+                    $season = Season::find($event_type->season_id);
                     return $season ? $season->name : '';
                 }
             })

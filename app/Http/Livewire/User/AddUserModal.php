@@ -140,6 +140,7 @@ class AddUserModal extends Component
         $this->name = $user->name;
         $this->email = $user->email;
         $this->role = $user->roles?->first()->name ?? '';
+        $this->selectedTenants = $user->tenants->pluck('id')->toArray();
     }
 
     public function hydrate()

@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Tenant;
+use Illuminate\Support\Facades\Hash;
 
 class UsersSeeder extends Seeder
 {
@@ -13,15 +14,16 @@ class UsersSeeder extends Seeder
         // Create a new tenant
         $tenant = new Tenant();
         $tenant->id = 1;
-        $tenant->name = 'Coco and Jay';
+        $tenant->name = 'coco and jay';
         $tenant->save();
 
-        $user = new User();
-        $user->name = 'Emanuele Nicolella';
-        $user->email = 'em@cocoandjay.com';
-        $user->password = Hash::make('12Pineapple!');
-        $user->email_verified_at = now();
-        $user->save();
+        // Create the users
+        $user1 = new User();
+        $user1->name = 'Emanuele Nicolella';
+        $user1->email = 'em@cocoandjay.com';
+        $user1->password = Hash::make('12Pineapple!');
+        $user1->email_verified_at = now();
+        $user1->save();
 
         $user2 = new User();
         $user2->name = 'Georg Schufft';
@@ -30,6 +32,7 @@ class UsersSeeder extends Seeder
         $user2->email_verified_at = now();
         $user2->save();
 
+        // Attach the users to the tenant
         $tenant->users()->attach([$user1->id, $user2->id]);
     }
 }

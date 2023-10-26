@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Models\Tenant;
+use App\Models\Season;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rules;
@@ -54,6 +55,14 @@ class RegisteredUserController extends Controller
 
         $tenant = Tenant::create([
             'name' => $request->company
+        ]);
+
+        $season = Season::create([
+            'name' => 'All',
+            'date_from' => '01/01/1900',
+            'date_to' => '31/12/2100',
+            'priority' => '0',
+            'tenant_id' => $tenant->id,
         ]);
 
         $tenant->users()->attach($user->id);

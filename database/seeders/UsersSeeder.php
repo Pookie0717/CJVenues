@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Tenant;
+use App\Models\Season;
 use Illuminate\Support\Facades\Hash;
 
 class UsersSeeder extends Seeder
@@ -31,6 +32,16 @@ class UsersSeeder extends Seeder
         $user2->password = Hash::make('r');
         $user2->email_verified_at = now();
         $user2->save();
+
+        // Create a new season
+        $season = new Season();
+        $season->id = 0;
+        $season->name = 'All';
+        $season->date_from = '01-01-0000';
+        $season->date_to = '31-12-9999';
+        $season->priority = 0;
+        $season->tenant_id = 1;
+        $season->save();
 
         // Attach the users to the tenant
         $tenant->users()->attach([$user1->id, $user2->id]);

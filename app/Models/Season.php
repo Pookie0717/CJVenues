@@ -16,6 +16,7 @@ class Season extends Model
         'date_to',
         'priority',
         'overwrite_weekday',
+        'tenant_id',
     ];
     public function prices()
     {
@@ -24,13 +25,5 @@ class Season extends Model
     public function options()
     {
         return $this->hasMany(Option::class, 'season_id');
-    }
-    protected static function boot() {
-        parent::boot();
-
-        self::creating(function($model) {
-            $currentTenantId = Session::get('current_tenant_id');
-            $model->tenant_id = $currentTenantId;
-        });
     }
 }

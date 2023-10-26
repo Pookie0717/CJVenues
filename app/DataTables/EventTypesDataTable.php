@@ -54,12 +54,8 @@ class EventTypesDataTable extends DataTable
                 return "$time_cleaningup ($duration_type)";
             })
             ->editColumn('season_id', function ($event_type) {
-                if ($event_type->season_id === 0) {
-                    return 'All';
-                } else {
                     $season = Season::find($event_type->season_id);
                     return $season ? $season->name : '';
-                }
             })
             ->editColumn('availability', function ($event_type) {
                 $availability = $event_type->availability;

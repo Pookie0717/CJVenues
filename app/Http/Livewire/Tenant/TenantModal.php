@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Tenant;
 
 use Livewire\Component;
 use App\Models\Tenant;
+use App\Models\Season;
 use Illuminate\Support\Facades\Auth;
 
 class TenantModal extends Component
@@ -57,6 +58,14 @@ class TenantModal extends Component
             // Attach the new tenant to the currently authenticated user
             $user->tenants()->attach($tenant->id);
 
+            $season = Season::create([
+                'name' => 'All',
+                'date_from' => '01-01-0000',
+                'date_to' => '31-12-9999',
+                'priority' => '0',
+                'tenant_id' => $tenant->id,
+            ]);
+
             // Emit an event to notify that the tenant was created successfully
             $this->emit('success', 'Tenant successfully added');
         } else {
@@ -77,6 +86,11 @@ class TenantModal extends Component
 
         // Detach the tenant from the currently authenticated user
         Auth::user()->tenants()->detach($tenant->id);
+
+         // Delete the "All" season if it exists
+            Season::where('tenant_id', $tenant->id)
+                ->where('name', 'All')
+                ->delete();
 
         // Delete the tenant if it's not associated with any users
         if ($tenant->users->isEmpty()) {

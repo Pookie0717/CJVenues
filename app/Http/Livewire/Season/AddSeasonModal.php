@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Season;
 
 use Livewire\Component;
 use App\Models\Season;
+use Illuminate\Support\Facades\Session;
 
 class AddSeasonModal extends Component
 {
@@ -12,6 +13,7 @@ class AddSeasonModal extends Component
     public $date_to;
     public $priority;
     public $overwrite_weekday;
+    public $tenant_id;
 
     public $edit_mode = false;
 
@@ -23,6 +25,9 @@ class AddSeasonModal extends Component
    public function submit()
     {
         // Validate the data
+
+        $currentTenantId = Session::get('current_tenant_id');
+
         $this->validate([
             'name' => 'required|string|max:255',
             'date_from' => 'required|date',
@@ -39,6 +44,7 @@ class AddSeasonModal extends Component
                 'date_to' => $this->date_to,
                 'priority' => $this->priority,
                 'overwrite_weekday' => $this->overwrite_weekday,
+                'tenant_id' => $currentTenantId,
             ]);
 
             // Emit an event to notify that the season was updated successfully
@@ -51,6 +57,7 @@ class AddSeasonModal extends Component
                 'date_to' => $this->date_to,
                 'priority' => $this->priority,
                 'overwrite_weekday' => $this->overwrite_weekday,
+                'tenant_id' => $currentTenantId,
             ]);
 
             // Emit an event to notify that the season was created successfully
@@ -66,6 +73,11 @@ class AddSeasonModal extends Component
     {
         // Find the venue by ID
         $season = Season::find($id);
+
+        // Check if the season being deleted is the "All" season
+        if ($season->name === 'All') {
+            return redirect()->back()->with('error', 'Cannot delete this season.');
+        }
 
         // If no associated areas, proceed with deletion
         $season->delete();
@@ -86,6 +98,7 @@ class AddSeasonModal extends Component
         $this->date_to = $season->date_to;
         $this->priority = $season->priority;
         $this->overwrite_weekday = $season->overwrite_weekday;
+        $this->tenant_id = $season->tenant_id;
     }
 
     public function render()

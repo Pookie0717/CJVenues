@@ -8,7 +8,7 @@
             <select class="form-select form-select-transparent" name="tenant" id="tenant" data-placeholder="Select an organization">
                 <option>Select an Organisation</option>
                 @foreach (auth()->user()->tenants as $tenant)
-                                <option value="{{ $tenant->id }}" {{ session('current_tenant_id') == $tenant->id ? 'selected' : '' }}>
+                    <option value="{{ $tenant->id }}" {{ session('current_tenant_id') == $tenant->id ? 'selected' : '' }}>
 {{ $tenant->name }}</option>
                 @endforeach
             </select>
@@ -38,6 +38,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var tenantSelect = document.getElementById('tenant');
+        tenantSelect.selectedIndex = 1;
+        tenantSelect.dispatchEvent(new Event('change'));
         tenantSelect.addEventListener('change', function () {
             document.getElementById('tenant-form').submit();
         });

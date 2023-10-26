@@ -8,7 +8,7 @@
             <select class="form-select form-select-transparent" name="tenant" id="tenant" data-placeholder="Select an organization">
                 <option>Select an Organisation</option>
                 @foreach (auth()->user()->tenants as $tenant)
-                    <option value="{{ $tenant->id }}">
+                    <option value="{{ $tenant->id }}" {{ session('current_tenant_id') == $tenant->id ? 'selected' : '' }}>
 {{ $tenant->name }}</option>
                 @endforeach
             </select>
@@ -53,7 +53,7 @@
             }
             
             // Trigger the change event to submit the form
-            tenantSelect.dispatchEvent(new Event('change'));
+            //tenantSelect.dispatchEvent(new Event('change'));
         } else {
             // Select the first option
             tenantSelect.options[1].selected = true;

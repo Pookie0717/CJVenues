@@ -14,7 +14,7 @@ class UsersSeeder extends Seeder
         // Create a new tenant
         $tenant = new Tenant();
         $tenant->id = 1;
-        $tenant->name = 'coco and jay';
+        $tenant->name = 'Coco and Jay';
         $tenant->save();
 
         // Create the users

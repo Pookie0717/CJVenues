@@ -48,9 +48,10 @@ class UsersDataTable extends DataTable
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
 
-        // Query the VenueArea records, filter by tenant_id
+        // Query the User model using a join with the tenant_user pivot table
         return $model->newQuery()
-            ->where('tenant_id', $currentTenantId);
+            ->join('tenant_user', 'users.id', '=', 'tenant_user.user_id')
+            ->where('tenant_user.tenant_id', $currentTenantId);
     }
 
     /**

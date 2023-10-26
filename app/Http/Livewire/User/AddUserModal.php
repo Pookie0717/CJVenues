@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Session;
 
 class AddUserModal extends Component
 {
@@ -59,10 +60,14 @@ class AddUserModal extends Component
         // Validate the form input data
         $this->validate();
 
-        DB::transaction(function () {
+        // Get the current tenant_id from wherever it's available in your application
+        $currentTenantId = Session::get('current_tenant_id'); // Adjust this based on your actual implementation
+
+        DB::transaction(function () use ($currentTenantId) {
             // Prepare the data for creating a new user
             $data = [
                 'name' => $this->name,
+                'tenant_id' => $currentTenantId, // Set the tenant_id
             ];
 
             if ($this->avatar) {

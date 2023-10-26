@@ -8,7 +8,7 @@
             <select class="form-select form-select-transparent" name="tenant" id="tenant" data-placeholder="Select an organization">
                 <option>Select an Organisation</option>
                 @foreach (auth()->user()->tenants as $tenant)
-                    <option value="{{ $tenant->id }}" {{ session('current_tenant_id') == $tenant->id ? 'selected' : '' }}>
+                    <option value="{{ $tenant->id }}">
 {{ $tenant->name }}</option>
                 @endforeach
             </select>

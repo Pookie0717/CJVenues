@@ -99,7 +99,6 @@ class EventTypesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('ID')->addClass('text-nowrap'),
             Column::make('name')->title('Name')->addClass('text-nowrap'),
             Column::make('typical_seating')->title('Typical Seating')->addClass('text-nowrap'),
             Column::make('duration')->title('Duration')->addClass('text-nowrap'),

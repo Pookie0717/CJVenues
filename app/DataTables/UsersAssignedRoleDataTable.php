@@ -72,7 +72,6 @@ class UsersAssignedRoleDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id'),
             Column::make('user')->addClass('d-flex align-items-center')->name('name'),
             Column::make('name'),
             Column::make('created_at')->title('Joined Date')->addClass('text-nowrap'),

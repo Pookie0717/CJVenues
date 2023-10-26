@@ -76,7 +76,6 @@ class SeasonsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('ID')->addClass('text-nowrap'),
             Column::make('name')->title('Name')->addClass('text-nowrap'),
             Column::make('date_from')->title('Date From'),
             Column::make('date_to')->title('Date To'),

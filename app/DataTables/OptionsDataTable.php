@@ -70,7 +70,6 @@ class OptionsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('ID')->addClass('text-nowrap'),
             Column::make('name')->title('Name')->addClass('text-nowrap'),
             Column::make('position')->title('Position'),
             Column::make('type')->title('Type'),

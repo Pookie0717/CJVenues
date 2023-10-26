@@ -51,7 +51,6 @@ public function html(): HtmlBuilder
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('ID'),
             Column::make('name')->title('Name'),
             Column::make('email')->title('Email'),
             Column::make('phone')->title('Phone'),

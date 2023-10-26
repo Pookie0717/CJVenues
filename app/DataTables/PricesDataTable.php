@@ -104,7 +104,6 @@ class PricesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('ID')->addClass('text-nowrap'),
             Column::make('name')->title('Price Rule Name')->addClass('text-nowrap'),
             Column::make('type')->title('Type'),
             Column::computed('property_id')->title('Property'),

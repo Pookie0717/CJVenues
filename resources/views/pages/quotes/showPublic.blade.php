@@ -1,4 +1,5 @@
-<x-default-layout>
+@extends('layout.public')
+
     @section('title')
     Quote
     @endsection
@@ -8,7 +9,7 @@
         {{ Breadcrumbs::render('quotes.show', $quote) }}
     @endsection
 <!--begin::Card toolbar-->
-    <div class="d-flex flex-column flex-xl-row gap-10">
+    <div class="d-flex flex-column flex-xl-row gap-10" style="padding:30px;">
     <div class="card flex-grow-1">
         <!--begin::Body-->
         <div class="card-body p-lg-20">
@@ -25,11 +26,6 @@
                                 <img alt="Logo" src="{{ image('logos/default-dark.svg') }}" class="h-25px app-sidebar-logo-default" />
                             </a>
                             <!--end::Logo-->
-
-                            <!--begin::Action-->
-                            <a href="#" class="btn btn-sm btn-success disabled">{{ trans('quote.invoice') }}</a>
-                            <!--end::Action-->
-                            
                         </div>
                         <!--end::Top-->
 
@@ -239,8 +235,6 @@
                 <div class="m-0">
                     <!--begin::Invoice 2 sidebar-->
                     <div class="d-print-none border border-dashed border-gray-300 card-rounded p-9 bg-lighten">
-
-                       
                         <!--begin::Title-->
                         <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">STATUS</h6>
                         <!--end::Title-->
@@ -275,7 +269,6 @@
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
                                                 <th class="pb-2">Version</th>
                                                 <th class="text-center pb-2">Date</th>
-                                                <th class="text-end pb-2">Action</th>
                                             </tr>
                                         </thead>
 
@@ -293,9 +286,6 @@
                                                     @else
                                                         {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y H:i:s') }}
                                                     @endif
-                                                </td>
-                                                <td class="pt-6 text-dark fw-bolder">
-                                                    <a href="{{ route('quotes.show', $quoteHistory) }}">View</a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -409,4 +399,3 @@
             });
         </script>
     @endpush
-</x-default-layout>

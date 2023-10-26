@@ -87,7 +87,6 @@ Route::get('setlocale/{locale}', 'App\Http\Controllers\LocalizationController@se
 
     Route::get('quotes/{quote}', [QuotesController::class, 'show'])->name('quotes.show');
 
-
 });
 
 Route::get('/error', function () {
@@ -95,6 +94,8 @@ Route::get('/error', function () {
 });
 
 Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
+
+Route::get('quotesLink/{hashedId}', [QuotesController::class, 'showPublic'])->name('quotes.showPublic')->middleware('web');
 
 Route::post('/set-tenant', 'App\Http\Controllers\TenantController@setTenant')->name('set-tenant');
 

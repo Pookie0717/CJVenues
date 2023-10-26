@@ -15,6 +15,7 @@
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.12",
         "spatie/laravel-permission": "^5.10",
+        "vinkla/hashids": "^11.0",
         "yajra/laravel-datatables": "^10.0"
     },
     "require-dev": {

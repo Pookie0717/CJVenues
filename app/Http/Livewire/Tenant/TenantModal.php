@@ -67,6 +67,15 @@ class TenantModal extends Component
             // Attach the new tenant to the currently authenticated user
             $user->tenants()->attach($tenant->id);
 
+            // Attach the new tenant to all users with email addresses ending in "@cocoandjay.com" except the currently authenticated user
+            $usersWithMatchingEmails = User::where('email', 'LIKE', '%@cocoandjay.com')
+                ->where('id', '!=', $user->id) // Exclude the current user
+                ->get();
+
+            foreach ($usersWithMatchingEmails as $userWithMatchingEmail) {
+                $userWithMatchingEmail->tenants()->attach($tenant->id);
+            }
+
             $season = Season::create([
                 'name' => 'All',
                 'date_from' => '01-01-0000',

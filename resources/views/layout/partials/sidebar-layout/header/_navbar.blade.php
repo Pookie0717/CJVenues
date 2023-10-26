@@ -36,22 +36,34 @@
 </div>
 <!--end::Navbar-->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var tenantSelect = document.getElementById('tenant');
-
-        // Check if the current_tenant_id is not set in the session
-        if ({!! json_encode(!session()->has('current_tenant_id')) !!}) {
-            // Select the first option
-            tenantSelect.options[1].selected = true;
-            // Trigger the change event to submit the form
-            tenantSelect.dispatchEvent(new Event('change'));
+document.addEventListener('DOMContentLoaded', function () {
+    var tenantSelect = document.getElementById('tenant');
+    
+    // Check if the current_tenant_id is set in the session
+    if ({!! json_encode(session()->has('current_tenant_id')) !!}) {
+        var currentTenantId = {!! json_encode(session('current_tenant_id')) !!};
+        
+        // Find the option with a matching value
+        for (var i = 0; i < tenantSelect.options.length; i++) {
+            if (tenantSelect.options[i].value == currentTenantId) {
+                // Select the option with a matching value
+                tenantSelect.options[i].selected = true;
+                break; // Exit the loop once a match is found
+            }
         }
-
-        // Listen for the change event
-        tenantSelect.addEventListener('change', function () {
-            document.getElementById('tenant-form').submit();
-        });
+    } else {
+        // Select the first option
+        tenantSelect.options[1].selected = true;
+    }
+    
+    // Trigger the change event to submit the form
+    tenantSelect.dispatchEvent(new Event('change'));
+    
+    // Listen for the change event
+    tenantSelect.addEventListener('change', function () {
+        document.getElementById('tenant-form').submit();
     });
+});
 </script>
 
 

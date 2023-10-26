@@ -31,7 +31,7 @@
                         </label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <input class="form-control form-control-solid" placeholder="Enter a tenant name" name="name" wire:model.defer="name"/>
+                        <input class="form-control form-control-solid" placeholder="Enter an organization name" name="name" wire:model.defer="name"/>
                         <!--end::Input-->
                         @error('name')
                         <span class="text-danger">{{ $message }}</span> @enderror

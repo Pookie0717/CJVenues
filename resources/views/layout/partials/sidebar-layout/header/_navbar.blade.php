@@ -37,17 +37,21 @@
 <!--end::Navbar-->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        var tenantSelect = document.getElementById('tenant');
+
         // Check if the current_tenant_id is not set in the session
-        if (!{!! json_encode(session()->has('current_tenant_id')) !!}) {
-            var tenantSelect = document.getElementById('tenant');
+        if ({!! json_encode(!session()->has('current_tenant_id')) !!}) {
             // Select the first option
             tenantSelect.options[1].selected = true;
             // Trigger the change event to submit the form
             tenantSelect.dispatchEvent(new Event('change'));
-            tenantSelect.addEventListener('change', function () {
-                document.getElementById('tenant-form').submit();
-            });
         }
+
+        // Listen for the change event
+        tenantSelect.addEventListener('change', function () {
+            document.getElementById('tenant-form').submit();
+        });
     });
 </script>
+
 

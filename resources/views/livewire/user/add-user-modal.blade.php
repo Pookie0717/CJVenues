@@ -99,6 +99,19 @@
                         </div>
                         <!--end::Input group-->
                         <!--begin::Input group-->
+                        <div class="fv-row mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Companies</label>
+                        <select wire:model="selectedTenants" name="selectedTenants[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
+                            @foreach($tenants as $tenant)
+                                <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('selectedTenants')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
                         <div class="mb-7">
                             <!--begin::Label-->
                             <label class="required fw-semibold fs-6 mb-5">Role</label>

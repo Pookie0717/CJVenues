@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\User;
+use App\Models\Tenant;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,8 @@ class AddUserModal extends Component
     public $role;
     public $avatar;
     public $saved_avatar;
+    public $tenants;
+    public $selectedTenants;
 
     public $edit_mode = false;
 
@@ -39,6 +42,8 @@ class AddUserModal extends Component
     public function render()
     {
         $roles = Role::all();
+
+        $this->tenants = Tenant::all();
 
         $roles_description = [
             'administrator' => 'Best for business owners and company administrators',
@@ -85,6 +90,8 @@ class AddUserModal extends Component
                 'email' => $this->email,
             ], $data);
 
+            $user->tenants()->sync($this->selectedTenants);
+
             if ($this->edit_mode) {
                 // Assign selected role for user
                 $user->syncRoles($this->role);
@@ -105,6 +112,7 @@ class AddUserModal extends Component
 
         // Reset the form fields after successful submission
         $this->reset();
+        $this->selectedTenants = [];
     }
 
     public function deleteUser($id)

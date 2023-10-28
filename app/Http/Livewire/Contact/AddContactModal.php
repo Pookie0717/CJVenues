@@ -112,11 +112,7 @@ class AddContactModal extends Component
             $this->emit('success', 'Contact successfully added');
         }
 
-        
-
-        // Emit an event to notify that the contact was created successfully
-        $this->emit('success');
-
+    
         // Reset the form fields
         $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
     }

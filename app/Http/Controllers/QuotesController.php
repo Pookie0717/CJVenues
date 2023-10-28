@@ -8,6 +8,7 @@ use App\Models\Quote;
 use App\Models\Contact;
 use App\Models\Season;
 use App\Models\Option;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -87,13 +88,19 @@ class QuotesController extends Controller
 
         $associatedSeason = $highestPrioritySeason;
 
+        // Get the tenant ID from the quote
+        $tenantId = $quote->tenant_id;
+
+        // Fetch the tenant model using the tenant ID
+        $tenant = Tenant::find($tenantId);
+
         $hashids = new Hashids('em-and-georg-are-supercool');
         $hashedId = $hashids->encode($quote->id);
 
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
 
-        return view('pages.quotes.show', compact('relatedQuotes', 'associatedContact', 'associatedSeason', 'optionsWithValues'), ['hashedId' => $hashedId]);
+        return view('pages.quotes.show', compact('relatedQuotes', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant'), ['hashedId' => $hashedId]);
     }
 
     public function showPublic($hashedId, Contact $contact, Season $season, Option $option)
@@ -165,11 +172,17 @@ class QuotesController extends Controller
             }
         }
 
+        // Get the tenant ID from the quote
+        $tenantId = $quote->tenant_id;
+
+        // Fetch the tenant model using the tenant ID
+        $tenant = Tenant::find($tenantId);
+
         $associatedSeason = $highestPrioritySeason;
 
         view()->share('quote', $quote);
 
-        return view('pages.quotes.showPublic', compact('relatedQuotes', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'quote',));
+        return view('pages.quotes.showPublic', compact('relatedQuotes', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'quote', 'tenant'));
     }
 
 

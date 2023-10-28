@@ -88,36 +88,20 @@
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+                 <div class="col">
+                    <!--begin::Label-->
+                    <label class="required fw-semibold fs-6 mb-2">State</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input type="text" wire:model.defer="state" name="state" class="form-control form-control-solid mb-7" placeholder="State"/>
+                    <!--end::Input-->
+                    @error('state')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             <!--end::Input group-->
             </div>
 
-            <!--begin::Input group for Venue State -->
-            <div class="row">
-                <div class="col">
-                <!--begin::Label-->
-                <label class="required fw-semibold fs-6 mb-2">State</label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input type="text" wire:model.defer="state" name="state" class="form-control form-control-solid mb-7" placeholder="State"/>
-                <!--end::Input-->
-                @error('state')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-                </div>
-            <div class="col">
-            <!--begin::Input group for Venue Country -->
-                <!--begin::Label-->
-                <label class="required fw-semibold fs-6 mb-2">Country</label>
-                <!--end::Label-->
-                <!--begin::Input-->
-                <input type="text" wire:model.defer="country" name="country" class="form-control form-control-solid mb-7" placeholder="Country"/>
-                <!--end::Input-->
-                @error('country')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-                </div>
-            <!--end::Input group-->
-            </div>
            <!-- Dynamic Area Input Fields -->
             @foreach ($areas as $index => $area)
             <div class="fv-row mb-7" wire:key="area-{{ $index }}">

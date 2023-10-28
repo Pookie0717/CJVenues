@@ -5,6 +5,9 @@ namespace App\Http\Livewire\Contact;
 use Livewire\Component;
 use App\Models\Contact;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use PragmaRX\Countries\Package\Countries;
+
 
 class AddContactModal extends Component
 {
@@ -18,8 +21,27 @@ class AddContactModal extends Component
     public $state;
     public $country;
     public $notes;
+    public $selectedCountry;
+    public $selectedState;
+    protected $countries;
+    public $states = [];
+    public $cities = [];
 
     public $edit_mode = false;
+
+    public function getCountriesProperty()
+    {
+        return $this->countries ?? [];
+    }
+
+    public function mount()
+    {
+        $countries = new Countries();
+        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
+        asort($this->countries);
+        $this->states = ['Select a state'];
+        $this->cities = [];
+    }
 
     protected $listeners = [
         'delete_contact' => 'deleteContact',
@@ -37,8 +59,8 @@ class AddContactModal extends Component
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'postcode' => 'required|string|max:20',
-            'state' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
+            'selectedState' => 'required|string|max:255',
+            'selectedCountry' => 'required|string|max:255',
             'notes' => 'nullable|string|max:500',
         ]);
 
@@ -54,8 +76,8 @@ class AddContactModal extends Component
                 'address' => $this->address,
                 'city' => $this->city,
                 'postcode' => $this->postcode,
-                'state' => $this->state,
-                'country' => $this->country,
+                'state' => $this->selectedState,
+                'country' => $this->selectedCountry,
                 'notes' => $this->notes,
             ]);
 
@@ -72,8 +94,8 @@ class AddContactModal extends Component
                 'address' => $this->address,
                 'city' => $this->city,
                 'postcode' => $this->postcode,
-                'state' => $this->state,
-                'country' => $this->country,
+                'state' => $this->selectedState,
+                'country' => $this->selectedCountry,
                 'notes' => $this->notes,
             ]);
 
@@ -108,6 +130,12 @@ class AddContactModal extends Component
 
         $contact = Contact::find($id);
 
+        $countries = new Countries();
+        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
+        asort($this->countries);
+        $this->states = [];
+        $this->cities = [];
+
         $this->first_name = $contact->first_name;
         $this->last_name = $contact->last_name;
         $this->name = $contact->name;
@@ -120,10 +148,33 @@ class AddContactModal extends Component
         $this->state = $contact->state;
         $this->country = $contact->country;
         $this->notes = $contact->notes;
+        $this->selectedCountry = $contact->country;
+        $this->updatedSelectedCountry($contact->country);
+        $this->selectedState = $contact->state;
+    }
+
+    public function updatedSelectedCountry($countryCode)
+    {
+        $countries = new Countries();
+        $this->states = $countries->where('cca3', $countryCode)->first()->hydrate('states')->states->pluck('name', 'postal')->toArray();
+        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
+        $this->selectedState = null;
+        $this->selectedCountry = $countryCode;
+    }
+
+
+    public function updatedSelectedState($stateCode)
+    {
+        $countries = new Countries();
+        $this->selectedState = $stateCode;
+        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
+        asort($this->countries);
     }
 
     public function render()
     {
-        return view('livewire.contact.add-contact-modal');
+     return view('livewire.contact.add-contact-modal', [
+            'countries' => $this->getCountriesProperty(),
+        ]);
     }
 }

@@ -69,66 +69,80 @@
                             <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         <!--end::Input group-->
-                        <!--begin::Input group-->
-                        <div class="fv-row mb-7">
-                            <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">Address</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" wire:model.defer="address" name="address" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Address"/>
-                            <!--end::address-->
-                            @error('address')
-                            <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
-                        <!--end::Input group-->
-                        <!--begin::Input group-->
-                        <div class="row mb-7">
-                            <div class="col">
-                            <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">City</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" wire:model.defer="city" name="city" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="City"/>
-                            <!--end::address-->
-                            @error('city')
-                            <span class="text-danger">{{ $message }}</span> @enderror
+                        <!--begin::Input groups for address details-->
+                        <div class="row">
+                            <!--begin::Input group for address-->
+                            <div class="col-md-6 fv-row mb-7">
+                                <label class="fs-6 fw-semibold form-label mb-2">
+                                    <span>Address</span>
+                                </label>
+                                <input class="form-control form-control-solid" placeholder="Enter address" name="address" wire:model.defer="address"/>
+                                @error('address')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
-                            <div class="col">
-                            <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">Postcode</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" wire:model.defer="postcode" name="postcode" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Postcode"/>
-                            <!--end::address-->
-                            @error('postcode')
-                            <span class="text-danger">{{ $message }}</span> @enderror
+
+                            <!--begin::Input group for city-->
+                            <div class="col-md-6 fv-row mb-7">
+                                <label class="fs-6 fw-semibold form-label mb-2">
+                                    <span>City</span>
+                                </label>
+                                <input class="form-control form-control-solid" placeholder="Enter city" name="city" wire:model.defer="city"/>
+                                @error('city')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
-                        <!--end::Input group-->
-                        <!--begin::Input group-->
-                        <div class="row mb-7">
-                            <div class="col">
-                            <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">State</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" wire:model.defer="state" name="state" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="State"/>
-                            <!--end::address-->
-                            @error('state')
-                            <span class="text-danger">{{ $message }}</span> @enderror
+
+                        <!--begin::Input groups for location details-->
+                        <div class="row">
+
+                            <!--begin::Input group for country-->
+                            <div class="col-md-4 fv-row mb-7">
+                                <label class="fs-6 fw-semibold form-label mb-2">
+                                    <span>Country</span>
+                                </label>
+                                <select class="form-select form-select-solid" name="country" wire:model="selectedCountry">
+                                    <option>Select a country</option>
+                                    @foreach ($this->getCountriesProperty() as $code => $name)
+                                        <option value="{{ $code }}" {{ $code == $this->selectedCountry ? 'selected' : '' }}>{{ $name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('country')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
-                            <div class="col">
-                            <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">Country</label>
-                            <!--end::Label-->
-                            <!--begin::Input-->
-                            <input type="text" wire:model.defer="country" name="country" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Country"/>
-                            <!--end::address-->
-                            @error('country')
-                            <span class="text-danger">{{ $message }}</span> @enderror
+
+
+                            
+
+                            <!--begin::Input group for state-->
+                            <div class="col-md-4 fv-row mb-7">
+                                <label class="fs-6 fw-semibold form-label mb-2">
+                                    <span>State/Province</span>
+                                </label>
+                                <select class="form-select form-select-solid" name="state" wire:model="selectedState">
+                                    @foreach ($states as $state)
+                                        <option value="{{ $state }}">{{ $state }}</option>
+                                    @endforeach
+                                </select>
+                                @error('state')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
+
+                            <!--begin::Input group for postcode-->
+                            <div class="col-md-4 fv-row mb-7">
+                                <label class="fs-6 fw-semibold form-label mb-2">
+                                    <span>Postcode</span>
+                                </label>
+                                <input class="form-control form-control-solid" placeholder="Enter postcode" name="postcode" wire:model.defer="postcode"/>
+                                @error('postcode')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            
                         </div>
-                        <!--end::Input group-->
                         <!--begin::Input group-->
                         <div class="mb-7">
                             <!--begin::Label-->

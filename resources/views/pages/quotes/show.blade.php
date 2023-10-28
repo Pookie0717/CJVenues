@@ -108,14 +108,14 @@
                                     <!--end::Label-->
 
                                     <!--end::Text-->
-                                    <div class="fw-bold fs-6 text-gray-800">Coco and Jay LLC</div>
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $tenant->name }}</div>
                                     <!--end::Text-->
 
-                                    <!--end::Description-->
+                                    <!--start::Description-->
                                     <div class="fw-semibold fs-7 text-gray-600">
-                                        30 N Gold St Ste R <br>
-                                        28104 Sheridan <br>
-                                        WY, United States
+                                        {{$tenant->address}} <br>
+                                        {{$tenant->postcode}} {{$tenant->city}} <br>
+                                        {{$tenant->stateprovince}}, {{$tenant->country}}
                                     </div>
                                     <!--end::Description-->
                                 </div>

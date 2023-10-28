@@ -23,6 +23,7 @@ class AddContactModal extends Component
     public $notes;
     public $selectedCountry;
     public $selectedState;
+    public $contactId;
     protected $countries;
     public $states = [];
     public $cities = [];
@@ -50,11 +51,11 @@ class AddContactModal extends Component
 
     public function submit()
     {
-        // Validate the data
-        $this->validate([
+        // Define the validation rules
+        $rules = [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => ['required', 'email', 'max:255', Rule::unique('contacts')],
+            'email' => ['required', 'email', 'max:255'],
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
@@ -62,7 +63,15 @@ class AddContactModal extends Component
             'selectedState' => 'required|string|max:255',
             'selectedCountry' => 'required|string|max:255',
             'notes' => 'nullable|string|max:500',
-        ]);
+        ];
+
+        // Add the email uniqueness rule conditionally
+        if (!$this->edit_mode) {
+            $rules['email'][] = Rule::unique('contacts');
+        }
+
+        // Validate the data
+        $this->validate($rules);
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing contact record
@@ -128,6 +137,7 @@ class AddContactModal extends Component
     {
         $this->edit_mode = true;
 
+
         $contact = Contact::find($id);
 
         $countries = new Countries();
@@ -135,7 +145,7 @@ class AddContactModal extends Component
         asort($this->countries);
         $this->states = [];
         $this->cities = [];
-
+        $this->contactId = $id; // Set the contactId property
         $this->first_name = $contact->first_name;
         $this->last_name = $contact->last_name;
         $this->name = $contact->name;

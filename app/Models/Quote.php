@@ -27,6 +27,7 @@ class Quote extends Model
         'time_to',
         'area_id',
         'event_type',
+        'event_name',
         'calculated_price',
         'discount_type',
         'discount',

@@ -136,7 +136,7 @@
                                             <tr class="fw-bold text-gray-700 fs-5">
                                                 <td class="d-flex align-items-center text-left pt-6">
                                                     <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                    {{ $quote->eventType ? $quote->eventType->name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
+                                                    {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
                                                 </td>
 
                                                 <!--<td class="pt-6 text-end">N/A</td>-->

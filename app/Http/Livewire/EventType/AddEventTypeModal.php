@@ -12,6 +12,8 @@ use Illuminate\Validation\Rule;
 class AddEventTypeModal extends Component
 {
     public $name;
+    public $event_name;
+    public $selectedEventNames = [];
     public $typical_seating;
     public $duration_type;
     public $duration;
@@ -22,6 +24,7 @@ class AddEventTypeModal extends Component
     public $availability;
 
     public $edit_mode = false;
+    public $eventTypeId;
 
     protected $listeners = [
         'delete_event_type' => 'deleteEventType',
@@ -32,7 +35,9 @@ class AddEventTypeModal extends Component
     {
         // Validate the data
         $this->validate([
-            'name' => 'required|string|max:255',
+            'event_name' => 'required|string|max:255',
+            'selectedEventNames' => 'required|array', // Change to selectedEventNames
+            'selectedEventNames.*' => 'required|string|max:255', // Validate each item in the array
             'typical_seating' => 'required',
             'duration_type' => 'required|in:days,hours,minutes',
             'duration' => 'required|integer',
@@ -43,24 +48,49 @@ class AddEventTypeModal extends Component
             'availability' => 'required|string|max:255',
         ]);
 
-        // Save the new event type to the database
-        EventType::create([
-            'name' => $this->name,
-            'typical_seating' => $this->typical_seating,
-            'duration_type' => $this->duration_type,
-            'duration' => $this->duration,
-            'min_duration' => $this->min_duration,
-            'time_setup' => $this->time_setup,
-            'time_cleaningup' => $this->time_cleaningup,
-            'season_id' => $this->season_id,
-            'availability' => $this->availability,
-        ]);
+        $eventNames = implode(', ', $this->selectedEventNames);
 
-        // Emit an event to notify that the event type was created successfully
-        $this->emit('success', 'Event Type successfully added');
+        if ($this->edit_mode) {
+            // If in edit mode, update the existing event type record
+            $eventType = EventType::find($this->eventTypeId);
+            $eventType->update([
+                'name' => $eventNames,
+                'event_name' => $this->event_name,
+                'typical_seating' => $this->typical_seating,
+                'duration_type' => $this->duration_type,
+                'duration' => $this->duration,
+                'min_duration' => $this->min_duration,
+                'time_setup' => $this->time_setup,
+                'time_cleaningup' => $this->time_cleaningup,
+                'season_id' => $this->season_id,
+                'availability' => $this->availability,
+            ]);
 
-        // Reset the form fields
-        $this->reset(['name', 'typical_seating', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability']);
+            // Emit an event to notify that the event type was updated successfully
+            $this->emit('success', 'Event Type successfully updated');
+
+        } else {
+            // Save the new event type to the database
+            EventType::create([
+                'name' => $eventNames,
+                'event_name' => $this->event_name,
+                'typical_seating' => $this->typical_seating,
+                'duration_type' => $this->duration_type,
+                'duration' => $this->duration,
+                'min_duration' => $this->min_duration,
+                'time_setup' => $this->time_setup,
+                'time_cleaningup' => $this->time_cleaningup,
+                'season_id' => $this->season_id,
+                'availability' => $this->availability,
+            ]);
+
+            // Emit an event to notify that the event type was created successfully
+            $this->emit('success', 'Event Type successfully added');
+
+
+            // Reset the form fields
+            $this->reset(['name', 'typical_seating', 'event_name', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability']);
+            }
     }
 
     public function render()
@@ -73,8 +103,11 @@ class AddEventTypeModal extends Component
 
     public function deleteEventType($id)
     {
-        // Delete the event type record with the specified ID
-        EventType::destroy($id);
+        // Find the event type by ID
+        $eventType = EventType::find($id);
+
+        // Delete the event type
+        $eventType->delete();
 
         // Emit a success event with a message
         $this->emit('success', 'Event Type successfully deleted');
@@ -83,37 +116,20 @@ class AddEventTypeModal extends Component
     public function updateEventType($id)
     {
         $this->edit_mode = true;
-        $event_type = EventType::find($id);
+        $eventType = EventType::find($id);
+
+        $this->event_name = $eventType->event_name;
+        $this->typical_seating = $eventType->typical_seating;
+        $this->selectedEventNames = explode(', ', $eventType->name); // Initialize selected values
+        $this->duration_type = $eventType->duration_type;
+        $this->duration = $eventType->duration;
+        $this->min_duration = $eventType->min_duration;
+        $this->time_setup = $eventType->time_setup;
+        $this->time_cleaningup = $eventType->time_cleaningup;
+        $this->season_id = $eventType->season_id;
+        $this->availability = $eventType->availability;
+        $this->eventTypeId = $eventType->id;
     }
 
-    private function resetFields()
-    {
-        $this->reset([
-            'name',
-            'typical_seating',
-            'duration_type',
-            'duration',
-            'min_duration',
-            'time_setup',
-            'time_cleaningup',
-            'season_id',
-            'availability',
-            'edit_mode',
-        ]);
-    }
 
-    private function getAttributes()
-    {
-        return [
-            'name' => $this->name,
-            'typical_seating' => $this->typical_seating,
-            'duration_type' => $this->duration_type,
-            'duration' => $this->duration,
-            'min_duration' => $this->min_duration,
-            'time_setup' => $this->time_setup,
-            'time_cleaningup' => $this->time_cleaningup,
-            'season_id' => $this->season_id,
-            'availability' => $this->availability,
-        ];
-    }
 }

@@ -30,6 +30,9 @@ class EventTypesDataTable extends DataTable
                 ];
                 return $labels[$event_type->name] ?? $event_type->name;
             })
+            ->editColumn('event_name', function ($event_type) {
+                return $event_type->event_name;
+            })
             ->editColumn('typical_seating', function ($event_type) {
                 $seatingLabels = [
                     'noseating' => 'No Seating',
@@ -76,7 +79,7 @@ class EventTypesDataTable extends DataTable
         // Query the VenueArea records, filter by tenant_id, and select specific columns
         return $model->newQuery()
             ->where('tenant_id', $currentTenantId)
-            ->select(['id', 'name', 'typical_seating', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability', 'created_at', 'updated_at']);    
+            ->select(['id', 'name', 'event_name', 'typical_seating', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability', 'created_at', 'updated_at']);    
     }
 
     public function html(): HtmlBuilder
@@ -95,7 +98,8 @@ class EventTypesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('name')->title('Name')->addClass('text-nowrap'),
+            Column::make('event_name')->title('Name')->addClass('text-nowrap'),
+            Column::make('name')->title('Type')->addClass('text-nowrap'),
             Column::make('typical_seating')->title('Typical Seating')->addClass('text-nowrap'),
             Column::make('duration')->title('Duration')->addClass('text-nowrap'),
             Column::make('time_setup')->title('Setup')->addClass('text-nowrap'),

@@ -13,6 +13,7 @@ class EventType extends Model
     protected $fillable = [
         'name',
         'typical_seating',
+        'event_name',
         'duration_type',
         'duration',
         'min_duration',

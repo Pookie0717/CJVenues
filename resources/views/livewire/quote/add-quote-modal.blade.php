@@ -32,10 +32,24 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="eventSelect" class="form-label">Select Event:</label>
+                                    <select class="form-select" id="eventNameSelect" wire:model="eventName" wire:change="loadEventTypes">
+                                        <option value="">Select an event</option>
+                                        <option value="wedding">Wedding</option>
+                                <option value="birthday">Birthday Party</option>
+                                <option value="summer">Summer Party</option>
+                                <option value="corporate">Corporate Event</option>
+                                <!-- Add more options as needed -->
+                                    </select>
+                </div>
+                <!--end::Input group-->
+
+                <!--begin::Input group-->
+                <div class="fv-row mb-10">
+                    <label for="eventSelect" class="form-label">Select Event Type:</label>
                                     <select class="form-select" id="eventSelect" wire:model="event_type">
                                         <option value="">Select an event</option>
                                         @foreach ($eventTypes as $event)
-                                            <option value="{{ $event->id }}">{{ $event->name }}</option>
+                                            <option value="{{ $event->id }}">{{ $event->event_name }}</option>
                                         @endforeach
                                     </select>
                 </div>

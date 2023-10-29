@@ -11,16 +11,25 @@
                 <form id="kt_modal_add_event_type_form" class="form" wire:submit.prevent="submit">
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_event_type_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_event_type_header" data-kt-scroll-wrappers="#kt_modal_add_event_type_scroll" data-kt-scroll-offset="300px">
                         
+                        
+
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Name (Event Type)</label>
-                            <select wire:model.defer="name" name="name" class="form-select form-select-solid">
-                                    <option value="">Select</option>
-                                    <option value="wedding">Wedding</option>
-                                    <option value="birthday">Birthday Party</option>
-                                    <option value="summer">Summer Party</option>
-                                    <option value="corporate">Corporate Event</option>
-                                    <!-- Add more options as needed -->
-                                </select>
+                            <label class="required fw-semibold fs-6 mb-2">Name</label>
+                            <input type="text" wire:model="event_name" name="event_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Name"/>
+                                @error('event_name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                        </div>
+
+                        <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Event Type</label>
+                            <select wire:model="selectedEventNames" name="name[]" class="form-select form-select-solid" multiple>
+                                <option value="wedding">Wedding</option>
+                                <option value="birthday">Birthday Party</option>
+                                <option value="summer">Summer Party</option>
+                                <option value="corporate">Corporate Event</option>
+                                <!-- Add more options as needed -->
+                            </select>
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror

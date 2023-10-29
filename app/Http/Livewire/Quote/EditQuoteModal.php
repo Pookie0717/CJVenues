@@ -27,6 +27,7 @@ class EditQuoteModal extends Component
     public $time_to;
     public $area_id;
     public $event_type;
+    public $event_name;
     public $quoteId;
     public $quote_number;
     public $selectedOptions = [];
@@ -40,6 +41,8 @@ class EditQuoteModal extends Component
     public $price_options;
     public $selectedVenue;
     public $people;
+    public $eventName = '';
+    public $eventTypes = [];
 
     public $edit_mode = true;
 
@@ -315,6 +318,9 @@ class EditQuoteModal extends Component
             $quote = Quote::find($this->quoteId);
             $newVersion = $quote->version + 1;
 
+                        $this->eventTypes = [];
+
+
             $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);;
             // Convert selected options to a comma-separated string format
             $optionIds = implode('|', array_keys($this->selectedOptions));
@@ -344,6 +350,7 @@ class EditQuoteModal extends Component
                 'time_to' => $quote->time_to,
                 'area_id' => $quote->area_id,
                 'event_type' => $quote->event_type,
+                'event_name' => $quote->eventName,
                 'people' => $quote->people,
                 'quote_number' => $quote->quote_number,
                 'calculated_price' =>  $quote->calculated_price,
@@ -366,6 +373,7 @@ class EditQuoteModal extends Component
                 'time_to' => $this->time_to,
                 'area_id' => $this->area_id,
                 'event_type' => $this->event_type,
+                'event_name' => $this->eventName,
                 'people' => $this->people,
                 'calculated_price' => $calculatedPrice,
                 'discount_type' => $this->discount_type,
@@ -383,7 +391,7 @@ class EditQuoteModal extends Component
         }
 
         // Reset the form fields
-        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type', 'edit_mode', 'quoteId', 'calculated_price', 'discount_type', 'people', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
+        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'discount_type', 'people', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
     }
 
     public function updateQuote($id)
@@ -399,8 +407,8 @@ class EditQuoteModal extends Component
         $this->time_from = $quote->time_from;
         $this->time_to = $quote->time_to;
         $this->area_id = $quote->area_id;
-        $this->area_id = $quote->area_id;
         $this->event_type = $quote->event_type;
+        $this->event_name = $quote->eventName;
         $this->people = $quote->people;
         $this->quoteId = $quote->id;
         $this->calculated_price = $quote->calculated_price;
@@ -437,6 +445,11 @@ class EditQuoteModal extends Component
     public function updatedSeasonId()
     {
         $this->loadOptions();
+    }
+
+    public function loadEventTypes()
+    {
+        $this->eventTypes = EventType::where('event_name', 'like', '%' . $this->eventName . '%')->get();
     }
 
     private function loadOptions()

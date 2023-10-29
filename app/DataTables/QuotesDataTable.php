@@ -26,7 +26,7 @@ class QuotesDataTable extends DataTable
         })
          ->addColumn('event_type', function ( $quote) {
             $eventType = $quote->eventType;
-            return $eventType ? $eventType->name : 'N/A';
+            return $eventType ? $eventType->event_name : 'N/A';
         })
         ->addColumn('contact_id', function ($quote) {
             $eventContact = $quote->eventContact;

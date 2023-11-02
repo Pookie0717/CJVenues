@@ -47,6 +47,73 @@
                             @enderror
                         </div>
                         </div>
+
+                        <label class="mb-2 required fw-semibold fs-6 mb-2">Days of the week</label>
+                        <div class="row mb-7">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Mon" id="flexCheckMon"  wire:model="selectedWeekdays"/>
+                                    <label class="form-check-label" for="flexCheckMon">
+                                        Mon
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Tue" id="flexCheckTue"  wire:model="selectedWeekdays"/>
+                                    <label class="form-check-label" for="flexCheckTue">
+                                        Tue
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Wed" id="flexCheckWed"  wire:model="selectedWeekdays"/>
+                                    <label class="form-check-label" for="flexCheckWed">
+                                        Wed
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Thu" id="flexCheckThu"  wire:model="selectedWeekdays"/>
+                                    <label class="form-check-label" for="flexCheckThu">
+                                        Thu
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Fri" id="flexCheckFri"  wire:model="selectedWeekdays"/>
+                                    <label class="form-check-label" for="flexCheckFri">
+                                        Fri
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Sat" id="flexCheckSat"  wire:model="selectedWeekdays"/>
+                                    <label class="form-check-label" for="flexCheckSat">
+                                        Sat
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Sun" id="flexCheckSun"  wire:model="selectedWeekdays"/>
+                                    <label class="form-check-label" for="flexCheckSun">
+                                        Sun
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         
                         <!-- Priority -->
                         <div class="fv-row mb-7">
@@ -57,18 +124,6 @@
                             @enderror
                         </div>
 
-                        <!-- Overwrite Weekday -->
-                        <div class="fv-row mb-7">
-                            <div class="form-check form-switch form-check-custom form-check-solid">
-                                <input class="form-check-input" type="checkbox" wire:model.defer="overwrite_weekday" id="overwrite_weekday_switch"/>
-                                <label class="form-check-label" for="overwrite_weekday_switch">
-                                    Overwrite Weekday
-                                </label>
-                            </div>
-                            @error('overwrite_weekday')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
 
                         
                     </div>

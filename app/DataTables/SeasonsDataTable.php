@@ -33,8 +33,8 @@ class SeasonsDataTable extends DataTable
             ->editColumn('date_to', function ($season) {
                 return $season->date_to;
             })
-            ->editColumn('overwrite_weekday', function ($season) {
-                return $season->overwrite_weekday ? 'Yes' : 'No';
+            ->editColumn('weekdays', function ($season) {
+                return $season->weekdays;
             })
             ->rawColumns(['action']);
     }
@@ -55,7 +55,7 @@ class SeasonsDataTable extends DataTable
         return $model->newQuery()
             ->where('tenant_id', $currentTenantId)
             ->select([
-                'id', 'name', 'priority', 'date_from', 'date_to', 'overwrite_weekday'
+                'id', 'name', 'priority', 'date_from', 'date_to', 'weekdays'
             ]);
     }
 
@@ -80,7 +80,7 @@ class SeasonsDataTable extends DataTable
             Column::make('date_from')->title('Date From'),
             Column::make('date_to')->title('Date To'),
             Column::make('priority')->title('Priority'),
-            Column::make('overwrite_weekday')->title('Overwrite Weekday'),
+            Column::make('weekdays')->title('Weekdays'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

@@ -14,6 +14,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Session;
 
 
 class AddQuoteModal extends Component
@@ -86,106 +87,143 @@ class AddQuoteModal extends Component
         $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
         $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
 
-        // Get all seasons from the database
-        $allSeasons = Season::orderBy('priority', 'desc')->get();
+        // Initialize the total price
+        $totalPrice = 0;
 
-        // Filter seasons based on the date range
-        $seasons = $allSeasons->filter(function ($season) use ($dateFrom, $dateTo) {
-            $seasonStartDate = Carbon::createFromFormat('d-m-Y', $season->date_from);
-            $seasonEndDate = Carbon::createFromFormat('d-m-Y', $season->date_to);
+        // Iterate through each day in the date range
+        $currentDate = $dateFrom->copy();
+        while ($currentDate->lte($dateTo)) {
+            // Get the day of the week for the current date (e.g., 'Mon')
+            $currentDayOfWeek = $currentDate->format('D');
 
-            // Check if the date range falls within this season
-            $isWithinSeason = $dateFrom->between($seasonStartDate, $seasonEndDate) ||
-                              $dateTo->between($seasonStartDate, $seasonEndDate) ||
-                              ($dateFrom <= $seasonStartDate && $dateTo >= $seasonEndDate);
+            // Get all seasons for the current date
+            $matchingSeasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek);
 
-            return $isWithinSeason;
-        });
+            // Iterate through the matching seasons for the current date
+            foreach ($matchingSeasons as $season) {
+                // Check if there is a price associated with the area for this season
+                $areaPrice = $area->prices()
+                    ->where('type', 'area')
+                    ->where('season_id', $season->id)
+                    ->first();
 
-        // Iterate through the seasons to find a matching price
-        foreach ($seasons as $season) {
-            // Check if there is a price associated with the area for this season
-            $areaPrice = $area->prices()
-                ->where('type', 'area')
-                ->where('season_id', $season->id)
-                ->first();
+                // Check if there is a price associated with the venue for this season
+                $venuePrice = $venue->prices()
+                    ->where('type', 'venue')
+                    ->where('season_id', $season->id)
+                    ->first();
 
-            // Check if there is a price associated with the venue for this season
-            $venuePrice = $venue->prices()
-                ->where('type', 'venue')
-                ->where('season_id', $season->id)
-                ->first();
+                // If no price is found for this season and area or venue, move to the next season
+                if (!$areaPrice && !$venuePrice) {
+                    continue;
+                }
 
-            // If no price is found for this season and area or venue, move to the next season
-            if (!$areaPrice && !$venuePrice) {
-                continue;
-            }
+                // Determine which price to use (area or venue) based on priority
+                $price = $areaPrice ?? $venuePrice;
 
-            // Determine which price to use (area or venue) based on priority
-            $price = $areaPrice ?? $venuePrice;
+                // Get the multiplier type (daily, hourly, per event) and value
+                $multiplierType = $price->multiplier;
+                $multiplierValue = (float)$price->price;
 
-            // Get the multiplier type (daily, hourly, per event) and value
-            $multiplierType = $price->multiplier;
-            $multiplierValue = (float)$price->price;
-
-            // Calculate the price based on the multiplier type
-            switch ($multiplierType) {
-                case 'daily':
-                    return $multiplierValue * $this->calculateNumberOfDays($dateFrom, $dateTo);
-                case 'hourly':
-                    return $multiplierValue * $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-                case 'event':
-                    return $multiplierValue;
-            }
-        }
-
-        // If no matching price is found for any of the seasons, return 0
-        return 0;
-    }
-
-   public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues, $people)
-    {
-        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
-        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
-        $allSeasons = Season::orderBy('priority', 'desc')->get();
-        $optionIdsArray = explode('|', $optionIds);
-        $optionValuesArray = explode('|', $optionValues);
-        $individualPrices = [];
-
-        foreach ($optionIdsArray as $index => $optionId) {
-            $optionTotalPrice = 0;
-
-            if (!isset($optionValuesArray[$index]) || $optionValuesArray[$index] == '') { 
-                $individualPrices[] = 0;
-                continue;
-            }
-
-            foreach ($allSeasons as $season) {
-                $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
-                $optionType = $this->getOptionType($optionId);
-
-                if ($optionPrice) {
-                    $multiplierValue = (float)$optionPrice->price;
-                    $optionTotalPrice += $this->calculateOptionPrice(
-                        $optionType,
-                        $optionValuesArray[$index],
-                        $optionPrice,
-                        $optionPrice->multiplier,
-                        $multiplierValue,
-                        $dateFrom,
-                        $dateTo,
-                        $timeFrom,
-                        $timeTo,
-                        $optionId,
-                        $people
-                    );
+                // Calculate the price based on the multiplier type for the current day
+                switch ($multiplierType) {
+                    case 'daily':
+                        $totalPrice += $multiplierValue;
+                        break;
+                    case 'hourly':
+                        $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
+                        $totalPrice += $multiplierValue * $hours;
+                        break;
+                    case 'event':
+                        $totalPrice += $multiplierValue;
+                        break;
                 }
             }
-            $individualPrices[] = $optionTotalPrice;
+
+            // Move to the next day
+            $currentDate->addDay();
         }
 
-        return implode('|', $individualPrices);
+        return $totalPrice;
     }
+
+    public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues, $people)
+    {
+        // Convert the date strings to Carbon instances
+        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
+        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
+
+        // Initialize the total price for options
+        $totalPrice = 0;
+
+        // Iterate through each day in the date range
+        $currentDate = $dateFrom->copy();
+        while ($currentDate->lte($dateTo)) {
+            // Get the day of the week for the current date (e.g., 'Mon')
+            $currentDayOfWeek = $currentDate->format('D');
+
+            // Get all seasons for the current date
+            $matchingSeasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek);
+
+            // Iterate through the matching seasons for the current date
+            foreach ($matchingSeasons as $season) {
+                foreach (explode('|', $optionIds) as $index => $optionId) {
+                    $optionValue = explode('|', $optionValues)[$index];
+
+                    if (!isset($optionValue) || $optionValue == '') {
+                        continue;
+                    }
+
+                    $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+                    $optionType = $this->getOptionType($optionId);
+
+                    if ($optionPrice) {
+                        $multiplierValue = (float)$optionPrice->price;
+                        $optionTotalPrice = $this->calculateOptionPrice(
+                            $optionType,
+                            $optionValue,
+                            $optionPrice,
+                            $optionPrice->multiplier,
+                            $multiplierValue,
+                            $currentDate,
+                            $currentDate, // Use the same date for both from and to when calculating for each day
+                            $timeFrom,
+                            $timeTo,
+                            $optionId,
+                            $people
+                        );
+                        $totalPrice += $optionTotalPrice;
+                    }
+                }
+            }
+
+            // Move to the next day
+            $currentDate->addDay();
+        }
+
+        return $totalPrice;
+    }
+
+   private function getSeasonsForDateAndWeekday($date, $weekday)
+    {
+        // Convert the date to a valid format for comparison
+        $formattedDate = $date->format('Y-m-d');
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Query for seasons that match the date, weekday, and tenant_id
+        return Season::where('tenant_id', $currentTenantId)
+            ->where(function ($query) use ($formattedDate, $weekday) {
+                $query->where('date_from', '<=', $formattedDate)
+                    ->where('date_to', '>=', $formattedDate)
+                    ->where(function ($query) use ($weekday) {
+                        $query->whereJsonContains('weekdays', [$weekday])
+                            ->orWhere('weekdays', null); // Include seasons with no specific weekdays
+                    });
+            })->orderBy('priority', 'desc')->get();
+    }
+
+
+
 
     private function calculateOptionPrice($optionType, $optionValue, $optionPrice, $multiplierType, $multiplierValue, $dateFrom, $dateTo, $timeFrom, $timeTo, $optionId, $people)
     {
@@ -420,10 +458,11 @@ class AddQuoteModal extends Component
 
     public function render()
     {
-        $contacts = Contact::all();
-        $venues = Venue::all();
-        $venueAreas = VenueArea::all();
-        $eventTypes = EventType::all();
+        $currentTenantId = Session::get('current_tenant_id');
+        $contacts = Contact::where('tenant_id', $currentTenantId)->get();
+        $venues = Venue::where('tenant_id', $currentTenantId)->get();
+        $venueAreas = VenueArea::where('tenant_id', $currentTenantId)->get();
+        $eventTypes = EventType::where('tenant_id', $currentTenantId)->get();
 
         // Filter areas based on the selected venue ID
         $filteredAreas = $venueAreas->where('venue_id', $this->selectedVenueId);
@@ -454,41 +493,46 @@ class AddQuoteModal extends Component
         $this->eventTypes = EventType::where('event_name', 'like', '%' . $this->eventName . '%')->get();
     }
 
-    private function loadOptions()
-    {
-        // Check if the required fields are set
-        if (!$this->date_from || !$this->area_id) {
-            $this->options = collect(); // No options to display if date and area are not set
-            return;
-        }
-
-        // Get the season for the selected date
-        $season = $this->getSeasonForDate($this->date_from);
-
-        // Find the associated venue ID for the selected area
-        $selectedArea = VenueArea::find($this->area_id);
-        $selectedVenueId = optional($selectedArea->venue)->id;
-
-        // Query the options based on selected venue, season, and position
-        $this->options = Option::orderBy('position')
-            ->when($selectedVenueId, function ($query) use ($selectedVenueId) {
-                return $query->where('venue_id', $selectedVenueId);
-            })
-            ->when($season, function ($query) use ($season) {
-                return $query->where('season_id', $season->id);
-            })
-            ->get();
+   private function loadOptions()
+{
+    // Check if the required fields are set
+    if (!$this->date_from || !$this->area_id) {
+        $this->options = collect(); // No options to display if date and area are not set
+        return;
     }
+    
+    // Convert the date strings to Carbon instances
+    $dateFrom = Carbon::createFromFormat('d-m-Y', $this->date_from);
+    $currentDate = $dateFrom;
+    $currentDayOfWeek = $currentDate->format('D');
 
+    // Get the seasons for the selected date and weekday
+    $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->first();
+    // Find the associated venue ID for the selected area
+    $selectedArea = VenueArea::find($this->area_id);
+    $selectedVenueId = optional($selectedArea->venue)->id;
 
+    // Query the options based on the selected venue and the season with the highest priority
+    $venueOptions = Option::orderBy('position')
+    ->when($selectedVenueId, function ($query) use ($selectedVenueId) {
+        return $query->where('venue_id', $selectedVenueId);
+    })
+    ->when($seasons, function ($query) use ($seasons) {
+        return $query->where('season_id', $seasons->id);
+    })
+    ->get();
 
-    private function getSeasonForDate($date)
-    {
-        $date = Carbon::createFromFormat('d-m-Y', $date);
+    // Get the "All" season
+    $allSeason = Season::getAllSeason();
 
-        return Season::where('date_from', '<=', $date)
-            ->orderBy('priority', 'desc')
-            ->first();
-    }
+    // Retrieve options associated with the "All" season
+    $allSeasonOptions = $allSeason
+        ? $allSeason->options()->orderBy('position')->get()
+        : collect();
+        
+    // Merge the two sets of options
+    $this->options = $venueOptions->concat($allSeasonOptions)->unique('id')->sortBy('position');
+}
+
 
 }

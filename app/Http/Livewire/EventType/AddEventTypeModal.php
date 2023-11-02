@@ -8,6 +8,7 @@ use App\Models\EventType;
 use App\Models\Season;
 
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Session;
 
 class AddEventTypeModal extends Component
 {
@@ -95,8 +96,8 @@ class AddEventTypeModal extends Component
 
     public function render()
     {
-        // Load seasons for selection
-        $seasons = Season::all();
+        $currentTenantId = Session::get('current_tenant_id');
+        $seasons = Season::where('tenant_id', $currentTenantId)->get();
         
         return view('livewire.event-type.add-event-type-modal', compact('seasons'));
     }

@@ -15,7 +15,7 @@ class Season extends Model
         'date_from',
         'date_to',
         'priority',
-        'overwrite_weekday',
+        'weekdays',
         'tenant_id',
     ];
     public function prices()
@@ -25,5 +25,10 @@ class Season extends Model
     public function options()
     {
         return $this->hasMany(Option::class, 'season_id');
+    }
+
+    public static function getAllSeason()
+    {
+        return static::where('name', 'All')->first();
     }
 }

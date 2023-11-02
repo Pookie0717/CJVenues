@@ -12,8 +12,9 @@ class AddSeasonModal extends Component
     public $date_from;
     public $date_to;
     public $priority;
-    public $overwrite_weekday;
+    public $weekdays;
     public $tenant_id;
+    public $selectedWeekdays = []; // Array to store selected weekdays
 
     public $edit_mode = false;
 
@@ -33,7 +34,11 @@ class AddSeasonModal extends Component
             'date_from' => 'required|date',
             'date_to' => 'required|date|after_or_equal:date_from',
             'priority' => 'required|max:255',
+            'selectedWeekdays' => 'required|array', // Make sure it's an array
         ]);
+
+        // Serialize the selected weekdays array into a string
+        $serializedWeekdays = json_encode($this->selectedWeekdays);
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing season record
@@ -43,7 +48,7 @@ class AddSeasonModal extends Component
                 'date_from' => $this->date_from,
                 'date_to' => $this->date_to,
                 'priority' => $this->priority,
-                'overwrite_weekday' => $this->overwrite_weekday,
+                'weekdays' => $serializedWeekdays, // Save the serialized string
                 'tenant_id' => $currentTenantId,
             ]);
 
@@ -56,7 +61,7 @@ class AddSeasonModal extends Component
                 'date_from' => $this->date_from,
                 'date_to' => $this->date_to,
                 'priority' => $this->priority,
-                'overwrite_weekday' => $this->overwrite_weekday,
+                'weekdays' => $serializedWeekdays, // Save the serialized string
                 'tenant_id' => $currentTenantId,
             ]);
 
@@ -65,7 +70,7 @@ class AddSeasonModal extends Component
         }
 
         // Reset the form fields and exit edit mode
-        $this->reset(['name', 'date_from', 'date_to', 'priority', 'overwrite_weekday', 'edit_mode']);
+        $this->reset(['name', 'date_from', 'date_to', 'priority', 'selectedWeekdays', 'edit_mode']);
     }
 
 
@@ -97,7 +102,7 @@ class AddSeasonModal extends Component
         $this->date_from = $season->date_from;
         $this->date_to = $season->date_to;
         $this->priority = $season->priority;
-        $this->overwrite_weekday = $season->overwrite_weekday;
+        $this->weekdays = $season->weekdays;
         $this->tenant_id = $season->tenant_id;
     }
 

@@ -14,6 +14,14 @@
 
     <!--begin::Menu item-->
     <div class="menu-item px-3">
+        <a href="#" class="menu-link px-3" data-kt-area-id="{{ $area->id }}" data-bs-toggle="modal" data-bs-target="#kt_modal_block_venue_area" data-kt-action="block_row">
+            Block
+        </a>
+    </div>
+    <!--end::Menu item-->
+
+    <!--begin::Menu item-->
+    <div class="menu-item px-3">
         <a href="#" class="menu-link px-3" data-kt-area-id="{{ $area->id }}" data-kt-action="delete_row">
             Delete
         </a>

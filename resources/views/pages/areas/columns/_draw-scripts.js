@@ -30,6 +30,13 @@ document.querySelectorAll('[data-kt-action="update_row"]').forEach(function (ele
     });
 });
 
+// Add click event listener to update buttons
+document.querySelectorAll('[data-kt-action="block_row"]').forEach(function (element) {
+    element.addEventListener('click', function () {
+        Livewire.emit('block_area', this.getAttribute('data-kt-area-id'));
+    });
+});
+
 // Listen for 'success' event emitted by Livewire
 Livewire.on('success', (message) => {
     // Reload the venues-table datatable

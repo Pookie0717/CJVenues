@@ -37,6 +37,7 @@
 
                 <!--begin::Modal-->
                 <livewire:venue-area.add-venue-area-modal></livewire:venue-area.add-venue-area-modal>
+                <livewire:venue-area.block-venue-area-modal></livewire:venue-block.add-venue-area-modal>
                 <!--end::Modal-->
             </div>
             <!--end::Card toolbar-->

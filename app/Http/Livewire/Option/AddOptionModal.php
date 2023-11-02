@@ -15,10 +15,30 @@ class AddOptionModal extends Component
     public $type;
     public $values;
     public $venue_id;
-    public $season_id;
+    public $season_ids = [];
+    public $venue_ids = [];
+    public $description;
+    public $default_value;
+    public $vat;
+    public $always_included = false;
+    public $conditions = [];
 
     public $edit_mode = false;
     public $optionId;
+
+    protected $rules = [
+        'name' => 'required|string|max:255',
+        'position' => 'required|integer',
+        'type' => 'required|in:yes_no,check,radio,number,dropdown,logic',
+        'values' => 'nullable|string',
+        'season_ids' => 'nullable|array',
+        'season_ids.*' => 'exists:seasons,id',
+        'venue_ids' => 'nullable|array',
+        'venue_ids.*' => 'exists:venues,id',
+        'description' => 'nullable|string|max:255',
+        'default_value' => 'nullable|string|max:255',
+        'vat' => 'nullable|numeric',
+    ];
 
     protected $listeners = [
         'delete_option' => 'deleteOption',
@@ -26,72 +46,140 @@ class AddOptionModal extends Component
     ];
 
     public function submit()
-    {
-        // Validate the data
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'position' => 'required|integer',
-            'type' => 'required|in:yes_no,check,radio,number,dropdown',
-            'values' => 'nullable|string', // You may need to adjust this validation based on the format of the values
-        ]);
+{
+    try {
+        $this->validate();
+
+        // Convert venue_ids to an array if it's not already
+        if (!is_array($this->venue_ids)) {
+            $this->venue_ids = [];
+        }
+
+        // Convert season_ids to an array if it's not already
+        if (!is_array($this->season_ids)) {
+            $this->season_ids = [];
+        }
 
         if ($this->edit_mode) {
-            // If in edit mode, update the existing option record
             $option = Option::find($this->optionId);
-            $option->update([
-                'name' => $this->name,
-                'position' => $this->position,
-                'type' => $this->type,
-                'values' => $this->values,
-                'venue_id' => $this->venue_id,
-                'season_id' => $this->season_id,
-            ]);
 
-            // Emit an event to notify that the option was updated successfully
+            if (!$option) {
+                throw new \Exception('Option not found with ID: ' . $this->optionId);
+            }
+
+            $option->update($this->getUpdatedData());
             $this->emit('success', 'Option successfully updated');
         } else {
-            // Save the new option to the database
-            Option::create([
-                'name' => $this->name,
-                'position' => $this->position,
-                'type' => $this->type,
-                'values' => $this->values,
-                'venue_id' => $this->venue_id,
-                'season_id' => $this->season_id,
-            ]);
-
-            // Emit an event to notify that the option was created successfully
+            Option::create($this->getUpdatedData());
             $this->emit('success', 'Option successfully added');
         }
 
-        // Reset the form fields
-        $this->reset(['name', 'position', 'type', 'values', 'edit_mode', 'optionId', 'season_id', 'venue_id']);
+        $this->resetFields();
+
+        // Dispatch a browser event for success
+        $this->dispatchBrowserEvent('optionSaved', ['message' => 'Option saved successfully']);
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        \Log::error($e->getMessage());
+
+        // Dispatch a browser event for error
+        $this->dispatchBrowserEvent('optionError', ['message' => 'An error occurred']);
     }
+}
+
 
     public function deleteOption($id)
     {
-        // Find the option by ID
         $option = Option::find($id);
-
-        // Delete the option
         $option->delete();
-
-        // Emit a success event with a message
         $this->emit('success', 'Option successfully deleted');
     }
 
-    public function updateOption($id)
-    {
-        $this->edit_mode = true;
-        $option = Option::find($id);
+public function updateOption($id)
+{
+    $this->edit_mode = true;
+    $option = Option::find($id);
+    $this->fill($option->toArray());
 
-        $this->name = $option->name;
-        $this->position = $option->position;
-        $this->type = $option->type;
-        $this->values = $option->values;
-        $this->optionId = $option->id;
-        $this->venue_id = $option->venue_id;
-        $this->season_id = $option->season_id;
+    // Convert the comma-separated string back to an array
+    $this->season_ids = explode(',', $option->season_ids);
+    $this->venue_ids = explode(',', $option->venue_ids);
+    $this->optionId = $id;
+}
+
+
+
+    public function addCondition()
+    {
+        $this->conditions[] = [
+            'logical_operator' => 'AND', // Default logical operator
+            'field' => null,
+            'operator' => null,
+            'value' => null,
+        ];
+    }
+
+    public function removeCondition($index)
+    {
+        unset($this->conditions[$index]);
+        $this->conditions = array_values($this->conditions);
+    }
+
+    protected function resetFields()
+    {
+        $this->reset([
+            'name',
+            'position',
+            'type',
+            'values',
+            'edit_mode',
+            'optionId',
+            'season_ids',
+            'venue_ids',
+            'description',
+            'default_value',
+            'vat',
+            'always_included',
+            'conditions',
+        ]);
+    }
+
+protected function getUpdatedData()
+{
+    // Convert arrays to comma-separated strings
+    $seasonIds = implode(',', $this->season_ids);
+    $venueIds = implode(',', $this->venue_ids);
+
+    return [
+        'name' => $this->name,
+        'position' => $this->position,
+        'type' => $this->type,
+        'values' => $this->values,
+        'description' => $this->description,
+        'default_value' => $this->default_value,
+        'vat' => $this->vat,
+        'always_included' => $this->always_included,
+        'logic' => $this->generateLogicString(),
+        'season_ids' => $seasonIds, // Updated to comma-separated string
+        'venue_ids' => $venueIds,   // Updated to comma-separated string
+    ];
+}
+
+
+
+    protected function generateLogicString()
+    {
+        $logicString = '';
+
+        foreach ($this->conditions as $index => $condition) {
+            if ($index > 0) {
+                $logicString .= ' ' . strtoupper($condition['logical_operator']) . ' ';
+            }
+
+            $logicString .= $condition['field'] . ' ' . $condition['operator'] . ' "' . $condition['value'] . '"';
+        }
+
+        return $logicString;
     }
 
     public function render()
@@ -102,4 +190,3 @@ class AddOptionModal extends Component
         return view('livewire.option.add-option-modal', compact('seasons', 'venues'));
     }
 }
-

@@ -11,26 +11,34 @@
                 <form id="kt_modal_add_event_type_form" class="form" wire:submit.prevent="submit">
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_event_type_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_event_type_header" data-kt-scroll-wrappers="#kt_modal_add_event_type_scroll" data-kt-scroll-offset="300px">
                         
-                        
-
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Name</label>
-                            <input type="text" wire:model="event_name" name="event_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Name"/>
-                                @error('event_name')
+                            <label class="required fw-semibold fs-6 mb-2">Event Name</label>
+                            <input type="text" wire:model.defer="event_name" name="event_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Event Name"/>
+                            @error('event_name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="row mb-7">
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">Description</label>
+                                <input type="text" wire:model.defer="description" name="description" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Event Description"/>
+                                @error('description')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
+                            </div>
                         </div>
 
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Event Type</label>
-                            <select wire:model="selectedEventNames" name="name[]" class="form-select form-select-solid" multiple>
+                            <select wire:model.defer="selectedEventNames" name="name[]" class="form-select form-select-solid" multiple>
                                 <option value="wedding">Wedding</option>
                                 <option value="birthday">Birthday Party</option>
                                 <option value="summer">Summer Party</option>
                                 <option value="corporate">Corporate Event</option>
                                 <!-- Add more options as needed -->
                             </select>
-                            @error('name')
+                            @error('selectedEventNames')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -38,7 +46,6 @@
                         <div class="row mb-7">
                             <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">Typical Seating</label>
-                                <!-- Add a select field for seating (you can use Livewire select2 component or native select) -->
                                 <select wire:model.defer="typical_seating" name="typical_seating" class="form-select form-select-solid">
                                     <option value="">Select</option>
                                     <option value="noseating">No Seating</option>
@@ -52,12 +59,10 @@
                             </div>
                             <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">Duration Type</label>
-                                <!-- Add a select field for duration type (you can use Livewire select2 component or native select) -->
                                 <select wire:model.defer="duration_type" name="duration_type" class="form-select form-select-solid">
                                     <option value="">Select</option>
                                     <option value="days">Days</option>
                                     <option value="hours">Hours</option>
-                                    <option value="minutes">Minutes</option>
                                     <!-- Add more options as needed -->
                                 </select>
                                 @error('duration_type')
@@ -68,16 +73,33 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Duration</label>
-                                <input type="number" wire:model.defer="duration" name="duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Duration"/>
-                                @error('duration')
+                                <label class="required fw-semibold fs-6 mb-2">Min Duration</label>
+                                <input type="number" wire:model.defer="min_duration" name="min_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Min Duration"/>
+                                @error('min_duration')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Min Duration</label>
-                                <input type="number" wire:model.defer="min_duration" name="min_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Min Duration"/>
-                                @error('min_duration')
+                                <label class="required fw-semibold fs-6 mb-2">Max Duration</label>
+                                <input type="number" wire:model.defer="max_duration" name="max_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Max Duration"/>
+                                @error('max_duration')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-7">
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">Min People</label>
+                                <input type="number" wire:model.defer="min_people" name="min_people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Min People"/>
+                                @error('min_people')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">Max People</label>
+                                <input type="number" wire:model.defer="max_people" name="max_people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Max People"/>
+                                @error('max_people')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -99,35 +121,48 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <div class="row">
+                                    <div class="col">
+                                        <label class="required fw-semibold fs-6 mb-2">Opening Time</label>
+                                        <div class="input-group" id="opening_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                            <input id="opening_time_picker_input" type="text"  wire:model.defer="opening_time" class="form-control" data-td-target="#opening_time_picker"/>
+                                            <span class="input-group-text" data-td-target="#opening_time_picker" data-td-toggle="datetimepicker">
+                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                            </span>
+                                        </div>
+                                        @error('opening_time')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col">
+                                        <label class="required fw-semibold fs-6 mb-2">Closing Time</label>
+                                        <div class="input-group" id="closing_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                            <input id="closing_time_picker_input" type="text"  wire:model.defer="closing_time" class="form-control" data-td-target="#closing_time_picker"/>
+                                            <span class="input-group-text" data-td-target="#closing_time_picker" data-td-toggle="datetimepicker">
+                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                            </span>
+                                        </div>
+                                        @error('closing_time')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    </div>
+                    </div>
+                    <!--end::Input group-->
+
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Availability Season</label>
-                                <!-- Add a select field for the season (you can use Livewire select2 component or native select) -->
-                                <select wire:model.defer="season_id" name="season_id" class="form-select form-select-solid">
-                                    <option value="">Select</option>
-                                    @foreach($seasons as $season)
+                                <label class="required fw-semibold fs-6 mb-2">Season</label>
+                                <select wire:model="selectedSeasons" name="seasons[]" class="form-select form-select-solid" multiple>
+                                    @foreach($seasonsList as $season)
                                         <option value="{{ $season->id }}">{{ $season->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('season_id')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Availability Days</label>
-                                <!-- Add a select field for the season (you can use Livewire select2 component or native select) -->
-                                <select wire:model.defer="availability" name="availability" class="form-select form-select-solid">
-                                    <option value="">Select</option>
-                                    <option value="0">All</option>
-                                        <option value="Monday">Monday</option>
-                                        <option value="Tuesday">Tuesday</option>
-                                        <option value="Wednesday">Wednesday</option>
-                                        <option value="Thursday">Thursday</option>
-                                        <option value="Friday">Friday</option>
-                                        <option value="Saturday">Saturday</option>
-                                        <option value="Sunday">Sunday</option>
-                                </select>
-                                @error('availability')
+                                @error('selectedSeasons')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -149,3 +184,17 @@
         </div>
     </div>
 </div>
+
+    @push('scripts')
+<script>   
+
+document.getElementById('opening_time_picker_input').addEventListener('change', function () {
+    @this.set('opening_time', this.value);
+});
+
+document.getElementById('closing_time_picker_input').addEventListener('change', function () {
+    @this.set('closing_time', this.value);
+});
+
+</script>
+    @endpush

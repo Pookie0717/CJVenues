@@ -2,27 +2,28 @@
 
 namespace App\Http\Livewire\EventType;
 
-
 use Livewire\Component;
 use App\Models\EventType;
 use App\Models\Season;
-
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Session;
 
 class AddEventTypeModal extends Component
 {
-    public $name;
     public $event_name;
     public $selectedEventNames = [];
     public $typical_seating;
     public $duration_type;
-    public $duration;
+    public $description;
     public $min_duration;
+    public $max_duration;
     public $time_setup;
     public $time_cleaningup;
-    public $season_id;
-    public $availability;
+    public $seasons;
+    public $selectedSeasons = [];
+    public $min_people;
+    public $max_people;
+    public $opening_time;
+    public $closing_time;
 
     public $edit_mode = false;
     public $eventTypeId;
@@ -37,19 +38,25 @@ class AddEventTypeModal extends Component
         // Validate the data
         $this->validate([
             'event_name' => 'required|string|max:255',
-            'selectedEventNames' => 'required|array', // Change to selectedEventNames
-            'selectedEventNames.*' => 'required|string|max:255', // Validate each item in the array
-            'typical_seating' => 'required',
-            'duration_type' => 'required|in:days,hours,minutes',
-            'duration' => 'required|integer',
+            'selectedEventNames' => 'required|array',
+            'selectedEventNames.*' => 'required|string|max:255',
+            'typical_seating' => 'required|string',
+            'duration_type' => 'required|in:days,hours',
+            'description' => 'required|string|max:255',
             'min_duration' => 'required|integer',
+            'max_duration' => 'required|integer',
             'time_setup' => 'required|integer',
             'time_cleaningup' => 'required|integer',
-            'season_id' => 'required',
-            'availability' => 'required|string|max:255',
+            'selectedSeasons' => 'required|array',
+            'selectedSeasons.*' => 'integer',
+            'min_people' => 'required|integer',
+            'max_people' => 'required|integer',
+            'opening_time' => 'required|string|max:255',
+            'closing_time' => 'required|string|max:255',
         ]);
 
         $eventNames = implode(', ', $this->selectedEventNames);
+        $seasons = implode(', ', $this->selectedSeasons);
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing event type record
@@ -59,47 +66,67 @@ class AddEventTypeModal extends Component
                 'event_name' => $this->event_name,
                 'typical_seating' => $this->typical_seating,
                 'duration_type' => $this->duration_type,
-                'duration' => $this->duration,
+                'description' => $this->description,
                 'min_duration' => $this->min_duration,
+                'max_duration' => $this->max_duration,
                 'time_setup' => $this->time_setup,
                 'time_cleaningup' => $this->time_cleaningup,
-                'season_id' => $this->season_id,
-                'availability' => $this->availability,
+                'seasons' => $seasons,
+                'min_people' => $this->min_people,
+                'max_people' => $this->max_people,
+                'opening_time' => $this->opening_time,
+                'closing_time' => $this->closing_time,
             ]);
 
             // Emit an event to notify that the event type was updated successfully
             $this->emit('success', 'Event Type successfully updated');
-
         } else {
             // Save the new event type to the database
             EventType::create([
-                'name' => $eventNames,
+                'name' => $seasons,
                 'event_name' => $this->event_name,
                 'typical_seating' => $this->typical_seating,
                 'duration_type' => $this->duration_type,
-                'duration' => $this->duration,
+                'description' => $this->description,
                 'min_duration' => $this->min_duration,
+                'max_duration' => $this->max_duration,
                 'time_setup' => $this->time_setup,
                 'time_cleaningup' => $this->time_cleaningup,
-                'season_id' => $this->season_id,
-                'availability' => $this->availability,
+                'seasons' => implode(', ', $this->selectedSeasons), // Store the selected seasons as a comma-separated string
+                'min_people' => $this->min_people,
+                'max_people' => $this->max_people,
+                'opening_time' => $this->opening_time,
+                'closing_time' => $this->closing_time,
             ]);
 
             // Emit an event to notify that the event type was created successfully
             $this->emit('success', 'Event Type successfully added');
 
-
             // Reset the form fields
-            $this->reset(['name', 'typical_seating', 'event_name', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability']);
-            }
+            $this->reset([
+                'event_name',
+                'typical_seating',
+                'selectedEventNames',
+                'duration_type',
+                'description',
+                'min_duration',
+                'max_duration',
+                'time_setup',
+                'time_cleaningup',
+                'selectedSeasons',
+                'min_people',
+                'opening_time',
+                'closing_time',
+            ]);
+        }
     }
 
     public function render()
     {
         $currentTenantId = Session::get('current_tenant_id');
-        $seasons = Season::where('tenant_id', $currentTenantId)->get();
-        
-        return view('livewire.event-type.add-event-type-modal', compact('seasons'));
+        $seasonsList = Season::where('tenant_id', $currentTenantId)->get();
+
+        return view('livewire.event-type.add-event-type-modal', compact('seasonsList'));
     }
 
     public function deleteEventType($id)
@@ -120,17 +147,20 @@ class AddEventTypeModal extends Component
         $eventType = EventType::find($id);
 
         $this->event_name = $eventType->event_name;
+        $this->selectedEventNames = explode(', ', $eventType->name);
         $this->typical_seating = $eventType->typical_seating;
-        $this->selectedEventNames = explode(', ', $eventType->name); // Initialize selected values
         $this->duration_type = $eventType->duration_type;
-        $this->duration = $eventType->duration;
+        $this->description = $eventType->description;
         $this->min_duration = $eventType->min_duration;
+        $this->max_duration = $eventType->max_duration;
         $this->time_setup = $eventType->time_setup;
         $this->time_cleaningup = $eventType->time_cleaningup;
-        $this->season_id = $eventType->season_id;
-        $this->availability = $eventType->availability;
+        $this->selectedSeasons = explode(', ', $eventType->seasons);
+        $this->min_people = $eventType->min_people;
+        $this->max_people = $eventType->max_people;
+        $this->opening_time = $eventType->opening_time;
+        $this->closing_time = $eventType->closing_time;
         $this->eventTypeId = $eventType->id;
     }
-
 
 }

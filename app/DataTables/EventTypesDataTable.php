@@ -33,6 +33,9 @@ class EventTypesDataTable extends DataTable
             ->editColumn('event_name', function ($event_type) {
                 return $event_type->event_name;
             })
+            ->editColumn('description', function ($event_type) {
+                return $event_type->description;
+            })
             ->editColumn('typical_seating', function ($event_type) {
                 $seatingLabels = [
                     'noseating' => 'No Seating',
@@ -40,33 +43,6 @@ class EventTypesDataTable extends DataTable
                     'seatingtables' => 'Tables',
                 ];
                 return $seatingLabels[$event_type->typical_seating] ?? $event_type->typical_seating;
-            })
-            ->editColumn('duration', function ($event_type) {
-                $duration = $event_type->duration;
-                $duration_type = $event_type->duration_type;
-                return "$duration ($duration_type)";
-            })
-            ->editColumn('time_setup', function ($event_type) {
-                $time_setup = $event_type->time_setup;
-                $duration_type = $event_type->duration_type;
-                return "$time_setup ($duration_type)";
-            })
-            ->editColumn('time_cleaningup', function ($event_type) {
-                $time_cleaningup = $event_type->time_cleaningup;
-                $duration_type = $event_type->duration_type;
-                return "$time_cleaningup ($duration_type)";
-            })
-            ->editColumn('season_id', function ($event_type) {
-                    $season = Season::find($event_type->season_id);
-                    return $season ? $season->name : '';
-            })
-            ->editColumn('availability', function ($event_type) {
-                $availability = $event_type->availability;
-                if ($availability === '0') {
-                    return 'All';
-                } else {
-                    return $availability;
-                }
             })
             ->rawColumns(['action']);
     }
@@ -79,7 +55,7 @@ class EventTypesDataTable extends DataTable
         // Query the VenueArea records, filter by tenant_id, and select specific columns
         return $model->newQuery()
             ->where('tenant_id', $currentTenantId)
-            ->select(['id', 'name', 'event_name', 'typical_seating', 'duration_type', 'duration', 'min_duration', 'time_setup', 'time_cleaningup', 'season_id', 'availability', 'created_at', 'updated_at']);    
+            ->select(['id', 'name', 'event_name', 'description', 'typical_seating', 'created_at', 'updated_at']);    
     }
 
     public function html(): HtmlBuilder
@@ -100,12 +76,8 @@ class EventTypesDataTable extends DataTable
         return [
             Column::make('event_name')->title('Name')->addClass('text-nowrap'),
             Column::make('name')->title('Type')->addClass('text-nowrap'),
+            Column::make('description')->title('Description')->addClass('text-nowrap'),
             Column::make('typical_seating')->title('Typical Seating')->addClass('text-nowrap'),
-            Column::make('duration')->title('Duration')->addClass('text-nowrap'),
-            Column::make('time_setup')->title('Setup')->addClass('text-nowrap'),
-            Column::make('time_cleaningup')->title('Cleaning')->addClass('text-nowrap'),
-            Column::make('season_id')->title('Season')->addClass('text-nowrap'),
-            Column::make('availability')->title('Availability')->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

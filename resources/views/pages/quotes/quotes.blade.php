@@ -83,7 +83,8 @@
                 localization: {
                     locale: "us",
                     format: "HH:ss"
-                }
+                },
+                stepping: 30, // Set the stepping to 30 minutes
             });
             new tempusDominus.TempusDominus(document.getElementById("time_from_picker_basic"), {
                 display: {
@@ -101,7 +102,8 @@
                 localization: {
                     locale: "us",
                     format: "HH:ss"
-                }
+                },
+                stepping: 30, // Set the stepping to 30 minutes
             });
             new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
                 display: {

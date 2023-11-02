@@ -33,6 +33,7 @@ class OptionsDataTable extends DataTable
                     'radio' => 'Radio',
                     'number' => 'Number',
                     'dropdown' => 'Dropdown',
+                    'logic' => 'Logic',
                 ];
 
                 return $typeLabels[$option->type] ?? $option->type;

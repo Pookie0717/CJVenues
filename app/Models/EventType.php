@@ -13,19 +13,27 @@ class EventType extends Model
     protected $fillable = [
         'name',
         'typical_seating',
-        'event_name',
         'duration_type',
-        'duration',
+        'max_duration',
         'min_duration',
         'time_setup',
         'time_cleaningup',
-        'season_id',
+        'event_name',
+        'min_people',
+        'max_people',
+        'description',
+        'tenant_id',
+        'seasons',
+        'opening_time',
+        'closing_time',
         'availability',
     ];
-    protected static function boot() {
+
+    protected static function boot()
+    {
         parent::boot();
 
-        self::creating(function($model) {
+        self::creating(function ($model) {
             $currentTenantId = Session::get('current_tenant_id');
             $model->tenant_id = $currentTenantId;
         });

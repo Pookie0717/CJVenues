@@ -15,27 +15,36 @@ class Option extends Model
         'position',
         'type',
         'values',
-        'season_id',
-        'venue_id',
+        'season_ids', // Updated column name
+        'venue_ids',  // Updated column name
+        'logic',       // Added column
+        'description', // Added column
+        'default_value', // Added column
+        'vat',         // Added column
+        'always_included', // Added column
     ];
 
     public function prices()
     {
         return $this->hasMany(Price::class, 'option_id');
     }
-    public function season()
+
+    // Define the relationship for seasons and venues using the accessor/mutator
+    public function seasons()
     {
-        return $this->belongsTo(Season::class, 'season_id');
+        return Season::whereIn('id', $this->season_ids);
     }
 
-    public function venue()
+    public function venues()
     {
-        return $this->belongsTo(Venue::class, 'venue_id');
+        return Venue::whereIn('id', $this->venue_ids);
     }
-    protected static function boot() {
+
+    protected static function boot()
+    {
         parent::boot();
 
-        self::creating(function($model) {
+        self::creating(function ($model) {
             $currentTenantId = Session::get('current_tenant_id');
             $model->tenant_id = $currentTenantId;
         });

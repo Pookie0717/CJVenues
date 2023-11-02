@@ -66,6 +66,44 @@
                     window.LaravelDataTables['event-types-table'].ajax.reload();  <!-- Update table name -->
                 });
             });
+            new tempusDominus.TempusDominus(document.getElementById("closing_time_picker_basic"), {
+                display: {
+                    viewMode: "clock",
+                    components: {
+                        decades: false,
+                        year: false,
+                        month: false,
+                        date: false,
+                        hours: true,
+                        minutes: true,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    format: "HH:ss"
+                },
+                stepping: 30, // Set the stepping to 30 minutes
+            });
+            new tempusDominus.TempusDominus(document.getElementById("opening_time_picker_basic"), {
+                display: {
+                    viewMode: "clock",
+                    components: {
+                        decades: false,
+                        year: false,
+                        month: false,
+                        date: false,
+                        hours: true,
+                        minutes: true,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    format: "HH:ss"
+                },
+                stepping: 30, // Set the stepping to 30 minutes
+            });
         </script>
     @endpush
 

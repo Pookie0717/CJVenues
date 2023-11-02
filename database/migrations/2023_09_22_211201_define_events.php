@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('typical_seating');
             $table->string('duration_type');
-            $table->string('duration');
+            $table->string('max_duration');
             $table->string('min_duration');
             $table->string('time_setup');
             $table->string('time_cleaningup');

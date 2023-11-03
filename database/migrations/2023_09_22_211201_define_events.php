@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('max_duration');
             $table->string('time_setup');
             $table->string('time_cleaningup');
-            $table->unsignedBigInteger('season_id');  // Foreign key to associate with a period
+            $table->unsignedBigInteger('season_id')->nullable()->default(null);
             $table->integer('min_people')->nullable();
             $table->integer('max_people')->nullable();
 

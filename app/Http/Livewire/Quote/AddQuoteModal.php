@@ -358,6 +358,15 @@ class AddQuoteModal extends Component
             $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
             $newQuoteNumber = $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
 
+            // Include options with always_included = 1
+            $alwaysIncludedOptions = Option::where('always_included', 1)->get();
+
+            foreach ($alwaysIncludedOptions as $option) {
+                if (!isset($this->selectedOptions[$option->id])) {
+                    $this->selectedOptions[$option->id] = $option->default_value;
+                }
+            }
+
             // Convert selected options to a comma-separated string format
             $optionIds = implode('|', array_keys($this->selectedOptions));
             $optionValues = implode('|', array_values($this->selectedOptions));
@@ -493,46 +502,58 @@ class AddQuoteModal extends Component
         $this->eventTypes = EventType::where('event_name', 'like', '%' . $this->eventName . '%')->get();
     }
 
-   private function loadOptions()
-{
-    // Check if the required fields are set
-    if (!$this->date_from || !$this->area_id) {
-        $this->options = collect(); // No options to display if date and area are not set
-        return;
+    private function loadOptions()
+    {
+        // Check if the required fields are set
+        if (!$this->date_from || !$this->area_id) {
+            $this->options = collect(); // No options to display if date and area are not set
+            return;
+        }
+
+        // Convert the date strings to Carbon instances
+        $dateFrom = Carbon::createFromFormat('d-m-Y', $this->date_from);
+        $currentDate = $dateFrom;
+        $currentDayOfWeek = $currentDate->format('D');
+
+        // Get the seasons for the selected date and weekday
+        $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->first();
+
+        // Find the associated venue ID for the selected area
+        $selectedArea = VenueArea::find($this->area_id);
+        $selectedVenueId = optional($selectedArea->venue)->id;
+
+        // Query the options based on the selected venue and the season with the highest priority
+        $venueOptions = Option::orderBy('position')
+            ->when($selectedVenueId, function ($query) use ($selectedVenueId) {
+                return $query->where('venue_id', $selectedVenueId);
+            })
+            ->when($seasons, function ($query) use ($seasons) {
+                return $query->where('season_id', $seasons->id);
+            })
+            ->get();
+
+        // Get the "All" season
+        $allSeason = Season::getAllSeason();
+
+        // Retrieve options associated with the "All" season
+        $allSeasonOptions = $allSeason
+            ? $allSeason->options()->orderBy('position')->get()
+            : collect();
+
+        // Include options with always_included = 1
+        $alwaysIncludedOptions = Option::where('always_included', 1)->get();
+
+        foreach ($alwaysIncludedOptions as $option) {
+            // Check if the option is not already selected to avoid duplicates
+            if (!isset($this->selectedOptions[$option->id])) {
+                $this->selectedOptions[$option->id] = $option->default_value; // Set the default value
+            }
+        }
+
+        // Merge the two sets of options
+        $this->options = $venueOptions->concat($allSeasonOptions)->unique('id')->sortBy('position');
     }
-    
-    // Convert the date strings to Carbon instances
-    $dateFrom = Carbon::createFromFormat('d-m-Y', $this->date_from);
-    $currentDate = $dateFrom;
-    $currentDayOfWeek = $currentDate->format('D');
 
-    // Get the seasons for the selected date and weekday
-    $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->first();
-    // Find the associated venue ID for the selected area
-    $selectedArea = VenueArea::find($this->area_id);
-    $selectedVenueId = optional($selectedArea->venue)->id;
-
-    // Query the options based on the selected venue and the season with the highest priority
-    $venueOptions = Option::orderBy('position')
-    ->when($selectedVenueId, function ($query) use ($selectedVenueId) {
-        return $query->where('venue_id', $selectedVenueId);
-    })
-    ->when($seasons, function ($query) use ($seasons) {
-        return $query->where('season_id', $seasons->id);
-    })
-    ->get();
-
-    // Get the "All" season
-    $allSeason = Season::getAllSeason();
-
-    // Retrieve options associated with the "All" season
-    $allSeasonOptions = $allSeason
-        ? $allSeason->options()->orderBy('position')->get()
-        : collect();
-        
-    // Merge the two sets of options
-    $this->options = $venueOptions->concat($allSeasonOptions)->unique('id')->sortBy('position');
-}
 
 
 }

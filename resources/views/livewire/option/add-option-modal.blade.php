@@ -94,6 +94,7 @@
                             @if ($index > 0)
                             <div class="input-group mb-3" wire:key="logical-operator-{{ $index }}">
                                 <select wire:model="conditions.{{ $index }}.logical_operator" name="conditions[{{ $index }}][logical_operator]" class="form-select form-select-solid">
+                                    <option value="">Select</option>
                                     <option value="AND">AND</option>
                                     <option value="OR">OR</option>
                                 </select>
@@ -101,12 +102,14 @@
                             @endif
                             <div class="input-group mb-3" wire:key="condition-{{ $index }}">
                                 <select wire:model="conditions.{{ $index }}.field" name="conditions[{{ $index }}][field]" class="form-select form-select-solid">
+                                    <option value="">Select</option>
                                     <option value="people">People</option>
                                     <option value="hours">Hours</option>
                                     <option value="days">Days</option>
                                     <!-- Add more fields as needed -->
                                 </select>
                                 <select wire:model="conditions.{{ $index }}.operator" name="conditions[{{ $index }}][operator]" class="form-select form-select-solid">
+                                    <option value="">Select</option>
                                     <option value="equals">equals</option>
                                     <option value="not_equals">not equals</option>
                                     <option value="less_than">less than</option>

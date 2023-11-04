@@ -216,6 +216,11 @@
                             <input type="number" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
                         @endif
 
+                        <!-- For 'logic', show number input -->
+                        @if($option->type === 'logic')
+                            <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->value }}" />
+                        @endif
+
 
 
                     </div>
@@ -249,7 +254,7 @@
     </div>
 </div>
     @push('scripts')
-<script>   
+<script>
 
 document.getElementById('date_from_picker_input').addEventListener('change', function () {
     @this.set('date_from', this.value);

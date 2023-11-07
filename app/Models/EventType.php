@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\VenueArea;
 
 class EventType extends Model
 {
@@ -27,7 +28,13 @@ class EventType extends Model
         'opening_time',
         'closing_time',
         'availability',
+        'venue_area_id',
     ];
+
+    public function venueAreas()
+    {
+        return $this->hasMany(VenueArea::class, 'venue_area_id');
+    }
 
     protected static function boot()
     {

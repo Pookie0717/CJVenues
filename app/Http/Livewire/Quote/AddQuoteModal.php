@@ -404,6 +404,7 @@ class AddQuoteModal extends Component
                     $optionValue = explode('|', $optionValues)[$index];
 
                     if (!isset($optionValue) || $optionValue == '') {
+                        $optionValue = '0';
                         continue;
                     }
 
@@ -460,9 +461,24 @@ class AddQuoteModal extends Component
         $newQuoteNumber = $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
 
         // Convert selected options to a comma-separated string format
-        $optionIds = implode('|', array_keys($this->selectedOptions));
-        $optionValues = implode('|', array_values($this->selectedOptions));
+        $optionIdsIm = implode('|', array_keys($this->selectedOptions));
+        $optionValuesIm = implode('|', array_values($this->selectedOptions));
 
+        $optionIds = explode('|', $optionIdsIm);
+        $optionValues = explode('|', $optionValuesIm);
+
+        $cleanedOptionIds = [];
+        $cleanedOptionValues = [];
+
+        foreach ($optionValues as $index => $value) {
+            if ($value !== '') {
+                $cleanedOptionIds[] = $optionIds[$index];
+                $cleanedOptionValues[] = $value;
+            }
+        }
+
+        $optionIds = implode('|', $cleanedOptionIds);
+        $optionValues = implode('|', $cleanedOptionValues);
 
         $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);
 
@@ -496,7 +512,7 @@ class AddQuoteModal extends Component
         // Save the new quote to the database
         Quote::create([
                 'contact_id' => $this->contact_id,
-                'status' => 'Unsent',
+                'status' => 'Draft',
                 'version' => '1',
                 'date_from' => $this->date_from,
                 'date_to' => $this->date_to,

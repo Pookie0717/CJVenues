@@ -5,6 +5,7 @@ namespace App\Http\Livewire\EventType;
 use Livewire\Component;
 use App\Models\EventType;
 use App\Models\Season;
+use App\Models\VenueArea;
 use Illuminate\Support\Facades\Session;
 
 class AddEventTypeModal extends Component
@@ -24,6 +25,7 @@ class AddEventTypeModal extends Component
     public $max_people;
     public $opening_time;
     public $closing_time;
+    public $venue_area_id;
 
     public $edit_mode = false;
     public $eventTypeId;
@@ -53,6 +55,7 @@ class AddEventTypeModal extends Component
             'max_people' => 'required|integer',
             'opening_time' => 'required|string|max:255',
             'closing_time' => 'required|string|max:255',
+            'venue_area_id' => 'required|exists:venue_areas,id',
         ]);
 
         $eventNames = implode(', ', $this->selectedEventNames);
@@ -76,6 +79,7 @@ class AddEventTypeModal extends Component
                 'max_people' => $this->max_people,
                 'opening_time' => $this->opening_time,
                 'closing_time' => $this->closing_time,
+                'venue_area_id' => $this->venue_area_id,
             ]);
 
             // Emit an event to notify that the event type was updated successfully
@@ -97,6 +101,7 @@ class AddEventTypeModal extends Component
                 'max_people' => $this->max_people,
                 'opening_time' => $this->opening_time,
                 'closing_time' => $this->closing_time,
+                'venue_area_id' => $this->venue_area_id,
             ]);
 
             // Emit an event to notify that the event type was created successfully
@@ -117,6 +122,7 @@ class AddEventTypeModal extends Component
                 'min_people',
                 'opening_time',
                 'closing_time',
+                'venue_area_id',
             ]);
         }
     }
@@ -125,8 +131,9 @@ class AddEventTypeModal extends Component
     {
         $currentTenantId = Session::get('current_tenant_id');
         $seasonsList = Season::where('tenant_id', $currentTenantId)->get();
+        $venueAreas = VenueArea::where('tenant_id', $currentTenantId)->get();
 
-        return view('livewire.event-type.add-event-type-modal', compact('seasonsList'));
+        return view('livewire.event-type.add-event-type-modal', compact('seasonsList','venueAreas'));
     }
 
     public function deleteEventType($id)
@@ -161,6 +168,7 @@ class AddEventTypeModal extends Component
         $this->opening_time = $eventType->opening_time;
         $this->closing_time = $eventType->closing_time;
         $this->eventTypeId = $eventType->id;
+        $this->venue_area_id = $eventType->venue_area_id;
     }
 
 }

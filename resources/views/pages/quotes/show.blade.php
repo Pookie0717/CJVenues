@@ -131,7 +131,7 @@
                                         <thead>
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
                                                 <th class="min-w-175px pb-2">Description</th>
-                                                <!--<th class="min-w-100px text-end pb-2">Amount</th>-->
+                                                <th class="min-w-100px text-end pb-2">Quantity</th>
                                                 <th class="min-w-100px text-end pb-2">Price</th>
                                             </tr>
                                         </thead>
@@ -143,7 +143,7 @@
                                                     {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
                                                 </td>
 
-                                                <!--<td class="pt-6 text-end">N/A</td>-->
+                                                <td class="pt-6 text-end">1</td>
                                                 <td class="pt-6 text-dark fw-bolder text-end">${{ number_format($quote->price_venue, 2) }}</td>
                                             </tr>
                                             <!-- Additional row for options and priceOption -->
@@ -160,10 +160,10 @@
                                                             @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
                                                                 {{ $optionWithValue['option']->name }}
                                                             @else
-                                                                {{ $optionWithValue['option']->name }} - {{ $optionWithValue['value'] }}
+                                                                {{ $optionWithValue['option']->name }}
                                                             @endif
                                                         </td>
-                                                        <!--<td class="pt-6 text-end">N/A</td>-->
+                                                        <td class="pt-6 text-end">{{ $optionWithValue['value'] }}</td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>
@@ -195,7 +195,7 @@
                                         <!--begin::Item-->
                                         <div class="d-flex flex-stack mb-3">
                                             <!--begin::Accountname-->
-                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">VAT 0%</div>
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">VAT</div>
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->

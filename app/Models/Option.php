@@ -15,13 +15,13 @@ class Option extends Model
         'position',
         'type',
         'values',
-        'season_ids', // Updated column name
-        'venue_ids',  // Updated column name
-        'logic',       // Added column
-        'description', // Added column
-        'default_value', // Added column
-        'vat',         // Added column
-        'always_included', // Added column
+        'season_ids',
+        'venue_ids',
+        'logic',
+        'description',
+        'default_value',
+        'vat',
+        'always_included',
     ];
 
     public function prices()

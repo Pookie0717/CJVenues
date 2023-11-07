@@ -122,6 +122,18 @@
                             </div>
                         </div>
 
+                        <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Venue Area</label>
+                            <select wire:model.defer="venue_area_id" name="venue_area_id" class="form-select form-select-solid">
+                                <option value="">Select</option>
+                                @foreach($venueAreas as $venueArea)
+                                    <option value="{{ $venueArea->id }}">{{ $venueArea->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('venue_area_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <div class="row">

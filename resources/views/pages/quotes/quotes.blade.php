@@ -67,44 +67,7 @@
                 });
             });
 
-            new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic"), {
-                display: {
-                    viewMode: "clock",
-                    components: {
-                        decades: false,
-                        year: false,
-                        month: false,
-                        date: false,
-                        hours: true,
-                        minutes: true,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    format: "HH:ss"
-                },
-                stepping: 30, // Set the stepping to 30 minutes
-            });
-            new tempusDominus.TempusDominus(document.getElementById("time_from_picker_basic"), {
-                display: {
-                    viewMode: "clock",
-                    components: {
-                        decades: false,
-                        year: false,
-                        month: false,
-                        date: false,
-                        hours: true,
-                        minutes: true,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    format: "HH:ss"
-                },
-                stepping: 30, // Set the stepping to 30 minutes
-            });
+            
             new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
                 display: {
                     viewMode: "calendar",

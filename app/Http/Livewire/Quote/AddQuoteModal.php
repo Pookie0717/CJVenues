@@ -45,12 +45,156 @@ class AddQuoteModal extends Component
     public $eventName = '';
     public $eventTypes = [];
     public $logicOptionValue;
+    public $time_ranges = [];
+
 
     public $edit_mode = false;
 
     protected $listeners = [
         'delete_quote' => 'deleteQuote',
     ];
+
+    public function submit()
+    {
+        // Validate the data
+        $this->validate([
+            'contact_id' => 'required',
+            'area_id' => 'required',
+            'event_type' => 'required',
+            'people' => 'required',
+            'time_ranges.*.time_from' => 'required',
+            'time_ranges.*.time_to' => 'required',
+        ]);
+
+        $this->eventTypes = [];
+        // Retrieve the current quote number
+        $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
+        $newQuoteNumber = $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
+
+        // Convert selected options to a comma-separated string format
+        $optionIdsIm = implode('|', array_keys($this->selectedOptions));
+        $optionValuesIm = implode('|', array_values($this->selectedOptions));
+
+        $optionIds = explode('|', $optionIdsIm);
+        $optionValues = explode('|', $optionValuesIm);
+
+        $cleanedOptionIds = [];
+        $cleanedOptionValues = [];
+
+        foreach ($optionValues as $index => $value) {
+            if ($value !== '') {
+                $cleanedOptionIds[] = $optionIds[$index];
+                $cleanedOptionValues[] = $value;
+            }
+        }
+
+        $optionIds = implode('|', $cleanedOptionIds);
+        $optionValues = implode('|', $cleanedOptionValues);
+
+        $timeFromArray = [];
+        $timeToArray = [];
+
+        foreach ($this->time_ranges as $time_range) {
+            $timeFromArray[] = $time_range['time_from'];
+            $timeToArray[] = $time_range['time_to'];
+        }
+
+        $timeFrom = implode('|', $timeFromArray);
+        $timeTo = implode('|', $timeToArray);
+
+        $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $timeFrom, $timeTo, $this->area_id);
+
+        $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $this->people);
+
+        $cleanedArray = [];
+        $optionIdMap = [];
+
+        foreach ($priceOptionsStringArray['individualPrices'] as $item) {
+            $optionId = $item['optionId'];
+            if (!isset($optionIdMap[$optionId])) {
+                $optionIdMap[$optionId] = $item;
+            }
+        }
+
+        $cleanedArray['totalPrice'] = $priceOptionsStringArray['totalPrice'];
+        $cleanedArray['individualPrices'] = array_values($optionIdMap);
+
+        $priceOptionsArray = $cleanedArray['individualPrices'];
+        $priceOptionsString = implode('|', array_map(function($item) {
+            return $item['price'];
+        }, $priceOptionsArray));
+
+        // Calculate the total of all the option prices
+        $valuesArray = explode('|', $priceOptionsString);
+        $priceOptions = array_sum(array_map('floatval', $valuesArray));
+        $calculatedPrice = $priceVenue + $priceOptions;
+
+        $totalPrice = $calculatedPrice;
+
+        // Save the new quote to the database
+        Quote::create([
+                'contact_id' => $this->contact_id,
+                'status' => 'Draft',
+                'version' => '1',
+                'date_from' => $this->date_from,
+                'date_to' => $this->date_to,
+                'time_from' => $timeFrom,
+                'time_to' => $timeTo,
+                'area_id' => $this->area_id,
+                'event_type' => $this->event_type,
+                'event_name' => $this->eventName,
+                'people' => $this->people,
+                'quote_number' => $newQuoteNumber, // Assign the new quote number
+                'calculated_price' => $calculatedPrice,
+                'discount_type' => $this->discount_type,
+                'discount' => $this->discount,
+                'price' => $totalPrice,
+                'price_venue' => $priceVenue,
+                'price_options' => $priceOptionsString,
+                'options_ids' => $optionIds,
+                'options_values' => $optionValues,
+        ]);
+
+        // Update the current quote number in the system_information table
+        DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
+
+        // Emit an event to notify that the quote was created successfully
+        $this->emit('success', 'Quote successfully added');
+
+        // Reset the form fields
+        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'people', 'discount_type', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
+    }
+
+    public function updatedDateFrom($value)
+    {
+        $this->calculateTimeRanges();
+    }
+
+    public function updatedDateTo($value)
+    {
+        $this->calculateTimeRanges();
+    }
+
+    private function calculateTimeRanges()
+    {
+        if (!empty($this->date_from) && !empty($this->date_to)) {
+            $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
+            $end = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_to);
+
+            // Initialize an array to store time ranges
+            $this->time_ranges = [];
+
+            // Loop through each day and add time ranges
+            while ($start->lte($end)) {
+                $this->time_ranges[$start->format('d-m-Y')] = [
+                    'time_from' => '',
+                    'time_to' => '',
+                ];
+
+                $start->addDay();
+            }
+        }
+    }
 
     public function updateSelectedOption($optionId, $value)
     {
@@ -137,17 +281,37 @@ class AddQuoteModal extends Component
     }
 
     // Helper method to calculate the number of hours between time_from and time_to
-    private function calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo)
+    private function calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo) //remove the date eventually
     {
+        // Split the time ranges into arrays
+        $timeFromArray = explode('|', $timeFrom);
+        $timeToArray = explode('|', $timeTo);
 
-        // Create Carbon instances for date and time
-        $dateTimeFrom = $dateFrom->copy()->setTimeFromTimeString($timeFrom);
-        $dateTimeTo = $dateTo->copy()->setTimeFromTimeString($timeTo);
+        // Initialize an array to store the total hours for each day
+        $totalHoursPerDay = [];
 
-        // Calculate the difference in hours
-        $hoursDifference = $dateTimeTo->diffInHours($dateTimeFrom);
+        // Loop through each day and calculate the total hours
+        for ($i = 0; $i < count($timeFromArray); $i++) {
+            // Split the time for the current day
+            $hoursFrom = explode(':', $timeFromArray[$i]);
+            $hoursTo = explode(':', $timeToArray[$i]);
 
-        return $hoursDifference;
+            // Calculate the hours and minutes for the current day
+            $fromHours = intval($hoursFrom[0]);
+            $fromMinutes = intval($hoursFrom[1]);
+            $toHours = intval($hoursTo[0]);
+            $toMinutes = intval($hoursTo[1]);
+
+            // Calculate the difference in hours for the current day
+            $hoursDifference = ($toHours - $fromHours) + ($toMinutes - $fromMinutes) / 60;
+
+            // Store the total hours for the current day
+            $totalHoursPerDay[] = $hoursDifference;
+        }
+
+        // Calculate the sum of total hours for all days
+        $totalHours = array_sum($totalHoursPerDay);
+        return $totalHours;
     }
 
     public function calculatePriceVenue($dateFrom, $dateTo, $timeFrom, $timeTo, $areaId)
@@ -291,8 +455,16 @@ class AddQuoteModal extends Component
         $dateFrom = Carbon::createFromFormat('d-m-Y', $this->date_from);
         $dateTo = Carbon::createFromFormat('d-m-Y', $this->date_to);
 
+        foreach ($this->time_ranges as $time_range) {
+            $timeFromArray[] = $time_range['time_from'];
+            $timeToArray[] = $time_range['time_to'];
+        }
+
+        $timeFrom = implode('|', $timeFromArray);
+        $timeTo = implode('|', $timeToArray);
+
         $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
-        $hours = $this->calculateNumberOfHours($dateFrom, $this->time_from, $dateTo, $this->time_to);
+        $hours = $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
 
         $optionType = $this->getOptionType($optionId);
         if ($optionType === 'logic') {
@@ -443,104 +615,6 @@ class AddQuoteModal extends Component
             'totalPrice' => $totalPrice,
             'individualPrices' => $individualPrices,
         ];
-    }
-
-    public function submit()
-    {
-        // Validate the data
-        $this->validate([
-            'contact_id' => 'required',
-            'area_id' => 'required',
-            'event_type' => 'required',
-            'people' => 'required',
-        ]);
-
-        $this->eventTypes = [];
-        // Retrieve the current quote number
-        $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
-        $newQuoteNumber = $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
-
-        // Convert selected options to a comma-separated string format
-        $optionIdsIm = implode('|', array_keys($this->selectedOptions));
-        $optionValuesIm = implode('|', array_values($this->selectedOptions));
-
-        $optionIds = explode('|', $optionIdsIm);
-        $optionValues = explode('|', $optionValuesIm);
-
-        $cleanedOptionIds = [];
-        $cleanedOptionValues = [];
-
-        foreach ($optionValues as $index => $value) {
-            if ($value !== '') {
-                $cleanedOptionIds[] = $optionIds[$index];
-                $cleanedOptionValues[] = $value;
-            }
-        }
-
-        $optionIds = implode('|', $cleanedOptionIds);
-        $optionValues = implode('|', $cleanedOptionValues);
-
-        $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $this->time_from, $this->time_to, $this->area_id);
-
-        $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $this->time_from, $this->time_to, $optionIds, $optionValues, $this->people);
-
-        $cleanedArray = [];
-        $optionIdMap = [];
-
-        foreach ($priceOptionsStringArray['individualPrices'] as $item) {
-            $optionId = $item['optionId'];
-            if (!isset($optionIdMap[$optionId])) {
-                $optionIdMap[$optionId] = $item;
-            }
-        }
-
-        $cleanedArray['totalPrice'] = $priceOptionsStringArray['totalPrice'];
-        $cleanedArray['individualPrices'] = array_values($optionIdMap);
-
-        $priceOptionsArray = $cleanedArray['individualPrices'];
-        $priceOptionsString = implode('|', array_map(function($item) {
-            return $item['price'];
-        }, $priceOptionsArray));
-
-        // Calculate the total of all the option prices
-        $valuesArray = explode('|', $priceOptionsString);
-        $priceOptions = array_sum(array_map('floatval', $valuesArray));
-        $calculatedPrice = $priceVenue + $priceOptions;
-
-        $totalPrice = $calculatedPrice;
-
-        // Save the new quote to the database
-        Quote::create([
-                'contact_id' => $this->contact_id,
-                'status' => 'Draft',
-                'version' => '1',
-                'date_from' => $this->date_from,
-                'date_to' => $this->date_to,
-                'time_from' => $this->time_from,
-                'time_to' => $this->time_to,
-                'area_id' => $this->area_id,
-                'event_type' => $this->event_type,
-                'event_name' => $this->eventName,
-                'people' => $this->people,
-                'quote_number' => $newQuoteNumber, // Assign the new quote number
-                'calculated_price' => $calculatedPrice,
-                'discount_type' => $this->discount_type,
-                'discount' => $this->discount,
-                'price' => $totalPrice,
-                'price_venue' => $priceVenue,
-                'price_options' => $priceOptionsString,
-                'options_ids' => $optionIds,
-                'options_values' => $optionValues,
-        ]);
-
-        // Update the current quote number in the system_information table
-        DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
-
-        // Emit an event to notify that the quote was created successfully
-        $this->emit('success', 'Quote successfully added');
-
-        // Reset the form fields
-        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'people', 'discount_type', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
     }
 
     public function deleteQuote($id)

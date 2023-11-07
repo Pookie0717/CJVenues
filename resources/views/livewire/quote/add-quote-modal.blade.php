@@ -85,37 +85,39 @@
                     </div>
                     <!--end::Input group-->
 
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-10">
-                        <div class="row">
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Time From</label>
-                                        <div class="input-group" id="time_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="time_from_picker_input" type="text"  wire:model.defer="time_from" class="form-control" data-td-target="#time_from_picker"/>
-                                            <span class="input-group-text" data-td-target="#time_from_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('time_from')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                    <!-- Add this code inside your Blade template -->
+                    @foreach ($time_ranges as $date => $time_range)
+                        <div class="fv-row mb-10">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="required fw-semibold fs-6 mb-2">Time From ({{ $date }})</label>
+                                    <div class="input-group" id="time_from_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                        <input id="time_from_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_from" class="form-control" data-td-target="#time_from_picker_{{ $loop->index }}"/>
+                                        <span class="input-group-text" data-td-target="#time_from_picker_{{ $loop->index }}" data-td-toggle="datetimepicker">
+                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                        </span>
                                     </div>
+                                    @error("time_ranges.$date.time_from")
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
 
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Time To</label>
-                                        <div class="input-group" id="time_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="time_to_picker_input" type="text"  wire:model.defer="time_to" class="form-control" data-td-target="#time_to_picker"/>
-                                            <span class="input-group-text" data-td-target="#time_to_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('time_to')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                <div class="col">
+                                    <label class="required fw-semibold fs-6 mb-2">Time To ({{ $date }})</label>
+                                    <div class="input-group" id="time_to_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                        <input id="time_to_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_to" class="form-control" data-td-target="#time_to_picker_{{ $loop->index }}"/>
+                                        <span class="input-group-text" data-td-target="#time_to_picker_{{ $loop->index }}" data-td-toggle="datetimepicker">
+                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                        </span>
                                     </div>
-                                    </div>
-                    </div>
-                    <!--end::Input group-->
+                                    @error("time_ranges.$date.time_to")
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+
                 </div>
                 <!--begin::Step 1-->
 
@@ -254,23 +256,103 @@
     </div>
 </div>
     @push('scripts')
+
+@foreach ($time_ranges as $date => $time_range)
+    <script>
+        document.getElementById('time_from_picker_input_{{ $loop->index }}').addEventListener('change', function () {
+            @this.set('time_ranges["{{ $date }}"]["time_from"]', this.value);
+        });
+
+        document.getElementById('time_to_picker_input_{{ $loop->index }}').addEventListener('change', function () {
+            @this.set('time_ranges["{{ $date }}"]["time_to"]', this.value);
+        });
+        new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic_{{ $loop->index }}"), {
+                display: {
+                    viewMode: "clock",
+                    components: {
+                        decades: false,
+                        year: false,
+                        month: false,
+                        date: false,
+                        hours: true,
+                        minutes: true,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    format: "HH:ss"
+                },
+                stepping: 30, // Set the stepping to 30 minutes
+            });
+            new tempusDominus.TempusDominus(document.getElementById("time_from_picker_basic_{{ $loop->index }}"), {
+                display: {
+                    viewMode: "clock",
+                    components: {
+                        decades: false,
+                        year: false,
+                        month: false,
+                        date: false,
+                        hours: true,
+                        minutes: true,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    format: "HH:ss"
+                },
+                stepping: 30, // Set the stepping to 30 minutes
+            });
+    </script>
+@endforeach
+
 <script>
+            new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
+                display: {
+                    viewMode: "calendar",
+                    components: {
+                        decades: true,
+                        year: true,
+                        month: true,
+                        date: true,
+                        hours: false,
+                        minutes: false,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    startOfTheWeek: 1,
+                    format: "dd-MM-yyyy"
+                }
+            });
+            new tempusDominus.TempusDominus(document.getElementById("date_to_picker_basic"), {
+                display: {
+                    viewMode: "calendar",
+                    components: {
+                        decades: true,
+                        year: true,
+                        month: true,
+                        date: true,
+                        hours: false,
+                        minutes: false,
+                        seconds: false
+                    }
+                },
+                localization: {
+                    locale: "us",
+                    startOfTheWeek: 1,
+                    format: "dd-MM-yyyy"
+                }
+            });
+    document.getElementById('date_from_picker_input').addEventListener('change', function () {
+        @this.set('date_from', this.value);
+    });
 
-document.getElementById('date_from_picker_input').addEventListener('change', function () {
-    @this.set('date_from', this.value);
-});
-
-document.getElementById('date_to_picker_input').addEventListener('change', function () {
-    @this.set('date_to', this.value);
-});
-
-document.getElementById('time_from_picker_input').addEventListener('change', function () {
-    @this.set('time_from', this.value);
-});
-
-document.getElementById('time_to_picker_input').addEventListener('change', function () {
-    @this.set('time_to', this.value);
-});
-
+    document.getElementById('date_to_picker_input').addEventListener('change', function () {
+        @this.set('date_to', this.value);
+    });
 </script>
+
     @endpush

@@ -82,7 +82,7 @@ class AddQuoteModal extends Component
         $cleanedOptionValues = [];
 
         foreach ($optionValues as $index => $value) {
-            if ($value !== '') {
+            if ($value !== '' && $value != 0) {
                 $cleanedOptionIds[] = $optionIds[$index];
                 $cleanedOptionValues[] = $value;
             }
@@ -323,6 +323,8 @@ class AddQuoteModal extends Component
 
         $area = VenueArea::find($areaId);
 
+
+
         // Convert the date strings to Carbon instances
         $dateFromC = Carbon::createFromFormat('d-m-Y', $dateFrom);
         $dateToC = Carbon::createFromFormat('d-m-Y', $dateTo);
@@ -332,7 +334,8 @@ class AddQuoteModal extends Component
 
         // Iterate through each day in the date range
         $currentDate = $dateFromC->copy();
-        while ($currentDate->lte($dateTo)) {
+
+        while ($currentDate->lte($dateToC)) {
             // Get the day of the week for the current date (e.g., 'Mon')
             $currentDayOfWeek = $currentDate->format('D');
 
@@ -368,6 +371,7 @@ class AddQuoteModal extends Component
                 // Calculate the price based on the multiplier type for the current day
                 switch ($multiplierType) {
                     case 'daily':
+                        $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
                         $totalPrice += $multiplierValue;
                         break;
                     case 'hourly':
@@ -379,11 +383,9 @@ class AddQuoteModal extends Component
                         break;
                 }
             }
-
             // Move to the next day
             $currentDate->addDay();
         }
-
         return $totalPrice;
     }
 
@@ -481,15 +483,25 @@ class AddQuoteModal extends Component
     private function getLogicOptionDetails($optionId, $people, $hours, $days)
     {
        // Use Eloquent to find the Option by its ID
-        $option = Option::find($optionId);
-        $logicExpression = $option->logic;
+    $option = Option::find($optionId);
+    $logicExpression = $option->logic;
+
             // Replace field names with their respective values
     $logicExpression = str_replace('people', $people, $logicExpression);
     $logicExpression = str_replace('hours', $hours, $logicExpression);
     $logicExpression = str_replace('days', $days, $logicExpression);
+    $logicExpression = str_replace('greater_than_or_equals', '>=', $logicExpression);
+    $logicExpression = str_replace('less_than_or_equals', '<=', $logicExpression);
+    $logicExpression = str_replace('equals', '==', $logicExpression);
+    $logicExpression = str_replace('not_equals', '!=', $logicExpression);
+    $logicExpression = str_replace('greater_than', '>', $logicExpression);
+    $logicExpression = str_replace('less_than', '<', $logicExpression);
+    $logicExpression = str_replace('"', '', $logicExpression);
+
 
     // Split the logic expression by "OR" operators
     $orConditions = preg_split('/\bOR\b/', $logicExpression);
+
     $result = false;
 
     foreach ($orConditions as $orCondition) {
@@ -501,29 +513,28 @@ class AddQuoteModal extends Component
         foreach ($andConditions as $andCondition) {
             // Split each condition into field, operator, and value
             $parts = preg_split('/(<=|>=|==|!=|<|>)/', $andCondition, -1, PREG_SPLIT_DELIM_CAPTURE);
-
             if (count($parts) === 3) {
                 list($field, $operator, $value) = array_map('trim', $parts);
 
                 // Evaluate the condition
                 switch ($operator) {
                     case '<':
-                        $andResult = ($$field < $value);
+                        $andResult = ($field < $value);
                         break;
                     case '<=':
-                        $andResult = ($$field <= $value);
+                        $andResult = ($field <= $value);
                         break;
                     case '>':
-                        $andResult = ($$field > $value);
+                        $andResult = ($field > $value);
                         break;
                     case '>=':
-                        $andResult = ($$field >= $value);
+                        $andResult = ($field >= $value);
                         break;
                     case '==':
-                        $andResult = ($$field == $value);
+                        $andResult = ($field == $value);
                         break;
                     case '!=':
-                        $andResult = ($$field != $value);
+                        $andResult = ($field != $value);
                         break;
                     default:
                         // Invalid operator; set result to false
@@ -546,7 +557,6 @@ class AddQuoteModal extends Component
             break;
         }
     }
-
     return $result;
 
     }

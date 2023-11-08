@@ -9,9 +9,18 @@
         {{ Breadcrumbs::render('bookings') }} <!-- Update breadcrumb -->
     @endsection
 
-    <div id="kt_docs_fullcalendar_populated">Calendar Coming Soon</div>
+    <div id="calendar"></div>
 
     @push('scripts')
     <script src="{{ mix('assets/plugins/custom/fullcalendar/main.js') }}"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth'
+        });
+        calendar.render();
+      });
+    </script>
     @endpush
 </x-default-layout>

@@ -52,6 +52,10 @@ mix.sass(`${dir}/sass/style.scss`, `public/assets/css/style.bundle.css`, {sassOp
     // .options({processCssUrls: false})
     .scripts(require(`./resources/mix/scripts.js`), `public/assets/js/scripts.bundle.js`);
 
+// Include fullcalendar CSS and JS
+mix.copy('node_modules/fullcalendar/main.css', 'public/assets/plugins/custom/fullcalendar/');
+mix.copy('node_modules/fullcalendar/main.js', 'public/assets/plugins/custom/fullcalendar/');
+
 // Build custom 3rd party plugins
 (glob.sync(`resources/mix/vendors/**/*.js`) || []).forEach(file => {
     mix.scripts(require('./' + file), `public/assets/${file.replace('resources/mix/vendors/', 'plugins/custom/')}`);

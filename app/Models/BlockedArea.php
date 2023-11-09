@@ -14,6 +14,4 @@ class BlockedArea extends Model
         'start_date',
         'end_date',
     ];
-
-    // Your other model code...
 }

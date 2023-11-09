@@ -35,7 +35,6 @@ class AddQuoteModal extends Component
     public $options_ids;
     public $options_values;
     public $calculated_price;
-    public $discount_type;
     public $discount;
     public $price;
     public $price_venue;
@@ -129,7 +128,16 @@ class AddQuoteModal extends Component
         $priceOptions = array_sum(array_map('floatval', $valuesArray));
         $calculatedPrice = $priceVenue + $priceOptions;
 
-        $totalPrice = $calculatedPrice;
+        $calculatedPrice = $priceVenue + $priceOptions;
+
+        try {
+            // Apply discount to the calculated price
+            $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
+        } catch (\Exception $e) {
+            // Handle exceptions related to discount parsing, e.g., flash a message to the session
+            session()->flash('error', $e->getMessage());
+            return;
+        }
 
         // Save the new quote to the database
         Quote::create([
@@ -146,7 +154,6 @@ class AddQuoteModal extends Component
                 'people' => $this->people,
                 'quote_number' => $newQuoteNumber, // Assign the new quote number
                 'calculated_price' => $calculatedPrice,
-                'discount_type' => $this->discount_type,
                 'discount' => $this->discount,
                 'price' => $totalPrice,
                 'price_venue' => $priceVenue,
@@ -162,7 +169,7 @@ class AddQuoteModal extends Component
         $this->emit('success', 'Quote successfully added');
 
         // Reset the form fields
-        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'people', 'discount_type', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
+        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'people', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
     }
 
     public function updatedDateFrom($value)
@@ -468,15 +475,10 @@ class AddQuoteModal extends Component
         $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
         $hours = $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
 
-        $optionType = $this->getOptionType($optionId);
-        if ($optionType === 'logic') {
-            $optionValues = explode('|', $this->getOptionValues($optionId));
-            $logicOption = $this->getLogicOptionDetails($optionId,  $this->people, $hours, $days);
-            $logicOptionValue = $logicOption ? $optionValues[0] : $optionValues[1];
-            return $logicOptionValue;
-        } else {
-            return null;
-        }
+        $optionValues = explode('|', $this->getOptionValues($optionId));
+        $logicOption = $this->getLogicOptionDetails($optionId,  $this->people, $hours, $days);
+        $logicOptionValue = $logicOption ? $optionValues[0] : $optionValues[1];
+        return $logicOptionValue;
     }
 
     // Function to retrieve logic option details based on $optionId (you need to implement this)
@@ -492,21 +494,21 @@ class AddQuoteModal extends Component
     $logicExpression = str_replace('days', $days, $logicExpression);
     $logicExpression = str_replace('greater_than_or_equals', '>=', $logicExpression);
     $logicExpression = str_replace('less_than_or_equals', '<=', $logicExpression);
-    $logicExpression = str_replace('equals', '==', $logicExpression);
     $logicExpression = str_replace('not_equals', '!=', $logicExpression);
+    $logicExpression = str_replace('equals', '==', $logicExpression);
     $logicExpression = str_replace('greater_than', '>', $logicExpression);
     $logicExpression = str_replace('less_than', '<', $logicExpression);
     $logicExpression = str_replace('"', '', $logicExpression);
 
 
     // Split the logic expression by "OR" operators
-    $orConditions = preg_split('/\bOR\b/', $logicExpression);
+    $orConditions = explode(' OR ', $logicExpression);
 
     $result = false;
 
     foreach ($orConditions as $orCondition) {
         // Split each OR condition by "AND" operators
-        $andConditions = preg_split('/\bAND\b/', $orCondition);
+        $andConditions = explode(' AND ', $orCondition);
 
         $orResult = true; // Initialize the OR result as true
 
@@ -751,6 +753,34 @@ class AddQuoteModal extends Component
         }
 
     }
+
+    private function applyDiscount($calculatedPrice, $discount)
+    {
+        // Remove whitespace and parse discount
+        $discount = trim($discount);
+
+        // Check if the discount is a percentage
+        if (str_ends_with($discount, '%')) {
+            $percentage = rtrim($discount, '%');
+            if (is_numeric($percentage)) {
+                // Calculate the discount as a percentage of the calculated price
+                $discountAmount = ($percentage / 100) * $calculatedPrice;
+            } else {
+                // Handle invalid percentage format
+                throw new \Exception("Invalid discount percentage format");
+            }
+        } elseif (is_numeric($discount)) {
+            // If the discount is a numeric value, treat it as a flat amount
+            $discountAmount = $discount;
+        } else {
+            // Handle invalid discount format
+            throw new \Exception("Invalid discount format");
+        }
+
+        // Subtract the discount amount from the calculated price
+        return max($calculatedPrice - $discountAmount, 0); // Ensure the total doesn't go below 0
+    }
+
 
 
 

@@ -228,6 +228,13 @@
                     </div>
                 @endforeach
                 <!--end::Input group-->
+                <div class="fv-row mb-10">
+                    <label for="discountField" class="form-label">Discount:</label>
+                    <input type="text" wire:model.defer="discount" class="form-control form-control-solid" placeholder="Enter a number or a percentage (e.g., 20 or 15%)" id="discountField" />
+                    @error('discount')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
             <!--begin::Step 1-->
         </div>
@@ -240,8 +247,8 @@
 <div class="text-center pt-15">
                         <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
                         <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove>Submit</span>
-                            <span class="indicator-progress" wire:loading wire:target="submit">
+                            <span class="indicator-label" wire:loading.remove wire:target="submit">Submit</span>
+                            <span class="" wire:loading wire:target="submit">
                                 Please wait...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>

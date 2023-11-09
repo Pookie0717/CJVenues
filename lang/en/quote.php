@@ -13,6 +13,6 @@ return [
     |
     */
 
-    'invoice' => 'Invoice',
+    'book' => 'Book',
 
 ];

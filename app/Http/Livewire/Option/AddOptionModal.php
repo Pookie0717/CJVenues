@@ -144,26 +144,26 @@ public function updateOption($id)
         ]);
     }
 
-protected function getUpdatedData()
-{
-    // Convert arrays to comma-separated strings
-    $seasonIds = implode(',', $this->season_ids);
-    $venueIds = implode(',', $this->venue_ids);
+    protected function getUpdatedData()
+    {
+        // Convert arrays to comma-separated strings
+        $seasonIds = implode(',', $this->season_ids);
+        $venueIds = implode(',', $this->venue_ids);
 
-    return [
-        'name' => $this->name,
-        'position' => $this->position,
-        'type' => $this->type,
-        'values' => $this->values,
-        'description' => $this->description,
-        'default_value' => $this->default_value,
-        'vat' => $this->vat,
-        'always_included' => $this->always_included,
-        'logic' => $this->generateLogicString(),
-        'season_ids' => $seasonIds, // Updated to comma-separated string
-        'venue_ids' => $venueIds,   // Updated to comma-separated string
-    ];
-}
+        return [
+            'name' => $this->name,
+            'position' => $this->position,
+            'type' => $this->type,
+            'values' => $this->values,
+            'description' => $this->description,
+            'default_value' => $this->default_value,
+            'vat' => $this->vat,
+            'always_included' => $this->always_included,
+            'logic' => $this->generateLogicString(),
+            'season_ids' => $seasonIds, // Updated to comma-separated string
+            'venue_ids' => $venueIds,   // Updated to comma-separated string
+        ];
+    }
 
 
 

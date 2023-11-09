@@ -10,17 +10,48 @@
     @endsection
 
     <div id="calendar"></div>
-
     @push('scripts')
     <script src="{{ mix('assets/plugins/custom/fullcalendar/main.js') }}"></script>
     <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+        var bookedQuotes = @json($bookedQuotes);
+        const element = document.getElementById("kt_docs_fullcalendar_basic");
+        var todayDate = moment().startOf("day");
+        var YM = todayDate.format("YYYY-MM");
+        var YESTERDAY = todayDate.clone().subtract(1, "day").format("YYYY-MM-DD");
+        var TODAY = todayDate.format("YYYY-MM-DD");
+        var TOMORROW = todayDate.clone().add(1, "day").format("YYYY-MM-DD");
+
+        var calendarEl = document.getElementById("calendar");
         var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth'
+            headerToolbar: {
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+            },
+
+            height: 800,
+            contentHeight: 780,
+            aspectRatio: 3,
+            editable: false,
+
+            nowIndicator: true,
+            now: TODAY,
+
+            views: {
+                dayGridMonth: { buttonText: "month" },
+                timeGridWeek: { buttonText: "week" },
+                timeGridDay: { buttonText: "day" }
+            },
+
+            initialView: "dayGridMonth",
+            initialDate: TODAY,
+
+            dayMaxEvents: true, // allow "more" link when too many events
+            navLinks: true,
+            events: bookedQuotes,
+
         });
         calendar.render();
-      });
     </script>
     @endpush
 </x-default-layout>

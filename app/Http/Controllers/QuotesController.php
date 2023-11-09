@@ -9,9 +9,11 @@ use App\Models\Contact;
 use App\Models\Season;
 use App\Models\Option;
 use App\Models\Tenant;
+use App\Models\BlockedArea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Hashids\Hashids;
 
 class QuotesController extends Controller
@@ -21,9 +23,57 @@ class QuotesController extends Controller
         return $dataTable->render('pages.quotes.quotes');
     }
 
-  /**
-     * Display the specified resource.
-     */
+
+    public function book(Request $request, $id)
+    {
+        $quote = Quote::find($id);
+
+        if (!$quote) {
+            return response()->json(['error' => 'Quote not found'], 404);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $quote->status = 'booked';
+            $quote->save();
+
+            // Format the dates correctly
+            $startDate = new \DateTime($quote->date_from);
+            $endDate = new \DateTime($quote->date_to);
+
+            // Convert dates to the format that the database expects
+            $formattedStartDate = $startDate->format('Y-m-d');
+            $formattedEndDate = $endDate->format('Y-m-d');
+
+            $exists = BlockedArea::where('area_id', $quote->area_id)
+                                 ->whereDate('start_date', $formattedStartDate)
+                                 ->whereDate('end_date', $formattedEndDate)
+                                 ->exists();
+
+            if (!$exists) {
+                $blockedArea = new BlockedArea();
+                $blockedArea->area_id = $quote->area_id;
+                $blockedArea->start_date = $formattedStartDate;
+                $blockedArea->end_date = $formattedEndDate;
+                $blockedArea->save();
+
+                DB::commit();
+                return response()->json(['message' => 'Quote has been booked and area blocked'], 200);
+            } else {
+                // If area is already blocked, we should roll back any changes.
+                DB::rollback();
+                return response()->json(['error' => 'The area is already blocked'], 409); // 409 Conflict
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Booking failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+
+
     public function show(Quote $quote, Contact $contact, Season $season, Option $option)
     {
         // Get the quote_number from the current $quote object
@@ -33,6 +83,8 @@ class QuotesController extends Controller
         // Get the date_from and date_to values from the $quote model
         $dateFrom = $quote->date_from;
         $dateTo = $quote->date_to;
+
+        $discount = $quote->discount;
 
         // Fetch related quotes based on the determined quote_number
         $relatedQuotes = Quote::where('quote_number', $quote_number)
@@ -100,7 +152,7 @@ class QuotesController extends Controller
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
 
-        return view('pages.quotes.show', compact('relatedQuotes', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant'), ['hashedId' => $hashedId]);
+        return view('pages.quotes.show', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant'), ['hashedId' => $hashedId]);
     }
 
     public function showPublic($hashedId, Contact $contact, Season $season, Option $option)

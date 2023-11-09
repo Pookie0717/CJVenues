@@ -27,7 +27,9 @@
                             <!--end::Logo-->
 
                             <!--begin::Action-->
-                            <a href="#" class="btn btn-sm btn-success disabled">{{ trans('quote.invoice') }}</a>
+                            <button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}">
+                                {{ trans('quote.book') }}
+                            </button>
                             <!--end::Action-->
                             
                         </div>
@@ -132,6 +134,7 @@
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
                                                 <th class="min-w-175px pb-2">Description</th>
                                                 <th class="min-w-100px text-end pb-2">Quantity</th>
+                                                <th class="min-w-100px text-end pb-2">Unit</th>
                                                 <th class="min-w-100px text-end pb-2">Price</th>
                                             </tr>
                                         </thead>
@@ -144,7 +147,8 @@
                                                 </td>
 
                                                 <td class="pt-6 text-end">1</td>
-                                                <td class="pt-6 text-dark fw-bolder text-end">${{ number_format($quote->price_venue, 2) }}</td>
+                                                <td class="pt-6 text-end">$ {{ number_format($quote->price_venue, 2) }}</td>
+                                                <td class="pt-6 text-dark fw-bolder text-end">$ {{ number_format($quote->price_venue, 2) }}</td>
                                             </tr>
                                             <!-- Additional row for options and priceOption -->
                                             @php
@@ -164,6 +168,7 @@
                                                             @endif
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $optionWithValue['value'] }}</td>
+                                                        <td class="pt-6 text-end">$ {{number_format( $priceOptionsArray[$index] / $optionWithValue['value'] )}}</td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>
@@ -187,11 +192,23 @@
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->
-                                            <div class="text-end fw-bold fs-6 text-gray-800">${{ number_format($quote->price, 2) }}</div>
+                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ number_format($quote->calculated_price, 2) }}</div>
                                             <!--end::Label-->
                                         </div>
                                         <!--end::Item-->
+                                        @if($discount)
+                                        <!--begin::Item-->
+                                        <div class="d-flex flex-stack mb-3">
+                                            <!--begin::Accountname-->
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">Discount</div>
+                                            <!--end::Accountname-->
 
+                                            <!--begin::Label-->
+                                            <div class="text-end fw-bold fs-6 text-gray-800">{{$quote->discount}}</div>
+                                            <!--end::Label-->
+                                        </div>
+                                        <!--end::Item-->
+                                        @endif
                                         <!--begin::Item-->
                                         <div class="d-flex flex-stack mb-3">
                                             <!--begin::Accountname-->
@@ -211,7 +228,7 @@
                                             <!--end::Code-->
 
                                             <!--begin::Label-->
-                                            <div class="text-end fw-bold fs-6 text-gray-800">${{ number_format($quote->price, 2) }}</div>
+                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ number_format($quote->price, 2) }}</div>
                                             <!--end::Label-->
                                         </div>
                                         <!--end::Item-->
@@ -321,7 +338,6 @@
     </div>
     @push('scripts')
         <script>
-            // Add click event listener to update buttons
             document.querySelectorAll('[data-kt-action="update_row"]').forEach(function (element) {
                 element.addEventListener('click', function () {
                     Livewire.emit('update_quote', this.getAttribute('data-kt-quote-id'));
@@ -333,80 +349,34 @@
                     location.reload();
                 });
             });
-            new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic"), {
-                display: {
-                    viewMode: "clock",
-                    components: {
-                        decades: false,
-                        year: false,
-                        month: false,
-                        date: false,
-                        hours: true,
-                        minutes: true,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    format: "HH:ss"
-                }
-            });
-            new tempusDominus.TempusDominus(document.getElementById("time_from_picker_basic"), {
-                display: {
-                    viewMode: "clock",
-                    components: {
-                        decades: false,
-                        year: false,
-                        month: false,
-                        date: false,
-                        hours: true,
-                        minutes: true,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    format: "HH:ss"
-                }
-            });
-            new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
-                display: {
-                    viewMode: "calendar",
-                    components: {
-                        decades: true,
-                        year: true,
-                        month: true,
-                        date: true,
-                        hours: false,
-                        minutes: false,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    startOfTheWeek: 1,
-                    format: "dd-MM-yyyy"
-                }
-            });
-            new tempusDominus.TempusDominus(document.getElementById("date_to_picker_basic"), {
-                display: {
-                    viewMode: "calendar",
-                    components: {
-                        decades: true,
-                        year: true,
-                        month: true,
-                        date: true,
-                        hours: false,
-                        minutes: false,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    startOfTheWeek: 1,
-                    format: "dd-MM-yyyy"
-                }
-            });
+            document.addEventListener('DOMContentLoaded', function() {
+            const bookButton = document.getElementById('book-quote');
+
+            if (bookButton) {
+                bookButton.addEventListener('click', function() {
+                    const quoteId = bookButton.getAttribute('data-quote-id');
+                    axios.post(`/quotes/${quoteId}/book`)
+                        .then(function(response) {
+                            if(response.status === 200) {
+                                toastr.success(response.data.message);
+                            } else {
+                                // If status is not 200, handle it as an error
+                                toastr.error('Something went wrong. Please try again.');
+                            }
+                        })
+                        .catch(function(error) {
+                            if (error.response && error.response.data && error.response.data.error) {
+                                toastr.error(error.response.data.error);
+                            } else {
+                                // Generic error message for other types of errors
+                                toastr.error('An error occurred. Please try again.');
+                            }
+                        });
+                });
+            }
+        });
+
+            
         </script>
     @endpush
 </x-default-layout>

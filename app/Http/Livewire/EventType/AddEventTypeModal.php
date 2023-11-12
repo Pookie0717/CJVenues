@@ -87,7 +87,7 @@ class AddEventTypeModal extends Component
         } else {
             // Save the new event type to the database
             EventType::create([
-                'name' => $seasons,
+                'name' => implode(', ', $this->selectedEventNames),
                 'event_name' => $this->event_name,
                 'typical_seating' => $this->typical_seating,
                 'duration_type' => $this->duration_type,

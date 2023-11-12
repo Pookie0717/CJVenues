@@ -168,7 +168,7 @@
                                                             @endif
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $optionWithValue['value'] }}</td>
-                                                        <td class="pt-6 text-end">$ {{number_format( $priceOptionsArray[$index] / $optionWithValue['value'] )}}</td>
+                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $optionWithValue['value'], 2) }}</td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>

@@ -685,7 +685,10 @@ class AddQuoteModal extends Component
 
     public function loadEventTypes()
     {
-        $this->eventTypes = EventType::where('name', 'like', '%' . $this->eventName . '%')->get();
+        $currentTenantId = Session::get('current_tenant_id');
+        $this->eventTypes = EventType::where('name', 'like', '%' . $this->eventName . '%')
+                                        ->where('tenant_id', $currentTenantId)
+                                        ->get();
     }
 
     private function loadOptions()

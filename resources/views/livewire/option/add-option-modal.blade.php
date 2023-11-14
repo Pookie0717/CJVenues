@@ -70,6 +70,7 @@
                             <select wire:model.defer="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">Select</option>
                                 <option value="yes_no">Yes/No</option>
+                                <option value="always">Always Included</option>
                                 <option value="check">Check</option>
                                 <option value="radio">Radio</option>
                                 <option value="number">Number</option>
@@ -165,19 +166,6 @@
                             </div>
                         </div>
                         <!--end::Input group-->
-
-
-                        <!-- Always Included -->
-                        <div class="fv-row mb-7">
-                            <div class="form-check form-switch">
-                                <input wire:model.defer="always_included" type="checkbox" class="form-check-input" id="always_included_checkbox">
-                                <label class="form-check-label" for="always_included_checkbox">Include by Default</label>
-                            </div>
-                            @error('always_included')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
                         
                     </div>
                     

@@ -6,7 +6,7 @@
             <!--begin::Modal header-->
             <div class="modal-header" id="kt_modal_add_contact_header">
                 <!--begin::Modal title-->
-                <h2 class="fw-bold">Add Contact</h2>
+                <h2 class="fw-bold">{{ trans('contact.addcontact') }}</h2>
                 <!--end::Modal title-->
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">

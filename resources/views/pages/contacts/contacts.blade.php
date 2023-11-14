@@ -29,7 +29,7 @@
                     <!--begin::Add contact-->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_contact">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        Add Contact
+                        {{ trans('contact.addcontact') }}
                     </button>
                     <!--end::Add contact-->
                 </div>

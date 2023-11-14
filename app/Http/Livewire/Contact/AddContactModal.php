@@ -91,7 +91,7 @@ class AddContactModal extends Component
             ]);
 
             // Emit an event to notify that the contact was updated successfully
-            $this->emit('success', 'Contact successfully updated');
+            $this->emit('success', trans('contact.contactsuccessfullyupdated'));
         } else {
             // Save the new contact to the database
             Contact::create([

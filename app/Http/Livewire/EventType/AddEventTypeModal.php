@@ -95,7 +95,7 @@ class AddEventTypeModal extends Component
             ]);
 
             // Emit an event to notify that the event type was updated successfully
-            $this->emit('success', 'Event Type successfully updated');
+            $this->emit('success', 'Event Package successfully updated');
         } else {
             // Save the new event type to the database
             EventType::create([
@@ -121,7 +121,7 @@ class AddEventTypeModal extends Component
             ]);
 
             // Emit an event to notify that the event type was created successfully
-            $this->emit('success', 'Event Type successfully added');
+            $this->emit('success', 'Event Package successfully added');
 
             // Reset the form fields
             $this->reset([
@@ -161,7 +161,7 @@ class AddEventTypeModal extends Component
         $eventType->delete();
 
         // Emit a success event with a message
-        $this->emit('success', 'Event Type successfully deleted');
+        $this->emit('success', 'Event Package successfully deleted');
     }
 
     public function updateEventType($id)

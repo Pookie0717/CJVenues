@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_event_type_header">
-                <h2 class="fw-bold">Add Event Type</h2>
+                <h2 class="fw-bold">Add Event Package</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     <!-- Add your close icon here -->
                 </div>
@@ -12,8 +12,8 @@
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_event_type_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_event_type_header" data-kt-scroll-wrappers="#kt_modal_add_event_type_scroll" data-kt-scroll-offset="300px">
                         
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Event Name</label>
-                            <input type="text" wire:model.defer="event_name" name="event_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Event Name"/>
+                            <label class="required fw-semibold fs-6 mb-2">Package Name</label>
+                            <input type="text" wire:model.defer="event_name" name="event_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Package Name"/>
                             @error('event_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -22,7 +22,7 @@
                         <div class="row mb-7">
                             <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">Description</label>
-                                <input type="text" wire:model.defer="description" name="description" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Event Description"/>
+                                <input type="text" wire:model.defer="description" name="description" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Package Description"/>
                                 @error('description')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -30,7 +30,7 @@
                         </div>
 
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Event Type</label>
+                            <label class="required fw-semibold fs-6 mb-2">Event Category</label>
                             <select wire:model.defer="selectedEventNames" name="name[]" class="form-select form-select-solid" multiple>
                                 <option value="wedding">Wedding</option>
                                 <option value="birthday">Birthday Party</option>

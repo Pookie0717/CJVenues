@@ -111,7 +111,7 @@ Breadcrumbs::for('options', function ($trail) {
 // Home > Event Types
 Breadcrumbs::for('event-types', function ($trail) {
     $trail->parent('home');
-    $trail->push('Event Types', route('event-types'));
+    $trail->push('Events Packages', route('event-types'));
 });
 
 // Home > Organizations

@@ -29,6 +29,10 @@ class EventType extends Model
         'closing_time',
         'availability',
         'venue_area_id',
+        'min_buffer_before',
+        'max_buffer_before',
+        'min_buffer_after',
+        'max_buffer_after',
     ];
 
     public function venueAreas()

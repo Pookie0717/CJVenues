@@ -107,16 +107,33 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Buffer Time (Before)</label>
-                                <input type="number" wire:model.defer="time_setup" name="time_setup" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Time before the event"/>
-                                @error('time_setup')
+                                <label class="required fw-semibold fs-6 mb-2">Min Buffer Before</label>
+                                <input type="number" wire:model.defer="min_buffer_before" name="min_buffer_before" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Minimum Buffer Before"/>
+                                @error('min_buffer_before')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Buffer Time (After)</label>
-                                <input type="number" wire:model.defer="time_cleaningup" name="time_cleaningup" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Time after the event"/>
-                                @error('time_cleaningup')
+                                <label class="required fw-semibold fs-6 mb-2">Max Buffer Before</label>
+                                <input type="number" wire:model.defer="max_buffer_before" name="max_buffer_before" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Maximum Buffer Before"/>
+                                @error('max_buffer_before')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-7">
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">Min Buffer After</label>
+                                <input type="number" wire:model.defer="min_buffer_after" name="min_buffer_after" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Minimum Buffer After"/>
+                                @error('min_buffer_after')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">Max Buffer After</label>
+                                <input type="number" wire:model.defer="max_buffer_after" name="max_buffer_after" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Maximum Buffer After"/>
+                                @error('max_buffer_after')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>

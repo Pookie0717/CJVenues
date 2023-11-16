@@ -1,6 +1,6 @@
 <div class="modal fade" id="kt_modal_add_quote" tabindex="-1" aria-hidden="true" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered mw-650px">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered mw-850px">
+        <div class="modal-content ">
             <div class="modal-header" id="kt_modal_add_quote_header">
                 <h2 class="fw-bold">Add Quote</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
@@ -120,6 +120,42 @@
 
                 </div>
                 <!--begin::Step 1-->
+
+                <div class="fv-row mb-10">
+                    <div class="row">
+                        <!-- Buffer Time Before the Event Start -->
+                        <div class="col">
+                            <label for="buffer_time_before" class="form-label">Buffer Time Before the Event Start:</label>
+                            <input type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time"/>
+                            @error('buffer_time_before')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Buffer Time After the Event End -->
+                        <div class="col">
+                            <label for="buffer_time_after" class="form-label">Buffer Time After the Event End:</label>
+                            <input type="number" id="buffer_time_after" wire:model.defer="buffer_time_after" class="form-control form-control-solid" placeholder="Buffer Time"/>
+                            @error('buffer_time_after')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Buffer Time Unit -->
+                        <div class="col">
+                            <label for="buffer_time_unit" class="form-label">Buffer Time Unit:</label>
+                            <select class="form-select" id="buffer_time_unit" wire:model="buffer_time_unit">
+                                <option value="">Select Unit</option>
+                                <option value="hours">Hours</option>
+                                <option value="days">Days</option>
+                            </select>
+                            @error('buffer_time_unit')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
 
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">

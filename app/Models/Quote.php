@@ -37,6 +37,9 @@ class Quote extends Model
         'options_ids',
         'options_values',
         'people',
+        'buffer_time_before',
+        'buffer_time_after',
+        'buffer_time_unit',
     ];
     protected static function boot() {
         parent::boot();

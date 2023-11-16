@@ -45,6 +45,9 @@ class AddQuoteModal extends Component
     public $eventTypes = [];
     public $logicOptionValue;
     public $time_ranges = [];
+    public $buffer_time_before;
+    public $buffer_time_after;
+    public $buffer_time_unit;
 
 
     public $edit_mode = false;
@@ -152,6 +155,9 @@ class AddQuoteModal extends Component
                 'price_options' => $priceOptionsString,
                 'options_ids' => $optionIds,
                 'options_values' => $optionValues,
+                'buffer_time_before' => $this->buffer_time_before,
+                'buffer_time_after' => $this->buffer_time_after,
+                'buffer_time_unit' => $this->buffer_time_unit,
         ]);
 
         // Update the current quote number in the system_information table

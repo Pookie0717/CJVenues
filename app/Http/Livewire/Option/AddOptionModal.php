@@ -29,7 +29,7 @@ class AddOptionModal extends Component
     protected $rules = [
         'name' => 'required|string|max:255',
         'position' => 'required|integer',
-        'type' => 'required|in:yes_no,check,radio,number,dropdown,logic',
+        'type' => 'required|in:yes_no,always,check,radio,number,dropdown,logic',
         'values' => 'nullable|string',
         'season_ids' => 'nullable|array',
         'season_ids.*' => 'exists:seasons,id',

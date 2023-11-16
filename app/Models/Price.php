@@ -20,6 +20,7 @@ class Price extends Model
         'price',
         'multiplier',
         'season_id',
+        'extra_tier_type'
     ];
 
     // Define relationships with other models if needed

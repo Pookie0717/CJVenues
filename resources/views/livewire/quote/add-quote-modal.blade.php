@@ -218,6 +218,12 @@
                             <input type="number" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
                         @endif
 
+                        <!-- For 'number', show number input -->
+                        @if($option->type === 'hidden')
+                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
+                            <input type="hidden" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
+                        @endif
+
                         <!-- For 'logic', show number input -->
                         @if($option->type === 'logic')
                             <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->value }}" />

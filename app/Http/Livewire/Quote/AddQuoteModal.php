@@ -55,20 +55,12 @@ class AddQuoteModal extends Component
 
     public function submit()
     {
-        // Validate the data
-        $this->validate([
-            'contact_id' => 'required',
-            'area_id' => 'required',
-            'event_type' => 'required',
-            'people' => 'required',
-            'time_ranges.*.time_from' => 'required',
-            'time_ranges.*.time_to' => 'required',
-        ]);
+        
 
         $this->eventTypes = [];
-        // Retrieve the current quote number
-        $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
-        $newQuoteNumber = $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
+
+        $this->validateQuoteData();
+        $newQuoteNumber = $this->getNewQuoteNumber();
 
         // Convert selected options to a comma-separated string format
         $optionIdsIm = implode('|', array_keys($this->selectedOptions));
@@ -172,6 +164,24 @@ class AddQuoteModal extends Component
         $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'people', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
     }
 
+    private function validateQuoteData()
+    {
+        $this->validate([
+            'contact_id' => 'required',
+            'area_id' => 'required',
+            'event_type' => 'required',
+            'people' => 'required',
+            'time_ranges.*.time_from' => 'required',
+            'time_ranges.*.time_to' => 'required',
+        ]);
+    }
+
+    private function getNewQuoteNumber()
+    {
+        $currentQuoteNumber = DB::table('system_information')->where('key', 'current_quote_number')->value('value');
+        return $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
+    }
+
     public function updatedDateFrom($value)
     {
         $this->calculateTimeRanges();
@@ -259,7 +269,7 @@ class AddQuoteModal extends Component
         $option = Option::find($optionId);
 
         // Check if the option exists and has a valid type
-        if ($option && in_array($option->type, ['yes_no', 'number', 'radio', 'checkbox', 'logic'])) {
+        if ($option && in_array($option->type, ['yes_no', 'number', 'radio', 'checkbox', 'logic', 'always'])) {
             return $option->type;
         }
 
@@ -399,9 +409,9 @@ class AddQuoteModal extends Component
     private function calculateOptionPrice($optionType, $optionValue, $optionPrice, $multiplierType, $multiplierValue, $dateFrom, $dateTo, $timeFrom, $timeTo, $optionId, $people)
     {
         $price = 0;
+
         $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
         $hours = $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-
         switch ($multiplierType) {
             case 'daily':
             case 'daily_pp':
@@ -424,12 +434,26 @@ class AddQuoteModal extends Component
         return $price;
     }
 
+    private function getDefaultOptionValue($optionId)
+    {
+        $option = Option::find($optionId);
+
+        // Check if the option exists and has a default value
+        if ($option && isset($option->default_value)) {
+            return $option->default_value;
+        }
+
+        return null; // Return null if no default value is set or option doesn't exist
+    }
+
     private function calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, $quantity, $optionId, $people, $hours, $days)
     {
         $price = 0;
 
         if ($optionType === 'yes_no') {
             $price = $optionValue === 'yes' ? $multiplierValue * $quantity : 0;
+        } elseif ($optionType === 'always') {
+            $price = $multiplierValue * $quantity * $this->getDefaultOptionValue($optionId);
         } elseif ($optionType === 'number') {
             $price = $multiplierValue * (float)$optionValue * $quantity;
         } elseif ($optionType === 'radio' || $optionType === 'checkbox') {
@@ -455,6 +479,7 @@ class AddQuoteModal extends Component
             $price = $multiplierValue * (float)$logicOptionValue * $quantity;
 
           }
+
         return $price;
     }
 
@@ -734,18 +759,11 @@ class AddQuoteModal extends Component
                 ->get()
             : collect();
 
-        // Include options with always_included = 1
-        $alwaysIncludedOptions = Option::where('always_included', 1)->get();
-        foreach ($alwaysIncludedOptions as $option) {
-            // Check if the option is not already selected to avoid duplicates
-            if (!isset($this->selectedOptions[$option->id])) {
-                $this->selectedOptions[$option->id] = $option->default_value; // Set the default value
-            }
-        }
-
 
         // Merge the two sets of options
         $this->options = $venueOptions->concat($allSeasonOptions)->unique('id')->sortBy('position');
+
+
         // Loop through the options and set the value for the specific logic option
         foreach ($this->options as $option) {
             if ($option->type === 'logic') {
@@ -753,8 +771,11 @@ class AddQuoteModal extends Component
                 $option->value = $this->calculateLogicOptionValues($option->id);
                 $this->selectedOptions[$option->id] = $option->value;
             }
+            // Check if a default value exists and if it's not already set in selectedOptions
+            if (!isset($this->selectedOptions[$option->id]) && isset($option->default_value)) {
+                $this->selectedOptions[$option->id] = $option->default_value;
+            }
         }
-
     }
 
     private function applyDiscount($calculatedPrice, $discount)

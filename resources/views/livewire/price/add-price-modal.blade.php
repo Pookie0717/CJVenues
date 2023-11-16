@@ -112,6 +112,21 @@
 
                         <div class="row fv-row mb-7">
                         <!-- Price -->
+
+                        <div class="col mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Apply price to</label>
+                            <select wire:model="extra_tier_type" name="extra_tier_type" class="form-select form-select-solid mb-3 mb-lg-0">
+                                <option value="">Select</option>
+                                <option value="buffer_before">Buffer Before</option>
+                                <option value="buffer_after">Buffer After</option>
+                                <option value="event">Event</option>
+                            </select>
+                            @error('extra_tier_type')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        
                         <div class="col mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Price</label>
                             <input type="text" wire:model="price" name="price" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Price"/>
@@ -136,6 +151,9 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        
+
                         </div>
 
                     </div>

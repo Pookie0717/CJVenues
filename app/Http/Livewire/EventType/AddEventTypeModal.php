@@ -26,6 +26,10 @@ class AddEventTypeModal extends Component
     public $opening_time;
     public $closing_time;
     public $venue_area_id;
+    public $min_buffer_before;
+    public $max_buffer_before;
+    public $min_buffer_after;
+    public $max_buffer_after;
 
     public $edit_mode = false;
     public $eventTypeId;
@@ -56,6 +60,10 @@ class AddEventTypeModal extends Component
             'opening_time' => 'required|string|max:255',
             'closing_time' => 'required|string|max:255',
             'venue_area_id' => 'required|exists:venue_areas,id',
+            'min_buffer_before' => 'nullable|integer',
+            'max_buffer_before' => 'nullable|integer',
+            'min_buffer_after' => 'nullable|integer',
+            'max_buffer_after' => 'nullable|integer',
         ]);
 
         $eventNames = implode(', ', $this->selectedEventNames);
@@ -80,10 +88,14 @@ class AddEventTypeModal extends Component
                 'opening_time' => $this->opening_time,
                 'closing_time' => $this->closing_time,
                 'venue_area_id' => $this->venue_area_id,
+                'min_buffer_before' => $this->min_buffer_before,
+                'max_buffer_before' => $this->max_buffer_before,
+                'min_buffer_after' => $this->min_buffer_after,
+                'max_buffer_after' => $this->max_buffer_after,
             ]);
 
             // Emit an event to notify that the event type was updated successfully
-            $this->emit('success', 'Event Type successfully updated');
+            $this->emit('success', 'Event Package successfully updated');
         } else {
             // Save the new event type to the database
             EventType::create([
@@ -102,10 +114,14 @@ class AddEventTypeModal extends Component
                 'opening_time' => $this->opening_time,
                 'closing_time' => $this->closing_time,
                 'venue_area_id' => $this->venue_area_id,
+                'min_buffer_before' => $this->min_buffer_before,
+                'max_buffer_before' => $this->max_buffer_before,
+                'min_buffer_after' => $this->min_buffer_after,
+                'max_buffer_after' => $this->max_buffer_after,
             ]);
 
             // Emit an event to notify that the event type was created successfully
-            $this->emit('success', 'Event Type successfully added');
+            $this->emit('success', 'Event Package successfully added');
 
             // Reset the form fields
             $this->reset([
@@ -145,7 +161,7 @@ class AddEventTypeModal extends Component
         $eventType->delete();
 
         // Emit a success event with a message
-        $this->emit('success', 'Event Type successfully deleted');
+        $this->emit('success', 'Event Package successfully deleted');
     }
 
     public function updateEventType($id)
@@ -169,6 +185,10 @@ class AddEventTypeModal extends Component
         $this->closing_time = $eventType->closing_time;
         $this->eventTypeId = $eventType->id;
         $this->venue_area_id = $eventType->venue_area_id;
+        $this->min_buffer_before = $eventType->min_buffer_before;
+        $this->max_buffer_before = $eventType->max_buffer_before;
+        $this->min_buffer_after = $eventType->min_buffer_after;
+        $this->max_buffer_after = $eventType->max_buffer_after;
     }
 
 }

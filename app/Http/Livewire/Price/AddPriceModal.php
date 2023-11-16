@@ -25,7 +25,7 @@ class AddPriceModal extends Component
     public $priceId;
     public $season_id;
     public $tier_type;
-    public $extra_tier_type;
+    public $extra_tier_type = [];
 
     public $edit_mode = false;
 
@@ -44,10 +44,13 @@ class AddPriceModal extends Component
             'option_id' => 'nullable|integer',
             'price' => 'required|string',
             'multiplier' => 'nullable|string|max:255',
-            'extra_tier_type' => 'nullable|string|max:255',
+            'extra_tier_type' => 'array',
+            'extra_tier_type.*' => 'in:buffer_before,buffer_after,event',
         ];
 
         $this->validate($rules);
+
+        $extraTierTypeString = implode(',', $this->extra_tier_type);
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing price record
@@ -62,7 +65,8 @@ class AddPriceModal extends Component
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
                 'season_id' => $this->season_id,
-                'extra_tier_type' => $this->extra_tier_type,
+                'extra_tier_type' => $extraTierTypeString,
+
             ]);
 
             // Emit an event to notify that the price was updated successfully
@@ -79,7 +83,7 @@ class AddPriceModal extends Component
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
                 'season_id' => $this->season_id,
-                'extra_tier_type' => $this->extra_tier_type,
+                'extra_tier_type' => $extraTierTypeString,
             ]);
 
             // Emit an event to notify that the price was created successfully
@@ -122,7 +126,7 @@ class AddPriceModal extends Component
         $this->price = $price->price;
         $this->multiplier = $price->multiplier;
         $this->season_id = $price->season_id;
-        $this->extra_tier_type = $price->extra_tier_type;
+        $this->extra_tier_type = explode(',', $price->extra_tier_type);
     }
 
     public function selectedType($type)

@@ -115,8 +115,7 @@
 
                         <div class="col mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Apply price to</label>
-                            <select wire:model="extra_tier_type" name="extra_tier_type" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">Select</option>
+                            <select wire:model="extra_tier_type" name="extra_tier_type" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
                                 <option value="buffer_before">Buffer Before</option>
                                 <option value="buffer_after">Buffer After</option>
                                 <option value="event">Event</option>

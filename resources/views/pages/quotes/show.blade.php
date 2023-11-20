@@ -1,6 +1,6 @@
 <x-default-layout>
     @section('title')
-    Quote
+    {{ trans('quotes.title') }}
     @endsection
 
     <!--begin::Breadcrumb-->
@@ -28,7 +28,7 @@
 
                             <!--begin::Action-->
                             <button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}">
-                                {{ trans('quote.book') }}
+                                {{ trans('quotes.book') }}
                             </button>
                             <!--end::Action-->
                             
@@ -38,7 +38,7 @@
                         <!--begin::Wrapper-->
                         <div class="m-0">
                             <!--begin::Label-->
-                            <div class="fw-bold fs-3 text-gray-800 mb-8">Quote #{{ $quote->quote_number }} v{{ $quote->version }}</div>
+                            <div class="fw-bold fs-3 text-gray-800 mb-8">{{ trans('quotes.title') }} #{{ $quote->quote_number }} v{{ $quote->version }}</div>
                             <!--end::Label-->
 
                             <!--begin::Row-->
@@ -46,7 +46,7 @@
                                 <!--end::Col-->
                                 <div class="col-sm-6">
                                     <!--end::Label-->
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">Created On:</div>
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.createdon') }}:</div>
                                     <!--end::Label-->
 
                                     <!--end::Col-->
@@ -58,7 +58,7 @@
                                 <!--end::Col-->
                                 <div class="col-sm-6">
                                     <!--end::Label-->
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">Sent On:</div>
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.senton') }}:</div>
                                     <!--end::Label-->
 
                                     <!--end::Info-->
@@ -69,7 +69,7 @@
                                         <span class="fs-7 text-danger d-flex align-items-center">
                                             <span class="bullet bullet-dot bg-danger me-2"></span>
 
-                                            Expiring in x days
+                                            {{ trans('quotes.expiring_in_days' , ['days' => "123"]) }}
                                         </span>
                                     </div>
                                     <!--end::Info-->
@@ -83,7 +83,7 @@
                                 <!--end::Col-->
                                 <div class="col-sm-6">
                                     <!--end::Label-->
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">Issue For:</div>
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.issuedfor') }}:</div>
                                     <!--end::Label-->
 
                                     @foreach ($associatedContact as $contact)
@@ -106,7 +106,7 @@
                                 <!--end::Col-->
                                 <div class="col-sm-6">
                                     <!--end::Label-->
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">Issued By:</div>
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.issuedby') }}:</div>
                                     <!--end::Label-->
 
                                     <!--end::Text-->
@@ -132,10 +132,10 @@
                                     <table class="table mb-3">
                                         <thead>
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
-                                                <th class="min-w-175px pb-2">Description</th>
-                                                <th class="min-w-100px text-end pb-2">Quantity</th>
-                                                <th class="min-w-100px text-end pb-2">Unit</th>
-                                                <th class="min-w-100px text-end pb-2">Price</th>
+                                                <th class="min-w-175px pb-2">{{ trans('quotes.description') }}</th>
+                                                <th class="min-w-100px text-end pb-2">{{ trans('quotes.quantity') }}</th>
+                                                <th class="min-w-100px text-end pb-2">{{ trans('quotes.unit') }}</th>
+                                                <th class="min-w-100px text-end pb-2">{{ trans('quotes.price') }}</th>
                                             </tr>
                                         </thead>
 
@@ -196,7 +196,7 @@
                                         <!--begin::Item-->
                                         <div class="d-flex flex-stack mb-3">
                                             <!--begin::Accountname-->
-                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">Subtotal:</div>
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.subtotal') }}:</div>
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->
@@ -208,7 +208,7 @@
                                         <!--begin::Item-->
                                         <div class="d-flex flex-stack mb-3">
                                             <!--begin::Accountname-->
-                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">Discount</div>
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.discount') }}</div>
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->
@@ -220,7 +220,7 @@
                                         <!--begin::Item-->
                                         <div class="d-flex flex-stack mb-3">
                                             <!--begin::Accountname-->
-                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">VAT</div>
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.vat') }}:</div>
                                             <!--end::Accountname-->
 
                                             <!--begin::Label-->
@@ -232,7 +232,7 @@
                                         <!--begin::Item-->
                                         <div class="d-flex flex-stack">
                                             <!--begin::Code-->
-                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">Total</div>
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.total') }}:</div>
                                             <!--end::Code-->
 
                                             <!--begin::Label-->
@@ -267,7 +267,7 @@
 
                        
                         <!--begin::Title-->
-                        <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">STATUS</h6>
+                        <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">{{ trans('quotes.status') }}</h6>
                         <!--end::Title-->
 
                         <div class="mb-8">
@@ -288,7 +288,7 @@
                         <!--end::Labels-->
 
                         <!--begin::Title-->
-                        <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">VERSION HISTORY</h6>
+                        <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">{{ trans('quotes.versionhistory') }}</h6>
                         <!--end::Title-->
 
                         <!--begin::Item-->
@@ -298,9 +298,9 @@
                                     <table class="table mb-3">
                                         <thead>
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
-                                                <th class="pb-2">Version</th>
-                                                <th class="text-center pb-2">Date</th>
-                                                <th class="text-end pb-2">Action</th>
+                                                <th class="pb-2">{{ trans('quotes.version') }}</th>
+                                                <th class="text-center pb-2">{{ trans('quotes.date') }}</th>
+                                                <th class="text-end pb-2">{{ trans('general.actions') }}</th>
                                             </tr>
                                         </thead>
 
@@ -320,7 +320,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="pt-6 text-dark fw-bolder">
-                                                    <a href="{{ route('quotes.show', $quoteHistory) }}">View</a>
+                                                    <a href="{{ route('quotes.show', $quoteHistory) }}">{{ trans('general.view') }}</a>
                                                 </td>
                                             </tr>
                                         @endforeach

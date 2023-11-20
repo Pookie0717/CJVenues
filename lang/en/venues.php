@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Validation Language Lines
+    | Vanues Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines contain the default error messages used by
@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'addcontact' => 'Add Contact tua sorella',
-    'contactsuccessfullyupdated' => 'Contact successfully updated',
+    'venues' => 'Venues',
+    'addvenue' => 'Add Venue',
 
 ];

@@ -4,7 +4,7 @@
 
         <div class="text-center mb-11">
             <!--begin::Title-->
-            <h1 class="text-dark fw-bolder mb-3">Verify Email</h1>
+            <h1 class="text-dark fw-bolder mb-3">{{ trans('auth.verifyemail') }}</h1>
             <!--end::Title-->
             <!--begin::Subtitle-->
             <div class="text-gray-500 fw-semibold fs-6">Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another</div>

@@ -2,7 +2,7 @@
     <link href="{{ mix('assets/plugins/custom/fullcalendar/main.css') }}" rel="stylesheet" type="text/css" />
 
     @section('title')
-        Bookings
+        {{ trans('bookings.bookings') }}
     @endsection
 
     @section('breadcrumbs')
@@ -38,9 +38,9 @@
             now: TODAY,
 
             views: {
-                dayGridMonth: { buttonText: "month" },
-                timeGridWeek: { buttonText: "week" },
-                timeGridDay: { buttonText: "day" }
+                dayGridMonth: { buttonText: "{{ trans('calendar.month') }}" },
+                timeGridWeek: { buttonText: "{{ trans('calendar.week') }}" },
+                timeGridDay: { buttonText: "{{ trans('calendar.day') }}" }
             },
 
             initialView: "dayGridMonth",

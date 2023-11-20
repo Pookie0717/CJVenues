@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Validation Language Lines
+    | General Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines contain the default error messages used by
@@ -17,5 +17,30 @@ return [
     'italian' => 'Italian',
     'english' => 'English',
     'german' => 'German',
+
+    'actions' => 'Actions',
+    'view' => 'View',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'block' => 'Block',
+
+    'addpermission' => 'Add permission',
+    'selected' => 'Selected',
+    'deleteselected' => 'Delete Selected',  
+
+    'roles' => 'Roles',  
+    'nopermissionsgiven' => 'No permissions given ...',  
+    'editrole' => 'Edit Role',  
+    'usersassigned' => 'Users Assigned',  
+    'termsandconditions' => 'Terms and Conditions',  
+    'cancel' => 'Cancel',  
+    'submit' => 'Submit',  
+    'deleteselected' => 'Delete Selected',  
+    'deleteselected' => 'Delete Selected',  
+    'deleteselected' => 'Delete Selected',  
+    'deleteselected' => 'Delete Selected',  
+    'deleteselected' => 'Delete Selected',  
+
+
 
 ];

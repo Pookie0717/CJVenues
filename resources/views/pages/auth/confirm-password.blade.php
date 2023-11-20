@@ -6,10 +6,10 @@
     <!--begin::Heading-->
         <div class="text-center mb-10">
             <!--begin::Title-->
-            <h1 class="text-dark fw-bolder mb-3">Confirm Password</h1>
+            <h1 class="text-dark fw-bolder mb-3">{{ trans('auth.confirmpassword') }}</h1>
             <!--end::Title-->
             <!--begin::Link-->
-            <div class="text-gray-500 fw-semibold fs-6">This is a secure area of the application. Please confirm your password before continuing.</div>
+            <div class="text-gray-500 fw-semibold fs-6">{{ trans('auth.thisisasecurearea') }}</div>
             <!--end::Link-->
         </div>
         <!--begin::Heading-->
@@ -24,7 +24,7 @@
             <button type="button" id="kt_password_reset_submit" class="btn btn-primary me-4">
                 @include('partials.general._button-indicator')
             </button>
-            <a href="{{ route('login') }}" class="btn btn-light">Cancel</a>
+            <a href="{{ route('login') }}" class="btn btn-light">{{ trans(’general.cancel') }}</a>
         </div>
         <!--end::Actions-->
         <div></div>

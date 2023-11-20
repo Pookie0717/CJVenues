@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Validation Language Lines
+    | Contact Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines contain the default error messages used by
@@ -13,6 +13,8 @@ return [
     |
     */
 
-    'book' => 'Book',
+    'addcontact' => 'Add Contact',
+    'contactsuccessfullyupdated' => 'Contact successfully updated',
+    'contacts' => 'Contacts',
 
 ];

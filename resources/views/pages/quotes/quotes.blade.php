@@ -1,7 +1,7 @@
 <x-default-layout>
 
     @section('title')
-        Quotes
+        {{ trans('quotes.quotes') }}
     @endsection
 
     @section('breadcrumbs')
@@ -29,7 +29,7 @@
                     <!--begin::Add quote-->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_quote">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        Add Quote
+                        {{ trans('quotes.addquote') }}
                     </button>
                     <!--end::Add quote-->
                 </div>

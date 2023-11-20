@@ -1,7 +1,7 @@
 <x-default-layout>
 
     @section('title')
-        Options
+        {{ trans('options.options') }}
     @endsection
 
     @section('breadcrumbs')
@@ -29,7 +29,7 @@
                     <!--begin::Add option-->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_option">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        Add Option
+                        {{ trans('options.addoption') }}
                     </button>
                     <!--end::Add option-->
                 </div>

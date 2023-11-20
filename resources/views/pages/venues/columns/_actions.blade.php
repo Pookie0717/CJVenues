@@ -1,5 +1,5 @@
 <a href="#" class="btn btn-light btn-active-light-primary btn-flex btn-center btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-    Actions
+    {{ trans('general.actions') }}
     <i class="ki-duotone ki-down fs-5 ms-1"></i>
 </a>
 <!--begin::Menu-->
@@ -8,7 +8,7 @@
     <!--begin::Menu item-->
     <div class="menu-item px-3">
         <a href="#" class="menu-link px-3" data-kt-venue-id="{{ $venue->id }}" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue" data-kt-action="update_row">
-            Edit
+            {{ trans('general.edit') }}
         </a>
     </div>
     <!--end::Menu item-->
@@ -16,7 +16,7 @@
     <!--begin::Menu item-->
     <div class="menu-item px-3">
         <a href="#" class="menu-link px-3" data-kt-venue-id="{{ $venue->id }}" data-kt-action="delete_row">
-            Delete
+            {{ trans('general.delete') }}
         </a>
     </div>
     <!--end::Menu item-->

@@ -7,13 +7,13 @@
         <div class="text-center mb-11">
             <!--begin::Title-->
             <h1 class="text-dark fw-bolder mb-3">
-                Sign Up
+                {{ trans('auth.signup') }}
             </h1>
             <!--end::Title-->
 
             <!--begin::Subtitle-->
             <div class="text-gray-500 fw-semibold fs-6">
-                with your CJ Account
+                {{ trans('auth.signupwithyourcjaccount') }}
             </div>
             <!--end::Subtitle--->
         </div>
@@ -22,14 +22,14 @@
         <!--begin::Input group--->
         <div class="fv-row mb-8">
             <!--begin::Name-->
-            <input type="text" placeholder="Name" name="name" autocomplete="off" class="form-control bg-transparent"/>
+            <input type="text" placeholder="{{ trans('fields.name') }}" name="name" autocomplete="off" class="form-control bg-transparent"/>
             <!--end::Name-->
         </div>
 
         <!--end::Input group--->
         <div class="fv-row mb-8">
             <!--begin::Repeat Company-->
-            <input placeholder="Company Name" name="company" type="text" autocomplete="off" class="form-control bg-transparent"/>
+            <input placeholder="{{ trans('fields.companyname') }}" name="company" type="text" autocomplete="off" class="form-control bg-transparent"/>
             <!--end::Repeat Company-->
         </div>
         <!--end::Input group--->
@@ -37,7 +37,7 @@
         <!--begin::Input group--->
         <div class="fv-row mb-8">
             <!--begin::Email-->
-            <input type="text" placeholder="Email" name="email" autocomplete="off" class="form-control bg-transparent"/>
+            <input type="text" placeholder="{{ trans('fields.email') }}" name="email" autocomplete="off" class="form-control bg-transparent"/>
             <!--end::Email-->
         </div>
 
@@ -69,7 +69,7 @@
 
             <!--begin::Hint-->
             <div class="text-muted">
-                Use 8 or more characters with a mix of letters, numbers & symbols.
+                {{ trans('auth.pwrequirments') }}
             </div>
             <!--end::Hint-->
         </div>
@@ -78,7 +78,7 @@
         <!--end::Input group--->
         <div class="fv-row mb-8">
             <!--begin::Repeat Password-->
-            <input placeholder="Repeat Password" name="password_confirmation" type="password" autocomplete="off" class="form-control bg-transparent"/>
+            <input placeholder="{{ trans('fields.repeatpassword') }}" name="password_confirmation" type="password" autocomplete="off" class="form-control bg-transparent"/>
             <!--end::Repeat Password-->
         </div>
         <!--end::Input group--->
@@ -89,9 +89,8 @@
                 <input class="form-check-input" type="checkbox" name="toc" value="1"/>
 
                 <label class="form-check-label fw-semibold text-gray-700 fs-6">
-                    I Agree &
-
-                    <a href="#" class="ms-1 link-primary">Terms and conditions</a>.
+                    {{ trans('auth.iagreewith') }}
+                    <a href="#" class="ms-1 link-primary">{{ trans('general.termsandconditions') }}</a>.
                 </label>
             </div>
         </div>
@@ -100,17 +99,17 @@
         <!--begin::Submit button-->
         <div class="d-grid mb-10">
             <button type="submit" id="kt_sign_up_submit" class="btn btn-primary">
-                @include('partials/general/_button-indicator', ['label' => 'Sign Up'])
+                @include('partials/general/_button-indicator', ['label' => __('auth.signup')])
             </button>
         </div>
         <!--end::Submit button-->
 
         <!--begin::Sign up-->
         <div class="text-gray-500 text-center fw-semibold fs-6">
-            Already have an Account?
+            {{ trans('auth.alreadyhaveanaccount') }}
 
             <a href="/login" class="link-primary fw-semibold">
-                Sign in
+                {{ trans('auth.signin') }}
             </a>
         </div>
         <!--end::Sign up-->

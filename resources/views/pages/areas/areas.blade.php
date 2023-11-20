@@ -1,7 +1,7 @@
 <x-default-layout>
 
     @section('title')
-        Venues Areas
+        {{ trans('areas.venuesareas') }}
     @endsection
 
     @section('breadcrumbs')
@@ -29,7 +29,7 @@
                     <!--begin::Add contact-->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue_area">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        Add Venue Area
+                        {{ trans('areas.addvenuearea') }}
                     </button>
                     <!--end::Add contact-->
                 </div>

@@ -7,13 +7,13 @@
         <div class="text-center mb-11">
             <!--begin::Title-->
             <h1 class="text-dark fw-bolder mb-3">
-                Sign In
+                {{ trans('auth.signin') }}
             </h1>
             <!--end::Title-->
 
             <!--begin::Subtitle-->
             <div class="text-gray-500 fw-semibold fs-6">
-                with your CJ Account
+                {{ trans('auth.signinwithyourcjaccount') }}
             </div>
             <!--end::Subtitle--->
         </div>
@@ -22,14 +22,14 @@
         <!--begin::Input group--->
         <div class="fv-row mb-8">
             <!--begin::Email-->
-            <input type="text" placeholder="Email" name="email" autocomplete="off" class="form-control bg-transparent" value=""/>
+            <input type="text" placeholder="{{ trans('fields.email') }}" name="email" autocomplete="off" class="form-control bg-transparent" value=""/>
             <!--end::Email-->
         </div>
 
         <!--end::Input group--->
         <div class="fv-row mb-3">
             <!--begin::Password-->
-            <input type="password" placeholder="Password" name="password" autocomplete="off" class="form-control bg-transparent" value=""/>
+            <input type="password" placeholder="{{ trans('fields.password') }}" name="password" autocomplete="off" class="form-control bg-transparent" value=""/>
             <!--end::Password-->
         </div>
         <!--end::Input group--->
@@ -40,7 +40,7 @@
 
             <!--begin::Link-->
             <a href="{{ route('password.request') }}" class="link-primary">
-                Forgot Password ?
+                {{ trans('auth.forgotpassword') }}
             </a>
             <!--end::Link-->
         </div>
@@ -49,17 +49,17 @@
         <!--begin::Submit button-->
         <div class="d-grid mb-10">
             <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">
-                @include('partials/general/_button-indicator', ['label' => 'Sign In'])
+                @include('partials/general/_button-indicator', ['label' => __('auth.signin')])
             </button>
         </div>
         <!--end::Submit button-->
 
         <!--begin::Sign up-->
         <div class="text-gray-500 text-center fw-semibold fs-6">
-            Not a Member yet?
+            {{ trans('auth.notamemberyet') }}
 
             <a href="{{ route('register') }}" class="link-primary">
-                Sign up
+                {{ trans('auth.signup') }}
             </a>
         </div>
         <!--end::Sign up-->

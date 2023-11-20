@@ -1,7 +1,7 @@
 <x-default-layout>
 
     @section('title')
-        Contacts
+        {{ trans('contacts.contacts') }}
     @endsection
 
     @section('breadcrumbs')
@@ -29,7 +29,7 @@
                     <!--begin::Add contact-->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_contact">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        {{ trans('contact.addcontact') }}
+                        {{ trans('contacts.addcontact') }}
                     </button>
                     <!--end::Add contact-->
                 </div>

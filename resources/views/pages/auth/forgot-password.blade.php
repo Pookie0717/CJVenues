@@ -7,13 +7,13 @@
         <div class="text-center mb-10">
             <!--begin::Title-->
             <h1 class="text-dark fw-bolder mb-3">
-                Forgot Password ?
+                {{ trans('auth.forgotpassword') }}
             </h1>
             <!--end::Title-->
 
             <!--begin::Link-->
             <div class="text-gray-500 fw-semibold fs-6">
-                Enter your email to reset your password.
+                {{ trans('auth.enteremailtoresetpw') }}
             </div>
             <!--end::Link-->
         </div>
@@ -29,10 +29,10 @@
         <!--begin::Actions-->
         <div class="d-flex flex-wrap justify-content-center pb-lg-0">
             <button type="button" id="kt_password_reset_submit" class="btn btn-primary me-4">
-                @include('partials/general/_button-indicator', ['label' => 'Submit'])
+                @include('partials/general/_button-indicator', ['label' => __('general.submit')])
             </button>
 
-            <a href="{{ route('login') }}" class="btn btn-light">Cancel</a>
+            <a href="{{ route('login') }}" class="btn btn-light">{{ trans('general.cancel') }}</a>
         </div>
         <!--end::Actions-->
     </form>

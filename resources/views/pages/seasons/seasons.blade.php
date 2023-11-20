@@ -1,7 +1,7 @@
 <x-default-layout>
 
     @section('title')
-        Seasons
+        {{ trans('seasons.seasons') }}
     @endsection
 
     @section('breadcrumbs')

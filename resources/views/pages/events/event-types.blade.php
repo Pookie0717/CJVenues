@@ -1,7 +1,7 @@
 <x-default-layout>
 
     @section('title')
-        Events Packages
+        {{ trans('events.eventpackages') }}
     @endsection
 
     @section('breadcrumbs')
@@ -29,7 +29,7 @@
                     <!--begin::Add event-type-->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_event_type">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        Add Event Package
+                        {{ trans('events.addeventpackage') }}
                     </button>
                     <!--end::Add event-type-->
                 </div>

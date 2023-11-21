@@ -64,11 +64,11 @@ class AddQuoteModal extends Component
 
         $this->validateQuoteData();
         $newQuoteNumber = $this->getNewQuoteNumber();
+        dd($this->selectedOptions);
 
         // Convert selected options to a comma-separated string format
         $optionIdsIm = implode('|', array_keys($this->selectedOptions));
         $optionValuesIm = implode('|', array_values($this->selectedOptions));
-
         $optionIds = explode('|', $optionIdsIm);
         $optionValues = explode('|', $optionValuesIm);
 
@@ -387,23 +387,28 @@ class AddQuoteModal extends Component
                 // Determine which price to use (area or venue) based on priority
                 $price = $areaPrice ?? $venuePrice;
 
-                // Get the multiplier type (daily, hourly, per event) and value
-                $multiplierType = $price->multiplier;
-                $multiplierValue = (float)$price->price;
+                if (($areaPrice && $areaPrice->extra_tier_type == 'event') ||
+                    ($venuePrice && $venuePrice->extra_tier_type == 'event')) {
+                
+                    // Get the multiplier type (daily, hourly, per event) and value
+                    $multiplierType = $price->multiplier;
+                    $multiplierValue = (float)$price->price;
 
-                // Calculate the price based on the multiplier type for the current day
-                switch ($multiplierType) {
-                    case 'daily':
-                        $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
-                        $totalPrice += $multiplierValue;
-                        break;
-                    case 'hourly':
-                        $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
-                        $totalPrice += $multiplierValue * $hours;
-                        break;
-                    case 'event':
-                        $totalPrice += $multiplierValue;
-                        break;
+                    // Calculate the price based on the multiplier type for the current day
+                    switch ($multiplierType) {
+                        case 'daily':
+                            $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
+                            $totalPrice += $multiplierValue;
+                            break;
+                        case 'hourly':
+                            $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
+                            $totalPrice += $multiplierValue * $hours;
+                            break;
+                        case 'event':
+                            $totalPrice += $multiplierValue;
+                            break;
+                    }
+
                 }
             }
             // Move to the next day
@@ -471,20 +476,13 @@ class AddQuoteModal extends Component
             if ($selectedValueIndex !== false && isset($prices[$selectedValueIndex])) {
                 $selectedPrice = (float)$prices[$selectedValueIndex];
                 $price = $selectedPrice * $quantity;
-            } else {
-                // Log when the selected value index is not found or the price is not set
             }
         } elseif ($optionType === 'logic') {
-
             $optionValues = explode('|', $this->getOptionValues($optionId));
-
             $logicOption = $this->getLogicOptionDetails($optionId, $people, $hours, $days);
-
             $logicOptionValue = $logicOption ? $optionValues[0] : $optionValues[1];
-
             $price = $multiplierValue * (float)$logicOptionValue * $quantity;
-
-          }
+        }
 
         return $price;
     }
@@ -622,30 +620,32 @@ class AddQuoteModal extends Component
                         $optionValue = '0';
                         continue;
                     }
+                    if ($optionPrice && $optionPrice->extra_tier_type == 'event') {
 
-                    $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
-                    $optionType = $this->getOptionType($optionId);
+                        $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+                        $optionType = $this->getOptionType($optionId);
 
-                    if ($optionPrice) {
-                        $multiplierValue = (float)$optionPrice->price;
-                        $optionTotalPrice = $this->calculateOptionPrice(
-                            $optionType,
-                            $optionValue,
-                            $optionPrice,
-                            $optionPrice->multiplier,
-                            $multiplierValue,
-                            $currentDate,
-                            $dateTo,
-                            $timeFrom,
-                            $timeTo,
-                            $optionId,
-                            $people
-                        );
-                        $totalPrice += $optionTotalPrice;
-                        $individualPrices[] = [
-                            'optionId' => $optionId,
-                            'price' => $optionTotalPrice,
-                        ];
+                        if ($optionPrice) {
+                            $multiplierValue = (float)$optionPrice->price;
+                            $optionTotalPrice = $this->calculateOptionPrice(
+                                $optionType,
+                                $optionValue,
+                                $optionPrice,
+                                $optionPrice->multiplier,
+                                $multiplierValue,
+                                $currentDate,
+                                $dateTo,
+                                $timeFrom,
+                                $timeTo,
+                                $optionId,
+                                $people
+                            );
+                            $totalPrice += $optionTotalPrice;
+                            $individualPrices[] = [
+                                'optionId' => $optionId,
+                                'price' => $optionTotalPrice,
+                            ];
+                        }
                     }
                 }
             }
@@ -724,6 +724,9 @@ class AddQuoteModal extends Component
 
     private function loadOptions()
     {
+
+        $currentTenantId = Session::get('current_tenant_id');
+
         // Check if the required fields are set
         if (!$this->date_from || !$this->area_id) {
             $this->options = collect(); // No options to display if date and area are not set

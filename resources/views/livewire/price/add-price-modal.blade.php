@@ -110,10 +110,8 @@
                             @enderror
                         </div>
 
-                        <div class="row fv-row mb-7">
-                        <!-- Price -->
-
-                        <div class="col mb-7">
+                        <!-- Season Dropdown -->
+                        <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.applypriceto') }}</label>
                             <select wire:model="extra_tier_type" name="extra_tier_type[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
                                 <option value="buffer_before">{{ trans('prices.bufferbefore') }}</option>
@@ -125,6 +123,8 @@
                             @enderror
                         </div>
 
+                        <div class="row fv-row mb-7">
+                        <!-- Price -->
                         
                         <div class="col mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.price') }}</label>

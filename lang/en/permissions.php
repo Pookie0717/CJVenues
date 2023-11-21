@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Options Language Lines
+    | Permissions Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are the default lines which match reasons
@@ -13,8 +13,7 @@ return [
     |
     */
 
-    'options' => 'Options',
-    'addoption' => 'Add Option',
-    'separatedby' => 'Separated by "|" if necessary',
+    'disclaimereditpermissionname' => "By editing the permission name, you might break the system permissions functionality. Please ensure you're absolutely certain before proceeding.",
+    'userswithrole' => 'Total users with this role',
 
 ];

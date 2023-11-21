@@ -6,7 +6,7 @@
             <!--begin::Modal header-->
             <div class="modal-header">
                 <!--begin::Modal title-->
-                <h2 class="fw-bold">Update Role</h2>
+                <h2 class="fw-bold">{{ trans('permissions.updaterole') }}</h2>
                 <!--end::Modal title-->
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
@@ -26,11 +26,11 @@
                         <div class="fv-row mb-10">
                             <!--begin::Label-->
                             <label class="fs-5 fw-bold form-label mb-2">
-                                <span class="required">Role name</span>
+                                <span class="required">{{ trans('permissions.rolename') }}</span>
                             </label>
                             <!--end::Label-->
                             <!--begin::Input-->
-                            <input class="form-control form-control-solid" placeholder="Enter a role name" name="name" wire:model.defer="name"/>
+                            <input class="form-control form-control-solid" placeholder="{{ trans('permissions.enterarollname') }}" name="name" wire:model.defer="name"/>
                             <!--end::Input-->
                             @error('name')
                             <span class="text-danger">{{ $message }}</span> @enderror
@@ -39,7 +39,7 @@
                         <!--begin::Permissions-->
                         <div class="fv-row">
                             <!--begin::Label-->
-                            <label class="fs-5 fw-bold form-label mb-2">Role Permissions</label>
+                            <label class="fs-5 fw-bold form-label mb-2">{{ trans('permissions.rolepermissions') }}</label>
                             <!--end::Label-->
                             <!--begin::Table wrapper-->
                             <div class="table-responsive">
@@ -49,7 +49,7 @@
                                     <tbody class="text-gray-600 fw-semibold">
                                     <!--begin::Table row-->
                                     <tr>
-                                        <td class="text-gray-800">Administrator Access
+                                        <td class="text-gray-800">{{ trans('permissions.administratoraccess') }}
                                             <span class="ms-1" data-bs-toggle="tooltip" title="Allows a full access to the system">
                                                 {!! getIcon('information-5','text-gray-500 fs-6') !!}
                                             </span>
@@ -58,7 +58,7 @@
                                             <!--begin::Checkbox-->
                                             <label class="form-check form-check-sm form-check-custom form-check-solid me-9">
                                                 <input class="form-check-input" type="checkbox" id="kt_roles_select_all" wire:model.defer="check_all" wire:change="checkAll" />
-                                                <span class="form-check-label" for="kt_roles_select_all">Select all</span>
+                                                <span class="form-check-label" for="kt_roles_select_all">{{ trans('general.selectall') }}</span>
                                             </label>
                                             <!--end::Checkbox-->
                                         </td>
@@ -102,11 +102,11 @@
                     <!--end::Scroll-->
                     <!--begin::Actions-->
                     <div class="text-center pt-15">
-                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
+                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">{{ trans('general.discard') }}</button>
                         <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove>Submit</span>
+                            <span class="indicator-label" wire:loading.remove>{{ trans('general.submit') }}</span>
                             <span class="indicator-progress" wire:loading wire:target="submit">
-                                Please wait...
+                                {{ trans('general.pleasewait') }}...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>

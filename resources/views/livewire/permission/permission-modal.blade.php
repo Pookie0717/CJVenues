@@ -6,7 +6,7 @@
             <!--begin::Modal header-->
             <div class="modal-header">
                 <!--begin::Modal title-->
-                <h2 class="fw-bold">Update Permission</h2>
+                <h2 class="fw-bold">{{ trans('permissions.updatepermissions') }}</h2>
                 <!--end::Modal title-->
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
@@ -28,7 +28,7 @@
                         <!--begin::Content-->
                         <div class="fw-semibold">
                             <div class="fs-6 text-gray-700">
-                                <strong class="me-1">Warning!</strong>By editing the permission name, you might break the system permissions functionality. Please ensure you're absolutely certain before proceeding.
+                                <strong class="me-1">{{ trans('general.warning') }}!</strong>{{ trans('permissions.disclaimereditpermissionname') }}
                             </div>
                         </div>
                         <!--end::Content-->
@@ -43,7 +43,7 @@
                     <div class="fv-row mb-7">
                         <!--begin::Label-->
                         <label class="fs-6 fw-semibold form-label mb-2">
-                            <span class="required">Permission Name</span>
+                            <span class="required">{{ trans('permissions.permissionname') }}</span>
                             <span class="ms-2" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-html="true" data-bs-content="Permission names is required to be unique.">
                                 {!! getIcon('information','fs-7') !!}
                             </span>
@@ -60,9 +60,9 @@
                     <div class="text-center pt-15">
                         <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
                         <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove>Submit</span>
+                            <span class="indicator-label" wire:loading.remove>{{ trans('general.submit') }}</span>
                             <span class="indicator-progress" wire:loading wire:target="submit">
-                                Please wait...
+                                {{ trans('general.pleasewait') }} ...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>

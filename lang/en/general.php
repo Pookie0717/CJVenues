@@ -35,7 +35,7 @@ return [
     'termsandconditions' => 'Terms and Conditions',  
     'cancel' => 'Cancel',  
     'submit' => 'Submit',  
-    'deleteselected' => 'Delete Selected',  
+    'select' => 'Select',  
     'deleteselected' => 'Delete Selected',  
     'deleteselected' => 'Delete Selected',  
     'deleteselected' => 'Delete Selected',  

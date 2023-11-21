@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_price_header">
-                <h2 class="fw-bold">Add Price</h2>
+                <h2 class="fw-bold">{{ trans('prices.addprice') }}</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     {!! getIcon('cross','fs-1') !!}
                 </div>
@@ -13,7 +13,7 @@
                         
                         <!-- Name -->
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Name</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.name') }}</label>
                             <input type="text" wire:model="name" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Name"/>
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
@@ -22,12 +22,12 @@
 
                         <!-- Type -->
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Type</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.type') }}</label>
                             <select wire:model="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">Select</option>
-                                <option value="area">Area</option>
-                                <option value="option">Option</option>
-                                <option value="venue">Venue</option>
+                                <option value="">{{ trans('general.select') }}</option>
+                                <option value="area">{{ trans('prices.type_area') }}</option>
+                                <option value="option">{{ trans('prices.type_option') }}</option>
+                                <option value="venue">{{ trans('prices.type_venue') }}</option>
                                 <!--<option value="per_person">Per Person</option>
                                 <option value="pp_tier">Per Tier</option>-->
                             </select>
@@ -39,7 +39,7 @@
                         <!-- Tier Dropdown (conditional) -->
                         @if($type === 'pp_tier')
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Tier</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.tier') }}</label>
                             <input type="text" id="tier_type_input" class="form-select form-select-solid mb-3 mb-lg-0" name="tier_type" wire:model="tier_type" placeholder="i.e. 1-100" class="form-control">
                             @error('pp_tier')
                                 <span class="text-danger">{{ $message }}</span>
@@ -50,9 +50,9 @@
                         <!-- Area Dropdown (conditional) -->
                         @if($type === 'area')
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Area</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.area') }}</label>
                             <select wire:model.defer="area_id" name="area_id" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">Select Area</option>
+                                <option value="">{{ trans('prices.selectarea') }}</option>
                                 @foreach($venueAreas as $area)
                                     <option value="{{ $area->id }}">{{ $area->name }}</option>
                                 @endforeach
@@ -67,9 +67,9 @@
                         <!-- Venue Dropdown (conditional) -->
                         @if($type === 'venue')
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Venue</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.venue') }}</label>
                             <select wire:model.defer="venue_id" name="venue_id" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">Select Venue</option>
+                                <option value="">{{ trans('prices.selectvenue') }}</option>
                                 @foreach($venues as $venue)
                                     <option value="{{ $venue->id }}">{{ $venue->name }}</option>
                                 @endforeach
@@ -83,9 +83,9 @@
                         <!-- Option Dropdown (conditional) -->
                         @if($type === 'option')
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Option</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.option') }}</label>
                             <select wire:model.defer="option_id" name="option_id" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">Select Option</option>
+                                <option value="">{{ trans('prices.selectoption') }}</option>
                                 @foreach($options as $option)
                                     <option value="{{ $option->id }}">{{ $option->name }}</option>
                                 @endforeach
@@ -98,9 +98,9 @@
 
                         <!-- Season Dropdown -->
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Season</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.season') }}</label>
                             <select wire:model.defer="season_id" name="season_id" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">Select Season</option>
+                                <option value="">{{ trans('prices.selectseason') }}</option>
                                 @foreach($seasons as $season)
                                     <option value="{{ $season->id }}">{{ $season->name }}</option>
                                 @endforeach
@@ -114,11 +114,11 @@
                         <!-- Price -->
 
                         <div class="col mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Apply price to</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.applypriceto') }}</label>
                             <select wire:model="extra_tier_type" name="extra_tier_type[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
-                                <option value="buffer_before">Buffer Before</option>
-                                <option value="buffer_after">Buffer After</option>
-                                <option value="event">Event</option>
+                                <option value="buffer_before">{{ trans('prices.bufferbefore') }}</option>
+                                <option value="buffer_after">{{ trans('prices.bufferafter') }}</option>
+                                <option value="event">{{ trans('prices.event') }}</option>
                             </select>
                             @error('extra_tier_type')
                                 <span class="text-danger">{{ $message }}</span>
@@ -127,7 +127,7 @@
 
                         
                         <div class="col mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Price</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.price') }}</label>
                             <input type="text" wire:model="price" name="price" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Price"/>
                             @error('price')
                                 <span class="text-danger">{{ $message }}</span>
@@ -136,15 +136,15 @@
 
                          <!-- Multiplier -->
                         <div class="col mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Multiplier</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.multiplier') }}</label>
                             <select wire:model="multiplier" name="multiplier" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">Select</option>
-                                <option value="event">Per Event</option>
-                                <option value="event_pp">Per Person</option>
-                                <option value="daily">Per Day</option>
-                                <option value="daily_pp">Per Day Per Person</option>
-                                <option value="hourly">Per Hour</option>
-                                <option value="hourly_pp">Per Hour Per Person</option>
+                                <option value="">{{ trans('general.select') }}</option>
+                                <option value="event">{{ trans('prices.multiplier_perevent') }}</option>
+                                <option value="event_pp">{{ trans('prices.multiplier_perperson') }}</option>
+                                <option value="daily">{{ trans('prices.multiplier_perday') }}</option>
+                                <option value="daily_pp">{{ trans('prices.multiplier_perdayperperson') }}</option>
+                                <option value="hourly">{{ trans('prices.multiplier_perhour') }}</option>
+                                <option value="hourly_pp">{{ trans('prices.multiplier_perhourperperson') }}</option>
                             </select>
                             @error('multiplier')
                                 <span class="text-danger">{{ $message }}</span>
@@ -158,11 +158,11 @@
                     </div>
                     
                     <div class="text-center pt-15">
-                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
+                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">{{ trans('general.discard') }}</button>
                         <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove>Submit</span>
+                            <span class="indicator-label" wire:loading.remove>{{ trans('general.select') }}</span>
                             <span class="indicator-progress" wire:loading wire:target="submit">
-                                Please wait...
+                                {{ trans('general.pleasewait') }}...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>

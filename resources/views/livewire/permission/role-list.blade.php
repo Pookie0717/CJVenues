@@ -16,7 +16,7 @@
                 <!--begin::Card body-->
                 <div class="card-body pt-1">
                     <!--begin::Users-->
-                    <div class="fw-bold text-gray-600 mb-5">Total users with this role: {{ $role->users->count() }}</div>
+                    <div class="fw-bold text-gray-600 mb-5">{{ trans('permissions.userswithrole') }}: {{ $role->users->count() }}</div>
                     <!--end::Users-->
                     <!--begin::Permissions-->
                     <div class="d-flex flex-column text-gray-600">
@@ -33,7 +33,7 @@
                         @if($role->permissions->count() ===0)
                             <div class="d-flex align-items-center py-2">
                                 <span class='bullet bg-primary me-3'></span>
-                                <em>No permissions given...</em>
+                                <em>{{ trans('permissions.nopermissionsgiven') }}...</em>
                             </div>
                         @endif
                     </div>
@@ -42,8 +42,8 @@
                 <!--end::Card body-->
                 <!--begin::Card footer-->
                 <div class="card-footer flex-wrap pt-0">
-                    <a href="{{ route('user-management.roles.show', $role) }}" class="btn btn-light btn-active-primary my-1 me-2">View Role</a>
-                    <button type="button" class="btn btn-light btn-active-light-primary my-1" data-role-id="{{ $role->name }}" data-bs-toggle="modal" data-bs-target="#kt_modal_update_role">Edit Role</button>
+                    <a href="{{ route('user-management.roles.show', $role) }}" class="btn btn-light btn-active-primary my-1 me-2">{{ trans('permissions.viewrole') }}</a>
+                    <button type="button" class="btn btn-light btn-active-light-primary my-1" data-role-id="{{ $role->name }}" data-bs-toggle="modal" data-bs-target="#kt_modal_update_role">{{ trans('permissions.editrole') }}</button>
                 </div>
                 <!--end::Card footer-->
             </div>
@@ -64,7 +64,7 @@
                     <img src="{{ image('illustrations/sketchy-1/4.png') }}" alt="" class="mw-100 mh-150px mb-7"/>
                     <!--end::Illustration-->
                     <!--begin::Label-->
-                    <div class="fw-bold fs-3 text-gray-600 text-hover-primary">Add New Role</div>
+                    <div class="fw-bold fs-3 text-gray-600 text-hover-primary">{{ trans('permissions.addnewrole') }}</div>
                     <!--end::Label-->
                 </button>
                 <!--begin::Button-->

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_event_type_header">
-                <h2 class="fw-bold">Add Event Package</h2>
+                <h2 class="fw-bold">{{ trans('events.addeventpackage') }}</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     <!-- Add your close icon here -->
                 </div>
@@ -12,8 +12,8 @@
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_event_type_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_event_type_header" data-kt-scroll-wrappers="#kt_modal_add_event_type_scroll" data-kt-scroll-offset="300px">
                         
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Package Name</label>
-                            <input type="text" wire:model.defer="event_name" name="event_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Package Name"/>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('events.packagename') }}</label>
+                            <input type="text" wire:model.defer="event_name" name="event_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.packagename') }}"/>
                             @error('event_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -21,8 +21,8 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Description</label>
-                                <input type="text" wire:model.defer="description" name="description" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Package Description"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.description') }}</label>
+                                <input type="text" wire:model.defer="description" name="description" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.description') }}"/>
                                 @error('description')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -30,12 +30,12 @@
                         </div>
 
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Event Category</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('events.category') }}</label>
                             <select wire:model.defer="selectedEventNames" name="name[]" class="form-select form-select-solid" multiple>
-                                <option value="wedding">Wedding</option>
-                                <option value="birthday">Birthday Party</option>
-                                <option value="summer">Summer Party</option>
-                                <option value="corporate">Corporate Event</option>
+                                <option value="wedding">{{ trans('events.wedding') }}</option>
+                                <option value="birthday">{{ trans('events.birthdayparty') }}</option>
+                                <option value="summer">{{ trans('events.summerparty') }}</option>
+                                <option value="corporate">{{ trans('events.corporatevent') }}</option>
                                 <!-- Add more options as needed -->
                             </select>
                             @error('selectedEventNames')
@@ -45,12 +45,12 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Typical Seating</label>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.typicalseating') }}</label>
                                 <select wire:model.defer="typical_seating" name="typical_seating" class="form-select form-select-solid">
-                                    <option value="">Select</option>
-                                    <option value="noseating">No Seating</option>
-                                    <option value="seatingrows">In Rows</option>
-                                    <option value="seatingtables">Tables</option>
+                                    <option value="">{{ trans('general.select') }}</option>
+                                    <option value="noseating">{{ trans('events.seating_noseating') }}</option>
+                                    <option value="seatingrows">{{ trans('events.seating_inrows') }}</option>
+                                    <option value="seatingtables">{{ trans('events.seating_tables') }}</option>
                                     <!-- Add more options as needed -->
                                 </select>
                                 @error('typical_seating')
@@ -58,11 +58,11 @@
                                 @enderror
                             </div>
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Duration Type</label>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.durationtype') }}</label>
                                 <select wire:model.defer="duration_type" name="duration_type" class="form-select form-select-solid">
-                                    <option value="">Select</option>
-                                    <option value="days">Days</option>
-                                    <option value="hours">Hours</option>
+                                    <option value="">{{ trans('general.select') }}</option>
+                                    <option value="days">{{ trans('events.duration_days') }}</option>
+                                    <option value="hours">{{ trans('events.duration_hours') }}</option>
                                     <!-- Add more options as needed -->
                                 </select>
                                 @error('duration_type')
@@ -73,15 +73,15 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Min Duration</label>
-                                <input type="number" wire:model.defer="min_duration" name="min_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Min Duration"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.minduration') }}</label>
+                                <input type="number" wire:model.defer="min_duration" name="min_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.minduration') }}"/>
                                 @error('min_duration')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Max Duration</label>
-                                <input type="number" wire:model.defer="max_duration" name="max_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Max Duration"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.maxduration') }}</label>
+                                <input type="number" wire:model.defer="max_duration" name="max_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.maxduration') }}"/>
                                 @error('max_duration')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -90,15 +90,15 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Min People</label>
-                                <input type="number" wire:model.defer="min_people" name="min_people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Min People"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.minpeople') }}</label>
+                                <input type="number" wire:model.defer="min_people" name="min_people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.minpeople') }}"/>
                                 @error('min_people')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Max People</label>
-                                <input type="number" wire:model.defer="max_people" name="max_people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Max People"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.maxpeople') }}</label>
+                                <input type="number" wire:model.defer="max_people" name="max_people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.maxpeople') }}"/>
                                 @error('max_people')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -107,15 +107,15 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Min Buffer Before</label>
-                                <input type="number" wire:model.defer="min_buffer_before" name="min_buffer_before" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Minimum Buffer Before"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.minbufferbefore') }}</label>
+                                <input type="number" wire:model.defer="min_buffer_before" name="min_buffer_before" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.minbufferbefore') }}"/>
                                 @error('min_buffer_before')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Max Buffer Before</label>
-                                <input type="number" wire:model.defer="max_buffer_before" name="max_buffer_before" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Maximum Buffer Before"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.maxbufferbefore') }}</label>
+                                <input type="number" wire:model.defer="max_buffer_before" name="max_buffer_before" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.maxbufferbefore') }}"/>
                                 @error('max_buffer_before')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -124,15 +124,15 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Min Buffer After</label>
-                                <input type="number" wire:model.defer="min_buffer_after" name="min_buffer_after" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Minimum Buffer After"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.minbufferafter') }}</label>
+                                <input type="number" wire:model.defer="min_buffer_after" name="min_buffer_after" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.minbufferbafter') }}"/>
                                 @error('min_buffer_after')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Max Buffer After</label>
-                                <input type="number" wire:model.defer="max_buffer_after" name="max_buffer_after" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Maximum Buffer After"/>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.maxbufferafter') }}</label>
+                                <input type="number" wire:model.defer="max_buffer_after" name="max_buffer_after" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.maxbufferafter') }}"/>
                                 @error('max_buffer_after')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -140,9 +140,9 @@
                         </div>
 
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Venue Area</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('events.venuearea') }}</label>
                             <select wire:model.defer="venue_area_id" name="venue_area_id" class="form-select form-select-solid">
-                                <option value="">Select</option>
+                                <option value="">{{ trans('general.select') }}</option>
                                 @foreach($venueAreas as $venueArea)
                                     <option value="{{ $venueArea->id }}">{{ $venueArea->name }}</option>
                                 @endforeach
@@ -155,7 +155,7 @@
                     <div class="fv-row mb-7">
                         <div class="row">
                                     <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Opening Time</label>
+                                        <label class="required fw-semibold fs-6 mb-2">{{ trans('events.openingtime') }}</label>
                                         <div class="input-group" id="opening_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
                                             <input id="opening_time_picker_input" type="text"  wire:model.defer="opening_time" class="form-control" data-td-target="#opening_time_picker"/>
                                             <span class="input-group-text" data-td-target="#opening_time_picker" data-td-toggle="datetimepicker">
@@ -168,7 +168,7 @@
                                     </div>
 
                                     <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Closing Time</label>
+                                        <label class="required fw-semibold fs-6 mb-2">{{ trans('events.closingtime') }}</label>
                                         <div class="input-group" id="closing_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
                                             <input id="closing_time_picker_input" type="text"  wire:model.defer="closing_time" class="form-control" data-td-target="#closing_time_picker"/>
                                             <span class="input-group-text" data-td-target="#closing_time_picker" data-td-toggle="datetimepicker">
@@ -185,7 +185,7 @@
 
                         <div class="row mb-7">
                             <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2">Season</label>
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.season') }}</label>
                                 <select wire:model="selectedSeasons" name="seasons[]" class="form-select form-select-solid" multiple>
                                     @foreach($seasonsList as $season)
                                         <option value="{{ $season->id }}">{{ $season->name }}</option>
@@ -199,11 +199,11 @@
                     </div>
                     
                     <div class="text-center pt-15">
-                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
+                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">{{ trans('general.discard') }}</button>
                         <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove>Submit</span>
+                            <span class="indicator-label" wire:loading.remove>{{ trans('general.submit') }}</span>
                             <span class="indicator-progress" wire:loading wire:target="submit">
-                                Please wait...
+                                {{ trans('general.pleasewait') }} ...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>

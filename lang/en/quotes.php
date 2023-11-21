@@ -38,6 +38,13 @@ return [
     'quantity' => 'Quantity',
     'unit' => 'Unit',
     'price' => 'Price',
+    'event' => 'Event',
+    'quote' => 'Quote',
+    'contact' => 'contact',
+    'area' => 'Area',
+    'createdupdate' => 'Created / Updated',
+    '' => '',
+    '' => '',
 
 
 

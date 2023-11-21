@@ -16,5 +16,6 @@ return [
     'addcontact' => 'Add Contact',
     'contactsuccessfullyupdated' => 'Contact successfully updated',
     'contacts' => 'Contacts',
+    'searchcontacts' => 'Search contacts',
 
 ];

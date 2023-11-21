@@ -25,5 +25,6 @@ return [
     'type_logic' => 'Logic',
     'addcondition' => 'Add Condition',
     'logic' => 'Logic',
+    'name' => 'Name',
 
 ];

@@ -41,8 +41,8 @@ return [
     'seating_tables' => 'Tables',
     'duration_days' => 'Days',
     'duration_hours' => 'Hours',
-    '' => '',
-    '' => '',
+    'name' => 'Name',
+    'categories' => 'Categories',
     '' => '',
 
 ];

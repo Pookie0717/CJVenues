@@ -33,7 +33,7 @@ return [
     'multiplier_perhour' => 'Per Hour',
     'multiplier_perdayperperson' => 'Per Day and Person',
     'multiplier_perhourperperson' => 'Per Hour and Person',
-    '' => '',
+    'amount' => 'Amount',
 
 
 

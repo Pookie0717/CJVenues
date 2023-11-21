@@ -43,7 +43,7 @@ return [
     'lastname' => 'Last name',
     'phone' => 'Phone',
     'notes' => 'Notes',
-    '' => '',
+    'selectacountry' => 'Select a country',
     '' => '',
 
 

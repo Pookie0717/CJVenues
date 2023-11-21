@@ -51,11 +51,11 @@ public function html(): HtmlBuilder
     public function getColumns(): array
     {
         return [
-            Column::make('name')->title('Name'),
-            Column::make('email')->title('Email'),
-            Column::make('phone')->title('Phone'),
-            Column::make('notes')->title('Notes'),
-            Column::make('created_at')->title('Created At')->addClass('text-nowrap'),
+            Column::make('name')->title(trans('fields.name')),
+            Column::make('email')->title(trans('fields.email')),
+            Column::make('phone')->title(trans('fields.phone')),
+            Column::make('notes')->title(trans('fields.notes')),
+            Column::make('created_at')->title(trans('general.createdat'))->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

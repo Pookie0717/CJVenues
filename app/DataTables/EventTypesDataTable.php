@@ -38,9 +38,9 @@ class EventTypesDataTable extends DataTable
             })
             ->editColumn('typical_seating', function ($event_type) {
                 $seatingLabels = [
-                    'noseating' => 'No Seating',
-                    'seatingrows' => 'In Rows',
-                    'seatingtables' => 'Tables',
+                    'noseating' => trans('fields.name'),
+                    'seatingrows' => trans('fields.name'),
+                    'seatingtables' => trans('fields.name'),
                 ];
                 return $seatingLabels[$event_type->typical_seating] ?? $event_type->typical_seating;
             })
@@ -74,10 +74,10 @@ class EventTypesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('event_name')->title('Name')->addClass('text-nowrap'),
-            Column::make('name')->title('Type')->addClass('text-nowrap'),
-            Column::make('description')->title('Description')->addClass('text-nowrap'),
-            Column::make('typical_seating')->title('Typical Seating')->addClass('text-nowrap'),
+            Column::make('event_name')->title(trans('events.name'))->addClass('text-nowrap'),
+            Column::make('name')->title(trans('events.categories'))->addClass('text-nowrap'),
+            Column::make('description')->title(trans('events.description'))->addClass('text-nowrap'),
+            Column::make('typical_seating')->title(trans('events.typicalseating'))->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

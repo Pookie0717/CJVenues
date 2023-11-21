@@ -71,10 +71,10 @@ class OptionsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('name')->title('Name')->addClass('text-nowrap'),
-            Column::make('position')->title('Position'),
-            Column::make('type')->title('Type'),
-            Column::make('values')->title('Values'),
+            Column::make('name')->title(trans('options.name'))->addClass('text-nowrap'),
+            Column::make('position')->title(trans('fields.position')),
+            Column::make('type')->title(trans('options.type')),
+            Column::make('values')->title(trans('general.values')),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

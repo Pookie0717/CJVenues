@@ -76,11 +76,11 @@ class AreasDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            Column::make('venue_id')->title('Venue'),
-            Column::make('name')->title('Area Name'),
-            Column::make('capacity_noseating')->title('Capacity (No Seating)'),
-            Column::make('capacity_seatingrows')->title('Capacity (Seating Rows)'),
-            Column::make('capacity_seatingtables')->title('Capacity (Seating Tables)'),
+            Column::make('venue_id')->title(trans('areas.venue')),
+            Column::make('name')->title(trans('areas.name')),
+            Column::make('capacity_noseating')->title(trans('areas.capacity')." (".trans('areas.capacity_noseating').")"),
+            Column::make('capacity_seatingrows')->title(trans('areas.capacity')." (".trans('areas.capacity_inrows').")"),
+            Column::make('capacity_seatingtables')->title(trans('areas.capacity')." (".trans('areas.capacity_tables').")"),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

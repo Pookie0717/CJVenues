@@ -19,7 +19,7 @@ return [
     'datefrom' => 'Date From',
     'dateto' => 'Date To',
     'daysoftheweek' => 'Days of the Week',
-    '' => '',
+    'weekdays' => 'Weekdays',
     '' => '',
     '' => '',
     '' => '',

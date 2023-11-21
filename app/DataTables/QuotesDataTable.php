@@ -101,12 +101,12 @@ public function query(Quote $model)
     public function getColumns(): array
     {
         return [
-            Column::make('id_version')->title('Quote #')->addClass('text-nowrap'),
-            Column::make('contact_id')->title('Contact')->addClass('text-nowrap'),
-            Column::make('status')->title('Status')->addClass('text-nowrap'),
-            Column::make('event_type')->title('Event')->addClass('text-nowrap'),
-            Column::make('area_id')->title('Area')->addClass('text-nowrap'),
-            Column::make('updated_at')->title('Created / Updated')->addClass('text-nowrap'),
+            Column::make('id_version')->title(trans('quotes.quote').' #')->addClass('text-nowrap'),
+            Column::make('contact_id')->title(trans('quotes.contact'))->addClass('text-nowrap'),
+            Column::make('status')->title(trans('quotes.status'))->addClass('text-nowrap'),
+            Column::make('event_type')->title(trans('quotes.event'))->addClass('text-nowrap'),
+            Column::make('area_id')->title(trans('quotes.area'))->addClass('text-nowrap'),
+            Column::make('updated_at')->title(trans('quotes.createdupdated'))->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

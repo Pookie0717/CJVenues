@@ -19,5 +19,6 @@ return [
     'venuetype' => 'Venue type',
     'venueaddress' => 'Venue address',
     'addarea' => 'Add area',
-    '' => '',
+    'type' => 'Type',
+    'name' => 'Name',
 ];

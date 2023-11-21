@@ -104,11 +104,11 @@ class PricesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('name')->title('Price Rule Name')->addClass('text-nowrap'),
-            Column::make('type')->title('Type'),
-            Column::computed('property_id')->title('Property'),
-            Column::make('price')->title('Amount'),
-            Column::make('multiplier')->title('Multiplier'),
+            Column::make('name')->title(trans('prices.name'))->addClass('text-nowrap'),
+            Column::make('type')->title(trans('prices.type')),
+            Column::computed('property_id')->title(trans('prices.applypriceto')),
+            Column::make('price')->title(trans('prices.amount')),
+            Column::make('multiplier')->title(trans('prices.multiplier')),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

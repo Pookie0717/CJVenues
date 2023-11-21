@@ -65,9 +65,9 @@ class PermissionsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('name'),
-            Column::make('assigned_to'),
-            Column::make('created_at')->addClass('text-nowrap'),
+            Column::make(trans('permissions.name')),
+            Column::make(trans('permissions.assignedto')),
+            Column::make(trans('general.createdat'))->addClass('text-nowrap'),
             Column::computed('actions')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

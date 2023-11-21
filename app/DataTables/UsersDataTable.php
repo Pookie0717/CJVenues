@@ -78,8 +78,8 @@ class UsersDataTable extends DataTable
         return [
             Column::make('user')->addClass('d-flex align-items-center')->name('name'),
             Column::make('role')->searchable(false),
-            Column::make('last_login_at')->title('Last Login'),
-            Column::make('created_at')->title('Joined Date')->addClass('text-nowrap'),
+            Column::make('last_login_at')->title(trans('users.lastlogin')),
+            Column::make('created_at')->title(trans('users.joineddate'))->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

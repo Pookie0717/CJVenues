@@ -56,8 +56,8 @@ return [
     'greaterthan' => 'Greater than',
     'lessthanorequals' => 'Less than or equals',
     'greaterthanorequals' => 'Greater than or equals',
-    '' => '',
-    '' => '',
+    'createdat' => 'Created at',
+    'updatedat' => 'Updated at',
     '' => '',
 
 

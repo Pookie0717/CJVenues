@@ -76,11 +76,11 @@ class SeasonsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('name')->title('Name')->addClass('text-nowrap'),
-            Column::make('date_from')->title('Date From'),
-            Column::make('date_to')->title('Date To'),
-            Column::make('priority')->title('Priority'),
-            Column::make('weekdays')->title('Weekdays'),
+            Column::make('name')->title(trans('seasons.name'))->addClass('text-nowrap'),
+            Column::make('date_from')->title(trans('seasons.datefrom')),
+            Column::make('date_to')->title(trans('seasons.dateto')),
+            Column::make('priority')->title(trans('general.priority')),
+            Column::make('weekdays')->title(trans('seasons.weekdays')),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

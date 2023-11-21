@@ -8,6 +8,7 @@ use App\Models\Contact;
 use App\Models\Option;
 use App\Models\VenueArea;
 use App\Models\Venue;
+use App\Models\Price;
 use App\Models\Season;
 use App\Models\EventType;
 use Illuminate\Validation\Rule;
@@ -59,16 +60,15 @@ class AddQuoteModal extends Component
     public function submit()
     {
         
-
         $this->eventTypes = [];
 
         $this->validateQuoteData();
         $newQuoteNumber = $this->getNewQuoteNumber();
-        dd($this->selectedOptions);
 
         // Convert selected options to a comma-separated string format
         $optionIdsIm = implode('|', array_keys($this->selectedOptions));
         $optionValuesIm = implode('|', array_values($this->selectedOptions));
+
         $optionIds = explode('|', $optionIdsIm);
         $optionValues = explode('|', $optionValuesIm);
 
@@ -96,7 +96,13 @@ class AddQuoteModal extends Component
         $timeFrom = implode('|', $timeFromArray);
         $timeTo = implode('|', $timeToArray);
 
+        $priceBufferVenue = $this->calculateBufferPriceVenue($this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit, $this->area_id);
+
         $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $timeFrom, $timeTo, $this->area_id);
+
+        $priceVenue = $priceVenue + $priceBufferVenue;
+
+        $priceBufferOptionsStringArray = 0;
 
         $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $this->people);
 
@@ -121,7 +127,6 @@ class AddQuoteModal extends Component
         // Calculate the total of all the option prices
         $valuesArray = explode('|', $priceOptionsString);
         $priceOptions = array_sum(array_map('floatval', $valuesArray));
-        $calculatedPrice = $priceVenue + $priceOptions;
 
         $calculatedPrice = $priceVenue + $priceOptions;
 
@@ -282,14 +287,15 @@ class AddQuoteModal extends Component
         // Default to a suitable option type if not found
         return 'unknown';
     }
-    private function getOptionPriceForSeason($optionId, $seasonId)
+
+   private function getOptionPriceForSeason($optionId, $seasonId)
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
             ->where('season_id', $seasonId)
+            ->where('extra_tier_type', 'like', '%event%')
             ->first();
     }
-
 
     // Helper method to calculate the number of days between date_from and date_to
     private function calculateNumberOfDays($dateFrom, $dateTo)
@@ -337,6 +343,89 @@ class AddQuoteModal extends Component
         return $totalHours;
     }
 
+    private function calculateBufferPriceVenue($bufferBefore, $bufferAfter, $bufferUnit, $areaId) {
+        // 1. Get the associated venue and area
+        $venue = Venue::whereHas('areas', function ($query) use ($areaId) {
+            $query->where('id', $areaId);
+        })->first();
+        $area = VenueArea::find($areaId);
+
+        // 2. Determine the season
+        $formattedDate = Carbon::createFromFormat('d-m-Y', $this->date_from)->format('Y-m-d');
+        $weekday = Carbon::createFromFormat('d-m-Y', $this->date_from)->format('D');
+        $currentTenantId = Session::get('current_tenant_id');
+        $seasons = Season::where('tenant_id', $currentTenantId)
+            ->where(function ($query) use ($formattedDate, $weekday) {
+                $query->where('date_from', '<=', $formattedDate)
+                    ->where('date_to', '>=', $formattedDate)
+                    ->where(function ($query) use ($weekday) {
+                        $query->whereJsonContains('weekdays', [$weekday])
+                            ->orWhere('weekdays', null);
+                    });
+            })->orderBy('priority', 'desc')->get();
+
+        // 3. Calculate buffer prices
+        $totalBufferPrice = 0;
+        foreach ($seasons as $season) {
+            $prices = $this->fetchBufferPrices($venue->id, $areaId, $season->id, $bufferUnit);
+
+            foreach ($prices as $price) {
+                $totalBufferPrice += $this->applyBufferPriceLogic($price, $bufferBefore, $bufferAfter, $bufferUnit);
+            }
+        }
+
+        return $totalBufferPrice;
+    }
+
+    private function fetchBufferPrices($venueId, $areaId, $seasonId, $bufferUnit) {
+    // Fetch prices with extra_tier_type containing buffer_before or buffer_after
+    // and type value "venue" or "area" associated with the current season
+    return Price::where(function ($query) use ($venueId, $areaId) {
+            $query->where(function ($subQuery) use ($venueId) {
+                $subQuery->where('type', 'venue')
+                         ->where('venue_id', $venueId);
+            })->orWhere(function ($subQuery) use ($areaId) {
+                $subQuery->where('type', 'area')
+                         ->where('area_id', $areaId);
+            });
+        })
+        ->where('season_id', $seasonId)
+        ->where(function ($query) {
+            $query->where('extra_tier_type', 'like', '%buffer_before%')
+                  ->orWhere('extra_tier_type', 'like', '%buffer_after%');
+        })
+        ->get();
+}
+
+    private function applyBufferPriceLogic($price, $bufferBefore, $bufferAfter, $bufferUnit) {
+        // Convert buffer times based on unit and multiplier type
+        if ($bufferUnit == 'hours') {
+            if ($price->multiplier == 'daily') {
+                // Convert buffer hours to days considering a day as 8 hours
+                $bufferDaysBefore = ceil($bufferBefore / 8);
+                $bufferDaysAfter = ceil($bufferAfter / 8);
+                return ($bufferDaysBefore + $bufferDaysAfter) * $price->price;
+            } elseif ($price->multiplier == 'hourly') {
+                // If both buffer and price are in hours, calculate directly
+                return ($bufferBefore + $bufferAfter) * $price->price;
+            }
+        } elseif ($bufferUnit == 'days') {
+            if ($price->multiplier == 'daily') {
+                // If both buffer and price are in days, calculate directly
+                return ($bufferBefore + $bufferAfter) * $price->price;
+            } elseif ($price->multiplier == 'hourly') {
+                // Convert buffer days to hours considering a day as 8 hours
+                $bufferHoursBefore = $bufferBefore * 8;
+                $bufferHoursAfter = $bufferAfter * 8;
+                return ($bufferHoursBefore + $bufferHoursAfter) * $price->price;
+            }
+        }
+
+        // Default return if none of the conditions above are met
+        return 0;
+    }
+
+
     public function calculatePriceVenue($dateFrom, $dateTo, $timeFrom, $timeTo, $areaId)
     {
         // Get the associated venue and area
@@ -345,9 +434,6 @@ class AddQuoteModal extends Component
         })->first();
 
         $area = VenueArea::find($areaId);
-
-
-
         // Convert the date strings to Carbon instances
         $dateFromC = Carbon::createFromFormat('d-m-Y', $dateFrom);
         $dateToC = Carbon::createFromFormat('d-m-Y', $dateTo);
@@ -367,16 +453,20 @@ class AddQuoteModal extends Component
 
             // Iterate through the matching seasons for the current date
             foreach ($matchingSeasons as $season) {
-                // Check if there is a price associated with the area for this season
+
+
+                 // Check if there is a price associated with the area for this season
                 $areaPrice = $area->prices()
                     ->where('type', 'area')
                     ->where('season_id', $season->id)
+                    ->where('extra_tier_type', 'like', '%event%')
                     ->first();
 
                 // Check if there is a price associated with the venue for this season
                 $venuePrice = $venue->prices()
                     ->where('type', 'venue')
                     ->where('season_id', $season->id)
+                    ->where('extra_tier_type', 'like', '%event%')
                     ->first();
 
                 // If no price is found for this season and area or venue, move to the next season
@@ -384,31 +474,27 @@ class AddQuoteModal extends Component
                     continue;
                 }
 
+
                 // Determine which price to use (area or venue) based on priority
                 $price = $areaPrice ?? $venuePrice;
 
-                if (($areaPrice && $areaPrice->extra_tier_type == 'event') ||
-                    ($venuePrice && $venuePrice->extra_tier_type == 'event')) {
-                
-                    // Get the multiplier type (daily, hourly, per event) and value
-                    $multiplierType = $price->multiplier;
-                    $multiplierValue = (float)$price->price;
+                // Get the multiplier type (daily, hourly, per event) and value
+                $multiplierType = $price->multiplier;
+                $multiplierValue = (float)$price->price;
 
-                    // Calculate the price based on the multiplier type for the current day
-                    switch ($multiplierType) {
-                        case 'daily':
-                            $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
-                            $totalPrice += $multiplierValue;
-                            break;
-                        case 'hourly':
-                            $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
-                            $totalPrice += $multiplierValue * $hours;
-                            break;
-                        case 'event':
-                            $totalPrice += $multiplierValue;
-                            break;
-                    }
-
+                // Calculate the price based on the multiplier type for the current day
+                switch ($multiplierType) {
+                    case 'daily':
+                        $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
+                        $totalPrice += $multiplierValue;
+                        break;
+                    case 'hourly':
+                        $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
+                        $totalPrice += $multiplierValue * $hours;
+                        break;
+                    case 'event':
+                        $totalPrice += $multiplierValue;
+                        break;
                 }
             }
             // Move to the next day
@@ -476,13 +562,20 @@ class AddQuoteModal extends Component
             if ($selectedValueIndex !== false && isset($prices[$selectedValueIndex])) {
                 $selectedPrice = (float)$prices[$selectedValueIndex];
                 $price = $selectedPrice * $quantity;
+            } else {
+                // Log when the selected value index is not found or the price is not set
             }
         } elseif ($optionType === 'logic') {
+
             $optionValues = explode('|', $this->getOptionValues($optionId));
+
             $logicOption = $this->getLogicOptionDetails($optionId, $people, $hours, $days);
+
             $logicOptionValue = $logicOption ? $optionValues[0] : $optionValues[1];
+
             $price = $multiplierValue * (float)$logicOptionValue * $quantity;
-        }
+
+          }
 
         return $price;
     }
@@ -620,32 +713,30 @@ class AddQuoteModal extends Component
                         $optionValue = '0';
                         continue;
                     }
-                    if ($optionPrice && $optionPrice->extra_tier_type == 'event') {
 
-                        $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
-                        $optionType = $this->getOptionType($optionId);
+                    $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+                    $optionType = $this->getOptionType($optionId);
 
-                        if ($optionPrice) {
-                            $multiplierValue = (float)$optionPrice->price;
-                            $optionTotalPrice = $this->calculateOptionPrice(
-                                $optionType,
-                                $optionValue,
-                                $optionPrice,
-                                $optionPrice->multiplier,
-                                $multiplierValue,
-                                $currentDate,
-                                $dateTo,
-                                $timeFrom,
-                                $timeTo,
-                                $optionId,
-                                $people
-                            );
-                            $totalPrice += $optionTotalPrice;
-                            $individualPrices[] = [
-                                'optionId' => $optionId,
-                                'price' => $optionTotalPrice,
-                            ];
-                        }
+                    if ($optionPrice) {
+                        $multiplierValue = (float)$optionPrice->price;
+                        $optionTotalPrice = $this->calculateOptionPrice(
+                            $optionType,
+                            $optionValue,
+                            $optionPrice,
+                            $optionPrice->multiplier,
+                            $multiplierValue,
+                            $currentDate,
+                            $dateTo,
+                            $timeFrom,
+                            $timeTo,
+                            $optionId,
+                            $people
+                        );
+                        $totalPrice += $optionTotalPrice;
+                        $individualPrices[] = [
+                            'optionId' => $optionId,
+                            'price' => $optionTotalPrice,
+                        ];
                     }
                 }
             }
@@ -724,9 +815,6 @@ class AddQuoteModal extends Component
 
     private function loadOptions()
     {
-
-        $currentTenantId = Session::get('current_tenant_id');
-
         // Check if the required fields are set
         if (!$this->date_from || !$this->area_id) {
             $this->options = collect(); // No options to display if date and area are not set

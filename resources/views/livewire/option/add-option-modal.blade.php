@@ -71,7 +71,6 @@
                                 <option value="">{{ trans('general.select') }}</option>
                                 <option value="yes_no">{{ trans('options.type_yesno') }}</option>
                                 <option value="always">{{ trans('options.type_always') }}</option>
-                                <!--<option value="check">{{ trans('options.type_check') }}</option>-->
                                 <option value="radio">{{ trans('options.type_radio') }}</option>
                                 <option value="number">{{ trans('options.type_number') }}</option>
                                 <option value="logic">{{ trans('options.type_logic') }}</option>

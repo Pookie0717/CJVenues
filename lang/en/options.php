@@ -16,5 +16,14 @@ return [
     'options' => 'Options',
     'addoption' => 'Add Option',
     'separatedby' => 'Separated by "|" if necessary',
+    'type' => 'Type',
+    'type_yesno' => 'Yes/No',
+    'type_always' => 'Always',
+    'type_check' => 'Check',
+    'type_radio' => 'Radio',
+    'type_number' => 'Number',
+    'type_logic' => 'Logic',
+    'addcondition' => 'Add Condition',
+    'logic' => 'Logic',
 
 ];

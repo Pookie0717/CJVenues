@@ -6,7 +6,7 @@
             <!--begin::Modal header-->
             <div class="modal-header" id="kt_modal_add_user_header">
                 <!--begin::Modal title-->
-                <h2 class="fw-bold">Add User</h2>
+                <h2 class="fw-bold">{{ trans('users.adduser') }}</h2>
                 <!--end::Modal title-->
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
@@ -24,7 +24,7 @@
                         <!--begin::Input group-->
                         <div class="fv-row mb-7">
                             <!--begin::Label-->
-                            <label class="d-block fw-semibold fs-6 mb-5">Avatar</label>
+                            <label class="d-block fw-semibold fs-6 mb-5">{{ trans('users.avatar') }}</label>
                             <!--end::Label-->
                             <!--begin::Image placeholder-->
                             <style>
@@ -47,7 +47,7 @@
                                 @endif
                                 <!--end::Preview existing avatar-->
                                 <!--begin::Label-->
-                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="{{ trans('users.changeavatar') }}">
                                     {!! getIcon('pencil','fs-7') !!}
                                     <!--begin::Inputs-->
                                     <input type="file" wire:model.defer="avatar" name="avatar" accept=".png, .jpg, .jpeg"/>
@@ -56,19 +56,19 @@
                                 </label>
                                 <!--end::Label-->
                                 <!--begin::Cancel-->
-                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="{{ trans('users.cancelavatar') }}">
                                     {!! getIcon('cross','fs-2') !!}
                                 </span>
                                 <!--end::Cancel-->
                                 <!--begin::Remove-->
-                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="{{ trans('users.removeavatar') }}">
                                     {!! getIcon('cross','fs-2') !!}
                                 </span>
                                 <!--end::Remove-->
                             </div>
                             <!--end::Image input-->
                             <!--begin::Hint-->
-                            <div class="form-text">Allowed file types: png, jpg, jpeg.</div>
+                            <div class="form-text">{{ trans('general.allowedfiletypes') }}: png, jpg, jpeg.</div>
                             <!--end::Hint-->
                             @error('avatar')
                             <span class="text-danger">{{ $message }}</span> @enderror
@@ -77,10 +77,10 @@
                         <!--begin::Input group-->
                         <div class="fv-row mb-7">
                             <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">Full Name</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.fullname') }}</label>
                             <!--end::Label-->
                             <!--begin::Input-->
-                            <input type="text" wire:model.defer="name" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name"/>
+                            <input type="text" wire:model.defer="name" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('fields.fullname') }}"/>
                             <!--end::Input-->
                             @error('name')
                             <span class="text-danger">{{ $message }}</span> @enderror
@@ -89,7 +89,7 @@
                         <!--begin::Input group-->
                         <div class="fv-row mb-7">
                             <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-2">Email</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.email') }}</label>
                             <!--end::Label-->
                             <!--begin::Input-->
                             <input type="email" wire:model.defer="email" name="email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com"/>
@@ -100,7 +100,7 @@
                         <!--end::Input group-->
                         <!--begin::Input group-->
                         <div class="fv-row mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Companies</label>
+                        <label class="required fw-semibold fs-6 mb-2">{{ trans('users.companies') }}</label>
                         <select wire:model="selectedTenants" name="selectedTenants[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
                             @foreach($tenants as $tenant)
                                 <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
@@ -114,7 +114,7 @@
                         <!--begin::Input group-->
                         <div class="mb-7">
                             <!--begin::Label-->
-                            <label class="required fw-semibold fs-6 mb-5">Role</label>
+                            <label class="required fw-semibold fs-6 mb-5">{{ trans('users.role') }}</label>
                             <!--end::Label-->
                             @error('role')
                             <span class="text-danger">{{ $message }}</span> @enderror
@@ -152,11 +152,11 @@
                     <!--end::Scroll-->
                     <!--begin::Actions-->
                     <div class="text-center pt-15">
-                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
+                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">{{ trans('general.discard') }}</button>
                         <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                            <span class="indicator-label" wire:loading.remove>Submit</span>
+                            <span class="indicator-label" wire:loading.remove>{{ trans('general.submit') }}</span>
                             <span class="indicator-progress" wire:loading wire:target="submit">
-                                Please wait...
+                                {{ trans('general.pleasewait') }}...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>

@@ -17,6 +17,15 @@ return [
     'addvenuearea' => 'Neuen Bereich hinzufügen',
     'addcontact' => 'Add Contact',
     'addcontact' => 'Add Contact',
+    'name' => 'Name',
+    'capacity' => 'Capacity',
+    'capacity_noseating' => 'Capacity (No Seating)',
+    'capacity_seatingrows' => 'Capacity (Seating Rows)',
+    'capacity_seatingtables' => 'Capacity (Seating Tables)',
+    'selectveue' => 'Select venue',
+    'venue' => 'Venue',
+    '' => '',
+    '' => '',
 
 
 

@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Areas Language Lines
+    | Tenants Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used during authentication for various
@@ -13,16 +13,14 @@ return [
     |
     */
 
-    'venuesareas' => 'Venues Areas',
-    'addvenuearea' => 'Add Venue Area',
-    'name' => 'Name',
-    'capacity' => 'Capacity',
-    'capacity_noseating' => 'No Seating',
-    'capacity_inrows' => 'Seating Rows',
-    'capacity_tables' => 'Seating Tables',
-    'selectvenue' => 'Select venue',
-    'venue' => 'Venue',
+    'updateorganisation' => 'Update organisation',
+    'organisationname' => 'Organisation name',
+    'enteranorganisationname' => 'Enter an organisation name',
     '' => '',
-
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
 
 ];

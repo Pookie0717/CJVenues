@@ -66,15 +66,15 @@
                         
                         <!-- Type -->
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.type') }}</label>
+                            <label class="required fw-semibold fs-6 mb-2">{{ trans('options.type') }}</label>
                             <select wire:model.defer="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">{{ trans('general.select') }}</option>
-                                <option value="yes_no">{{ trans('fields.type_yesno') }}</option>
-                                <option value="always">{{ trans('fields.type_always') }}</option>
-                                <option value="check">{{ trans('fields.type_check') }}</option>
-                                <option value="radio">{{ trans('fields.type_radio') }}</option>
-                                <option value="number">{{ trans('fields.type_number') }}</option>
-                                <option value="logic">{{ trans('fields.type_logic') }}</option>
+                                <option value="yes_no">{{ trans('options.type_yesno') }}</option>
+                                <option value="always">{{ trans('options.type_always') }}</option>
+                                <option value="check">{{ trans('options.type_check') }}</option>
+                                <option value="radio">{{ trans('options.type_radio') }}</option>
+                                <option value="number">{{ trans('options.type_number') }}</option>
+                                <option value="logic">{{ trans('options.type_logic') }}</option>
                             </select>
                             @error('type')
                                 <span class="text-danger">{{ $message }}</span>
@@ -159,7 +159,7 @@
                             <div class="col">
                                 <!-- Default Value -->
                                 <label class="fw-semibold fs-6 mb-2">{{ trans('general.defaultvalue') }}</label>
-                                <input type="text" wire:model.defer="default_value" name="default_value" class="form-control form-control-solid" placeholder="Default Value">
+                                <input type="text" wire:model.defer="default_value" name="default_value" class="form-control form-control-solid" placeholder="{{ trans('general.defaultvalue') }}">
                                 @error('default_value')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

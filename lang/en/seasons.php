@@ -15,5 +15,21 @@ return [
 
     'seasons' => 'Seasons',
     'addseason' => 'Add Season',
+    'name' => 'Name',
+    'datefrom' => 'Date From',
+    'dateto' => 'Date To',
+    'daysoftheweek' => 'Days of the Week',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
 
 ];

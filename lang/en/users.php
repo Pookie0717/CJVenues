@@ -16,5 +16,16 @@ return [
     'users' => 'Users',
     'permissions' => 'Permissions',
     'roles' => 'Roles',
+    'adduser' => 'Add user',
+    'avatar' => 'Avatar',
+    'companies' => 'Organisations',
+    'role' => 'Role',
+    'changeavatar' => 'Change avatar',
+    'cancelavatar' => 'Cancel avatar',
+    'removeavatar' => 'Remove avatar',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
 
 ];

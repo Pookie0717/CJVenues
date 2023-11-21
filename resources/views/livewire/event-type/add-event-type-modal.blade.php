@@ -35,7 +35,7 @@
                                 <option value="wedding">{{ trans('events.wedding') }}</option>
                                 <option value="birthday">{{ trans('events.birthdayparty') }}</option>
                                 <option value="summer">{{ trans('events.summerparty') }}</option>
-                                <option value="corporate">{{ trans('events.corporatevent') }}</option>
+                                <option value="corporate">{{ trans('events.corporateevent') }}</option>
                                 <!-- Add more options as needed -->
                             </select>
                             @error('selectedEventNames')

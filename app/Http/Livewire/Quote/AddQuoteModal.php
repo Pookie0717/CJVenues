@@ -972,6 +972,7 @@ class AddQuoteModal extends Component
 
     private function loadOptions()
     {
+        $currentTenantId = Session::get('current_tenant_id');
         // Check if the required fields are set
         if (!$this->date_from || !$this->area_id) {
             $this->options = collect(); // No options to display if date and area are not set
@@ -985,7 +986,9 @@ class AddQuoteModal extends Component
         $currentDayOfWeek = $currentDate->format('D');
 
         // Get the seasons for the selected date and weekday
-        $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->first();
+        $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)
+                        ->where('tenant_id', $currentTenantId)
+                        ->first();
 
         // Find the associated venue ID for the selected area
         $selectedArea = VenueArea::find($this->area_id);
@@ -993,6 +996,7 @@ class AddQuoteModal extends Component
 
         // Query the options based on the selected venue and the season with the highest priority
         $venueOptions = Option::orderBy('position')
+            ->where('tenant_id', $currentTenantId)
             ->where(function ($query) use ($selectedVenueId) {
                 $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenueId]);
             })
@@ -1002,11 +1006,12 @@ class AddQuoteModal extends Component
             ->get();
 
         // Get the "All" season
-        $allSeason = Season::getAllSeason();
+        $allSeason = Season::getAllSeason()->where('tenant_id', $currentTenantId);
 
         // Retrieve options associated with the "All" season
         $allSeasonOptions = $allSeason
             ? Option::orderBy('position')
+                ->where('tenant_id', $currentTenantId)
                 ->where(function ($query) use ($allSeason) {
                     $query->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$allSeason->id]);
                 })

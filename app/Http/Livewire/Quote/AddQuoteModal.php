@@ -98,35 +98,61 @@ class AddQuoteModal extends Component
 
         $priceBufferVenue = $this->calculateBufferPriceVenue($this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit, $this->area_id);
 
+        Log::info('Buffer Price Venue: ' . $priceBufferVenue);
+
         $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $timeFrom, $timeTo, $this->area_id);
+
+        Log::info('Price Venue: ' . $priceVenue);
 
         $priceVenue = $priceVenue + $priceBufferVenue;
 
-        $priceBufferOptionsStringArray = 0;
+        // Calculate regular and buffer prices for options
+        $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
 
         $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $this->people);
 
         $cleanedArray = [];
         $optionIdMap = [];
 
+        // Loop through the regular option prices
         foreach ($priceOptionsStringArray['individualPrices'] as $item) {
+
+            Log::info('Option Price for ID ' . $item['optionId'] . ': ' . $item['price']);
+
             $optionId = $item['optionId'];
-            if (!isset($optionIdMap[$optionId])) {
-                $optionIdMap[$optionId] = $item;
-            }
+            $optionIdMap[$optionId] = $item; // Add or update the item
         }
 
-        $cleanedArray['totalPrice'] = $priceOptionsStringArray['totalPrice'];
+        // Add buffer prices to the regular prices
+        foreach ($priceBufferOptionsStringArray['individualPrices'] as $bufferItem) {
+
+            Log::info('Buffer Price for ID ' . $bufferItem['optionId'] . ': ' . $bufferItem['price']);
+
+            $optionId = $bufferItem['optionId'];
+            $bufferPrice = $bufferItem['price'];
+
+            if (isset($optionIdMap[$optionId])) {
+                $optionIdMap[$optionId]['price'] += $bufferPrice;
+            } else {
+                $optionIdMap[$optionId] = $bufferItem; // Add the buffer item if it doesn't exist in the regular prices
+            }
+
+        }
+
+        // Update the total price
+        $cleanedArray['totalPrice'] = $priceOptionsStringArray['totalPrice'] + $priceBufferOptionsStringArray['totalPrice'];
         $cleanedArray['individualPrices'] = array_values($optionIdMap);
 
+        // Your existing code to handle the price options string and calculate the final prices
         $priceOptionsArray = $cleanedArray['individualPrices'];
         $priceOptionsString = implode('|', array_map(function($item) {
             return $item['price'];
         }, $priceOptionsArray));
 
-        // Calculate the total of all the option prices
+
         $valuesArray = explode('|', $priceOptionsString);
         $priceOptions = array_sum(array_map('floatval', $valuesArray));
+
 
         $calculatedPrice = $priceVenue + $priceOptions;
 
@@ -297,6 +323,18 @@ class AddQuoteModal extends Component
             ->first();
     }
 
+    private function getOptionBufferPriceForSeason($optionId, $seasonId)
+    {
+        return Option::find($optionId)->prices()
+            ->where('type', 'option')
+            ->where('season_id', $seasonId)
+            ->where(function($query) {
+                $query->where('extra_tier_type', 'like', '%buffer_before%')
+                      ->orWhere('extra_tier_type', 'like', '%buffer_after%');
+            })
+            ->first();
+    }
+
     // Helper method to calculate the number of days between date_from and date_to
     private function calculateNumberOfDays($dateFrom, $dateTo)
     {
@@ -367,7 +405,7 @@ class AddQuoteModal extends Component
         // 3. Calculate buffer prices
         $totalBufferPrice = 0;
         foreach ($seasons as $season) {
-            $prices = $this->fetchBufferPrices($venue->id, $areaId, $season->id, $bufferUnit);
+            $prices = $this->fetchBufferPricesVenue($venue->id, $areaId, $season->id, $bufferUnit);
 
             foreach ($prices as $price) {
                 $totalBufferPrice += $this->applyBufferPriceLogic($price, $bufferBefore, $bufferAfter, $bufferUnit);
@@ -377,7 +415,7 @@ class AddQuoteModal extends Component
         return $totalBufferPrice;
     }
 
-    private function fetchBufferPrices($venueId, $areaId, $seasonId, $bufferUnit) {
+    private function fetchBufferPricesVenue($venueId, $areaId, $seasonId, $bufferUnit) {
     // Fetch prices with extra_tier_type containing buffer_before or buffer_after
     // and type value "venue" or "area" associated with the current season
     return Price::where(function ($query) use ($venueId, $areaId) {
@@ -509,6 +547,7 @@ class AddQuoteModal extends Component
 
         $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
         $hours = $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
+
         switch ($multiplierType) {
             case 'daily':
             case 'daily_pp':
@@ -528,6 +567,54 @@ class AddQuoteModal extends Component
         if (str_ends_with($multiplierType, '_pp')) {
             $price *= $people;
         }
+        return $price;
+    }
+
+    private function calculateOptionBufferPrice($optionType, $optionValue, $optionPrice, $multiplierType, $multiplierValue, $bufferTimeBefore, $bufferTimeAfter, $bufferTimeUnit, $optionId, $people)
+    {
+        $price = 0;
+
+        // Calculate the total buffer time in hours
+        $totalBufferHours = 0;
+        if ($bufferTimeUnit == 'days') {
+            $totalBufferHours = ($bufferTimeBefore + $bufferTimeAfter) * 8;
+        } else { // Assuming the unit is hours
+            $totalBufferHours = $bufferTimeBefore + $bufferTimeAfter;
+        }
+
+        // Calculate days and hours from the total buffer hours
+        $days = ceil($totalBufferHours / 8);
+        $hours = $totalBufferHours;
+
+        Log::info('');
+        Log::info('Buffer Hours ' . $hours);
+        Log::info('');
+
+
+        switch ($multiplierType) {
+            case 'daily':
+            case 'daily_pp':
+                $price = $this->calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, $days, $optionId, $people, $hours, $days);
+                break;
+
+            case 'hourly':
+            case 'hourly_pp':
+                $price = $this->calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, $hours, $optionId, $people, $hours, $days);
+                break;
+
+            case 'event':
+            case 'event_pp':
+                $price = $this->calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, 1, $optionId, $people, $hours, $days);
+                break;
+        }
+        if (str_ends_with($multiplierType, '_pp')) {
+            $price *= $people;
+        }
+
+        Log::info('Type Option ' . $optionId . ': ' . $optionType);
+        Log::info('Multiplier Type for Option ' . $optionId . ': ' . $multiplierType);
+        Log::info('Price for Option ' . $optionId . ': ' . $price);
+
         return $price;
     }
 
@@ -574,7 +661,7 @@ class AddQuoteModal extends Component
             $logicOptionValue = $logicOption ? $optionValues[0] : $optionValues[1];
 
             $price = $multiplierValue * (float)$logicOptionValue * $quantity;
-
+        
           }
 
         return $price;
@@ -607,81 +694,81 @@ class AddQuoteModal extends Component
     private function getLogicOptionDetails($optionId, $people, $hours, $days)
     {
        // Use Eloquent to find the Option by its ID
-    $option = Option::find($optionId);
-    $logicExpression = $option->logic;
+        $option = Option::find($optionId);
+        $logicExpression = $option->logic;
 
-            // Replace field names with their respective values
-    $logicExpression = str_replace('people', $people, $logicExpression);
-    $logicExpression = str_replace('hours', $hours, $logicExpression);
-    $logicExpression = str_replace('days', $days, $logicExpression);
-    $logicExpression = str_replace('greater_than_or_equals', '>=', $logicExpression);
-    $logicExpression = str_replace('less_than_or_equals', '<=', $logicExpression);
-    $logicExpression = str_replace('not_equals', '!=', $logicExpression);
-    $logicExpression = str_replace('equals', '==', $logicExpression);
-    $logicExpression = str_replace('greater_than', '>', $logicExpression);
-    $logicExpression = str_replace('less_than', '<', $logicExpression);
-    $logicExpression = str_replace('"', '', $logicExpression);
+                // Replace field names with their respective values
+        $logicExpression = str_replace('people', $people, $logicExpression);
+        $logicExpression = str_replace('hours', $hours, $logicExpression);
+        $logicExpression = str_replace('days', $days, $logicExpression);
+        $logicExpression = str_replace('greater_than_or_equals', '>=', $logicExpression);
+        $logicExpression = str_replace('less_than_or_equals', '<=', $logicExpression);
+        $logicExpression = str_replace('not_equals', '!=', $logicExpression);
+        $logicExpression = str_replace('equals', '==', $logicExpression);
+        $logicExpression = str_replace('greater_than', '>', $logicExpression);
+        $logicExpression = str_replace('less_than', '<', $logicExpression);
+        $logicExpression = str_replace('"', '', $logicExpression);
 
 
-    // Split the logic expression by "OR" operators
-    $orConditions = explode(' OR ', $logicExpression);
+        // Split the logic expression by "OR" operators
+        $orConditions = explode(' OR ', $logicExpression);
 
-    $result = false;
+        $result = false;
 
-    foreach ($orConditions as $orCondition) {
-        // Split each OR condition by "AND" operators
-        $andConditions = explode(' AND ', $orCondition);
+        foreach ($orConditions as $orCondition) {
+            // Split each OR condition by "AND" operators
+            $andConditions = explode(' AND ', $orCondition);
 
-        $orResult = true; // Initialize the OR result as true
+            $orResult = true; // Initialize the OR result as true
 
-        foreach ($andConditions as $andCondition) {
-            // Split each condition into field, operator, and value
-            $parts = preg_split('/(<=|>=|==|!=|<|>)/', $andCondition, -1, PREG_SPLIT_DELIM_CAPTURE);
-            if (count($parts) === 3) {
-                list($field, $operator, $value) = array_map('trim', $parts);
+            foreach ($andConditions as $andCondition) {
+                // Split each condition into field, operator, and value
+                $parts = preg_split('/(<=|>=|==|!=|<|>)/', $andCondition, -1, PREG_SPLIT_DELIM_CAPTURE);
+                if (count($parts) === 3) {
+                    list($field, $operator, $value) = array_map('trim', $parts);
 
-                // Evaluate the condition
-                switch ($operator) {
-                    case '<':
-                        $andResult = ($field < $value);
+                    // Evaluate the condition
+                    switch ($operator) {
+                        case '<':
+                            $andResult = ($field < $value);
+                            break;
+                        case '<=':
+                            $andResult = ($field <= $value);
+                            break;
+                        case '>':
+                            $andResult = ($field > $value);
+                            break;
+                        case '>=':
+                            $andResult = ($field >= $value);
+                            break;
+                        case '==':
+                            $andResult = ($field == $value);
+                            break;
+                        case '!=':
+                            $andResult = ($field != $value);
+                            break;
+                        default:
+                            // Invalid operator; set result to false
+                            $andResult = false;
+                            break;
+                    }
+
+                    // If any AND condition is false, break out of the loop
+                    if (!$andResult) {
+                        $orResult = false;
                         break;
-                    case '<=':
-                        $andResult = ($field <= $value);
-                        break;
-                    case '>':
-                        $andResult = ($field > $value);
-                        break;
-                    case '>=':
-                        $andResult = ($field >= $value);
-                        break;
-                    case '==':
-                        $andResult = ($field == $value);
-                        break;
-                    case '!=':
-                        $andResult = ($field != $value);
-                        break;
-                    default:
-                        // Invalid operator; set result to false
-                        $andResult = false;
-                        break;
+                    }
+
                 }
+            }
 
-                // If any AND condition is false, break out of the loop
-                if (!$andResult) {
-                    $orResult = false;
-                    break;
-                }
-
+            // If any OR condition is true, set the final result to true
+            if ($orResult) {
+                $result = true;
+                break;
             }
         }
-
-        // If any OR condition is true, set the final result to true
-        if ($orResult) {
-            $result = true;
-            break;
-        }
-    }
-    return $result;
+        return $result;
 
     }
 
@@ -732,6 +819,76 @@ class AddQuoteModal extends Component
                             $optionId,
                             $people
                         );
+                        $totalPrice += $optionTotalPrice;
+                        $individualPrices[] = [
+                            'optionId' => $optionId,
+                            'price' => $optionTotalPrice,
+                        ];
+                    }
+                }
+            }
+
+            // Move to the next day
+            $currentDate->addDay();
+        }
+
+        return [
+            'totalPrice' => $totalPrice,
+            'individualPrices' => $individualPrices,
+        ];
+    }
+
+    public function calculateBufferPriceOptions($dateFrom, $dateTo, $optionIds, $optionValues, $people, $bufferTimeBefore, $bufferTimeAfter, $bufferTimeUnit)
+    {
+        // Convert the date strings to Carbon instances
+        $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
+        $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
+
+        // Initialize the total price for options
+        $totalPrice = 0;
+
+        // Iterate through each day in the date range
+        $currentDate = $dateFrom->copy();
+        while ($currentDate->lte($dateTo)) {
+            // Get the day of the week for the current date (e.g., 'Mon')
+            $currentDayOfWeek = $currentDate->format('D');
+
+            // Get all seasons for the current date
+            $matchingSeasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek);
+
+            // Iterate through the matching seasons for the current date
+            foreach ($matchingSeasons as $season) {
+                foreach (explode('|', $optionIds) as $index => $optionId) {
+                    $optionValue = explode('|', $optionValues)[$index];
+
+                    if (!isset($optionValue) || $optionValue == '') {
+                        $optionValue = '0';
+                        continue;
+                    }
+
+                    $optionPrice = $this->getOptionBufferPriceForSeason($optionId, $season->id);
+                    $optionType = $this->getOptionType($optionId);
+
+                    if ($optionPrice) {
+                        $multiplierValue = (float)$optionPrice->price;
+                        $optionTotalPrice = $this->calculateOptionBufferPrice(
+                            $optionType,
+                            $optionValue,
+                            $optionPrice,
+                            $optionPrice->multiplier,
+                            $multiplierValue,
+                            $bufferTimeBefore, 
+                            $bufferTimeAfter,
+                            $bufferTimeUnit,
+                            $optionId,
+                            $people
+                        );
+
+                        Log::info('optionPrice ' . $optionId . ': ' . $optionPrice);
+
+                        Log::info('Single Buffer Price for Option ' . $optionId . ': ' . $optionTotalPrice);
+                        Log::info('');
+
                         $totalPrice += $optionTotalPrice;
                         $individualPrices[] = [
                             'optionId' => $optionId,

@@ -34,6 +34,7 @@ return [
     'senton' => 'Sent on',
     'issuedfor' => 'Issued for',
     'issuedby' => 'Issued by',
+    'details' => 'Details',
     'description' => 'Description',
     'quantity' => 'Quantity',
     'unit' => 'Unit',
@@ -41,13 +42,15 @@ return [
     'event' => 'Event',
     'quote' => 'Quote',
     'contact' => 'contact',
+    'event_date' => 'Event Date',
+    'event_time' => 'Event Time',
+    'buffer_time' => 'Buffer Time',
+    'after' => 'after',
+    'before' => 'before',
+    'and' => 'and',
+    'people' => 'People',
     'area' => 'Area',
     'createdupdate' => 'Created / Updated',
-    '' => '',
-    '' => '',
-
-
-
-
+    'event_kind' => 'Type of Event',
 
 ];

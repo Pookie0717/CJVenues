@@ -125,11 +125,77 @@
                             </div>
                             <!--end::Row-->
 
+                            <!--begin::Row-->
+                            <div class="row g-5 mb-12">
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.event_date') }}:</div>
+                                    <!--end::Label-->
+
+                                    <!--end::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">
+                                        {{ $quote->date_from }}
+                                        @if($quote->date_from != $quote->date_to)
+                                            - {{ $quote->date_to }}
+                                        @endif
+                                        <br>
+                                        {{$quote->time_from}} - {{$quote->time_to}}
+                                    </div>
+                                    <!--end::Text-->
+
+                                    <!--start::Description-->
+                                    <div class="fw-semibold fs-7 text-gray-600">
+                                        {{ trans('quotes.buffer_time') }} ({{$quote->buffer_time_unit}}): {{$quote->buffer_time_before}} {{ trans('quotes.before') }} {{ trans('quotes.and') }} {{$quote->buffer_time_after}} {{ trans('quotes.after') }}
+                                    </div>
+                                    <!--end::Description-->
+                                </div>
+                                <!--end::Col-->
+
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.people') }}:</div>
+                                    <!--end::Label-->
+
+                                    <!--end::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $quote->people }}</div>
+                                    <!--end::Text-->
+
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600">{{ trans('quotes.event_kind') }}:</div>
+                                    <!--end::Label-->
+
+                                    <!--end::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $quote->eventType ? $quote->eventType->name : 'N/A' }} </div>
+                                    <!--end::Text-->
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+
                             <!--begin::Content-->
                             <div class="flex-grow-1">
                                 <!--begin::Table-->
-                                <div class="table-responsive border-bottom mb-9">
+                                <div class="table-responsive border-bottom mb-9">                                  
                                     <table class="table mb-3">
+
+                                        <thead>
+                                            <tr class="border-bottom fs-6 fw-bold text-muted">
+                                                <th colspan="4" class="min-w-175px pb-2">{{ trans('quotes.details') }}</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr class="fw-bold text-gray-700 fs-5">
+                                                <td colspan="4" class="text-left pt-6" style="font-size: 80%;">
+                                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                                </td>
+
+                                            </tr>
+
+                                        </tbody>
+
                                         <thead>
                                             <tr class="border-bottom fs-6 fw-bold text-muted">
                                                 <th class="min-w-175px pb-2">{{ trans('quotes.description') }}</th>
@@ -255,7 +321,7 @@
             </div>
         </div>
     </div>
-    <div class="card h-lg-100 min-w-md-350px">
+    <div class="card h-lg-100 min-w-md-400px">
          <!--begin::Body-->
         <div class="card-body">
             <!--begin::Layout-->
@@ -314,9 +380,9 @@
                                                 <td class="pt-6 text-dark text-center fw-bolder">
                                                     @if ($key == 0)
                                                         <!-- Handle the first item (shifted from the last) -->
-                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d-m-Y H:i:s') }}
+                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d/m/Y H:i') }}
                                                     @else
-                                                        {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y H:i:s') }}
+                                                        {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y') }}
                                                     @endif
                                                 </td>
                                                 <td class="pt-6 text-dark fw-bolder">
@@ -324,7 +390,9 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-
+                                            <tr>
+                                                
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

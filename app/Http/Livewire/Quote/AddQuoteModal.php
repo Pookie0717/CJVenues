@@ -986,9 +986,7 @@ class AddQuoteModal extends Component
         $currentDayOfWeek = $currentDate->format('D');
 
         // Get the seasons for the selected date and weekday
-        $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)
-                        ->where('tenant_id', $currentTenantId)
-                        ->first();
+        $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->first();
 
         // Find the associated venue ID for the selected area
         $selectedArea = VenueArea::find($this->area_id);
@@ -1006,7 +1004,7 @@ class AddQuoteModal extends Component
             ->get();
 
         // Get the "All" season
-        $allSeason = Season::getAllSeason()->where('tenant_id', $currentTenantId);
+        $allSeason = Season::getAllSeason();
 
         // Retrieve options associated with the "All" season
         $allSeasonOptions = $allSeason

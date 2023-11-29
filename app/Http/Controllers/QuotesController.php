@@ -112,7 +112,7 @@ class QuotesController extends Controller
             ];
         }
 
-        $allSeasons = Season::orderBy('priority', 'desc')->get();
+        $allSeasons = Season::orderBy('priority', 'desc')->where('tenant_id', $currentTenantId)->get();
 
         // Initialize variables to keep track of the highest priority season
         $highestPrioritySeason = null;

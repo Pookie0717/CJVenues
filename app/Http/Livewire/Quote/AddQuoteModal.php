@@ -975,7 +975,7 @@ class AddQuoteModal extends Component
 
         $currentTenantId = Session::get('current_tenant_id');
         // Check if the required fields are set
-        if (!$this->date_from) {
+        if (!$this->date_from || !$this->area_id) {
             $this->options = collect(); // No options to display if date is not set
             return;
         }
@@ -992,8 +992,8 @@ class AddQuoteModal extends Component
         $allSeasonId = Season::getAllSeason()->where('tenant_id', $currentTenantId)->first()->id ?? null;
 
         // Find the associated venue ID for the selected area
-        $selectedArea = VenueArea::find($this->area_id);
-        $selectedVenueId = optional($selectedArea->venue)->id;
+        $selectedAreaId = VenueArea::find($this->area_id);
+        $selectedVenueId = optional($selectedAreaId)->venue->id ?? null;
         $selectedEventTypeId = $this->eventName;
 
         // Query the options based on the selected season, "All" season, and tenant ID

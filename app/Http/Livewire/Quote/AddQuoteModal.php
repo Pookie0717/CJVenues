@@ -865,8 +865,8 @@ class AddQuoteModal extends Component
                         $optionValue = '0';
                         continue;
                     }
-
                     $optionPrice = $this->getOptionBufferPriceForSeason($optionId, $season->id);
+                    dd($optionPrice);
                     $optionType = $this->getOptionType($optionId);
 
                     if ($optionPrice) {

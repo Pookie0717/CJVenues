@@ -1016,12 +1016,12 @@ class AddQuoteModal extends Component
             });
 
             // Refine additional filters
-            if ($selectedVenueId) {
+            /*if ($selectedVenueId) {
                 $optionsQuery->where(function ($query) use ($selectedVenueId) {
                     $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenueId])
                           ->orWhereNull('venue_ids');
                 });
-            }
+            }*/
             if ($selectedAreaId) {
                 $optionsQuery->where(function ($query) use ($selectedAreaId) {
                     $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedAreaId])

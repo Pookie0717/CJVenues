@@ -55,7 +55,7 @@
                                 <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.eventtype') }}</label>
                                 <select wire:model.defer="eventtype_ids" name="eventtype_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
                                     @foreach($eventTypes as $eventType)
-                                        <option value="{{ $eventType->id }}">{{ $eventType->name }}</option>
+                                        <option value="{{ $eventType->id }}">{{ $eventType->event_name }}</option>
                                     @endforeach
                                 </select>
                                 @error('eventtype_ids')

@@ -994,7 +994,7 @@ class AddQuoteModal extends Component
         // Find the associated venue ID for the selected area
         $selectedAreaId = VenueArea::find($this->area_id);
         $selectedVenueId = optional($selectedAreaId)->venue->id ?? null;
-        $selectedEventTypeId = $this->eventName;
+        $selectedEventTypeId = EventType::find($this->event_type);
 
         // Query the options based on the selected season, "All" season, and tenant ID
         $optionsQuery = Option::orderBy('position')

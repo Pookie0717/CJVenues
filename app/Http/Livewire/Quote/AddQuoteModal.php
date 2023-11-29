@@ -972,13 +972,13 @@ class AddQuoteModal extends Component
 
     private function loadOptions()
     {
+
         $currentTenantId = Session::get('current_tenant_id');
         // Check if the required fields are set
-        if (!$this->date_from || !$this->area_id) {
-            $this->options = collect(); // No options to display if date and area are not set
+        if (!$this->date_from) {
+            $this->options = collect(); // No options to display if date is not set
             return;
         }
-
 
         // Convert the date strings to Carbon instances
         $dateFrom = Carbon::createFromFormat('d-m-Y', $this->date_from);
@@ -988,51 +988,43 @@ class AddQuoteModal extends Component
         // Get the seasons for the selected date and weekday
         $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->first();
 
+        // Get the "All" season ID
+        $allSeasonId = Season::getAllSeason()->where('tenant_id', $currentTenantId)->first()->id ?? null;
+
         // Find the associated venue ID for the selected area
         $selectedArea = VenueArea::find($this->area_id);
         $selectedVenueId = optional($selectedArea->venue)->id;
+        $selectedEventTypeId = $this->eventName;
 
-        // Query the options based on the selected venue and the season with the highest priority
-        $venueOptions = Option::orderBy('position')
+        // Query the options based on the selected season, "All" season, and tenant ID
+        $optionsQuery = Option::orderBy('position')
             ->where('tenant_id', $currentTenantId)
-            ->where(function ($query) use ($selectedVenueId) {
-                $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenueId]);
-            })
-            ->when($seasons, function ($query) use ($seasons) {
-                return $query->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$seasons->id]);
-            })
-            ->get();
+            ->where(function ($query) use ($seasons, $allSeasonId) {
+                $query->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$seasons->id ?? 0])
+                      ->orWhereRaw('FIND_IN_SET(?, season_ids) > 0', [$allSeasonId]);
+            });
 
-        // Get the "All" season
-        $allSeason = Season::getAllSeason();
+        // Apply additional filters if values are set
+        if ($selectedVenueId) {
+            $optionsQuery->whereRaw('FIND_IN_SET(?, venue_ids) > 0 OR venue_ids IS NULL', [$selectedVenueId]);
+        }
+        if ($selectedAreaId) {
+            $optionsQuery->whereRaw('FIND_IN_SET(?, area_ids) > 0 OR area_ids IS NULL', [$selectedAreaId]);
+        }
+        if ($selectedEventTypeId) {
+            $optionsQuery->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0 OR eventtype_ids IS NULL', [$selectedEventTypeId]);
+        }
 
-        // Retrieve options associated with the "All" season
-        $allSeasonOptions = $allSeason
-            ? Option::orderBy('position')
-                ->where('tenant_id', $currentTenantId)
-                ->where(function ($query) use ($allSeason) {
-                    $query->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$allSeason->id]);
-                })
-                ->get()
-            : collect();
+        $this->options = $optionsQuery->get();
 
-
-        // Merge the two sets of options
-        $this->options = $venueOptions->concat($allSeasonOptions)->unique('id')->sortBy('position');
-
-
-        // Loop through the options and set the value for the specific logic option
+        // Set values for specific logic options and default values
         foreach ($this->options as $option) {
             if ($option->type === 'logic') {
-                // Set the value for the specific logic option
                 $option->value = $this->calculateLogicOptionValues($option->id);
-                $this->selectedOptions[$option->id] = $option->value;
             }
-            // Check if a default value exists and if it's not already set in selectedOptions
-            if (!isset($this->selectedOptions[$option->id]) && isset($option->default_value)) {
-                $this->selectedOptions[$option->id] = $option->default_value;
-            }
+            $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
         }
+
     }
 
     private function applyDiscount($calculatedPrice, $discount)

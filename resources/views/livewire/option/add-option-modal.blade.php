@@ -52,6 +52,32 @@
                                 @enderror
                             </div>
                             <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.eventtype') }}</label>
+                                <select wire:model.defer="eventtype_ids" name="eventtype_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
+                                    @foreach($eventTypes as $eventType)
+                                        <option value="{{ $eventType->id }}">{{ $eventType->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('eventtype_ids')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Season and Venue -->
+                        <div class="row mb-7">
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.area') }}</label>
+                                <select wire:model.defer="area_ids" name="area_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
+                                    @foreach($areas as $area)
+                                        <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('area_ids')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.venue') }}</label>
                                 <select wire:model.defer="venue_ids" name="venue_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
                                     @foreach($venues as $venue)

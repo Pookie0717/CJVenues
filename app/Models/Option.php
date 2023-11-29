@@ -17,6 +17,8 @@ class Option extends Model
         'values',
         'season_ids',
         'venue_ids',
+        'area_ids',
+        'eventtype_ids',
         'logic',
         'description',
         'default_value',
@@ -33,6 +35,16 @@ class Option extends Model
     public function seasons()
     {
         return Season::whereIn('id', $this->season_ids);
+    }
+
+    public function area()
+    {
+        return VenueArea::whereIn('id', $this->area_ids);
+    }
+
+    public function eventType()
+    {
+        return EventType::whereIn('name', $this->eventtype_ids);
     }
 
     public function venues()

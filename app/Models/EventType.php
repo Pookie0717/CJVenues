@@ -17,8 +17,6 @@ class EventType extends Model
         'duration_type',
         'max_duration',
         'min_duration',
-        'time_setup',
-        'time_cleaningup',
         'event_name',
         'min_people',
         'max_people',

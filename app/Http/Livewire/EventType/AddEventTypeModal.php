@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 
 class AddEventTypeModal extends Component
 {
+    public $name;
     public $event_name;
     public $selectedEventNames = [];
     public $typical_seating;
@@ -17,8 +18,6 @@ class AddEventTypeModal extends Component
     public $description;
     public $min_duration;
     public $max_duration;
-    public $time_setup;
-    public $time_cleaningup;
     public $seasons;
     public $selectedSeasons = [];
     public $min_people;
@@ -51,8 +50,6 @@ class AddEventTypeModal extends Component
             'description' => 'required|string|max:255',
             'min_duration' => 'required|integer',
             'max_duration' => 'required|integer',
-            'time_setup' => 'required|integer',
-            'time_cleaningup' => 'required|integer',
             'selectedSeasons' => 'required|array',
             'selectedSeasons.*' => 'integer',
             'min_people' => 'required|integer',
@@ -80,8 +77,6 @@ class AddEventTypeModal extends Component
                 'description' => $this->description,
                 'min_duration' => $this->min_duration,
                 'max_duration' => $this->max_duration,
-                'time_setup' => $this->time_setup,
-                'time_cleaningup' => $this->time_cleaningup,
                 'seasons' => $seasons,
                 'min_people' => $this->min_people,
                 'max_people' => $this->max_people,
@@ -106,8 +101,6 @@ class AddEventTypeModal extends Component
                 'description' => $this->description,
                 'min_duration' => $this->min_duration,
                 'max_duration' => $this->max_duration,
-                'time_setup' => $this->time_setup,
-                'time_cleaningup' => $this->time_cleaningup,
                 'seasons' => implode(', ', $this->selectedSeasons), // Store the selected seasons as a comma-separated string
                 'min_people' => $this->min_people,
                 'max_people' => $this->max_people,
@@ -125,6 +118,7 @@ class AddEventTypeModal extends Component
 
             // Reset the form fields
             $this->reset([
+                'name',
                 'event_name',
                 'typical_seating',
                 'selectedEventNames',
@@ -132,8 +126,6 @@ class AddEventTypeModal extends Component
                 'description',
                 'min_duration',
                 'max_duration',
-                'time_setup',
-                'time_cleaningup',
                 'selectedSeasons',
                 'min_people',
                 'opening_time',
@@ -176,8 +168,6 @@ class AddEventTypeModal extends Component
         $this->description = $eventType->description;
         $this->min_duration = $eventType->min_duration;
         $this->max_duration = $eventType->max_duration;
-        $this->time_setup = $eventType->time_setup;
-        $this->time_cleaningup = $eventType->time_cleaningup;
         $this->selectedSeasons = explode(', ', $eventType->seasons);
         $this->min_people = $eventType->min_people;
         $this->max_people = $eventType->max_people;

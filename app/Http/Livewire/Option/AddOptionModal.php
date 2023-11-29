@@ -6,6 +6,8 @@ use Livewire\Component;
 use App\Models\Option;
 use App\Models\Season;
 use App\Models\Venue;
+use App\Models\VenueArea;
+use App\Models\EventType;
 use Illuminate\Support\Facades\Session;
 
 class AddOptionModal extends Component
@@ -17,6 +19,8 @@ class AddOptionModal extends Component
     public $venue_id;
     public $season_ids = [];
     public $venue_ids = [];
+    public $area_ids = [];
+    public $eventtype_ids = [];
     public $description;
     public $default_value;
     public $vat;
@@ -35,6 +39,10 @@ class AddOptionModal extends Component
         'season_ids.*' => 'exists:seasons,id',
         'venue_ids' => 'nullable|array',
         'venue_ids.*' => 'exists:venues,id',
+        'area_ids' => 'nullable|array',
+        'area_ids.*' => 'exists:venue_areas,id',
+        'eventtype_ids' => 'nullable|array',
+        'eventtype_ids.*' => 'exists:event_types,id',
         'description' => 'nullable|string|max:255',
         'default_value' => 'nullable|string|max:255',
         'vat' => 'nullable|numeric',
@@ -58,6 +66,16 @@ class AddOptionModal extends Component
         // Convert season_ids to an array if it's not already
         if (!is_array($this->season_ids)) {
             $this->season_ids = [];
+        }
+
+        // Convert area_ids to an array if it's not already
+        if (!is_array($this->area_ids)) {
+            $this->area_ids = [];
+        }
+
+        // Convert eventtype_ids to an array if it's not already
+        if (!is_array($this->eventtype_ids)) {
+            $this->eventtype_ids = [];
         }
 
         if ($this->edit_mode) {
@@ -95,17 +113,19 @@ class AddOptionModal extends Component
         $this->emit('success', 'Option successfully deleted');
     }
 
-public function updateOption($id)
-{
-    $this->edit_mode = true;
-    $option = Option::find($id);
-    $this->fill($option->toArray());
+    public function updateOption($id)
+    {
+        $this->edit_mode = true;
+        $option = Option::find($id);
+        $this->fill($option->toArray());
 
-    // Convert the comma-separated string back to an array
-    $this->season_ids = explode(',', $option->season_ids);
-    $this->venue_ids = explode(',', $option->venue_ids);
-    $this->optionId = $id;
-}
+        // Convert the comma-separated string back to an array
+        $this->season_ids = explode(',', $option->season_ids);
+        $this->venue_ids = explode(',', $option->venue_ids);
+        $this->area_ids = explode(',', $option->area_ids);
+        $this->eventtype_ids = explode(',', $option->eventtype_ids);
+        $this->optionId = $id;
+    }
 
 
 
@@ -136,6 +156,8 @@ public function updateOption($id)
             'optionId',
             'season_ids',
             'venue_ids',
+            'area_ids',
+            'eventtype_ids',
             'description',
             'default_value',
             'vat',
@@ -149,6 +171,8 @@ public function updateOption($id)
         // Convert arrays to comma-separated strings
         $seasonIds = implode(',', $this->season_ids);
         $venueIds = implode(',', $this->venue_ids);
+        $areaIds = implode(',', $this->area_ids);
+        $eventTypeIds = implode(',', $this->eventtype_ids);
 
         return [
             'name' => $this->name,
@@ -162,6 +186,8 @@ public function updateOption($id)
             'logic' => $this->generateLogicString(),
             'season_ids' => $seasonIds, // Updated to comma-separated string
             'venue_ids' => $venueIds,   // Updated to comma-separated string
+            'area_ids' => $areaIds,   // Updated to comma-separated string
+            'eventtype_ids' => $eventTypeIds,   // Updated to comma-separated string
         ];
     }
 
@@ -187,6 +213,8 @@ public function updateOption($id)
         $currentTenantId = Session::get('current_tenant_id');
         $seasons = Season::where('tenant_id', $currentTenantId)->get();
         $venues = Venue::where('tenant_id', $currentTenantId)->get();
-        return view('livewire.option.add-option-modal', compact('seasons', 'venues'));
+        $areas = VenueArea::where('tenant_id', $currentTenantId)->get();
+        $eventTypes = EventType::where('tenant_id', $currentTenantId)->get();
+        return view('livewire.option.add-option-modal', compact('seasons', 'venues', 'areas', 'eventTypes'));
     }
 }

@@ -43,6 +43,8 @@ return [
     'lastname' => 'Last name',
     'phone' => 'Phone',
     'notes' => 'Notes',
+    'eventtype' => 'Event Type',
+    'area' => 'Area',
     'selectacountry' => 'Select a country',
     '' => '',
 

@@ -65,6 +65,8 @@ class AddQuoteModal extends Component
         $this->validateQuoteData();
         $newQuoteNumber = $this->getNewQuoteNumber();
 
+        if($this->selectedOptions) {
+
         // Convert selected options to a comma-separated string format
         $optionIdsIm = implode('|', array_keys($this->selectedOptions));
         $optionValuesIm = implode('|', array_values($this->selectedOptions));
@@ -84,6 +86,8 @@ class AddQuoteModal extends Component
 
         $optionIds = implode('|', $cleanedOptionIds);
         $optionValues = implode('|', $cleanedOptionValues);
+
+        } 
 
         $timeFromArray = [];
         $timeToArray = [];
@@ -105,6 +109,8 @@ class AddQuoteModal extends Component
         Log::info('Price Venue: ' . $priceVenue);
 
         $priceVenue = $priceVenue + $priceBufferVenue;
+
+        if($this->selectedOptions) {
 
         // Calculate regular and buffer prices for options
         $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
@@ -153,7 +159,12 @@ class AddQuoteModal extends Component
         $valuesArray = explode('|', $priceOptionsString);
         $priceOptions = array_sum(array_map('floatval', $valuesArray));
 
-
+        } else {
+            $priceOptions = 0;
+            $priceOptionsString = NULL;
+            $optionIds = NULL;
+            $optionValues = NULL;
+        }
         $calculatedPrice = $priceVenue + $priceOptions;
 
         try {
@@ -855,9 +866,9 @@ class AddQuoteModal extends Component
 
             // Get all seasons for the current date
             $matchingSeasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek);
-
             // Iterate through the matching seasons for the current date
             foreach ($matchingSeasons as $season) {
+
                 foreach (explode('|', $optionIds) as $index => $optionId) {
                     $optionValue = explode('|', $optionValues)[$index];
 
@@ -866,9 +877,7 @@ class AddQuoteModal extends Component
                         continue;
                     }
                     $optionPrice = $this->getOptionBufferPriceForSeason($optionId, $season->id);
-                    dd($optionPrice);
                     $optionType = $this->getOptionType($optionId);
-
                     if ($optionPrice) {
                         $multiplierValue = (float)$optionPrice->price;
                         $optionTotalPrice = $this->calculateOptionBufferPrice(
@@ -996,27 +1005,38 @@ class AddQuoteModal extends Component
         $selectedVenueId = optional($selectedAreaId)->venue->id ?? null;
         $selectedEventTypeId = EventType::find($this->event_type);
 
-        // Query the options based on the selected season, "All" season, and tenant ID
-        $optionsQuery = Option::orderBy('position')
+           $optionsQuery = Option::orderBy('position')
             ->where('tenant_id', $currentTenantId)
             ->where(function ($query) use ($seasons, $allSeasonId) {
-                $query->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$seasons->id ?? 0])
-                      ->orWhereRaw('FIND_IN_SET(?, season_ids) > 0', [$allSeasonId]);
+                $query->where(function ($q) use ($seasons) {
+                    $q->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$seasons->id ?? 0]);
+                })->orWhere(function ($q) use ($allSeasonId) {
+                    $q->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$allSeasonId]);
+                });
             });
 
-        // Apply additional filters if values are set
-        if ($selectedVenueId) {
-            $optionsQuery->whereRaw('FIND_IN_SET(?, venue_ids) > 0 OR venue_ids IS NULL', [$selectedVenueId]);
-        }
-        if ($selectedAreaId) {
-            $optionsQuery->whereRaw('FIND_IN_SET(?, area_ids) > 0 OR area_ids IS NULL', [$selectedAreaId]);
-        }
-        if ($selectedEventTypeId) {
-            $optionsQuery->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0 OR eventtype_ids IS NULL', [$selectedEventTypeId]);
-        }
+            // Refine additional filters
+            if ($selectedVenueId) {
+                $optionsQuery->where(function ($query) use ($selectedVenueId) {
+                    $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenueId])
+                          ->orWhereNull('venue_ids');
+                });
+            }
+            if ($selectedAreaId) {
+                $optionsQuery->where(function ($query) use ($selectedAreaId) {
+                    $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedAreaId])
+                          ->orWhereNull('area_ids');
+                });
+            }
+            if ($selectedEventTypeId) {
+                $optionsQuery->where(function ($query) use ($selectedEventTypeId) {
+                    $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventTypeId])
+                          ->orWhereNull('eventtype_ids');
+                });
+            }
+
 
         $this->options = $optionsQuery->get();
-
         // Set values for specific logic options and default values
         foreach ($this->options as $option) {
             if ($option->type === 'logic') {

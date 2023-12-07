@@ -983,6 +983,7 @@ class AddQuoteModal extends Component
     {
 
         $currentTenantId = Session::get('current_tenant_id');
+        
         // Check if the required fields are set
         if (!$this->date_from || !$this->area_id) {
             $this->options = collect(); // No options to display if date is not set
@@ -1005,37 +1006,42 @@ class AddQuoteModal extends Component
         $selectedVenueId = optional($selectedAreaId)->venue->id ?? null;
         $selectedEventTypeId = EventType::find($this->event_type);
 
-           $optionsQuery = Option::orderBy('position')
-            ->where('tenant_id', $currentTenantId)
-            ->where(function ($query) use ($seasons, $allSeasonId) {
-                $query->where(function ($q) use ($seasons) {
-                    $q->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$seasons->id ?? 0]);
-                })->orWhere(function ($q) use ($allSeasonId) {
-                    $q->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$allSeasonId]);
-                });
+        $optionsQuery = Option::orderBy('position')
+        ->where('tenant_id', $currentTenantId)
+        ->where(function ($query) use ($seasons, $allSeasonId) {
+            $query->where(function ($q) use ($seasons) {
+                $q->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$seasons->id ?? 0]);
+            })->orWhere(function ($q) use ($allSeasonId) {
+                $q->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$allSeasonId]);
             });
+        });
 
-            // Refine additional filters
-            /*if ($selectedVenueId) {
-                $optionsQuery->where(function ($query) use ($selectedVenueId) {
-                    $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenueId])
-                          ->orWhereNull('venue_ids');
-                });
-            }*/
-            if ($selectedAreaId) {
-                $optionsQuery->where(function ($query) use ($selectedAreaId) {
-                    $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedAreaId])
-                          ->orWhereNull('area_ids');
-                });
-            }
-            if ($selectedEventTypeId) {
-                $optionsQuery->where(function ($query) use ($selectedEventTypeId) {
-                    $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventTypeId])
-                          ->orWhereNull('eventtype_ids');
-                });
-            }
+        
 
+        // Refine additional filters
+        /*if ($selectedVenueId) {
+            $optionsQuery->where(function ($query) use ($selectedVenueId) {
+                $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenueId])
+                        ->orWhereNull('venue_ids');
+            });
+        }*/
+        if ($selectedAreaId) {
+            $optionsQuery->where(function ($query) use ($selectedAreaId) {
+                $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedAreaId->id])
+                        ->orWhereNull('area_ids');
+            });
+        }
 
+        
+
+        if ($selectedEventTypeId) {
+            $optionsQuery->where(function ($query) use ($selectedEventTypeId) {
+                $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventTypeId->id])
+                        ->orWhereNull('eventtype_ids');
+            });
+        }
+        
+            
         $this->options = $optionsQuery->get();
         // Set values for specific logic options and default values
         foreach ($this->options as $option) {
@@ -1044,7 +1050,6 @@ class AddQuoteModal extends Component
             }
             $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
         }
-
     }
 
     private function applyDiscount($calculatedPrice, $discount)

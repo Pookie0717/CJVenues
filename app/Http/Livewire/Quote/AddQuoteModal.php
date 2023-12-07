@@ -69,9 +69,13 @@ class AddQuoteModal extends Component
 
         // Convert selected options to a comma-separated string format
         $optionIdsIm = implode('|', array_keys($this->selectedOptions));
+
+        Log::info("-----optionIdsIm". json_encode($optionIdsIm));
+
         $optionValuesIm = implode('|', array_values($this->selectedOptions));
 
         $optionIds = explode('|', $optionIdsIm);
+
         $optionValues = explode('|', $optionValuesIm);
 
         $cleanedOptionIds = [];
@@ -263,6 +267,7 @@ class AddQuoteModal extends Component
 
     public function updateSelectedOption($optionId, $value)
     {
+        Log::info("updateSelectedOption". json_encode($this->selectedOptions));
         $this->selectedOptions[$optionId] = $value;
     }
 
@@ -804,6 +809,10 @@ class AddQuoteModal extends Component
 
             // Iterate through the matching seasons for the current date
             foreach ($matchingSeasons as $season) {
+
+                
+                Log::info("-----optionIds". json_encode($optionIds));
+
                 foreach (explode('|', $optionIds) as $index => $optionId) {
                     $optionValue = explode('|', $optionValues)[$index];
 
@@ -1048,7 +1057,10 @@ class AddQuoteModal extends Component
             if ($option->type === 'logic') {
                 $option->value = $this->calculateLogicOptionValues($option->id);
             }
-            $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
+
+            
+            Log::info("loadOptions". json_encode($this->options));
+            // $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
         }
     }
 

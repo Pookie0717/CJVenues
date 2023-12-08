@@ -101,6 +101,8 @@ class QuotesController extends Controller
         // Fetch the selected options based on the extracted IDs
         $selectedOptions = Option::whereIn('id', $optionIds)->get();
 
+
+
         // Combine the selected options with their values
         $optionsWithValues = [];
 
@@ -186,6 +188,7 @@ class QuotesController extends Controller
 
         // Fetch the selected options based on the extracted IDs
         $selectedOptions = Option::whereIn('id', $optionIds)->get();
+        
 
         // Combine the selected options with their values
         $optionsWithValues = [];
@@ -223,6 +226,7 @@ class QuotesController extends Controller
                 $highestPriority = $season->priority;
             }
         }
+
 
         // Get the tenant ID from the quote
         $tenantId = $quote->tenant_id;

@@ -7,6 +7,7 @@ use App\Models\EventType;
 use App\Models\Season;
 use App\Models\VenueArea;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class AddEventTypeModal extends Component
 {
@@ -22,8 +23,8 @@ class AddEventTypeModal extends Component
     public $selectedSeasons = [];
     public $min_people;
     public $max_people;
-    public $opening_time;
-    public $closing_time;
+    public $opening_time = "00:00";
+    public $closing_time = "23:30";
     public $venue_area_id;
     public $min_buffer_before;
     public $max_buffer_before;
@@ -36,6 +37,7 @@ class AddEventTypeModal extends Component
     protected $listeners = [
         'delete_event_type' => 'deleteEventType',
         'update_event_type' => 'updateEventType',
+        // 'slider_updated' => 'sliderUpdate',
     ];
 
     public function submit()
@@ -181,4 +183,8 @@ class AddEventTypeModal extends Component
         $this->max_buffer_after = $eventType->max_buffer_after;
     }
 
+    // public function sliderUpdate($values) {
+    //     $this->opening_time = $values[0];
+    //     $this->closing_time = $values[1];
+    // }
 }

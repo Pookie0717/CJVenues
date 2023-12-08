@@ -154,32 +154,35 @@
                         <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <div class="row">
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">{{ trans('events.openingtime') }}</label>
-                                        <div class="input-group" id="opening_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="opening_time_picker_input" type="text"  wire:model.defer="opening_time" class="form-control" data-td-target="#opening_time_picker"/>
-                                            <span class="input-group-text" data-td-target="#opening_time_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('opening_time')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.openingtime') }}</label>
+                                <div class="input-group" id="opening_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                    <input id="opening_time_picker_input" type="text"  wire:model.defer="opening_time" class="form-control" data-td-target="#opening_time_picker"/>
+                                    <span class="input-group-text" data-td-target="#opening_time_picker" data-td-toggle="datetimepicker">
+                                        <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                    </span>
+                                </div>
+                                @error('opening_time')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
 
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">{{ trans('events.closingtime') }}</label>
-                                        <div class="input-group" id="closing_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="closing_time_picker_input" type="text"  wire:model.defer="closing_time" class="form-control" data-td-target="#closing_time_picker"/>
-                                            <span class="input-group-text" data-td-target="#closing_time_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('closing_time')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    </div>
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('events.closingtime') }}</label>
+                                <div class="input-group" id="closing_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                    <input id="closing_time_picker_input" type="text"  wire:model.defer="closing_time" class="form-control" data-td-target="#closing_time_picker"/>
+                                    <span class="input-group-text" data-td-target="#closing_time_picker" data-td-toggle="datetimepicker">
+                                        <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                    </span>
+                                </div>
+                                @error('closing_time')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <label class="required fw-semibold fs-6 mb-4 pb-5">Event Time</label>
+                        <div id="event_time_slider" class="my-4"></div>
                     </div>
                     <!--end::Input group-->
 
@@ -214,16 +217,93 @@
     </div>
 </div>
 
-    @push('scripts')
+@push('scripts')
 <script>   
 
-document.getElementById('opening_time_picker_input').addEventListener('change', function () {
+var slider = document.querySelector("#event_time_slider");
+var openingTimeInput = document.getElementById('opening_time_picker_input');
+var closingTimeInput = document.getElementById('closing_time_picker_input');
+
+function convertDecimalToTime(decimalNumber) {
+  if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
+    return 'Invalid input';
+  }
+
+  const hour = Math.floor(decimalNumber);
+  const minute = decimalNumber % 1 === 0.5 ? '30' : '00';
+
+  const formattedHour = hour < 10 ? '0' + hour : hour;
+
+  const formattedTime = `${formattedHour}:${minute}`;
+  return formattedTime;
+}
+
+
+function convertTimeToDecimal(timeString) {
+  const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+  console.log(timeString)
+  if (!timeRegex.test(timeString)) {
+    return 'Invalid time format';
+  }
+
+  const [hours, minutes] = timeString.split(':');
+
+  const decimalNumber = parseInt(hours, 10) + parseInt(minutes, 10) / 60;
+
+  return decimalNumber;
+}
+
+
+function customSliderTooltip (value) {
+  return convertDecimalToTime(value);
+}
+
+openingTimeInput.addEventListener('change', function () {
     @this.set('opening_time', this.value);
 });
 
-document.getElementById('closing_time_picker_input').addEventListener('change', function () {
+closingTimeInput.addEventListener('change', function () {
     @this.set('closing_time', this.value);
 });
 
+noUiSlider.create(slider, {
+    start: [convertTimeToDecimal(@json($opening_time)), convertTimeToDecimal(@json($closing_time))],
+    connect: true,
+    step: 0.5,
+    tooltips: [true, true],
+    range: {
+        "min": 0,
+        "max": 23.5
+    },
+    format: {
+      to: customSliderTooltip,
+      from: Number
+    },
+});
+
+document.addEventListener('livewire:load', () => {
+    // Livewire.on('slider_updated', function (values) {
+    //     slider.noUiSlider.updateOptions({
+    //         start: [convertTimeToDecimal(values[0]), convertTimeToDecimal(values[1])]
+    //     });
+    //     // @this.set('closing_time', values[1]);
+    //     // @this.set('opening_time', values[0]);
+       
+    // });
+
+    slider.noUiSlider.on("change", function (values, handle) {
+        if (handle) {
+            closingTimeInput.value = values[handle];
+            // @this.set('closing_time', values[handle]);
+        } else {
+            openingTimeInput.value = values[handle];
+            // @this.set('opening_time', values[handle]);
+        }
+
+        // Livewire.emit('slider_updated', [values[0], values[1]]);
+    });
+});
+
+
 </script>
-    @endpush
+@endpush

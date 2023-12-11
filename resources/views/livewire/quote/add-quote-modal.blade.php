@@ -131,7 +131,7 @@
                         <!-- Buffer Time Before the Event Start -->
                         <div class="col">
                             <label for="buffer_time_before" class="form-label">Buffer Time Before the Event Start:</label>
-                            <input type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
+                            <input @if($is_invalid_range) disabled @endif type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
                             @error('buffer_time_before')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -393,7 +393,18 @@
             });
 
             slider.noUiSlider.on("change", function (values, handle) {
-                Livewire.emit('update_time_range', {index, date, values});
+                const maxDuration = event.detail.maxDuration;
+                const minDuration = event.detail.minDuration;
+                const duration = convertTimeToDecimal(values[1]) - convertTimeToDecimal(values[0]);
+                if(handle) {
+                    if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
+                    if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
+                    Livewire.emit('update_time_range', {index, date, values});
+                } else {
+                    if(duration < minDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - minDuration);
+                    if(duration > maxDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - maxDuration);
+                    Livewire.emit('update_time_range', {index, date, values});
+                }
             });
         })
     }

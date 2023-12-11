@@ -181,12 +181,14 @@ class AddEventTypeModal extends Component
         $this->max_buffer_before = $eventType->max_buffer_before;
         $this->min_buffer_after = $eventType->min_buffer_after;
         $this->max_buffer_after = $eventType->max_buffer_after;
-        $this->dispatchBrowserEvent('event-type-range-updated', ['openingTime' => $this->opening_time, 'closingTime' => $this->closing_time]);
+        $this->dispatchBrowserEvent('event-type-range-updated', 
+        ['openingTime' => $this->opening_time, 'closingTime' => $this->closing_time]);
     }
 
     public function updateEventTypeRange($range) {
         $this->opening_time = $range[0];
         $this->closing_time = $range[1];
-        $this->dispatchBrowserEvent('event-type-range-updated', ['openingTime' => $this->opening_time, 'closingTime' => $this->closing_time]);
+        $this->dispatchBrowserEvent('event-type-range-updated', 
+        ['openingTime' => $this->opening_time, 'closingTime' => $this->closing_time]);
     }
 }

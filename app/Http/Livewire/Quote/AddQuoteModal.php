@@ -53,6 +53,7 @@ class AddQuoteModal extends Component
 
     public $edit_mode = false;
 
+    public $is_invalid_range = true;
 
     protected $listeners = [
         'delete_quote' => 'deleteQuote',
@@ -249,7 +250,9 @@ class AddQuoteModal extends Component
         $this->date_from = $range[0];
         $this->date_to = $range[1];
         $this->calculateTimeRanges();
-    
+        $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
+        $end = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_to);
+        $this->is_invalid_range = $start->gt($end);
     }
 
     public function updateTimeRange($data) {
@@ -272,10 +275,14 @@ class AddQuoteModal extends Component
 
             $time_from = '00:00';
             $time_to = '23:30';
+            $max_duration = 24;
+            $min_duration = 0;
 
             if($event) {
                 $time_from = $event->opening_time;
                 $time_to = $event->closing_time;
+                $max_duration = $event->max_duration;
+                $min_duration = $event->min_duration;
             }
 
             $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
@@ -293,7 +300,14 @@ class AddQuoteModal extends Component
 
                 $start->addDay();
             }
-            $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges, 'timeFrom' => $time_from, 'timeTo' => $time_to]);
+            $this->dispatchBrowserEvent('date-range-updated', 
+                [
+                    'timeRanges' => $this->time_ranges,
+                    'timeFrom' => $time_from,
+                    'timeTo' => $time_to,
+                    'minDuration' => $min_duration,
+                    'maxDuration' => $max_duration
+                ]);
         }
     }
 
@@ -997,13 +1011,24 @@ class AddQuoteModal extends Component
         $event = EventType::find($this->event_type);
         $time_from = '00:00';
         $time_to = '23:30';
+        $max_duration = 24;
+        $min_duration = 0;
 
         if($event) {
             $time_from = $event->opening_time;
             $time_to = $event->closing_time;
+            $max_duration = $event->max_duration;
+            $min_duration = $event->min_duration;
         }
 
-        $this->dispatchBrowserEvent('time-range-updated', ['timeRanges' => $this->time_ranges, 'timeFrom' => $time_from, "timeTo" => $time_to]);
+        $this->dispatchBrowserEvent('date-range-updated', 
+        [
+            'timeRanges' => $this->time_ranges,
+            'timeFrom' => $time_from,
+            'timeTo' => $time_to,
+            'minDuration' => $min_duration,
+            'maxDuration' => $max_duration
+        ]);
 
         return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'options'));
     }

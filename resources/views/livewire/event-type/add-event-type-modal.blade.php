@@ -74,14 +74,14 @@
                         <div class="row mb-7">
                             <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">{{ trans('events.minduration') }}</label>
-                                <input type="number" wire:model.defer="min_duration" name="min_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.minduration') }}"/>
+                                <input type="number" id="min_duration" wire:model.defer="min_duration" name="min_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.minduration') }}"/>
                                 @error('min_duration')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">{{ trans('events.maxduration') }}</label>
-                                <input type="number" wire:model.defer="max_duration" name="max_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.maxduration') }}"/>
+                                <input type="number" id="max_duration" wire:model.defer="max_duration" name="max_duration" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="{{ trans('events.maxduration') }}"/>
                                 @error('max_duration')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -221,6 +221,8 @@
 <script>   
 
 var slider = document.querySelector("#event_time_slider");
+var minDurationInput = document.querySelector("#min_duration");
+var maxDurationInput = document.querySelector("#max_duration");
 
 function convertDecimalToTime(decimalNumber) {
     if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
@@ -275,11 +277,18 @@ document.addEventListener('livewire:load', () => {
     })
 
     slider.noUiSlider.on("change", function (values, handle) {
-        Livewire.emit('update_event_type_range', values);
-        if (handle) {
-            // @this.set('closing_time', values[handle]);
+        const maxDuration = Number(maxDurationInput.value);
+        const minDuration = Number(minDurationInput.value);
+        const duration = convertTimeToDecimal(values[1]) - convertTimeToDecimal(values[0]);
+        if(handle) {
+            if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
+            if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
+            Livewire.emit('update_event_type_range', values);
+
         } else {
-            // @this.set('opening_time', values[handle]);
+            if(duration < minDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - minDuration);
+            if(duration > maxDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - maxDuration);
+            Livewire.emit('update_event_type_range', values);
         }
     });
 });

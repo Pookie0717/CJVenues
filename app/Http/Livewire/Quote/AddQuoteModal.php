@@ -241,24 +241,15 @@ class AddQuoteModal extends Component
         return $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
     }
 
-    // public function updatedDateFrom($value)
-    // {
-    //     $this->calculateTimeRanges();
-    //     $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges]);
-    // }
-
-    // public function updatedDateTo($value)
-    // {
-    //     $this->calculateTimeRanges();
-    //     $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges]);
-    // }
+    public function updatedEventType($value) {
+        $this->calculateTimeRanges();
+    }
 
     public function updateDateRange($range) {
         $this->date_from = $range[0];
         $this->date_to = $range[1];
         $this->calculateTimeRanges();
-       
-        $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges]);
+    
     }
 
     public function updateTimeRange($data) {
@@ -276,6 +267,17 @@ class AddQuoteModal extends Component
     private function calculateTimeRanges()
     {
         if (!empty($this->date_from) && !empty($this->date_to)) {
+
+            $event = EventType::find($this->event_type);
+
+            $time_from = '00:00';
+            $time_to = '23:30';
+
+            if($event) {
+                $time_from = $event->opening_time;
+                $time_to = $event->closing_time;
+            }
+
             $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
             $end = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_to);
 
@@ -285,12 +287,13 @@ class AddQuoteModal extends Component
             // Loop through each day and add time ranges
             while ($start->lte($end)) {
                 $this->time_ranges[$start->format('d-m-Y')] = [
-                    'time_from' => '00:00',
-                    'time_to' => '23:30',
+                    'time_from' => $time_from,
+                    'time_to' => $time_to,
                 ];
 
                 $start->addDay();
             }
+            $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges, 'timeFrom' => $time_from, 'timeTo' => $time_to]);
         }
     }
 
@@ -991,7 +994,16 @@ class AddQuoteModal extends Component
 
         $options = $this->loadOptions();
 
-        $this->dispatchBrowserEvent('time-range-updated', ['timeRanges' => $this->time_ranges]);
+        $event = EventType::find($this->event_type);
+        $time_from = '00:00';
+        $time_to = '23:30';
+
+        if($event) {
+            $time_from = $event->opening_time;
+            $time_to = $event->closing_time;
+        }
+
+        $this->dispatchBrowserEvent('time-range-updated', ['timeRanges' => $this->time_ranges, 'timeFrom' => $time_from, "timeTo" => $time_to]);
 
         return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'options'));
     }

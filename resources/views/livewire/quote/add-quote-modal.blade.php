@@ -327,12 +327,15 @@
 <script>
 
     function convertDecimalToTime(decimalNumber) {
+
         if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
             return 'Invalid input';
         }
 
+        if(Math.abs(decimalNumber - Math.round(decimalNumber)) < 0.01) decimalNumber = Math.round(decimalNumber)
+        
         const hour = Math.floor(decimalNumber);
-        const minute = decimalNumber % 1 === 0.5 ? '30' : '00';
+        const minute = decimalNumber % 1 < 0.51 && decimalNumber % 1 > 0.49 ? '30' : '00';
 
         const formattedHour = hour < 10 ? '0' + hour : hour;
 
@@ -369,22 +372,31 @@
             }
 
             noUiSlider.create(slider, {
-                start: [0, 23.5],
+                start: [
+                    convertTimeToDecimal(event.detail.timeRanges[date]["time_from"]),
+                    convertTimeToDecimal(event.detail.timeRanges[date]["time_to"]),
+                ],
                 connect: true,
                 step: 0.5,
-                tooltips: [true, true],
+                tooltips: [
+                    true,
+                    true, 
+                ],
                 range: {
-                    "min": 0,
-                    "max": 23.5
+                    "min": convertTimeToDecimal(event.detail.timeFrom),
+                    "max": convertTimeToDecimal(event.detail.timeTo)
                 },
                 format: {
-                to: customSliderTooltip,
-                from: Number
+                    to: customSliderTooltip,
+                    from: Number
                 },
             });
 
             slider.noUiSlider.updateOptions({
-                start: [convertTimeToDecimal(event.detail.timeRanges[date]["time_from"]), convertTimeToDecimal(event.detail.timeRanges[date]["time_to"])]
+                start: [
+                    convertTimeToDecimal(event.detail.timeRanges[date]["time_from"]), 
+                    convertTimeToDecimal(event.detail.timeRanges[date]["time_to"]),
+                ]
             });
 
             slider.noUiSlider.on("change", function (values, handle) {

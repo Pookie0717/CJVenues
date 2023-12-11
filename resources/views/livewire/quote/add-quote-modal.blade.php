@@ -393,18 +393,23 @@
             });
 
             slider.noUiSlider.on("change", function (values, handle) {
-                const maxDuration = event.detail.maxDuration;
-                const minDuration = event.detail.minDuration;
+                const maxDuration = Number(event.detail.maxDuration);
+                const minDuration = Number(event.detail.minDuration);
                 const duration = convertTimeToDecimal(values[1]) - convertTimeToDecimal(values[0]);
                 if(handle) {
                     if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
                     if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
-                    Livewire.emit('update_time_range', {index, date, values});
                 } else {
                     if(duration < minDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - minDuration);
                     if(duration > maxDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - maxDuration);
-                    Livewire.emit('update_time_range', {index, date, values});
                 }
+                Livewire.emit('update_time_range', {index, date, values});
+                slider.noUiSlider.updateOptions({
+                    start: [
+                        convertTimeToDecimal(values[0]), 
+                        convertTimeToDecimal(values[1]),
+                    ]
+                });
             });
         })
     }

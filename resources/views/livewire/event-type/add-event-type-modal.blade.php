@@ -204,7 +204,7 @@
                     <div class="text-center pt-15">
                         <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">{{ trans('general.discard') }}</button>
                         <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove>{{ trans('general.submit') }}</span>
+                            <span class="indicator-label" wire:loading.remove wire:target="submit">{{ trans('general.submit') }}</span>
                             <span class="indicator-progress" wire:loading wire:target="submit">
                                 {{ trans('general.pleasewait') }} ...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
@@ -283,13 +283,18 @@ document.addEventListener('livewire:load', () => {
         if(handle) {
             if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
             if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
-            Livewire.emit('update_event_type_range', values);
 
         } else {
             if(duration < minDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - minDuration);
             if(duration > maxDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - maxDuration);
-            Livewire.emit('update_event_type_range', values);
         }
+        Livewire.emit('update_event_type_range', values);
+        slider.noUiSlider.updateOptions({
+            start: [
+                convertTimeToDecimal(values[0]), 
+                convertTimeToDecimal(values[1]),
+            ]
+        });
     });
 });
 

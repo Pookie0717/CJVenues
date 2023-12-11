@@ -223,31 +223,27 @@
 var slider = document.querySelector("#event_time_slider");
 
 function convertDecimalToTime(decimalNumber) {
-  if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
-    return 'Invalid input';
-  }
-
-  const hour = Math.floor(decimalNumber);
-  const minute = decimalNumber % 1 === 0.5 ? '30' : '00';
-
-  const formattedHour = hour < 10 ? '0' + hour : hour;
-
-  const formattedTime = `${formattedHour}:${minute}`;
-  return formattedTime;
+    if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
+        return 'Invalid input';
+    }
+    const tolerance = 0.01
+    if(Math.abs(decimalNumber - Math.round(decimalNumber)) < tolerance) decimalNumber = Math.round(decimalNumber)
+    const hour = Math.floor(decimalNumber);
+    const minute = decimalNumber % 1 < 0.5 + tolerance && decimalNumber % 1 > 0.5 - tolerance ? '30' : '00';
+    const formattedHour = hour < 10 ? '0' + hour : hour;
+    const formattedTime = `${formattedHour}:${minute}`;
+    return formattedTime;
 }
 
 
 function convertTimeToDecimal(timeString) {
-//   const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
-//   if (!timeRegex.test(timeString)) {
-//     return 'Invalid time format';
-//   }
-
-  const [hours, minutes] = timeString.split(':');
-
-  const decimalNumber = parseInt(hours, 10) + parseInt(minutes, 10) / 60;
-
-  return decimalNumber;
+    //   const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+    //   if (!timeRegex.test(timeString)) {
+    //     return 'Invalid time format';
+    //   }
+    const [hours, minutes] = timeString.split(':');
+    const decimalNumber = parseInt(hours, 10) + parseInt(minutes, 10) / 60;
+    return decimalNumber;
 }
 
 

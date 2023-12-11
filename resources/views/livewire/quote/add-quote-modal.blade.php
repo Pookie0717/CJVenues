@@ -327,18 +327,14 @@
 <script>
 
     function convertDecimalToTime(decimalNumber) {
-
         if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
             return 'Invalid input';
         }
-
-        if(Math.abs(decimalNumber - Math.round(decimalNumber)) < 0.01) decimalNumber = Math.round(decimalNumber)
-        
+        const tolerance = 0.01
+        if(Math.abs(decimalNumber - Math.round(decimalNumber)) < tolerance) decimalNumber = Math.round(decimalNumber)
         const hour = Math.floor(decimalNumber);
-        const minute = decimalNumber % 1 < 0.51 && decimalNumber % 1 > 0.49 ? '30' : '00';
-
+        const minute = decimalNumber % 1 < 0.5 + tolerance && decimalNumber % 1 > 0.5 - tolerance ? '30' : '00';
         const formattedHour = hour < 10 ? '0' + hour : hour;
-
         const formattedTime = `${formattedHour}:${minute}`;
         return formattedTime;
     }
@@ -349,11 +345,8 @@
         //   if (!timeRegex.test(timeString)) {
         //     return 'Invalid time format';
         //   }
-
         const [hours, minutes] = timeString.split(':');
-
         const decimalNumber = parseInt(hours, 10) + parseInt(minutes, 10) / 60;
-
         return decimalNumber;
     }
 

@@ -167,7 +167,7 @@
                                     <!--end::Label-->
 
                                     <!--end::Text-->
-                                    <div class="fw-bold fs-6 text-gray-800">{{ $quote->eventType ? $quote->eventType->name : 'N/A' }} </div>
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $quote->event_name ? $quote->event_name : 'N/A' }} </div>
                                     <!--end::Text-->
                                 </div>
                                 <!--end::Col-->
@@ -225,12 +225,18 @@
 
 
                                             @foreach($optionsWithValues as $index => $optionWithValue)
+                                             
                                                 @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
                                                   @php
+                                                    echo var_dump($optionWithValue['value']);
                                                     $price = floatval($priceOptionsArray[$index]);
-                                                    $value = floatval($optionWithValue['value']);
+                                                    if($optionWithValue['value'] == 'yes') {
+                                                        $value = 1;
+                                                    } else {
+                                                        $value = floatval($optionWithValue['value']);
+                                                    }
                                                   @endphp
-                                                  @if ($value != 0)
+                                                  @if ($price != 0)
                                                     <tr class="fw-bold text-gray-700 fs-5">
                                                         <td class="d-flex align-items-center text-left pt-6">
                                                             <i class="fa fa-genderless text-danger fs-2 me-2"></i>
@@ -240,8 +246,8 @@
                                                                 {{ $optionWithValue['option']->name }}
                                                             @endif
                                                         </td>
-                                                        <td class="pt-6 text-end">{{ $optionWithValue['value'] }}</td>
-                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $optionWithValue['value'], 2) }}</td>
+                                                        <td class="pt-6 text-end">{{ $value }}</td>
+                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>

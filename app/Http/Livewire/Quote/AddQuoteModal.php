@@ -53,8 +53,11 @@ class AddQuoteModal extends Component
 
     public $edit_mode = false;
 
+
     protected $listeners = [
         'delete_quote' => 'deleteQuote',
+        'update_time_range' => 'updateTimeRange',
+        'update_date_range' => 'updateDateRange'
     ];
 
     public function submit()
@@ -216,6 +219,10 @@ class AddQuoteModal extends Component
         $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'people', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
     }
 
+    public function isValidRange() {
+        return false;
+    }
+
     private function validateQuoteData()
     {
         $this->validate([
@@ -234,15 +241,37 @@ class AddQuoteModal extends Component
         return $currentQuoteNumber ? $currentQuoteNumber + 1 : 1;
     }
 
-    public function updatedDateFrom($value)
-    {
+    // public function updatedDateFrom($value)
+    // {
+    //     $this->calculateTimeRanges();
+    //     $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges]);
+    // }
+
+    // public function updatedDateTo($value)
+    // {
+    //     $this->calculateTimeRanges();
+    //     $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges]);
+    // }
+
+    public function updateDateRange($range) {
+        $this->date_from = $range[0];
+        $this->date_to = $range[1];
         $this->calculateTimeRanges();
+       
+        $this->dispatchBrowserEvent('date-range-updated', ['timeRanges' => $this->time_ranges]);
     }
 
-    public function updatedDateTo($value)
-    {
-        $this->calculateTimeRanges();
+    public function updateTimeRange($data) {
+        $index = $data["index"];
+        $date = $data["date"];
+        $range = $data["values"];
+        $this->time_ranges[$date] = [
+            'time_from' => $range[0],
+            'time_to' => $range[1],
+        ];
+        // $this->dispatchBrowserEvent('time-range-updated', ['timeRanges' => $this->time_ranges]);
     }
+
 
     private function calculateTimeRanges()
     {
@@ -256,8 +285,8 @@ class AddQuoteModal extends Component
             // Loop through each day and add time ranges
             while ($start->lte($end)) {
                 $this->time_ranges[$start->format('d-m-Y')] = [
-                    'time_from' => '',
-                    'time_to' => '',
+                    'time_from' => '00:00',
+                    'time_to' => '23:30',
                 ];
 
                 $start->addDay();
@@ -961,6 +990,8 @@ class AddQuoteModal extends Component
         $filteredAreas = $venueAreas->where('venue_id', $this->selectedVenueId);
 
         $options = $this->loadOptions();
+
+        $this->dispatchBrowserEvent('time-range-updated', ['timeRanges' => $this->time_ranges]);
 
         return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'options'));
     }

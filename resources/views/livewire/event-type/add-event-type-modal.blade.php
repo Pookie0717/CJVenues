@@ -153,7 +153,7 @@
                         </div>
                         <!--begin::Input group-->
                     <div class="fv-row mb-7">
-                        <div class="row">
+                        <div class="row d-none">
                             <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">{{ trans('events.openingtime') }}</label>
                                 <div class="input-group" id="opening_time_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
@@ -221,8 +221,6 @@
 <script>   
 
 var slider = document.querySelector("#event_time_slider");
-var openingTimeInput = document.getElementById('opening_time_picker_input');
-var closingTimeInput = document.getElementById('closing_time_picker_input');
 
 function convertDecimalToTime(decimalNumber) {
   if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
@@ -240,11 +238,10 @@ function convertDecimalToTime(decimalNumber) {
 
 
 function convertTimeToDecimal(timeString) {
-  const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
-  console.log(timeString)
-  if (!timeRegex.test(timeString)) {
-    return 'Invalid time format';
-  }
+//   const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+//   if (!timeRegex.test(timeString)) {
+//     return 'Invalid time format';
+//   }
 
   const [hours, minutes] = timeString.split(':');
 
@@ -258,16 +255,8 @@ function customSliderTooltip (value) {
   return convertDecimalToTime(value);
 }
 
-openingTimeInput.addEventListener('change', function () {
-    @this.set('opening_time', this.value);
-});
-
-closingTimeInput.addEventListener('change', function () {
-    @this.set('closing_time', this.value);
-});
-
 noUiSlider.create(slider, {
-    start: [convertTimeToDecimal(@json($opening_time)), convertTimeToDecimal(@json($closing_time))],
+    start: [0, 23.5],
     connect: true,
     step: 0.5,
     tooltips: [true, true],
@@ -282,25 +271,20 @@ noUiSlider.create(slider, {
 });
 
 document.addEventListener('livewire:load', () => {
-    // Livewire.on('slider_updated', function (values) {
-    //     slider.noUiSlider.updateOptions({
-    //         start: [convertTimeToDecimal(values[0]), convertTimeToDecimal(values[1])]
-    //     });
-    //     // @this.set('closing_time', values[1]);
-    //     // @this.set('opening_time', values[0]);
-       
-    // });
+
+    window.addEventListener('event-type-range-updated', function(event) {
+        slider.noUiSlider.updateOptions({
+            start: [convertTimeToDecimal(event.detail.openingTime), convertTimeToDecimal(event.detail.closingTime)]
+        });
+    })
 
     slider.noUiSlider.on("change", function (values, handle) {
+        Livewire.emit('update_event_type_range', values);
         if (handle) {
-            closingTimeInput.value = values[handle];
             // @this.set('closing_time', values[handle]);
         } else {
-            openingTimeInput.value = values[handle];
             // @this.set('opening_time', values[handle]);
         }
-
-        // Livewire.emit('slider_updated', [values[0], values[1]]);
     });
 });
 

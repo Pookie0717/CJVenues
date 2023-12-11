@@ -46,13 +46,13 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="people" class="form-label">How many people will attend?</label>
-                    <input type="number" wire:model.defer="people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number of people"/>
+                    <input type="number" id="people" wire:model.defer="people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number of people"/>
 
                 </div>
                 <!--end::Input group-->
 
                 <!--begin::Step 1-->
-                <div class="flex-column" data-kt-stepper-element="content">
+                <div class="flex-column mb-10" data-kt-stepper-element="content">
                     <!--begin::Input group-->
                     <div class="fv-row mb-10">
                         <div class="row">
@@ -87,7 +87,7 @@
 
                     <!-- Add this code inside your Blade template -->
                     @foreach ($time_ranges as $date => $time_range)
-                        <div class="fv-row mb-10">
+                        <div class="fv-row mb-10 d-none">
                             <div class="row">
                                 <div class="col">
                                     <label class="required fw-semibold fs-6 mb-2">Time From ({{ $date }})</label>
@@ -116,6 +116,11 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="mx-10">
+                            <label class="fw-semibold fs-6 mb-4 pb-5">{{ $date }}</label>
+                            <div id="event_time_slider_{{ $loop->index }}" class="my-4"></div>
+                        </div>
                     @endforeach
 
                 </div>
@@ -126,7 +131,7 @@
                         <!-- Buffer Time Before the Event Start -->
                         <div class="col">
                             <label for="buffer_time_before" class="form-label">Buffer Time Before the Event Start:</label>
-                            <input type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time"/>
+                            <input type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
                             @error('buffer_time_before')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -265,8 +270,6 @@
                             <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->value }}" />
                         @endif
 
-
-
                     </div>
                 @endforeach
                 <!--end::Input group-->
@@ -286,16 +289,16 @@
         <div class="d-flex flex-stack justify-content-center ">
 
             <!--begin::Wrapper-->
-<div class="text-center pt-15">
-                        <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove wire:target="submit">Submit</span>
-                            <span class="" wire:loading wire:target="submit">
-                                Please wait...
-                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                            </span>
-                        </button>
-                    </div>
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="indicator-label" wire:loading.remove wire:target="submit">Submit</span>
+                    <span class="" wire:loading wire:target="submit">
+                        Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                </button>
+            </div>
             <!--end::Wrapper-->
         </div>
         <!--end::Actions-->
@@ -304,104 +307,156 @@
         </div>
     </div>
 </div>
-    @push('scripts')
+@push('scripts')
 
 @foreach ($time_ranges as $date => $time_range)
     <script>
-        document.getElementById('time_from_picker_input_{{ $loop->index }}').addEventListener('change', function () {
-            @this.set('time_ranges["{{ $date }}"]["time_from"]', this.value);
-        });
 
-        document.getElementById('time_to_picker_input_{{ $loop->index }}').addEventListener('change', function () {
-            @this.set('time_ranges["{{ $date }}"]["time_to"]', this.value);
-        });
-        new tempusDominus.TempusDominus(document.getElementById("time_to_picker_basic_{{ $loop->index }}"), {
-                display: {
-                    viewMode: "clock",
-                    components: {
-                        decades: false,
-                        year: false,
-                        month: false,
-                        date: false,
-                        hours: true,
-                        minutes: true,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    format: "HH:ss"
-                },
-                stepping: 30, // Set the stepping to 30 minutes
-            });
-            new tempusDominus.TempusDominus(document.getElementById("time_from_picker_basic_{{ $loop->index }}"), {
-                display: {
-                    viewMode: "clock",
-                    components: {
-                        decades: false,
-                        year: false,
-                        month: false,
-                        date: false,
-                        hours: true,
-                        minutes: true,
-                        seconds: false
-                    }
-                },
-                localization: {
-                    locale: "us",
-                    format: "HH:ss"
-                },
-                stepping: 30, // Set the stepping to 30 minutes
-            });
+        // document.getElementById('time_from_picker_input_{{ $loop->index }}').addEventListener('change', function () {
+        //     @this.set('time_ranges["{{ $date }}"]["time_from"]', this.value);
+        // });
+
+        // document.getElementById('time_to_picker_input_{{ $loop->index }}').addEventListener('change', function () {
+        //     @this.set('time_ranges["{{ $date }}"]["time_to"]', this.value);
+        // });
+    
+       
     </script>
 @endforeach
 
 <script>
-            new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
-                display: {
-                    viewMode: "calendar",
-                    components: {
-                        decades: true,
-                        year: true,
-                        month: true,
-                        date: true,
-                        hours: false,
-                        minutes: false,
-                        seconds: false
-                    }
+
+    function convertDecimalToTime(decimalNumber) {
+        if (typeof decimalNumber !== 'number' || decimalNumber < 0 || decimalNumber > 24) {
+            return 'Invalid input';
+        }
+
+        const hour = Math.floor(decimalNumber);
+        const minute = decimalNumber % 1 === 0.5 ? '30' : '00';
+
+        const formattedHour = hour < 10 ? '0' + hour : hour;
+
+        const formattedTime = `${formattedHour}:${minute}`;
+        return formattedTime;
+    }
+
+
+    function convertTimeToDecimal(timeString) {
+        //   const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+        //   if (!timeRegex.test(timeString)) {
+        //     return 'Invalid time format';
+        //   }
+
+        const [hours, minutes] = timeString.split(':');
+
+        const decimalNumber = parseInt(hours, 10) + parseInt(minutes, 10) / 60;
+
+        return decimalNumber;
+    }
+
+
+    function customSliderTooltip (value) {
+        return convertDecimalToTime(value);
+    }
+
+    function setupSlider(event) {
+        Object.keys(event.detail.timeRanges).forEach((date, index) => {
+
+            let slider = document.querySelector("#event_time_slider_" + index);
+
+            if(slider.noUiSlider) {
+                slider.noUiSlider.destroy();
+            }
+
+            noUiSlider.create(slider, {
+                start: [0, 23.5],
+                connect: true,
+                step: 0.5,
+                tooltips: [true, true],
+                range: {
+                    "min": 0,
+                    "max": 23.5
                 },
-                localization: {
-                    locale: "us",
-                    startOfTheWeek: 1,
-                    format: "dd-MM-yyyy"
-                }
-            });
-            new tempusDominus.TempusDominus(document.getElementById("date_to_picker_basic"), {
-                display: {
-                    viewMode: "calendar",
-                    components: {
-                        decades: true,
-                        year: true,
-                        month: true,
-                        date: true,
-                        hours: false,
-                        minutes: false,
-                        seconds: false
-                    }
+                format: {
+                to: customSliderTooltip,
+                from: Number
                 },
-                localization: {
-                    locale: "us",
-                    startOfTheWeek: 1,
-                    format: "dd-MM-yyyy"
-                }
             });
-    document.getElementById('date_from_picker_input').addEventListener('change', function () {
-        @this.set('date_from', this.value);
+
+            slider.noUiSlider.updateOptions({
+                start: [convertTimeToDecimal(event.detail.timeRanges[date]["time_from"]), convertTimeToDecimal(event.detail.timeRanges[date]["time_to"])]
+            });
+
+            slider.noUiSlider.on("change", function (values, handle) {
+                Livewire.emit('update_time_range', {index, date, values});
+            });
+        })
+    }
+    document.addEventListener('livewire:load', function () {
+
+        window.addEventListener('date-range-updated', event => {
+            setupSlider(event)
+        })
+
+        window.addEventListener('time-range-updated', event => {
+            setupSlider(event)
+        })
+
     });
 
-    document.getElementById('date_to_picker_input').addEventListener('change', function () {
-        @this.set('date_to', this.value);
+</script>
+
+<script>
+
+    var fromInput = document.getElementById('date_from_picker_input');
+    var toInput = document.getElementById('date_to_picker_input');
+
+    new tempusDominus.TempusDominus(fromInput, {
+        display: {
+            viewMode: "calendar",
+            components: {
+                decades: true,
+                year: true,
+                month: true,
+                date: true,
+                hours: false,
+                minutes: false,
+                seconds: false
+            }
+        },
+        localization: {
+            locale: "us",
+            startOfTheWeek: 1,
+            format: "dd-MM-yyyy"
+        }
+    });
+    new tempusDominus.TempusDominus(toInput, {
+        display: {
+            viewMode: "calendar",
+            components: {
+                decades: true,
+                year: true,
+                month: true,
+                date: true,
+                hours: false,
+                minutes: false,
+                seconds: false
+            }
+        },
+        localization: {
+            locale: "us",
+            startOfTheWeek: 1,
+            format: "dd-MM-yyyy"
+        }
+    });
+
+    fromInput.addEventListener('change', function () {
+        if(this.value !== "" && toInput.value !== "") Livewire.emit('update_date_range', [this.value, toInput.value]);
+    });
+
+    toInput.addEventListener('change', function () {
+        if(this.value !== "" && fromInput.value !== "") Livewire.emit('update_date_range', [fromInput.value, this.value]);
     });
 </script>
 
-    @endpush
+@endpush

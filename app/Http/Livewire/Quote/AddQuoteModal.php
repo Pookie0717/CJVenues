@@ -48,7 +48,7 @@ class AddQuoteModal extends Component
     public $time_ranges = [];
     public $buffer_time_before;
     public $buffer_time_after;
-    public $buffer_time_unit;
+    public $buffer_time_unit = "days";
 
 
     public $edit_mode = false;
@@ -243,7 +243,14 @@ class AddQuoteModal extends Component
     }
 
     public function updatedEventType($value) {
+        $selectedEvent = EventType::find($value);
+        if($selectedEvent) $this->buffer_time_unit = $selectedEvent->duration_type;
         $this->calculateTimeRanges();
+    }
+
+    public function updatedBufferTimeUnit($value) {
+        $selectedEvent = EventType::find($this->event_type);
+        $this->dispatchBrowserEvent('buffer-time-unit-updated', ['value' => $value, 'selectedEvent' => $selectedEvent]);
     }
 
     public function updateDateRange($range) {

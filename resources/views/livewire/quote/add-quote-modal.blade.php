@@ -433,6 +433,7 @@
     var bufferBeforeInput = document.getElementById('buffer_time_before');
     var bufferAfterInput = document.getElementById('buffer_time_after');
     var bufferUnitInput = document.getElementById('buffer_time_unit');
+    var bufferTimeUnitSelect = document.getElementById('buffer_time_unit');
     var submitBtn =  document.getElementById('submit_button');
 
     new tempusDominus.TempusDominus(fromInput, {
@@ -547,6 +548,44 @@
             @this.set('buffer_time_after', this.value);
         }
     });
+
+    document.addEventListener('livewire:load', function () {
+        window.addEventListener('date-range-updated', event => {
+            setupSlider(event);
+        })
+    });
+    
+    document.addEventListener('livewire:load', function () {
+        window.addEventListener('buffer-time-unit-updated', event => {
+            const bufferTimeUnit = event.detail.value;
+            const selectedEvent = event.detail.selectedEvent;
+            if(selectedEvent && selectedEvent["duration_type"] === "hours") {
+                bufferBeforeInput.min = (selectedEvent['min_buffer_before'])? (bufferTimeUnit === "days"? Math.floor(selectedEvent['min_buffer_before'] / 8): (bufferTimeUnit === "hours"? selectedEvent['min_buffer_before']: 0)): 0;
+                bufferBeforeInput.max = (selectedEvent['max_buffer_before'])? (bufferTimeUnit === "days"? Math.floor(selectedEvent['max_buffer_before'] / 8): (bufferTimeUnit === "hours"? selectedEvent['max_buffer_before']: 0)): 0;
+            } else if(selectedEvent && selectedEvent["duration_type"] === "days") {
+                bufferBeforeInput.min = (selectedEvent['min_buffer_before'])? (bufferTimeUnit === "days"? selectedEvent['min_buffer_before']: (bufferTimeUnit === "hours"? selectedEvent['min_buffer_before'] * 8: 0)): 0;
+                bufferBeforeInput.max = (selectedEvent['max_buffer_before'])? (bufferTimeUnit === "days"? selectedEvent['max_buffer_before']: (bufferTimeUnit === "hours"? selectedEvent['max_buffer_before'] * 8: 0)): 0; 
+            } else {
+                bufferBeforeInput.min = 0; bufferBeforeInput.max = 0
+            }
+            if(selectedEvent && selectedEvent["duration_type"] === "hours") {
+                bufferAfterInput.min = (selectedEvent['min_buffer_after'])? (bufferTimeUnit === "days"? Math.floor(selectedEvent['min_buffer_after'] / 8): (bufferTimeUnit === "hours"? selectedEvent['min_buffer_after']: 0)): 0;
+                bufferAfterInput.max = (selectedEvent['max_buffer_after'])? (bufferTimeUnit === "days"? Math.floor(selectedEvent['max_buffer_after'] / 8): (bufferTimeUnit === "hours"? selectedEvent['max_buffer_after']: 0)): 0;
+            } else if(selectedEvent && selectedEvent["duration_type"] === "days") {
+                bufferAfterInput.min = (selectedEvent['min_buffer_after'])? (bufferTimeUnit === "days"? selectedEvent['min_buffer_after']: (bufferTimeUnit === "hours"? selectedEvent['min_buffer_after'] * 8: 0)): 0;
+                bufferAfterInput.max = (selectedEvent['max_buffer_after'])? (bufferTimeUnit === "days"? selectedEvent['max_buffer_after']: (bufferTimeUnit === "hours"? selectedEvent['max_buffer_after'] * 8: 0)): 0; 
+            } else {
+                bufferAfterInput.min = 0; bufferAfterInput.max = 0
+            }
+            bufferBeforeInput.dispatchEvent(new Event('change'));
+            bufferAfterInput.dispatchEvent(new Event('change'));
+        })
+    });
+
+    
+    bufferTimeUnitSelect.addEventListener('change', function() {
+        @this.set('buffer_time_unit', this.value);
+    })
 </script>
 
 @endpush

@@ -486,7 +486,7 @@
             const [d2, m2, y2] = toInput.value.split("-");
             const t1 = new Date(`${y1}-${m1}-${d1}`).getTime();
             const t2 = new Date(`${y2}-${m2}-${d2}`).getTime();
-            if(t1 > t2) toastr.warning('Date range setting is incorrect!');
+            if(t1 > t2) toastr.warning('Date From setting is incorrect!');
             Livewire.emit('update_date_range', [this.value, toInput.value]);
         } else {
             submitBtn.disabled = true;
@@ -499,7 +499,7 @@
             const [d2, m2, y2] = this.value.split("-");
             const t1 = new Date(`${y1}-${m1}-${d1}`).getTime();
             const t2 = new Date(`${y2}-${m2}-${d2}`).getTime();
-            if(t1 > t2) toastr.warning('Date range setting is incorrect!');
+            if(t1 > t2) toastr.warning('Date To setting is incorrect!');
             Livewire.emit('update_date_range', [fromInput.value, this.value]);
         } else {
             submitBtn.disabled = true;

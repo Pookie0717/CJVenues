@@ -8,6 +8,7 @@ use App\Models\Season;
 use App\Models\Venue;
 use App\Models\VenueArea;
 use App\Models\EventType;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class AddOptionModal extends Component
@@ -125,6 +126,10 @@ class AddOptionModal extends Component
         $this->area_ids = explode(',', $option->area_ids);
         $this->eventtype_ids = explode(',', $option->eventtype_ids);
         $this->optionId = $id;
+        $this->type = $option->type;
+        if($this->type === "logic") {
+            $this->conditions = $this->generateLogic($option->logic);
+        }
     }
 
 
@@ -206,6 +211,26 @@ class AddOptionModal extends Component
         }
 
         return $logicString;
+    }
+
+    protected function generateLogic($logicExpression) {
+
+        $conditions = [];
+        $orConditions = explode(' OR ', $logicExpression);
+        foreach ($orConditions as $orCondition) {
+            $andConditions = explode(' AND ', $orCondition);
+            foreach ($andConditions as $index => $andCondition) {
+                $arr = explode(" ", $andCondition);
+                $conditions[] = [
+                    'logical_operator' => $index === 0 ? 'OR' : 'AND',
+                    'field' => $arr[0],
+                    'operator' => $arr[1],
+                    'value' => preg_replace('/[^0-9]/', '', $arr[2]),
+                ];
+            }
+        }
+
+        return $conditions;
     }
 
     public function render()

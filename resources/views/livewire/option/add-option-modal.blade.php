@@ -93,7 +93,7 @@
                         <!-- Type -->
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('options.type') }}</label>
-                            <select wire:model.defer="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
+                            <select wire:model.defer="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0" id="type">
                                 <option value="">{{ trans('general.select') }}</option>
                                 <option value="yes_no">{{ trans('options.type_yesno') }}</option>
                                 <option value="always">{{ trans('options.type_always') }}</option>
@@ -108,12 +108,14 @@
 
                         <!-- Logic -->
                         <div class="fv-row mb-7">
-                            <label class="fw-semibold fs-6 mb-2">{{ trans('options.logic') }}</label>
 
-                            <div>
-                                <!-- Add Condition Button -->
-                                <button wire:click.prevent="addCondition" class="btn btn-sm btn-light mb-3">{{ trans('options.addcondition') }}</button>
-                            </div>
+                            @if($type === "logic")
+                                <label class="fw-semibold fs-6 mb-2">{{ trans('options.logic') }}</label>
+                                <div>
+                                    <!-- Add Condition Button -->
+                                    <button wire:click.prevent="addCondition" class="btn btn-sm btn-light mb-3">{{ trans('options.addcondition') }}</button>
+                                </div>
+                            @endif
 
                             <!-- List of Conditions -->
                             @foreach($conditions as $index => $condition)
@@ -163,10 +165,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-
-
-
                         
                         <!--begin::Input group-->
                         <div class="row mb-7">
@@ -209,3 +207,18 @@
         </div>
     </div>
 </div>
+
+
+@push('scripts')
+<script>   
+
+var typeSelect = document.querySelector("#type");
+
+typeSelect.addEventListener('change', function() {
+    console.log(this.value)
+    @this.set('type', this.value);
+})
+
+
+</script>
+@endpush

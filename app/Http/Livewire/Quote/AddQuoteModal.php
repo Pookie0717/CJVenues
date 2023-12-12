@@ -263,7 +263,6 @@ class AddQuoteModal extends Component
             'time_from' => $range[0],
             'time_to' => $range[1],
         ];
-        // $this->dispatchBrowserEvent('time-range-updated', ['timeRanges' => $this->time_ranges]);
     }
 
 
@@ -271,18 +270,18 @@ class AddQuoteModal extends Component
     {
         if (!empty($this->date_from) && !empty($this->date_to)) {
 
-            $event = EventType::find($this->event_type);
+            $selectedEvent = EventType::find($this->event_type);
 
             $time_from = '00:00';
             $time_to = '23:30';
-            $max_duration = 24;
-            $min_duration = 0;
+            // $max_duration = 24;
+            // $min_duration = 0;
 
-            if($event) {
-                $time_from = $event->opening_time;
-                $time_to = $event->closing_time;
-                $max_duration = $event->max_duration;
-                $min_duration = $event->min_duration;
+            if($selectedEvent) {
+                $time_from = $selectedEvent->opening_time;
+                $time_to = $selectedEvent->closing_time;
+                // $max_duration = $selectedEvent->max_duration;
+                // $min_duration = $selectedEvent->min_duration;
             }
 
             $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
@@ -303,10 +302,11 @@ class AddQuoteModal extends Component
             $this->dispatchBrowserEvent('date-range-updated', 
                 [
                     'timeRanges' => $this->time_ranges,
-                    'timeFrom' => $time_from,
-                    'timeTo' => $time_to,
-                    'minDuration' => $min_duration,
-                    'maxDuration' => $max_duration
+                    'selectedEvent' => $selectedEvent
+                    // 'timeFrom' => $time_from,
+                    // 'timeTo' => $time_to,
+                    // 'minDuration' => $min_duration,
+                    // 'maxDuration' => $max_duration
                 ]);
         }
     }
@@ -1008,29 +1008,30 @@ class AddQuoteModal extends Component
 
         $options = $this->loadOptions();
 
-        $event = EventType::find($this->event_type);
-        $time_from = '00:00';
-        $time_to = '23:30';
-        $max_duration = 24;
-        $min_duration = 0;
+        $selectedEvent = EventType::find($this->event_type);
+        // $time_from = '00:00';
+        // $time_to = '23:30';
+        // $max_duration = 24;
+        // $min_duration = 0;
 
-        if($event) {
-            $time_from = $event->opening_time;
-            $time_to = $event->closing_time;
-            $max_duration = $event->max_duration;
-            $min_duration = $event->min_duration;
-        }
+        // if($selectedEvent) {
+        //     $time_from = $selectedEvent->opening_time;
+        //     $time_to = $selectedEvent->closing_time;
+        //     $max_duration = $selectedEvent->max_duration;
+        //     $min_duration = $selectedEvent->min_duration;
+        // }
 
         $this->dispatchBrowserEvent('date-range-updated', 
         [
             'timeRanges' => $this->time_ranges,
-            'timeFrom' => $time_from,
-            'timeTo' => $time_to,
-            'minDuration' => $min_duration,
-            'maxDuration' => $max_duration
+            'selectedEvent' => $selectedEvent,
+            // 'timeFrom' => $time_from,
+            // 'timeTo' => $time_to,
+            // 'minDuration' => $min_duration,
+            // 'maxDuration' => $max_duration
         ]);
 
-        return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'options'));
+        return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'options', 'selectedEvent'));
     }
 
     public function updatedAreaId()

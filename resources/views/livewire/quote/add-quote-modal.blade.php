@@ -46,7 +46,9 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="people" class="form-label">How many people will attend?</label>
-                    <input type="number" id="people" wire:model.defer="people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number of people"/>
+                    <input type="number" wire:model.defer="people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number of people"
+                    id="people" min="{{$selectedEvent? $selectedEvent->min_people: 0}}" max="{{$selectedEvent? $selectedEvent->max_people: 0}}"
+                    />
 
                 </div>
                 <!--end::Input group-->
@@ -131,7 +133,10 @@
                         <!-- Buffer Time Before the Event Start -->
                         <div class="col">
                             <label for="buffer_time_before" class="form-label">Buffer Time Before the Event Start:</label>
-                            <input type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
+                            <input type="number" id="buffer_time_before"
+                            min="{{($selectedEvent && $selectedEvent->min_buffer_before)? $selectedEvent->min_buffer_before: 0}}" 
+                            max="{{($selectedEvent && $selectedEvent->max_buffer_before)? $selectedEvent->max_buffer_before: 0}}"
+                            wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
                             @error('buffer_time_before')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -140,7 +145,10 @@
                         <!-- Buffer Time After the Event End -->
                         <div class="col">
                             <label for="buffer_time_after" class="form-label">Buffer Time After the Event End:</label>
-                            <input type="number" id="buffer_time_after" wire:model.defer="buffer_time_after" class="form-control form-control-solid" placeholder="Buffer Time"/>
+                            <input type="number" id="buffer_time_after"
+                            min="{{($selectedEvent && $selectedEvent->min_buffer_after)? $selectedEvent->min_buffer_after: 0}}"
+                            max="{{($selectedEvent && $selectedEvent->max_buffer_after)? $selectedEvent->max_buffer_after: 0}}"
+                            wire:model.defer="buffer_time_after" class="form-control form-control-solid" placeholder="Buffer Time"/>
                             @error('buffer_time_after')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -291,7 +299,7 @@
             <!--begin::Wrapper-->
             <div class="text-center pt-15">
                 <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
-                <button type="submit" id="submit" class="btn btn-primary" @if($is_invalid_range) disabled @endif>
+                <button type="submit" id="submit_button" class="btn btn-primary" @if(sizeof($time_ranges) === 0 || !$selectedEvent) disabled @endif>
                     <span class="indicator-label" wire:loading.remove wire:target="submit">Submit</span>
                     <span class="" wire:loading wire:target="submit">
                         Please wait...
@@ -357,8 +365,8 @@
                     true, 
                 ],
                 range: {
-                    "min": convertTimeToDecimal(event.detail.timeFrom),
-                    "max": convertTimeToDecimal(event.detail.timeTo)
+                    "min": convertTimeToDecimal(event.detail.selectedEvent?event.detail.selectedEvent["opening_time"]: "00:00"),
+                    "max": convertTimeToDecimal(event.detail.selectedEvent?event.detail.selectedEvent["closing_time"]: "23:30")
                 },
                 format: {
                     to: customSliderTooltip,
@@ -374,8 +382,9 @@
             });
 
             slider.noUiSlider.on("change", function (values, handle) {
-                const maxDuration = Number(event.detail.maxDuration);
-                const minDuration = Number(event.detail.minDuration);
+                const maxDuration = Number(event.detail.selectedEvent?event.detail.selectedEvent["max_duration"]: 24);
+                const minDuration = Number(event.detail.selectedEvent?event.detail.selectedEvent["min_duration"]: 24);
+                console.log(maxDuration, minDuration)
                 const duration = convertTimeToDecimal(values[1]) - convertTimeToDecimal(values[0]);
                 if(handle) {
                     if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
@@ -399,9 +408,6 @@
         window.addEventListener('date-range-updated', event => {
             setupSlider(event);
         })
-        window.addEventListener('time-range-updated', event => {
-            setupSlider(event);
-        })
     });
 
 </script>
@@ -410,7 +416,11 @@
 
     var fromInput = document.getElementById('date_from_picker_input');
     var toInput = document.getElementById('date_to_picker_input');
-    var submitBtn =  document.getElementById('submit');
+    var peopleInput = document.getElementById('people');
+    var bufferBeforeInput = document.getElementById('buffer_time_before');
+    var bufferAfterInput = document.getElementById('buffer_time_after');
+    var bufferUnitInput = document.getElementById('buffer_time_unit');
+    var submitBtn =  document.getElementById('submit_button');
 
     new tempusDominus.TempusDominus(fromInput, {
         display: {
@@ -479,6 +489,49 @@
             Livewire.emit('update_date_range', [fromInput.value, this.value]);
         } else {
             submitBtn.disabled = true;
+        }
+    });
+
+    peopleInput.addEventListener('change', function () {
+        if(this.value == "") {
+            toastr.warning('People setting is incorrect!');
+        } else if(Number(this.value) > Number(this.max)) {
+            toastr.warning('People setting is incorrect!');
+            this.value = this.max;
+            @this.set('people', this.value);
+        } else if(Number(this.value) < Number(this.min)) {
+            toastr.warning('People setting is incorrect!');
+            this.value = this.min;
+            @this.set('people', this.value);
+        }
+    });
+
+    bufferBeforeInput.addEventListener('change', function () {
+        if(this.value == "") {
+            toastr.warning('Buffer Time Before the Event Start setting is incorrect!');
+        } else if(Number(this.value) > Number(this.max)) {
+            toastr.warning('Buffer Time Before the Event Start setting is incorrect!');
+            this.value = this.max;
+            @this.set('buffer_time_before', this.value);
+        } else if(Number(this.value) < Number(this.min)) {
+            toastr.warning('Buffer Time Before the Event Start setting is incorrect!');
+            this.value = this.min;
+            @this.set('buffer_time_before', this.value);
+        }
+    });
+
+    bufferAfterInput.addEventListener('change', function () {
+        
+        if(this.value == "") {
+            toastr.warning('Buffer Time After the Event End setting is incorrect!');
+        } else if(Number(this.value) > Number(this.max)) {
+            toastr.warning('Buffer Time After the Event End setting is incorrect!');
+            this.value = this.max;
+            @this.set('buffer_time_after', this.value);
+        } else if(Number(this.value) < Number(this.min)) {
+            toastr.warning('Buffer Time After the Event End setting is incorrect!');
+            this.value = this.min;
+            @this.set('buffer_time_after', this.value);
         }
     });
 </script>

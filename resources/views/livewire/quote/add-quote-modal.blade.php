@@ -43,6 +43,18 @@
                 </div>
                 <!--end::Input group-->
 
+                 <!--begin::Input group-->
+                 <div class="fv-row mb-10">
+                    <label for="eventSelect" class="form-label">Select Event Type:</label>
+                    <select class="form-select" id="eventSelect" wire:model="event_type">
+                        <option value="">Select an event</option>
+                        @foreach ($eventTypes as $event)
+                            <option value="{{ $event->id }}">{{ $event->event_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <!--end::Input group-->
+
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="people" class="form-label">How many people will attend?</label>
@@ -134,8 +146,15 @@
                         <div class="col">
                             <label for="buffer_time_before" class="form-label">Buffer Time Before the Event Start:</label>
                             <input type="number" id="buffer_time_before"
-                            min="{{($selectedEvent && $selectedEvent->min_buffer_before)? $selectedEvent->min_buffer_before: 0}}" 
-                            max="{{($selectedEvent && $selectedEvent->max_buffer_before)? $selectedEvent->max_buffer_before: 0}}"
+                            @if($selectedEvent && $selectedEvent->duration_type === "hours")
+                            min="{{($selectedEvent->min_buffer_before)? ($buffer_time_unit === "days"? floor($selectedEvent->min_buffer_before / 8): ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_before: 0)): 0}}" 
+                            max="{{($selectedEvent->max_buffer_before)? ($buffer_time_unit === "days"? floor($selectedEvent->max_buffer_before / 8): ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_before: 0)): 0}}" 
+                            @elseif($selectedEvent && $selectedEvent->duration_type === "days")
+                            min="{{($selectedEvent->min_buffer_before)? ($buffer_time_unit === "days"? $selectedEvent->min_buffer_before: ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_before * 8: 0)): 0}}" 
+                            max="{{($selectedEvent->max_buffer_before)? ($buffer_time_unit === "days"? $selectedEvent->max_buffer_before: ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_before * 8: 0)): 0}}" 
+                            @else
+                            min="0" max="0"
+                            @endif
                             wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
                             @error('buffer_time_before')
                                 <span class="text-danger">{{ $message }}</span>
@@ -146,8 +165,15 @@
                         <div class="col">
                             <label for="buffer_time_after" class="form-label">Buffer Time After the Event End:</label>
                             <input type="number" id="buffer_time_after"
-                            min="{{($selectedEvent && $selectedEvent->min_buffer_after)? $selectedEvent->min_buffer_after: 0}}"
-                            max="{{($selectedEvent && $selectedEvent->max_buffer_after)? $selectedEvent->max_buffer_after: 0}}"
+                            @if($selectedEvent && $selectedEvent->duration_type === "hours")
+                            min="{{($selectedEvent->min_buffer_after)? ($buffer_time_unit === "days"? floor($selectedEvent->min_buffer_after / 8): ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_after: 0)): 0}}" 
+                            max="{{($selectedEvent->max_buffer_after)? ($buffer_time_unit === "days"? floor($selectedEvent->max_buffer_after / 8): ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_after: 0)): 0}}" 
+                            @elseif($selectedEvent && $selectedEvent->duration_type === "days")
+                            min="{{($selectedEvent->min_buffer_after)? ($buffer_time_unit === "days"? $selectedEvent->min_buffer_after: ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_after * 8: 0)): 0}}" 
+                            max="{{($selectedEvent->max_buffer_after)? ($buffer_time_unit === "days"? $selectedEvent->max_buffer_after: ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_after * 8: 0)): 0}}" 
+                            @else
+                            min="0" max="0"
+                            @endif
                             wire:model.defer="buffer_time_after" class="form-control form-control-solid" placeholder="Buffer Time"/>
                             @error('buffer_time_after')
                                 <span class="text-danger">{{ $message }}</span>
@@ -168,19 +194,6 @@
                         </div>
                     </div>
                 </div>
-
-
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="eventSelect" class="form-label">Select Event Type:</label>
-                    <select class="form-select" id="eventSelect" wire:model="event_type">
-                        <option value="">Select an event</option>
-                        @foreach ($eventTypes as $event)
-                            <option value="{{ $event->id }}">{{ $event->event_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <!--end::Input group-->
 
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">

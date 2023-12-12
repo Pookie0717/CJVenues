@@ -115,7 +115,6 @@
                                     <!-- Add Condition Button -->
                                     <button wire:click.prevent="addCondition" class="btn btn-sm btn-light mb-3">{{ trans('options.addcondition') }}</button>
                                 </div>
-                            @endif
 
                             <!-- List of Conditions -->
                             @foreach($conditions as $index => $condition)
@@ -155,6 +154,8 @@
                             @error('conditions.*.field') @error('conditions.*.operator') @error('conditions.*.value')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror @enderror @enderror
+
+                            @endif
                         </div>
 
                         <!-- Values -->

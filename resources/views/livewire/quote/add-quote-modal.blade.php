@@ -118,7 +118,7 @@
                         </div>
 
                         <div class="mx-10">
-                            <label class="fw-semibold fs-6 mb-4 pb-5">{{ $date }}</label>
+                            <label class="fw-semibold fs-6 mb-4 pb-5">@if(sizeof($time_ranges) !== 1){{ $date }}@endif</label>
                             <div id="event_time_slider_{{ $loop->index }}" class="my-4"></div>
                         </div>
                     @endforeach
@@ -308,21 +308,6 @@
     </div>
 </div>
 @push('scripts')
-
-@foreach ($time_ranges as $date => $time_range)
-    <script>
-
-        // document.getElementById('time_from_picker_input_{{ $loop->index }}').addEventListener('change', function () {
-        //     @this.set('time_ranges["{{ $date }}"]["time_from"]', this.value);
-        // });
-
-        // document.getElementById('time_to_picker_input_{{ $loop->index }}').addEventListener('change', function () {
-        //     @this.set('time_ranges["{{ $date }}"]["time_to"]', this.value);
-        // });
-    
-       
-    </script>
-@endforeach
 
 <script>
 

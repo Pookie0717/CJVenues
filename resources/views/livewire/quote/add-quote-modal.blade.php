@@ -131,7 +131,7 @@
                         <!-- Buffer Time Before the Event Start -->
                         <div class="col">
                             <label for="buffer_time_before" class="form-label">Buffer Time Before the Event Start:</label>
-                            <input @if($is_invalid_range) disabled @endif type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
+                            <input type="number" id="buffer_time_before" wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
                             @error('buffer_time_before')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -165,12 +165,12 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="eventSelect" class="form-label">Select Event Type:</label>
-                                    <select class="form-select" id="eventSelect" wire:model="event_type">
-                                        <option value="">Select an event</option>
-                                        @foreach ($eventTypes as $event)
-                                            <option value="{{ $event->id }}">{{ $event->event_name }}</option>
-                                        @endforeach
-                                    </select>
+                    <select class="form-select" id="eventSelect" wire:model="event_type">
+                        <option value="">Select an event</option>
+                        @foreach ($eventTypes as $event)
+                            <option value="{{ $event->id }}">{{ $event->event_name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <!--end::Input group-->
 
@@ -189,12 +189,12 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="areaSelect" class="form-label">Select Areas:</label>
-                                    <select class="form-select" id="areaSelect" wire:model="area_id">
-                                        <option value="">Select an area</option>
-                                        @foreach ($filteredAreas as $area)
-                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
-                                        @endforeach
-                                    </select>
+                    <select class="form-select" id="areaSelect" wire:model="area_id">
+                        <option value="">Select an area</option>
+                        @foreach ($filteredAreas as $area)
+                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <!--end::Input group-->
                 
@@ -291,7 +291,7 @@
             <!--begin::Wrapper-->
             <div class="text-center pt-15">
                 <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" id="submit" class="btn btn-primary" @if($is_invalid_range) disabled @endif>
                     <span class="indicator-label" wire:loading.remove wire:target="submit">Submit</span>
                     <span class="" wire:loading wire:target="submit">
                         Please wait...
@@ -326,10 +326,6 @@
 
 
     function convertTimeToDecimal(timeString) {
-        //   const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
-        //   if (!timeRegex.test(timeString)) {
-        //     return 'Invalid time format';
-        //   }
         const [hours, minutes] = timeString.split(':');
         const decimalNumber = parseInt(hours, 10) + parseInt(minutes, 10) / 60;
         return decimalNumber;
@@ -398,16 +394,14 @@
             });
         })
     }
+
     document.addEventListener('livewire:load', function () {
-
         window.addEventListener('date-range-updated', event => {
-            setupSlider(event)
+            setupSlider(event);
         })
-
         window.addEventListener('time-range-updated', event => {
-            setupSlider(event)
+            setupSlider(event);
         })
-
     });
 
 </script>
@@ -416,6 +410,7 @@
 
     var fromInput = document.getElementById('date_from_picker_input');
     var toInput = document.getElementById('date_to_picker_input');
+    var submitBtn =  document.getElementById('submit');
 
     new tempusDominus.TempusDominus(fromInput, {
         display: {
@@ -456,12 +451,35 @@
         }
     });
 
+    function isDateFormat(str) {
+        const dateFormatRegex = /^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-\d{4}$/;
+        return dateFormatRegex.test(str);
+    }   
+
     fromInput.addEventListener('change', function () {
-        if(this.value !== "" && toInput.value !== "") Livewire.emit('update_date_range', [this.value, toInput.value]);
+        if(this.value !== "" && toInput.value !== "" && isDateFormat(this.value) && isDateFormat(toInput.value)) {
+            const [d1, m1, y1] = this.value.split("-");
+            const [d2, m2, y2] = toInput.value.split("-");
+            const t1 = new Date(`${y1}-${m1}-${d1}`).getTime();
+            const t2 = new Date(`${y2}-${m2}-${d2}`).getTime();
+            if(t1 > t2) toastr.warning('Date range setting is incorrect!');
+            Livewire.emit('update_date_range', [this.value, toInput.value]);
+        } else {
+            submitBtn.disabled = true;
+        }
     });
 
     toInput.addEventListener('change', function () {
-        if(this.value !== "" && fromInput.value !== "") Livewire.emit('update_date_range', [fromInput.value, this.value]);
+        if(this.value !== "" && fromInput.value !== "" && isDateFormat(this.value) && isDateFormat(fromInput.value)) {
+            const [d1, m1, y1] = fromInput.value.split("-");
+            const [d2, m2, y2] = this.value.split("-");
+            const t1 = new Date(`${y1}-${m1}-${d1}`).getTime();
+            const t2 = new Date(`${y2}-${m2}-${d2}`).getTime();
+            if(t1 > t2) toastr.warning('Date range setting is incorrect!');
+            Livewire.emit('update_date_range', [fromInput.value, this.value]);
+        } else {
+            submitBtn.disabled = true;
+        }
     });
 </script>
 

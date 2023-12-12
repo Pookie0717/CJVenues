@@ -239,10 +239,6 @@ function convertDecimalToTime(decimalNumber) {
 
 
 function convertTimeToDecimal(timeString) {
-    //   const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
-    //   if (!timeRegex.test(timeString)) {
-    //     return 'Invalid time format';
-    //   }
     const [hours, minutes] = timeString.split(':');
     const decimalNumber = parseInt(hours, 10) + parseInt(minutes, 10) / 60;
     return decimalNumber;

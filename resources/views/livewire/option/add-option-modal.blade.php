@@ -213,13 +213,11 @@
 @push('scripts')
 <script>   
 
-var typeSelect = document.querySelector("#type");
+    var typeSelect = document.querySelector("#type");
 
-typeSelect.addEventListener('change', function() {
-    console.log(this.value)
-    @this.set('type', this.value);
-})
-
+    typeSelect.addEventListener('change', function() {
+        @this.set('type', this.value);
+    })
 
 </script>
 @endpush

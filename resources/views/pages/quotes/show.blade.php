@@ -413,9 +413,6 @@
             <!--end::Layout-->
         </div>
         <!--end::Body-->
-        <!--begin::Modal-->
-        <livewire:quote.edit-quote-modal></livewire:quote.edit-quote-modal>
-        <!--end::Modal-->
     </div>
     </div>
     @push('scripts')

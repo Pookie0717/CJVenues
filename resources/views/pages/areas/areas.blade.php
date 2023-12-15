@@ -27,7 +27,7 @@
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                     <!--begin::Add contact-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue_area">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue_area" data-kt-action="create_row">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                         {{ trans('areas.addvenuearea') }}
                     </button>
@@ -65,6 +65,14 @@
                 Livewire.on('success', function () {
                     $('#kt_modal_add_venue_area').modal('hide');  <!-- Update modal ID -->
                     window.LaravelDataTables['areas-table'].ajax.reload();  <!-- Update table name -->
+                });
+            });
+
+            document.addEventListener('livewire:load', function () {
+                document.querySelectorAll('[data-kt-action="create_row"]').forEach(function (element) {
+                    element.addEventListener('click', function (e) {
+                        Livewire.emit('create_area');
+                    });
                 });
             });
         </script>

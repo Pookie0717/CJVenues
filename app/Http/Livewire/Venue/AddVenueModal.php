@@ -36,6 +36,7 @@ class AddVenueModal extends Component
     ];
 
     protected $listeners = [
+        'create_venue' => 'createVenue',
         'delete_venue' => 'deleteVenue',
         'update_venue' => 'updateVenue',
         'check_areas' => 'checkAreasAssociation',
@@ -136,6 +137,11 @@ class AddVenueModal extends Component
             $this->emit('showSuccessMessage', 'Venue and venue areas added successfully!');
 
         }
+    }
+
+    public function createVenue() {
+        $this->resetFields();
+        $this->resetAreas();
     }
 
     public function deleteVenue($id)

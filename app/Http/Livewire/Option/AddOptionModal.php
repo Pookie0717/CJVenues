@@ -52,7 +52,7 @@ class AddOptionModal extends Component
     protected $listeners = [
         'delete_option' => 'deleteOption',
         'update_option' => 'updateOption',
-        'create_option' => 'resetFields'
+        'create_option' => 'createOption'
     ];
 
     public function submit()
@@ -151,7 +151,11 @@ class AddOptionModal extends Component
         $this->conditions = array_values($this->conditions);
     }
 
-    public function resetFields()
+    public function createOption() {
+        $this->resetFields();
+    }
+
+    protected function resetFields()
     {
         $this->reset([
             'name',

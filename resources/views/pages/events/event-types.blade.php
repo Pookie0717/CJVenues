@@ -27,7 +27,7 @@
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                     <!--begin::Add event-type-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_event_type">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_event_type" data-kt-action="create_row">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                         {{ trans('events.addeventpackage') }}
                     </button>
@@ -66,6 +66,15 @@
                     window.LaravelDataTables['event-types-table'].ajax.reload();  <!-- Update table name -->
                 });
             });
+
+            document.addEventListener('livewire:load', function () {
+                document.querySelectorAll('[data-kt-action="create_row"]').forEach(function (element) {
+                    element.addEventListener('click', function (e) {
+                        Livewire.emit('create_event_type');
+                    });
+                });
+            });
+
             new tempusDominus.TempusDominus(document.getElementById("closing_time_picker_basic"), {
                 display: {
                     viewMode: "clock",

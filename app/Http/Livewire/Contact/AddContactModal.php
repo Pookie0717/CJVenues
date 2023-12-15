@@ -45,6 +45,7 @@ class AddContactModal extends Component
     }
 
     protected $listeners = [
+        'create_contact' => 'createContact',
         'delete_contact' => 'deleteContact',
         'update_contact' => 'updateContact',
     ];
@@ -114,6 +115,10 @@ class AddContactModal extends Component
 
     
         // Reset the form fields
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
+    }
+
+    public function createContact() {
         $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
     }
 

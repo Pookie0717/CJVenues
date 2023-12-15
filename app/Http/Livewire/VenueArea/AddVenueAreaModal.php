@@ -24,6 +24,7 @@ class AddVenueAreaModal extends Component
     public $edit_mode = false;
 
     protected $listeners = [
+        'create_area' => 'createArea',
         'delete_area' => 'deleteArea',
         'update_area' => 'updateArea',
     ];
@@ -44,17 +45,32 @@ class AddVenueAreaModal extends Component
         ]);
 
 
-        // Save the new venue area to the database
-        VenueArea::create([
-            'venue_id' => $this->venue_id,
-            'name' => $this->name,
-            'capacity_noseating' => $this->capacity_noseating,
-            'capacity_seatingrows' => $this->capacity_seatingrows,
-            'capacity_seatingtables' => $this->capacity_seatingtables,
-        ]);
+        if ($this->edit_mode) {
+            // If in edit mode, update the existing season record
+            $area = VenueArea::find($this->areaId);
+            $area->update([
+                'venue_id' => $this->venue_id,
+                'name' => $this->name,
+                'capacity_noseating' => $this->capacity_noseating,
+                'capacity_seatingrows' => $this->capacity_seatingrows,
+                'capacity_seatingtables' => $this->capacity_seatingtables,
+            ]);
 
-        // Emit an event to notify that the venue area was created successfully
-        $this->emit('success', 'Area successfully Added');
+            // Emit an event to notify that the season was updated successfully
+            $this->emit('success', 'Area successfully updated');
+        } else {
+           
+             // Save the new venue area to the database
+            VenueArea::create([
+                'venue_id' => $this->venue_id,
+                'name' => $this->name,
+                'capacity_noseating' => $this->capacity_noseating,
+                'capacity_seatingrows' => $this->capacity_seatingrows,
+                'capacity_seatingtables' => $this->capacity_seatingtables,
+            ]);
+            // Emit an event to notify that the venue area was created successfully
+            $this->emit('success', 'Area successfully added');
+        }
 
         // Reset the form fields
         $this->reset(['venue_id', 'name', 'capacity_noseating', 'capacity_seatingrows', 'capacity_seatingtables']);
@@ -67,6 +83,10 @@ class AddVenueAreaModal extends Component
         $venues = Venue::where('tenant_id', $currentTenantId)->get();
         
         return view('livewire.venue-area.add-venue-area-modal', compact('venues'));
+    }
+
+    public function createArea() {
+        $this->reset(['venue_id', 'name', 'capacity_noseating', 'capacity_seatingrows', 'capacity_seatingtables']);
     }
 
     public function deleteArea($id)
@@ -83,7 +103,14 @@ class AddVenueAreaModal extends Component
         $this->edit_mode = true;
 
         $currentTenantId = Session::get('current_tenant_id');
-        $venue = VenueArea::where('id', $id)
-            ->where('tenant_id', $currentTenantId);
+        $venueArea = VenueArea::where('id', $id)
+            ->where('tenant_id', $currentTenantId)->first();
+
+        $this->areaId = $id;
+        $this->venue_id = $venueArea->venue_id;
+        $this->name = $venueArea->name;
+        $this->capacity_noseating = $venueArea->capacity_noseating;
+        $this->capacity_seatingrows = $venueArea->capacity_seatingrows;
+        $this->capacity_seatingtables = $venueArea->capacity_seatingtables;
     }
 }

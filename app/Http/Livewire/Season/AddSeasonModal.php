@@ -19,6 +19,7 @@ class AddSeasonModal extends Component
     public $edit_mode = false;
 
     protected $listeners = [
+        'create_season' => 'createSeason',
         'delete_season' => 'deleteSeason',
         'update_season' => 'updateSeason',
     ];
@@ -74,6 +75,10 @@ class AddSeasonModal extends Component
     }
 
 
+    public function createSeason() {
+        $this->reset(['name', 'date_from', 'date_to', 'priority', 'selectedWeekdays', 'edit_mode']);
+    }
+    
     public function deleteSeason($id)
     {
         // Find the venue by ID

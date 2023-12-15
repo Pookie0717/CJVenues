@@ -27,7 +27,7 @@
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                     <!--begin::Add season-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_season">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_season" data-kt-action="create_row" >
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                         Add Season
                     </button>
@@ -66,6 +66,15 @@
                     window.LaravelDataTables['seasons-table'].ajax.reload();  <!-- Update table name -->
                 });
             });
+
+            document.addEventListener('livewire:load', function () {
+                document.querySelectorAll('[data-kt-action="create_row"]').forEach(function (element) {
+                    element.addEventListener('click', function (e) {
+                        Livewire.emit('create_season');
+                    });
+                });
+            });
+
             new tempusDominus.TempusDominus(document.getElementById("date_from_picker_basic"), {
                 display: {
                     viewMode: "calendar",

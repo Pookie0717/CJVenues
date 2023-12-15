@@ -30,6 +30,7 @@ class AddPriceModal extends Component
     public $edit_mode = false;
 
     protected $listeners = [
+        'create_price' => 'createPrice',
         'delete_price' => 'deletePrice',
         'update_price' => 'updatePrice',
     ];
@@ -91,6 +92,12 @@ class AddPriceModal extends Component
         }
 
         // Reset the form fields and exit edit mode
+        $this->reset([
+            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'edit_mode'
+        ]);
+    }
+
+    public function createPrice() {
         $this->reset([
             'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'edit_mode'
         ]);

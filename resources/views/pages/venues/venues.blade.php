@@ -27,7 +27,7 @@
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                     <!--begin::Add venue-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_venue" data-kt-action="create_row">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                         {{ trans('venues.addvenue') }}
                     </button>
@@ -64,6 +64,14 @@
                 Livewire.on('success', function () {
                     $('#kt_modal_add_venue').modal('hide');  <!-- Update modal ID -->
                     window.LaravelDataTables['venues-table'].ajax.reload();  <!-- Update table name -->
+                });
+            });
+
+            document.addEventListener('livewire:load', function () {
+                document.querySelectorAll('[data-kt-action="create_row"]').forEach(function (element) {
+                    element.addEventListener('click', function (e) {
+                        Livewire.emit('create_venue');
+                    });
                 });
             });
         </script>

@@ -35,6 +35,7 @@ class AddEventTypeModal extends Component
     public $eventTypeId;
 
     protected $listeners = [
+        'create_event_type' => 'createEventType',
         'delete_event_type' => 'deleteEventType',
         'update_event_type' => 'updateEventType',
         'update_event_type_range' => 'updateEventTypeRange'
@@ -146,6 +147,24 @@ class AddEventTypeModal extends Component
         return view('livewire.event-type.add-event-type-modal', compact('seasonsList','venueAreas'));
     }
 
+    public function createEventType() {
+        $this->reset([
+            'name',
+            'event_name',
+            'typical_seating',
+            'selectedEventNames',
+            'duration_type',
+            'description',
+            'min_duration',
+            'max_duration',
+            'selectedSeasons',
+            'min_people',
+            'opening_time',
+            'closing_time',
+            'venue_area_id',
+        ]);
+    }
+    
     public function deleteEventType($id)
     {
         // Find the event type by ID

@@ -14,6 +14,7 @@ use App\Models\Season;
 use App\Models\User;
 use App\Models\Venue;
 use App\Models\VenueArea;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use PragmaRX\Countries\Package\Countries;
@@ -237,11 +238,14 @@ class TenantModal extends Component
     public function updatedSelectedCountry($countryCode)
     {
         $countries = new Countries();
-        $this->states = $countries->where('cca3', $countryCode)->first()->hydrate('states')->states->pluck('name', 'postal')->toArray();
+        $country = $countries->where('cca3', $countryCode)->first();
+        if($country) {
+            $this->states = sizeof($country) > 0 ? $country->hydrate('states')->states->pluck('name', 'postal')->toArray(): [];
+        }
         $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
         asort($this->countries);
-        $this->selectedState = null;
-        $this->selectedCountry = $countryCode;
+        // $this->selectedState = null;
+        // $this->selectedCountry = $countryCode;
     }
 
 

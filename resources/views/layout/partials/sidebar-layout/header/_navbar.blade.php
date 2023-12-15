@@ -9,7 +9,8 @@
                 <option>Select an Organisation</option>
                 @foreach (auth()->user()->tenants as $tenant)
                     <option value="{{ $tenant->id }}" {{ session('current_tenant_id') == $tenant->id ? 'selected' : '' }}>
-{{ $tenant->name }}</option>
+                        {{ $tenant->name }}
+                    </option>
                 @endforeach
             </select>
         </form>

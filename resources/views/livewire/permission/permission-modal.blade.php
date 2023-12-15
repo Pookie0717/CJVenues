@@ -60,7 +60,7 @@
                     <div class="text-center pt-15">
                         <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
                         <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label" wire:loading.remove>{{ trans('general.submit') }}</span>
+                            <span class="indicator-label" wire:loading.remove wire:target="submit">{{ trans('general.submit') }}</span>
                             <span class="indicator-progress" wire:loading wire:target="submit">
                                 {{ trans('general.pleasewait') }} ...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>

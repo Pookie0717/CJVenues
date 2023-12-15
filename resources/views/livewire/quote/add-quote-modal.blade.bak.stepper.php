@@ -358,7 +358,7 @@
             <!--begin::Wrapper-->
             <div>
                 <button type="button" class="btn btn-primary" wire:click="submit" data-kt-stepper-action="submit">
-                    <span class="indicator-label" wire:loading.remove>
+                    <span class="indicator-label" wire:loading.remove wire:target="submit">
                         Submit
                     </span>
                     <span class="indicator-progress" wire:loading wire:target="submit">

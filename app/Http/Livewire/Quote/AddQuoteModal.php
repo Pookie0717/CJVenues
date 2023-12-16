@@ -519,12 +519,12 @@ class AddQuoteModal extends Component
         } elseif ($bufferUnit == 'days') {
             if ($price->multiplier == 'daily') {
                 // If both buffer and price are in days, calculate directly
-                return ($bufferBefore + $bufferAfter) * $price->price;
+                return ((int)$bufferBefore + (int)$bufferAfter) * $price->price;
             } elseif ($price->multiplier == 'hourly') {
                 // Convert buffer days to hours considering a day as 8 hours
                 $bufferHoursBefore = $bufferBefore * 8;
                 $bufferHoursAfter = $bufferAfter * 8;
-                return ($bufferHoursBefore + $bufferHoursAfter) * $price->price;
+                return ((int)$bufferHoursBefore + (int)$bufferHoursAfter) * $price->price;
             }
         }
 

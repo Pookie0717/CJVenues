@@ -930,6 +930,7 @@ class AddQuoteModal extends Component
 
         // Iterate through each day in the date range
         $currentDate = $dateFrom->copy();
+        $individualPrices = [];
         while ($currentDate->lte($dateTo)) {
             // Get the day of the week for the current date (e.g., 'Mon')
             $currentDayOfWeek = $currentDate->format('D');
@@ -972,6 +973,11 @@ class AddQuoteModal extends Component
                         $individualPrices[] = [
                             'optionId' => $optionId,
                             'price' => $optionTotalPrice,
+                        ];
+                    } else {
+                        $individualPrices[] = [
+                            'optionId' => $optionId,
+                            'price' => 0,
                         ];
                     }
                 }

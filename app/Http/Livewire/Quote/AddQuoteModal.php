@@ -514,17 +514,17 @@ class AddQuoteModal extends Component
                 return ($bufferDaysBefore + $bufferDaysAfter) * $price->price;
             } elseif ($price->multiplier == 'hourly') {
                 // If both buffer and price are in hours, calculate directly
-                return ($bufferBefore + $bufferAfter) * $price->price;
+                return (intval($bufferBefore) + intval($bufferAfter)) * $price->price;
             }
         } elseif ($bufferUnit == 'days') {
             if ($price->multiplier == 'daily') {
                 // If both buffer and price are in days, calculate directly
-                return ((int)$bufferBefore + (int)$bufferAfter) * $price->price;
+                return (intval($bufferBefore) + intval($bufferAfter)) * $price->price;
             } elseif ($price->multiplier == 'hourly') {
                 // Convert buffer days to hours considering a day as 8 hours
-                $bufferHoursBefore = $bufferBefore * 8;
-                $bufferHoursAfter = $bufferAfter * 8;
-                return ((int)$bufferHoursBefore + (int)$bufferHoursAfter) * $price->price;
+                $bufferHoursBefore = intval($bufferBefore) * 8;
+                $bufferHoursAfter = intval($bufferAfter) * 8;
+                return ($bufferHoursBefore + $bufferHoursAfter) * $price->price;
             }
         }
 
@@ -853,6 +853,9 @@ class AddQuoteModal extends Component
 
         // Iterate through each day in the date range
         $currentDate = $dateFrom->copy();
+
+        $individualPrices = [];
+
         while ($currentDate->lte($dateTo)) {
             // Get the day of the week for the current date (e.g., 'Mon')
             $currentDayOfWeek = $currentDate->format('D');
@@ -896,6 +899,11 @@ class AddQuoteModal extends Component
                         $individualPrices[] = [
                             'optionId' => $optionId,
                             'price' => $optionTotalPrice,
+                        ];
+                    } else {
+                        $individualPrices[] = [
+                            'optionId' => $optionId,
+                            'price' => 0,
                         ];
                     }
                 }

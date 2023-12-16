@@ -86,6 +86,7 @@ class AddVenueAreaModal extends Component
     }
 
     public function createArea() {
+        $this->edit_mode = false;
         $this->reset(['venue_id', 'name', 'capacity_noseating', 'capacity_seatingrows', 'capacity_seatingtables']);
     }
 

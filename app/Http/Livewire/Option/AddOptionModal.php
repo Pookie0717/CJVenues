@@ -152,6 +152,7 @@ class AddOptionModal extends Component
     }
 
     public function createOption() {
+        $this->edit_mode = false;
         $this->resetFields();
     }
 

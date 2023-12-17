@@ -119,6 +119,7 @@ class AddContactModal extends Component
     }
 
     public function createContact() {
+        $this->edit_mode = false;
         $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
     }
 

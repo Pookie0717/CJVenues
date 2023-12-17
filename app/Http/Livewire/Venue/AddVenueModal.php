@@ -140,6 +140,7 @@ class AddVenueModal extends Component
     }
 
     public function createVenue() {
+        $this->edit_mode = false;
         $this->resetFields();
         $this->resetAreas();
     }

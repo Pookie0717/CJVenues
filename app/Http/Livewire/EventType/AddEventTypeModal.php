@@ -148,6 +148,7 @@ class AddEventTypeModal extends Component
     }
 
     public function createEventType() {
+        $this->edit_mode = false;
         $this->reset([
             'name',
             'event_name',

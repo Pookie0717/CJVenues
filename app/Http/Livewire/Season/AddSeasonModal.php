@@ -76,6 +76,7 @@ class AddSeasonModal extends Component
 
 
     public function createSeason() {
+        $this->edit_mode = false;
         $this->reset(['name', 'date_from', 'date_to', 'priority', 'selectedWeekdays', 'edit_mode']);
     }
     

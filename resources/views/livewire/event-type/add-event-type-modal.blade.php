@@ -273,17 +273,6 @@ document.addEventListener('livewire:load', () => {
     })
 
     slider.noUiSlider.on("change", function (values, handle) {
-        // const maxDuration = Number(maxDurationInput.value);
-        // const minDuration = Number(minDurationInput.value);
-        // const duration = convertTimeToDecimal(values[1]) - convertTimeToDecimal(values[0]);
-        // if(handle) {
-        //     if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
-        //     if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
-
-        // } else {
-        //     if(duration < minDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - minDuration);
-        //     if(duration > maxDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - maxDuration);
-        // }
         Livewire.emit('update_event_type_range', values);
         slider.noUiSlider.updateOptions({
             start: [

@@ -43,7 +43,13 @@ class AddUserModal extends Component
     {
         $roles = Role::all();
 
-        $this->tenants = Tenant::all();
+        // $this->tenants = DB::select(DB::raw('SELECT e.employee_name AS employee, m.employee_name AS manager
+        // FROM employees e
+        // LEFT JOIN employees m ON e.manager_id = m.employee_id'))
+        $this->tenants = Tenant::leftJoin('tenants as t', 'tenants.parent_id', '=', 't.id')
+        ->select('tenants.id', DB::raw('CONCAT(CASE WHEN t.name IS NULL THEN "" ELSE CONCAT(t.name, " - ") END, tenants.name) AS name'))
+        ->orderBy('name')
+        ->get();
 
         $roles_description = [
             'administrator' => 'Best for business owners and company administrators',

@@ -10,6 +10,7 @@ use App\Models\VenueArea;
 use App\Models\Venue;
 use App\Models\Price;
 use App\Models\Season;
+use App\Models\Tenant;
 use App\Models\EventType;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,6 @@ class AddQuoteModal extends Component
     public $price_options;
     public $selectedVenueId;
     public $people;
-    public $eventName = '';
     public $eventTypes = [];
     public $logicOptionValue;
     public $time_ranges = [];
@@ -71,29 +71,29 @@ class AddQuoteModal extends Component
 
         if($this->selectedOptions) {
 
-        // Convert selected options to a comma-separated string format
-        $optionIdsIm = implode('|', array_keys($this->selectedOptions));
+            // Convert selected options to a comma-separated string format
+            $optionIdsIm = implode('|', array_keys($this->selectedOptions));
 
-        Log::info("-----optionIdsIm". json_encode($optionIdsIm));
+            Log::info("-----optionIdsIm". json_encode($optionIdsIm));
 
-        $optionValuesIm = implode('|', array_values($this->selectedOptions));
+            $optionValuesIm = implode('|', array_values($this->selectedOptions));
 
-        $optionIds = explode('|', $optionIdsIm);
+            $optionIds = explode('|', $optionIdsIm);
 
-        $optionValues = explode('|', $optionValuesIm);
+            $optionValues = explode('|', $optionValuesIm);
 
-        $cleanedOptionIds = [];
-        $cleanedOptionValues = [];
+            $cleanedOptionIds = [];
+            $cleanedOptionValues = [];
 
-        foreach ($optionValues as $index => $value) {
-            if ($value !== '' && $value != 0) {
-                $cleanedOptionIds[] = $optionIds[$index];
-                $cleanedOptionValues[] = $value;
+            foreach ($optionValues as $index => $value) {
+                if ($value !== '' && $value != 0) {
+                    $cleanedOptionIds[] = $optionIds[$index];
+                    $cleanedOptionValues[] = $value;
+                }
             }
-        }
 
-        $optionIds = implode('|', $cleanedOptionIds);
-        $optionValues = implode('|', $cleanedOptionValues);
+            $optionIds = implode('|', $cleanedOptionIds);
+            $optionValues = implode('|', $cleanedOptionValues);
 
         } 
 
@@ -120,59 +120,60 @@ class AddQuoteModal extends Component
 
         if($this->selectedOptions) {
 
-        // Calculate regular and buffer prices for options
-        $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
+            // Calculate regular and buffer prices for options
+            $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
 
-        $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $this->people);
+            $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $this->people);
 
-        $cleanedArray = [];
-        $optionIdMap = [];
+            $cleanedArray = [];
+            $optionIdMap = [];
 
-        // Loop through the regular option prices
-        foreach ($priceOptionsStringArray['individualPrices'] as $item) {
+            // Loop through the regular option prices
+            foreach ($priceOptionsStringArray['individualPrices'] as $item) {
 
-            Log::info('Option Price for ID ' . $item['optionId'] . ': ' . $item['price']);
+                Log::info('Option Price for ID ' . $item['optionId'] . ': ' . $item['price']);
 
-            $optionId = $item['optionId'];
-            $optionIdMap[$optionId] = $item; // Add or update the item
-        }
-
-        // Add buffer prices to the regular prices
-        foreach ($priceBufferOptionsStringArray['individualPrices'] as $bufferItem) {
-
-            Log::info('Buffer Price for ID ' . $bufferItem['optionId'] . ': ' . $bufferItem['price']);
-
-            $optionId = $bufferItem['optionId'];
-            $bufferPrice = $bufferItem['price'];
-
-            if (isset($optionIdMap[$optionId])) {
-                $optionIdMap[$optionId]['price'] += $bufferPrice;
-            } else {
-                $optionIdMap[$optionId] = $bufferItem; // Add the buffer item if it doesn't exist in the regular prices
+                $optionId = $item['optionId'];
+                $optionIdMap[$optionId] = $item; // Add or update the item
             }
 
-        }
+            // Add buffer prices to the regular prices
+            foreach ($priceBufferOptionsStringArray['individualPrices'] as $bufferItem) {
 
-        // Update the total price
-        $cleanedArray['totalPrice'] = $priceOptionsStringArray['totalPrice'] + $priceBufferOptionsStringArray['totalPrice'];
-        $cleanedArray['individualPrices'] = array_values($optionIdMap);
+                Log::info('Buffer Price for ID ' . $bufferItem['optionId'] . ': ' . $bufferItem['price']);
 
-        // Your existing code to handle the price options string and calculate the final prices
-        $priceOptionsArray = $cleanedArray['individualPrices'];
-        $priceOptionsString = implode('|', array_map(function($item) {
-            return $item['price'];
-        }, $priceOptionsArray));
+                $optionId = $bufferItem['optionId'];
+                $bufferPrice = $bufferItem['price'];
+
+                if (isset($optionIdMap[$optionId])) {
+                    $optionIdMap[$optionId]['price'] += $bufferPrice;
+                } else {
+                    $optionIdMap[$optionId] = $bufferItem; // Add the buffer item if it doesn't exist in the regular prices
+                }
+
+            }
+
+            // Update the total price
+            $cleanedArray['totalPrice'] = $priceOptionsStringArray['totalPrice'] + $priceBufferOptionsStringArray['totalPrice'];
+            $cleanedArray['individualPrices'] = array_values($optionIdMap);
+
+            // Your existing code to handle the price options string and calculate the final prices
+            $priceOptionsArray = $cleanedArray['individualPrices'];
+            $priceOptionsString = implode('|', array_map(function($item) {
+                return $item['price'];
+            }, $priceOptionsArray));
 
 
-        $valuesArray = explode('|', $priceOptionsString);
-        $priceOptions = array_sum(array_map('floatval', $valuesArray));
+            $valuesArray = explode('|', $priceOptionsString);
+            $priceOptions = array_sum(array_map('floatval', $valuesArray));
 
         } else {
-            $priceOptions = 0;
-            $priceOptionsString = NULL;
-            $optionIds = NULL;
-            $optionValues = NULL;
+                $priceOptions = 0;
+                $priceOptionsString = NULL;
+                $optionIds = NULL;
+                $optionValues = NULL;
         }
+        
         $calculatedPrice = $priceVenue + $priceOptions;
 
         try {
@@ -196,7 +197,7 @@ class AddQuoteModal extends Component
                 'time_to' => $timeTo,
                 'area_id' => $this->area_id,
                 'event_type' => $this->event_type,
-                'event_name' => $this->eventName,
+                'event_name' => $this->event_name,
                 'people' => $this->people,
                 'quote_number' => $newQuoteNumber, // Assign the new quote number
                 'calculated_price' => $calculatedPrice,
@@ -209,6 +210,7 @@ class AddQuoteModal extends Component
                 'buffer_time_before' => $this->buffer_time_before,
                 'buffer_time_after' => $this->buffer_time_after,
                 'buffer_time_unit' => $this->buffer_time_unit,
+                'tenant_id' => EventType::find($this->event_type)->tenant_id
         ]);
 
         // Update the current quote number in the system_information table
@@ -282,14 +284,10 @@ class AddQuoteModal extends Component
 
             $time_from = '00:00';
             $time_to = '23:30';
-            // $max_duration = 24;
-            // $min_duration = 0;
 
             if($selectedEvent) {
                 $time_from = $selectedEvent->opening_time;
                 $time_to = $selectedEvent->closing_time;
-                // $max_duration = $selectedEvent->max_duration;
-                // $min_duration = $selectedEvent->min_duration;
             }
 
             $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
@@ -311,10 +309,6 @@ class AddQuoteModal extends Component
                 [
                     'timeRanges' => $this->time_ranges,
                     'selectedEvent' => $selectedEvent
-                    // 'timeFrom' => $time_from,
-                    // 'timeTo' => $time_to,
-                    // 'minDuration' => $min_duration,
-                    // 'maxDuration' => $max_duration
                 ]);
         }
     }
@@ -344,7 +338,13 @@ class AddQuoteModal extends Component
     {
         // Convert the date to a valid format for comparison
         $formattedDate = $date->format('Y-m-d');
-        $currentTenantId = Session::get('current_tenant_id');
+
+         // selected event
+         $selectedEvent = EventType::find($this->event_type);
+         $tenantId = null;
+         if($selectedEvent) {
+             $tenantId = $selectedEvent->tenant_id;
+         }
 
         // Query for seasons that match the date, weekday, and tenant_id
         return Season::where('tenant_id', $currentTenantId)
@@ -460,8 +460,16 @@ class AddQuoteModal extends Component
         // 2. Determine the season
         $formattedDate = Carbon::createFromFormat('d-m-Y', $this->date_from)->format('Y-m-d');
         $weekday = Carbon::createFromFormat('d-m-Y', $this->date_from)->format('D');
-        $currentTenantId = Session::get('current_tenant_id');
-        $seasons = Season::where('tenant_id', $currentTenantId)
+
+
+         // selected event
+         $selectedEvent = EventType::find($this->event_type);
+         $tenantId = null;
+         if($selectedEvent) {
+             $tenantId = $selectedEvent->tenant_id;
+         }
+
+        $seasons = Season::where('tenant_id', $tenantId)
             ->where(function ($query) use ($formattedDate, $weekday) {
                 $query->where('date_from', '<=', $formattedDate)
                     ->where('date_to', '>=', $formattedDate)
@@ -1024,40 +1032,39 @@ class AddQuoteModal extends Component
     public function render()
     {
         $currentTenantId = Session::get('current_tenant_id');
-        $contacts = Contact::where('tenant_id', $currentTenantId)->get();
-        $venues = Venue::where('tenant_id', $currentTenantId)->get();
-        $venueAreas = VenueArea::where('tenant_id', $currentTenantId)->get();
-        $eventTypes = EventType::where('tenant_id', $currentTenantId)->get();
 
-        // Filter areas based on the selected venue ID
-        $filteredAreas = $venueAreas->where('venue_id', $this->selectedVenueId);
+        // contact info
+
+
+        // filtered event type
+        $tenant = Tenant::find($currentTenantId);
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        if($tenant && !$tenant->isMain()) $tenantIds[] = $currentTenantId;
+        $filteredEventTypes = EventType::where('name', 'like', '%' . $this->event_name . '%')
+                                        ->whereIn('tenant_id', $tenantIds)
+                                        ->get();
+
+        // selected event
+        $selectedEvent = EventType::find($this->event_type);
+        $tenantId = null;
+        if($selectedEvent) {
+            $tenantId = $selectedEvent->tenant_id;
+        }
+
+        // filtered contacts, venues and venue areas
+        $filteredContacts = Contact::where('tenant_id', $tenantId)->get();
+        $filteredVenues = Venue::where('tenant_id', $tenantId)->get();
+        $filteredAreas = VenueArea::where('tenant_id', $tenantId)->get()->where('venue_id', $this->selectedVenueId);
 
         $this->loadOptions();
-
-        $selectedEvent = EventType::find($this->event_type);
-        // $time_from = '00:00';
-        // $time_to = '23:30';
-        // $max_duration = 24;
-        // $min_duration = 0;
-
-        // if($selectedEvent) {
-        //     $time_from = $selectedEvent->opening_time;
-        //     $time_to = $selectedEvent->closing_time;
-        //     $max_duration = $selectedEvent->max_duration;
-        //     $min_duration = $selectedEvent->min_duration;
-        // }
 
         $this->dispatchBrowserEvent('date-range-updated', 
         [
             'timeRanges' => $this->time_ranges,
             'selectedEvent' => $selectedEvent,
-            // 'timeFrom' => $time_from,
-            // 'timeTo' => $time_to,
-            // 'minDuration' => $min_duration,
-            // 'maxDuration' => $max_duration
         ]);
 
-        return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'selectedEvent'));
+        return view('livewire.quote.add-quote-modal', compact('filteredContacts', 'filteredAreas', 'filteredEventTypes', 'filteredVenues', 'options', 'selectedEvent'));
     }
 
     // public function updatedAreaId()
@@ -1075,19 +1082,17 @@ class AddQuoteModal extends Component
     //     $this->loadOptions();
     // }
 
-    public function loadEventTypes()
-    {
-        $currentTenantId = Session::get('current_tenant_id');
-        $this->eventTypes = EventType::where('name', 'like', '%' . $this->eventName . '%')
-                                        ->where('tenant_id', $currentTenantId)
-                                        ->get();
-    }
 
     private function loadOptions()
     {
 
-        $currentTenantId = Session::get('current_tenant_id');
-        
+        $selectedEvent = EventType::find($this->event_type);
+
+        $tenantId = null;
+        if($selectedEvent) {
+            $tenantId = $selectedEvent->tenant_id;
+        }
+
         // Check if the required fields are set
         if (!$this->date_from || !$this->area_id) {
             $this->options = collect(); // No options to display if date is not set
@@ -1103,7 +1108,7 @@ class AddQuoteModal extends Component
         $seasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->first();
 
         // Get the "All" season ID
-        $allSeasonId = Season::getAllSeason()->where('tenant_id', $currentTenantId)->first()->id ?? null;
+        $allSeasonId = Season::where("name", "All")->where('tenant_id', $tenantId)->first()->id ?? null;
 
         // Find the associated venue ID for the selected area
         $selectedAreaId = VenueArea::find($this->area_id);
@@ -1111,7 +1116,7 @@ class AddQuoteModal extends Component
         $selectedEventTypeId = EventType::find($this->event_type);
 
         $optionsQuery = Option::orderBy('position')
-        ->where('tenant_id', $currentTenantId)
+        ->where('tenant_id', $tenantId)
         ->where(function ($query) use ($seasons, $allSeasonId) {
             $query->where(function ($q) use ($seasons) {
                 $q->whereRaw('FIND_IN_SET(?, season_ids) > 0', [$seasons->id ?? 0]);

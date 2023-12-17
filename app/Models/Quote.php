@@ -40,15 +40,16 @@ class Quote extends Model
         'buffer_time_before',
         'buffer_time_after',
         'buffer_time_unit',
+        'tenant_id'
     ];
-    protected static function boot() {
-        parent::boot();
+    // protected static function boot() {
+    //     parent::boot();
 
-        self::creating(function($model) {
-            $currentTenantId = Session::get('current_tenant_id');
-            $model->tenant_id = $currentTenantId;
-        });
-    }
+    //     self::creating(function($model) {
+    //         $currentTenantId = Session::get('current_tenant_id');
+    //         $model->tenant_id = $currentTenantId;
+    //     });
+    // }
 
     /**
      * Get the contact associated with the quote.
@@ -77,5 +78,10 @@ class Quote extends Model
     public function eventType(): BelongsTo
     {
         return $this->belongsTo(EventType::class, 'event_type');
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
 }

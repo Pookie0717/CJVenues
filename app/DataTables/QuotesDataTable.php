@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Quote;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -69,16 +70,17 @@ public function query(Quote $model)
 {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenant = Tenant::find($currentTenantId);
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
 
-        // Get the current tenant_id from the session
-        $currentTenantId = Session::get('current_tenant_id');
+        if($tenant && !$tenant->isMain()) $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records, filter by tenant_id, and select specific columns
-        return $model->newQuery()
-            ->where('tenant_id', $currentTenantId)
+        return $model->newQuery()->with('tenant')
+            ->whereIn('tenant_id', $tenantIds)
             ->where('status', '<>', 'Archived')
             ->select([
-                'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at'
+                'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
             ]);
 
 }
@@ -103,6 +105,7 @@ public function query(Quote $model)
         return [
             Column::make('quote_number')->title(trans('quotes.quote').' #')->addClass('text-nowrap'),
             Column::make('contact_id')->title(trans('quotes.contact'))->addClass('text-nowrap'),
+            Column::make('tenant.name')->title(trans('quotes.tenantname'))->addClass('text-nowrap'),
             Column::make('status')->title(trans('quotes.status'))->addClass('text-nowrap'),
             Column::make('event_type')->title(trans('quotes.event'))->addClass('text-nowrap'),
             Column::make('area_id')->title(trans('quotes.area'))->addClass('text-nowrap'),

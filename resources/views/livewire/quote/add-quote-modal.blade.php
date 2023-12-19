@@ -230,66 +230,76 @@
                 <!-- Loop through each option and render based on kind -->
                 @foreach ($options as $option)
                     <div class="fv-row mb-10">
+
+
                         <!-- For 'yes_no', show a select dropdown with Yes and No options -->
                         @if($option->type === 'yes_no')
                             <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
                             <select class="form-select" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
                                 <option value="">Select Yes/No</option>
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
+                                <option value="yes" {{ $option->default_value == 'yes' ? 'selected' : '' }}>Yes</option>
+                                <option value="no" {{ $option->default_value == 'no' ? 'selected' : '' }}>No</option>
                             </select>
+                            <!-- ... -->
                         @endif
 
                         <!-- For 'check', show checkboxes for each value -->
                         @if($option->type === 'check')
-                            <label class="form-label">{{ $option->name }}:</label>
+                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
+                            @php
+                                $defaultValues = explode('|', $option->default_value);
+                            @endphp
                             @foreach(explode('|', $option->values) as $value)
                                 <div>
-                                    <input type="checkbox" wire:change="updateCheckboxOption({{ $option->id }}, '{{ $value }}', $event.target.checked)">
+                                    <input type="checkbox" wire:change="updateCheckboxOption({{ $option->id }}, '{{ $value }}', $event.target.checked)" {{ in_array($value, $defaultValues) ? 'checked' : '' }}>
                                     <label>{{ $value }}</label>
                                 </div>
                             @endforeach
+                            <!-- ... -->
                         @endif
 
                         <!-- For 'radio', show radio buttons for each value -->
                         @if($option->type === 'radio')
-                            <label class="form-label mb-5">{{ $option->name }}:</label>
+                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
                             @foreach(explode('|', $option->values) as $value)
                                 <div class="form-check form-check-custom form-check-solid mb-5">
-                                    <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}" name="selectedOptions{{ $option->id }}"/>
+                                    <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}" name="selectedOptions{{ $option->id }}" {{ $option->default_value == $value ? 'checked' : '' }}/>
                                     <label class="form-check-label" for="selectedOptions{{ $option->id }}">
                                         {{ $value }}
                                     </label>
                                 </div>
                             @endforeach
+                            <!-- ... -->
                         @endif
+
 
                         <!-- For 'dropdown', show dropdown for each value -->
                         @if($option->type === 'dropdown')
                             <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
                             <select class="form-select" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
                                 @foreach(explode('|', $option->values) as $value)
-                                    <option value="{{$value}}">{{$value}}</option>
+                                    <option value="{{$value}}" {{ $option->default_value == $value ? 'selected' : '' }}>{{$value}}</option>
                                 @endforeach
                             </select>
                         @endif
 
+
                         <!-- For 'number', show number input -->
                         @if($option->type === 'number')
                             <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                            <input type="number" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
+                            <input type="number" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->default_value }}" placeholder="Number"/>
                         @endif
 
                         <!-- For 'number', show number input -->
-                        @if($option->type === 'hidden')
-                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                            <input type="hidden" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
+                        @if($option->type === 'always')
+                            <input type="hidden" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->default_value }}" placeholder="Number"/>
                         @endif
 
                         <!-- For 'logic', show number input -->
                         @if($option->type === 'logic')
-                            <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->value }}" />
+                            <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->default_value }}" />
                         @endif
+
 
                     </div>
                 @endforeach

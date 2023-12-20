@@ -54,18 +54,13 @@ class PricesDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
-        // $tenant = Tenant::find($currentTenantId);
-        // $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-        // if($tenant && !$tenant->isMain()) $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records, filter by tenant_id, and select specific columns
         return $model->newQuery()->with('tenant')
             ->where('tenant_id', $currentTenantId)
-            // ->whereIn('tenant_id', $tenantIds)
             ->select([
                 'id', 'name', 'type',
                 'venue_id', 'area_id', 'option_id', 'price', 'multiplier',
-                // 'tenant_id'
             ]);
     }
 

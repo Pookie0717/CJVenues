@@ -102,10 +102,10 @@
                                 <label class="fs-6 fw-semibold form-label mb-2">
                                     <span>{{ trans('fields.country') }}</span>
                                 </label>
-                                <select class="form-select form-select-solid" name="country" wire:model="selectedCountry">
+                                <select class="form-select form-select-solid" name="country" wire:model="country">
                                     <option>{{ trans('fields.selectacountry') }}</option>
-                                    @foreach ($this->getCountriesProperty() as $code => $name)
-                                        <option value="{{ $code }}" {{ $code == $this->selectedCountry ? 'selected' : '' }}>{{ $name }}</option>
+                                    @foreach ($countries as $code => $name)
+                                        <option value="{{ $code }}" {{ $code == $this->country ? 'selected' : '' }}>{{ $name }}</option>
                                     @endforeach
                                 </select>
                                 @error('country')
@@ -113,17 +113,15 @@
                                 @enderror
                             </div>
 
-
-                            
-
                             <!--begin::Input group for state-->
                             <div class="col-md-4 fv-row mb-7">
                                 <label class="fs-6 fw-semibold form-label mb-2">
                                     <span>{{ trans('fields.stateprovince') }}</span>
                                 </label>
-                                <select class="form-select form-select-solid" name="state" wire:model="selectedState">
-                                    @foreach ($states as $state)
-                                        <option value="{{ $state }}">{{ $state }}</option>
+                                <select class="form-select form-select-solid" name="state" wire:model="state">
+                                    <option>{{ trans('fields.selectastateprovince') }}</option>
+                                    @foreach ($states as $e)
+                                        <option value="{{ $e }}">{{ $e }}</option>
                                     @endforeach
                                 </select>
                                 @error('state')

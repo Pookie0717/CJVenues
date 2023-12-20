@@ -21,27 +21,19 @@ class AddContactModal extends Component
     public $state;
     public $country;
     public $notes;
-    public $selectedCountry;
-    public $selectedState;
     public $contactId;
-    protected $countries;
+    
+    public $countries;
     public $states = [];
-    public $cities = [];
 
     public $edit_mode = false;
 
-    public function getCountriesProperty()
-    {
-        return $this->countries ?? [];
-    }
-
     public function mount()
     {
-        $countries = new Countries();
-        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
+        $country = new Countries();
+        $this->countries = $country->all()->pluck('name.common', 'cca3')->toArray();
         asort($this->countries);
-        $this->states = ['Select a state'];
-        $this->cities = [];
+        $this->states = [];
     }
 
     protected $listeners = [
@@ -61,8 +53,8 @@ class AddContactModal extends Component
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'postcode' => 'required|string|max:20',
-            'selectedState' => 'required|string|max:255',
-            'selectedCountry' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
             'notes' => 'nullable|string|max:500',
         ];
 
@@ -86,8 +78,8 @@ class AddContactModal extends Component
                 'address' => $this->address,
                 'city' => $this->city,
                 'postcode' => $this->postcode,
-                'state' => $this->selectedState,
-                'country' => $this->selectedCountry,
+                'state' => $this->state,
+                'country' => $this->country,
                 'notes' => $this->notes,
             ]);
 
@@ -104,8 +96,8 @@ class AddContactModal extends Component
                 'address' => $this->address,
                 'city' => $this->city,
                 'postcode' => $this->postcode,
-                'state' => $this->selectedState,
-                'country' => $this->selectedCountry,
+                'state' => $this->state,
+                'country' => $this->country,
                 'notes' => $this->notes,
             ]);
 
@@ -113,14 +105,13 @@ class AddContactModal extends Component
             $this->emit('success', 'Contact successfully added');
         }
 
-    
         // Reset the form fields
-        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
     }
 
     public function createContact() {
         $this->edit_mode = false;
-        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
     }
 
     public function deleteContact($id)
@@ -142,11 +133,6 @@ class AddContactModal extends Component
 
         $contact = Contact::find($id);
 
-        $countries = new Countries();
-        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
-        asort($this->countries);
-        $this->states = [];
-        $this->cities = [];
         $this->contactId = $id; // Set the contactId property
         $this->first_name = $contact->first_name;
         $this->last_name = $contact->last_name;
@@ -160,33 +146,21 @@ class AddContactModal extends Component
         $this->state = $contact->state;
         $this->country = $contact->country;
         $this->notes = $contact->notes;
-        $this->selectedCountry = $contact->country;
-        $this->updatedSelectedCountry($contact->country);
-        $this->selectedState = $contact->state;
+        $this->updatedCountry($contact->country);
     }
 
-    public function updatedSelectedCountry($countryCode)
+    public function updatedCountry($countryCode)
     {
-        $countries = new Countries();
-        $this->states = $countries->where('cca3', $countryCode)->first()->hydrate('states')->states->pluck('name', 'postal')->toArray();
-        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
-        $this->selectedState = null;
-        $this->selectedCountry = $countryCode;
-    }
-
-
-    public function updatedSelectedState($stateCode)
-    {
-        $countries = new Countries();
-        $this->selectedState = $stateCode;
-        $this->countries = $countries->all()->pluck('name.common', 'cca3')->toArray();
-        asort($this->countries);
+        $country = new Countries();
+        $country = $country->where('cca3', $countryCode)->first();
+        if($country) {
+            $this->states = sizeof($country) > 0 ? $country->hydrate('states')->states->pluck('name', 'postal')->toArray(): [];
+        }
+        $this->state = null;
     }
 
     public function render()
     {
-     return view('livewire.contact.add-contact-modal', [
-            'countries' => $this->getCountriesProperty(),
-        ]);
+     return view('livewire.contact.add-contact-modal');
     }
 }

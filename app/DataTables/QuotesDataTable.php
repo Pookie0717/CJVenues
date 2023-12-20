@@ -16,76 +16,71 @@ use Illuminate\Support\Facades\Session;
 class QuotesDataTable extends DataTable
 {
     public function dataTable(QueryBuilder $query): EloquentDataTable
-{
-        return datatables()
-            ->eloquent($query)
-        ->addColumn('action', function ($quote) {
-            return view('pages.quotes.columns._actions', compact('quote'));
-        })
-        ->addColumn('id_version', function ($quote) {
-            return $quote->quote_number . '.' . $quote->version;
-        })
-         ->addColumn('event_type', function ( $quote) {
-            $eventType = $quote->eventType;
-            return $eventType ? $eventType->event_name : 'N/A';
-        })
-        ->addColumn('contact_id', function ($quote) {
-            $eventContact = $quote->eventContact;
-            return $eventContact ? $eventContact->first_name.' '.$eventContact->last_name : 'N/A';
-        })
-        ->addColumn('area_id', function ($quote) {
-            $area = $quote->eventArea;
-            return $area ? $area->name : 'N/A';
-        })
-        ->addColumn('updated_at', function ( $quote) {
-            return max($quote->updated_at, $quote->created_at)->format('d-m-Y H:i:s');
-        })
-        ->addColumn('status', function ( $quote) {
-            $status = $quote->status;
-            $badgeClass = '';
+    {
+            return datatables()
+                ->eloquent($query)
+            ->addColumn('action', function ($quote) {
+                return view('pages.quotes.columns._actions', compact('quote'));
+            })
+            ->addColumn('id_version', function ($quote) {
+                return $quote->quote_number . '.' . $quote->version;
+            })
+            ->addColumn('event_type', function ( $quote) {
+                $eventType = $quote->eventType;
+                return $eventType ? $eventType->event_name : 'N/A';
+            })
+            ->addColumn('contact_id', function ($quote) {
+                $eventContact = $quote->eventContact;
+                return $eventContact ? $eventContact->first_name.' '.$eventContact->last_name : 'N/A';
+            })
+            ->addColumn('area_id', function ($quote) {
+                $area = $quote->eventArea;
+                return $area ? $area->name : 'N/A';
+            })
+            ->addColumn('updated_at', function ( $quote) {
+                return max($quote->updated_at, $quote->created_at)->format('d-m-Y H:i:s');
+            })
+            ->addColumn('status', function ( $quote) {
+                $status = $quote->status;
+                $badgeClass = '';
 
-            switch ($status) {
-                case 'Sent':
-                    $badgeClass = 'badge-primary';
-                    break;
-                case 'Approved':
-                    $badgeClass = 'badge-success';
-                    break;
-                case 'Rejected':
-                    $badgeClass = 'badge-danger';
-                    break;
-                default:
-                    $badgeClass = 'badge-secondary';
-                    break;
-            }
+                switch ($status) {
+                    case 'Sent':
+                        $badgeClass = 'badge-primary';
+                        break;
+                    case 'Approved':
+                        $badgeClass = 'badge-success';
+                        break;
+                    case 'Rejected':
+                        $badgeClass = 'badge-danger';
+                        break;
+                    default:
+                        $badgeClass = 'badge-secondary';
+                        break;
+                }
 
-            return new HtmlString('<span class="badge ' . $badgeClass . '">' . $status . '</span>');
-        });
-}
+                return new HtmlString('<span class="badge ' . $badgeClass . '">' . $status . '</span>');
+            });
+    }
 
+    public function query(Quote $model)
+    {
+            // Get the current tenant_id from the session
+            $currentTenantId = Session::get('current_tenant_id');
+            $tenant = Tenant::find($currentTenantId);
+            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
 
+            if($tenant && !$tenant->isMain()) $tenantIds[] = $currentTenantId;
 
+            // Query the VenueArea records, filter by tenant_id, and select specific columns
+            return $model->newQuery()->with('tenant')
+                ->whereIn('tenant_id', $tenantIds)
+                ->where('status', '<>', 'Archived')
+                ->select([
+                    'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
+                ]);
 
-public function query(Quote $model)
-{
-        // Get the current tenant_id from the session
-        $currentTenantId = Session::get('current_tenant_id');
-        $tenant = Tenant::find($currentTenantId);
-        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-
-        if($tenant && !$tenant->isMain()) $tenantIds[] = $currentTenantId;
-
-        // Query the VenueArea records, filter by tenant_id, and select specific columns
-        return $model->newQuery()->with('tenant')
-            ->whereIn('tenant_id', $tenantIds)
-            ->where('status', '<>', 'Archived')
-            ->select([
-                'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
-            ]);
-
-}
-
-
+    }
 
     public function html(): HtmlBuilder
     {

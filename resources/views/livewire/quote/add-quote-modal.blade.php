@@ -10,7 +10,22 @@
             <div class="modal-body scroll-y mx-5 mx-xl-10 my-5">
                 <form class="form" novalidate="novalidate" id="kt_modal_add_quote_form" class="form" wire:submit.prevent="submit">
                     <!--begin::Group-->
-                    <div class="">
+                    <div>
+
+                        <div class="flex-column" data-kt-stepper-element="content">
+                             
+                             <!--begin::Input group-->
+                             <div class="fv-row mb-10">
+                                <label for="contactSelect" class="form-label">Select Contact:</label>
+                                <select class="form-select" id="contactSelect" wire:model="contact_id">
+                                    <option value="">Select a contact</option>
+                                    @foreach ($filteredContacts as $contact)
+                                        <option value="{{ $contact->id }}">{{ $contact->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!--end::Input group-->
+                        </div>
 
             <!--begin::Step 1-->
             <div class="flex-column" data-kt-stepper-element="content">
@@ -117,25 +132,13 @@
                             </div>
                             <!--end::Input group-->
 
-                            <!--begin::Input group-->
-                            <div class="fv-row mb-10">
+                             <!--begin::Input group-->
+                             <div class="fv-row mb-10">
                                 <label for="eventSelect" class="form-label">Select Event Type:</label>
                                 <select class="form-select" id="eventSelect" wire:model="event_type">
                                     <option value="">Select an event</option>
                                     @foreach ($filteredEventTypes as $event)
                                         <option value="{{ $event->id }}">{{ $event->event_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <!--end::Input group-->
-
-                             <!--begin::Input group-->
-                             <div class="fv-row mb-10">
-                                <label for="contactSelect" class="form-label">Select Contact:</label>
-                                <select class="form-select" id="contactSelect" wire:model="contact_id">
-                                    <option value="">Select a contact</option>
-                                    @foreach ($filteredContacts as $contact)
-                                        <option value="{{ $contact->id }}">{{ $contact->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

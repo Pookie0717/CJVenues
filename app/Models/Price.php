@@ -12,7 +12,6 @@ class Price extends Model
 
     protected $fillable = [
         'name',
-        'tenant_id',
         'value',
         'type',
         'venue_id',
@@ -49,12 +48,12 @@ class Price extends Model
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
     }
-    // protected static function boot() {
-    //     parent::boot();
+    protected static function boot() {
+        parent::boot();
 
-    //     self::creating(function($model) {
-    //         $currentTenantId = Session::get('current_tenant_id');
-    //         $model->tenant_id = $currentTenantId;
-    //     });
-    // }
+        self::creating(function($model) {
+            $currentTenantId = Session::get('current_tenant_id');
+            $model->tenant_id = $currentTenantId;
+        });
+    }
 }

@@ -27,9 +27,9 @@ class Season extends Model
         return $this->hasMany(Option::class, 'season_id');
     }
 
-    // public static function getAllSeason()
-    // {
-    //     $currentTenantId = Session::get('current_tenant_id');
-    //     return static::where('name', 'All')->where('tenant_id', $currentTenantId)->first();
-    // }
+    public static function getAllSeason()
+    {
+        $currentTenantId = Session::get('current_tenant_id');
+        return static::where('name', 'All')->where('tenant_id', $currentTenantId)->first();
+    }
 }

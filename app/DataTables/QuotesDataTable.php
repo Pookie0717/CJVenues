@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Session;
 class QuotesDataTable extends DataTable
 {
     public function dataTable(QueryBuilder $query): EloquentDataTable
-{
+    {
         return datatables()
             ->eloquent($query)
         ->addColumn('action', function ($quote) {
@@ -44,48 +44,43 @@ class QuotesDataTable extends DataTable
             $status = $quote->status;
             $badgeClass = '';
 
-            switch ($status) {
-                case 'Sent':
-                    $badgeClass = 'badge-primary';
-                    break;
-                case 'Approved':
-                    $badgeClass = 'badge-success';
-                    break;
-                case 'Rejected':
-                    $badgeClass = 'badge-danger';
-                    break;
-                default:
-                    $badgeClass = 'badge-secondary';
-                    break;
-            }
+                switch ($status) {
+                    case 'Sent':
+                        $badgeClass = 'badge-primary';
+                        break;
+                    case 'Approved':
+                        $badgeClass = 'badge-success';
+                        break;
+                    case 'Rejected':
+                        $badgeClass = 'badge-danger';
+                        break;
+                    default:
+                        $badgeClass = 'badge-secondary';
+                        break;
+                }
 
-            return new HtmlString('<span class="badge ' . $badgeClass . '">' . $status . '</span>');
-        });
-}
+                return new HtmlString('<span class="badge ' . $badgeClass . '">' . $status . '</span>');
+            });
+    }
 
+    public function query(Quote $model)
+    {
+            // Get the current tenant_id from the session
+            $currentTenantId = Session::get('current_tenant_id');
+            $tenant = Tenant::find($currentTenantId);
+            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
 
+            if($tenant && !$tenant->isMain()) $tenantIds[] = $currentTenantId;
 
+            // Query the VenueArea records, filter by tenant_id, and select specific columns
+            return $model->newQuery()->with('tenant')
+                ->whereIn('tenant_id', $tenantIds)
+                ->where('status', '<>', 'Archived')
+                ->select([
+                    'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
+                ]);
 
-public function query(Quote $model)
-{
-        // Get the current tenant_id from the session
-        $currentTenantId = Session::get('current_tenant_id');
-        $tenant = Tenant::find($currentTenantId);
-        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-
-        if($tenant && !$tenant->isMain()) $tenantIds[] = $currentTenantId;
-
-        // Query the VenueArea records, filter by tenant_id, and select specific columns
-        return $model->newQuery()->with('tenant')
-            ->whereIn('tenant_id', $tenantIds)
-            ->where('status', '<>', 'Archived')
-            ->select([
-                'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
-            ]);
-
-}
-
-
+    }
 
     public function html(): HtmlBuilder
     {

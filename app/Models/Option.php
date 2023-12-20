@@ -26,6 +26,11 @@ class Option extends Model
         'always_included',
     ];
 
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
     public function prices()
     {
         return $this->hasMany(Price::class, 'option_id');

@@ -328,10 +328,11 @@ class AddQuoteModal extends Component
 
         $currentTenantId = Session::get('current_tenant_id');
 
-        // Code for parent tenant
-        $tenant = Tenant::find($currentTenantId);
-        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-        $tenantIds[] = $currentTenantId; // self and child tenant ids.
+        $tenantIds = [];
+        if($selectedEventType) {
+            $tenantIds = Tenant::where('parent_id', $selectedEventType->tenant->id)->pluck('id')->toArray();
+            $tenantIds[] = $selectedEventType->tenant->id;
+        }
 
         // Query for seasons that match the date, weekday, and tenant_id
         return Season::whereIn('tenant_id', $tenantIds)
@@ -994,12 +995,6 @@ class AddQuoteModal extends Component
 
 
                         $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
-                        
-                        $pricesMap[$optionTenantId]["individualPrices"][] = [
-                            'optionId' => $optionId,
-                            'price' => $optionTotalPrice,
-                        ];
-
                         
                         $pricesMap[$optionTenantId]["individualPrices"][] = [
                             'optionId' => $optionId,

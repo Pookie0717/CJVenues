@@ -93,7 +93,7 @@
                         <!-- Type -->
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('options.type') }}</label>
-                            <select wire:model.defer="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0" id="type">
+                            <select wire:model="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0" id="type">
                                 <option value="">{{ trans('general.select') }}</option>
                                 <option value="yes_no">{{ trans('options.type_yesno') }}</option>
                                 <option value="always">{{ trans('options.type_always') }}</option>
@@ -158,14 +158,16 @@
                             @endif
                         </div>
 
-                        <!-- Values -->
-                        <div class="fv-row mb-7">
-                            <label class="fw-semibold fs-6 mb-2">{{ trans('general.values') }} ({{ trans('options.separatedby') }})</label>
-                            <textarea wire:model.defer="values" name="values" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Value1|Value2|Value3"></textarea>
-                            @error('values')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                        @if($type !== "yes_no" && $type !== "always" )
+                            <!-- Values -->
+                            <div class="fv-row mb-7">
+                                <label class="fw-semibold fs-6 mb-2">{{ trans('general.values') }} ({{ trans('options.separatedby') }})</label>
+                                <textarea wire:model.defer="values" name="values" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Value1|Value2|Value3"></textarea>
+                                @error('values')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
                         
                         <!--begin::Input group-->
                         <div class="row mb-7">
@@ -180,14 +182,18 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col">
-                                <!-- Default Value -->
-                                <label class="fw-semibold fs-6 mb-2">{{ trans('general.defaultvalue') }}</label>
-                                <input type="text" wire:model.defer="default_value" name="default_value" class="form-control form-control-solid" placeholder="{{ trans('general.defaultvalue') }}">
-                                @error('default_value')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
+
+                            @if($type !== "yes_no")
+                                <div class="col">
+                                    <!-- Default Value -->
+                                    <label class="{{$type === 'always'? 'required': ''}} fw-semibold fs-6 mb-2">{{ trans('general.defaultvalue') }}</label>
+                                    <input type="text" wire:model.defer="default_value" name="default_value" class="form-control form-control-solid" placeholder="{{ trans('general.defaultvalue') }}">
+                                    @error('default_value')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
+                           
                         </div>
                         <!--end::Input group-->
                         

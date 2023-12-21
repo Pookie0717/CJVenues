@@ -57,54 +57,46 @@ class AddOptionModal extends Component
 
     public function submit()
     {
-        try {
-            $this->validate();
+        $this->validate($this->rules);
 
-            // Convert venue_ids to an array if it's not already
-            if (!is_array($this->venue_ids)) {
-                $this->venue_ids = [];
-            }
-
-            // Convert season_ids to an array if it's not already
-            if (!is_array($this->season_ids)) {
-                $this->season_ids = [];
-            }
-
-            // Convert area_ids to an array if it's not already
-            if (!is_array($this->area_ids)) {
-                $this->area_ids = [];
-            }
-
-            // Convert eventtype_ids to an array if it's not already
-            if (!is_array($this->eventtype_ids)) {
-                $this->eventtype_ids = [];
-            }
-
-            if ($this->edit_mode) {
-                $option = Option::find($this->optionId);
-
-                if (!$option) {
-                    throw new \Exception('Option not found with ID: ' . $this->optionId);
-                }
-
-                $option->update($this->getUpdatedData());
-                $this->emit('success', 'Option successfully updated');
-            } else {
-                Option::create($this->getUpdatedData());
-                $this->emit('success', 'Option successfully added');
-            }
-
-            $this->resetFields();
-
-            // Dispatch a browser event for success
-            $this->dispatchBrowserEvent('optionSaved', ['message' => 'Option saved successfully']);
-        } catch (\Exception $e) {
-            // Log the error for debugging
-            \Log::error($e->getMessage());
-
-            // Dispatch a browser event for error
-            $this->dispatchBrowserEvent('optionError', ['message' => 'An error occurred']);
+        // Convert venue_ids to an array if it's not already
+        if (!is_array($this->venue_ids)) {
+            $this->venue_ids = [];
         }
+
+        // Convert season_ids to an array if it's not already
+        if (!is_array($this->season_ids)) {
+            $this->season_ids = [];
+        }
+
+        // Convert area_ids to an array if it's not already
+        if (!is_array($this->area_ids)) {
+            $this->area_ids = [];
+        }
+
+        // Convert eventtype_ids to an array if it's not already
+        if (!is_array($this->eventtype_ids)) {
+            $this->eventtype_ids = [];
+        }
+
+        if ($this->edit_mode) {
+            $option = Option::find($this->optionId);
+
+            if (!$option) {
+                throw new \Exception('Option not found with ID: ' . $this->optionId);
+            }
+
+            $option->update($this->getUpdatedData());
+            $this->emit('success', 'Option successfully updated');
+        } else {
+            Option::create($this->getUpdatedData());
+            $this->emit('success', 'Option successfully added');
+        }
+
+        $this->resetFields();
+
+        // Dispatch a browser event for success
+        $this->dispatchBrowserEvent('optionSaved', ['message' => 'Option saved successfully']);
     }
 
 
@@ -133,7 +125,11 @@ class AddOptionModal extends Component
         }
     }
 
-
+    public function updatedType($value) {
+        if($value === "always") {
+            $this->rules['default_value'] = 'required|string|max:255';
+        }
+    }
 
     public function addCondition()
     {

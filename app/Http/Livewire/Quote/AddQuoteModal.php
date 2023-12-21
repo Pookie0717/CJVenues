@@ -347,9 +347,9 @@ class AddQuoteModal extends Component
 
         // Query for seasons that match the date, weekday, and tenant_id
         return Season::where('tenant_id', $currentTenantId)
-            ->where(function ($query) use ($formattedDate, $weekday) {
-                $query->where('date_from', '<=', $formattedDate)
-                    ->where('date_to', '>=', $formattedDate)
+            ->where(function ($query) use ($date, $weekday) {
+                $query->where(DB::raw('STR_TO_DATE(date_from, "%d-%m-%Y")'), '<=', $date)
+                    ->where(DB::raw('STR_TO_DATE(date_to, "%d-%m-%Y")'), '>=', $date)
                     ->where(function ($query) use ($weekday) {
                         $query->whereJsonContains('weekdays', [$weekday])
                             ->orWhere('weekdays', null); // Include seasons with no specific weekdays
@@ -934,8 +934,13 @@ class AddQuoteModal extends Component
             // Get the day of the week for the current date (e.g., 'Mon')
             $currentDayOfWeek = $currentDate->format('D');
 
+            Log::info("currentDate". json_encode($currentDate));
+
             // Get all seasons for the current date
             $matchingSeasons = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek);
+
+            Log::info("matchingSeasons". json_encode($matchingSeasons));
+
             // Iterate through the matching seasons for the current date
             foreach ($matchingSeasons as $season) {
 

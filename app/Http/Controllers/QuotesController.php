@@ -174,6 +174,8 @@ class QuotesController extends Controller
         $dateFrom = $quote->date_from;
         $dateTo = $quote->date_to;
 
+        $discount = $quote->discount;
+
         // Fetch related quotes based on the determined quote_number
         $relatedQuotes = Quote::where('quote_number', $quote_number)
             ->orderBy('version')
@@ -188,7 +190,8 @@ class QuotesController extends Controller
 
         // Fetch the selected options based on the extracted IDs
         $selectedOptions = Option::whereIn('id', $optionIds)->get();
-        
+
+
 
         // Combine the selected options with their values
         $optionsWithValues = [];
@@ -201,7 +204,7 @@ class QuotesController extends Controller
             ];
         }
 
-        $allSeasons = Season::orderBy('priority', 'desc')->get();
+        $allSeasons = Season::orderBy('priority', 'desc')->where('tenant_id', $quote->tenant_id)->get();
 
         // Initialize variables to keep track of the highest priority season
         $highestPrioritySeason = null;
@@ -227,8 +230,6 @@ class QuotesController extends Controller
             }
         }
 
-
-        // Get the tenant ID from the quote
         $tenantId = $quote->tenant_id;
 
         // Fetch the tenant model using the tenant ID
@@ -238,7 +239,7 @@ class QuotesController extends Controller
 
         view()->share('quote', $quote);
 
-        return view('pages.quotes.showPublic', compact('relatedQuotes', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'quote', 'tenant'));
+        return view('pages.quotes.showPublic', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant'));
     }
 
 

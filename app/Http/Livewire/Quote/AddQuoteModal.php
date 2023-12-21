@@ -320,7 +320,6 @@ class AddQuoteModal extends Component
 
     public function updateSelectedOption($optionId, $value)
     {
-        Log::info("updateSelectedOption". json_encode($this->selectedOptions));
         $this->selectedOptions[$optionId] = $value;
     }
 
@@ -1027,7 +1026,7 @@ class AddQuoteModal extends Component
         // Filter areas based on the selected venue ID
         $filteredAreas = $venueAreas->where('venue_id', $this->selectedVenueId);
 
-        $options = $this->loadOptions();
+        $this->loadOptions();
 
         $selectedEvent = EventType::find($this->event_type);
         // $time_from = '00:00';
@@ -1052,23 +1051,23 @@ class AddQuoteModal extends Component
             // 'maxDuration' => $max_duration
         ]);
 
-        return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'options', 'selectedEvent'));
+        return view('livewire.quote.add-quote-modal', compact('contacts', 'filteredAreas', 'venues', 'eventTypes', 'selectedEvent'));
     }
 
-    public function updatedAreaId()
-    {
-        $this->loadOptions();
-    }
+    // public function updatedAreaId()
+    // {
+    //     $this->loadOptions();
+    // }
 
-    public function updatedSelectedVenueId()
-    {
-        $this->loadOptions();
-    }
+    // public function updatedSelectedVenueId()
+    // {
+    //     $this->loadOptions();
+    // }
 
-    public function updatedSeasonId()
-    {
-        $this->loadOptions();
-    }
+    // public function updatedSeasonId()
+    // {
+    //     $this->loadOptions();
+    // }
 
     public function loadEventTypes()
     {
@@ -1148,9 +1147,8 @@ class AddQuoteModal extends Component
                 $option->value = $this->calculateLogicOptionValues($option->id);
             }
 
-            
-            Log::info("loadOptions". json_encode($this->options));
-            // $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
+            $this->selectedOptions[$option->id] = $this->selectedOptions[$option->id] ?? $option->value ?? $option->default_value;
+            // Log::info("selectedOptions".json_encode($this->selectedOptions));
         }
     }
 

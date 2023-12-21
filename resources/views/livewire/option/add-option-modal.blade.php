@@ -183,16 +183,18 @@
                                 @enderror
                             </div>
 
-                            @if($type !== "yes_no")
-                                <div class="col">
+                            
+                            <div class="col">
+                                @if($type !== "yes_no" && $type !== "logic" )
                                     <!-- Default Value -->
                                     <label class="{{$type === 'always'? 'required': ''}} fw-semibold fs-6 mb-2">{{ trans('general.defaultvalue') }}</label>
                                     <input type="text" wire:model.defer="default_value" name="default_value" class="form-control form-control-solid" placeholder="{{ trans('general.defaultvalue') }}">
                                     @error('default_value')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                </div>
-                            @endif
+                                @endif
+                            </div>
+                           
                            
                         </div>
                         <!--end::Input group-->

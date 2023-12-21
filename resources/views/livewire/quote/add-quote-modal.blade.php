@@ -69,33 +69,34 @@
                 <div class="flex-column mb-10" data-kt-stepper-element="content">
                     <!--begin::Input group-->
                     <div class="fv-row mb-10">
-                        <div class="row">
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Date From</label>
-                                        <div class="input-group" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker"/>
-                                            <span class="input-group-text" data-td-target="#date_from_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('date_from')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
 
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Date To</label>
-                                        <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker"/>
-                                            <span class="input-group-text" data-td-target="#date_to_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('date_to')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2" for="date_from_picker_input">Date From</label>
+                                <div class="input-group log-event" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                    <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker_basic"/>
+                                    <span class="input-group-text" data-td-target="#date_from_picker_basic" data-td-toggle="datetimepicker">
+                                        <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                    </span>
+                                </div>
+                                @error('date_from')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="col">
+                                <label class="required fw-semibold fs-6 mb-2" for="date_to_picker_input">Date To</label>
+                                <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                    <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker_basic"/>
+                                    <span class="input-group-text" data-td-target="#date_to_picker_basic" data-td-toggle="datetimepicker">
+                                        <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                    </span>
+                                </div>
+                                @error('date_to')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
                     <!--end::Input group-->
 
@@ -107,7 +108,7 @@
                                     <label class="required fw-semibold fs-6 mb-2">Time From ({{ $date }})</label>
                                     <div class="input-group" id="time_from_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
                                         <input id="time_from_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_from" class="form-control" data-td-target="#time_from_picker_{{ $loop->index }}"/>
-                                        <span class="input-group-text" data-td-target="#time_from_picker_{{ $loop->index }}" data-td-toggle="datetimepicker">
+                                        <span class="input-group-text" data-td-target="#time_from_picker_basic_{{ $loop->index }}" data-td-toggle="datetimepicker">
                                             <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
                                         </span>
                                     </div>
@@ -120,7 +121,7 @@
                                     <label class="required fw-semibold fs-6 mb-2">Time To ({{ $date }})</label>
                                     <div class="input-group" id="time_to_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
                                         <input id="time_to_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_to" class="form-control" data-td-target="#time_to_picker_{{ $loop->index }}"/>
-                                        <span class="input-group-text" data-td-target="#time_to_picker_{{ $loop->index }}" data-td-toggle="datetimepicker">
+                                        <span class="input-group-text" data-td-target="#time_to_picker_basic_{{ $loop->index }}" data-td-toggle="datetimepicker">
                                             <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
                                         </span>
                                     </div>
@@ -437,8 +438,10 @@
 
 <script>
 
+    var fromDateEl = document.getElementById('date_from_picker_basic');
     var fromInput = document.getElementById('date_from_picker_input');
     var toInput = document.getElementById('date_to_picker_input');
+
     var peopleInput = document.getElementById('people');
     var bufferBeforeInput = document.getElementById('buffer_time_before');
     var bufferAfterInput = document.getElementById('buffer_time_after');
@@ -446,71 +449,84 @@
     var bufferTimeUnitSelect = document.getElementById('buffer_time_unit');
     var submitBtn =  document.getElementById('submit_button');
 
-    new tempusDominus.TempusDominus(fromInput, {
-        display: {
-            viewMode: "calendar",
-            components: {
-                decades: true,
-                year: true,
-                month: true,
-                date: true,
-                hours: false,
-                minutes: false,
-                seconds: false
-            }
-        },
-        localization: {
-            locale: "us",
-            startOfTheWeek: 1,
-            format: "dd-MM-yyyy"
-        }
-    });
-    new tempusDominus.TempusDominus(toInput, {
-        display: {
-            viewMode: "calendar",
-            components: {
-                decades: true,
-                year: true,
-                month: true,
-                date: true,
-                hours: false,
-                minutes: false,
-                seconds: false
-            }
-        },
-        localization: {
-            locale: "us",
-            startOfTheWeek: 1,
-            format: "dd-MM-yyyy"
-        }
-    });
-
     function isDateFormat(str) {
         const dateFormatRegex = /^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-\d{4}$/;
         return dateFormatRegex.test(str);
     }   
 
-    fromInput.addEventListener('change', function () {
-        if(this.value !== "" && toInput.value !== "" && isDateFormat(this.value) && isDateFormat(toInput.value)) {
-            const [d1, m1, y1] = this.value.split("-");
+    const linked1 = new tempusDominus.TempusDominus(fromDateEl, {
+        display: {
+            viewMode: "calendar",
+            components: {
+                decades: true,
+                year: true,
+                month: true,
+                date: true,
+                hours: false,
+                minutes: false,
+                seconds: false
+            }
+        },
+        localization: {
+            locale: "us",
+            startOfTheWeek: 1,
+            format: "dd-MM-yyyy"
+        }
+    });
+
+    const linked2 = new tempusDominus.TempusDominus(document.getElementById('date_to_picker_basic'), {
+        useCurrent: false,
+        display: {
+            viewMode: "calendar",
+            components: {
+                decades: true,
+                year: true,
+                month: true,
+                date: true,
+                hours: false,
+                minutes: false,
+                seconds: false
+            }
+        },
+        localization: {
+            locale: "us",
+            startOfTheWeek: 1,
+            format: "dd-MM-yyyy"
+        }
+    });
+
+    fromDateEl.addEventListener(tempusDominus.Namespace.events.change, function (e) {
+        linked2.updateOptions({
+            restrictions: {
+                minDate: e.detail.date,
+            },
+        });
+
+        if(fromInput.value !== "" && toInput.value !== "" && isDateFormat(fromInput.value) && isDateFormat(toInput.value)) {
+            const [d1, m1, y1] = fromInput.value.split("-");
             const [d2, m2, y2] = toInput.value.split("-");
             const t1 = new Date(`${y1}-${m1}-${d1}`).getTime();
             const t2 = new Date(`${y2}-${m2}-${d2}`).getTime();
             if(t1 > t2) toastr.warning('Date From setting is incorrect!');
-            Livewire.emit('update_date_range', [this.value, toInput.value]);
+            Livewire.emit('update_date_range', [fromInput.value, toInput.value]);
         } else {
             submitBtn.disabled = true;
         }
     });
 
-    toInput.addEventListener('change', function () {
-        if(this.value !== "" && fromInput.value !== "" && isDateFormat(this.value) && isDateFormat(fromInput.value)) {
+    const subscription = linked2.subscribe(tempusDominus.Namespace.events.change, (e) => {
+        linked1.updateOptions({
+            restrictions: {
+                maxDate: e.date,
+            },
+        });
+        if(toInput.value !== "" && fromInput.value !== "" && isDateFormat(toInput.value) && isDateFormat(fromInput.value)) {
             const [d1, m1, y1] = fromInput.value.split("-");
-            const [d2, m2, y2] = this.value.split("-");
+            const [d2, m2, y2] = toInput.value.split("-");
             const t1 = new Date(`${y1}-${m1}-${d1}`).getTime();
             const t2 = new Date(`${y2}-${m2}-${d2}`).getTime();
             if(t1 > t2) toastr.warning('Date To setting is incorrect!');
-            Livewire.emit('update_date_range', [fromInput.value, this.value]);
+            Livewire.emit('update_date_range', [fromInput.value, toInput.value]);
         } else {
             submitBtn.disabled = true;
         }

@@ -236,7 +236,6 @@
                                                         $value = floatval($optionWithValue['value']);
                                                     }
                                                   @endphp
-                                                  @if ($price != 0)
                                                     <tr class="fw-bold text-gray-700 fs-5">
                                                         <td class="d-flex align-items-center text-left pt-6">
                                                             <i class="fa fa-genderless text-danger fs-2 me-2"></i>
@@ -252,7 +251,6 @@
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>
                                                     </tr>
-                                                    @endif
                                                 @endif
                                             @endforeach
 

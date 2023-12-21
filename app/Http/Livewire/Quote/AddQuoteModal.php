@@ -140,19 +140,23 @@ class AddQuoteModal extends Component
                  // Update the total price
                  $item['totalPrice'] = $item['totalPrice'] + $priceBufferOptionsStringArray[$tenantId]['totalPrice']; 
                 
-                foreach($item['individualPrices'] as $index => $individual) {
-                    $item['individualPrices'][$index]["price"] += $priceBufferOptionsStringArray[$tenantId]['individualPrices']["$index"]["price"];
+                foreach($item['individualPrices'] as $optionId => $optionTotalPrice) {
+                    $item['individualPrices'][$optionId] += $priceBufferOptionsStringArray[$tenantId]['individualPrices'][$optionId];
                 } 
 
                 // Your existing code to handle the price options string and calculate the final prices
-                $priceOptionsArray = $item['individualPrices'];
-                $priceOptionsString = implode('|', array_map(function($item) {
-                    return $item['price'];
-                }, $priceOptionsArray));
+                $priceOptionsString = implode('|', array_values($item['individualPrices']));
 
 
-                $valuesArray = explode('|', $priceOptionsString);
-                $priceOptions = array_sum(array_map('floatval', $valuesArray));
+                $optionIds = [];
+                $optionValues = [];
+                foreach( $item['individualPrices'] as $optionId => $optionTotalPrice) {
+                    $optionIds[] = $optionId;
+                    $optionValues[] = $item["optionValues"][$optionId];
+                } 
+
+
+                $priceOptions = array_sum(array_map('floatval', array_values($item['individualPrices'])));
                 
                 $calculatedPrice = $priceOptions;
 
@@ -186,8 +190,8 @@ class AddQuoteModal extends Component
                     'price' => $totalPrice,
                     'price_venue' => $priceVenue,
                     'price_options' => $priceOptionsString,
-                    'options_ids' => implode('|', $item["optionIds"]),
-                    'options_values' => implode('|', $item["optionValues"]),
+                    'options_ids' => implode("|", $optionIds),
+                    'options_values' => implode("|", $optionValues),
                     'buffer_time_before' => $this->buffer_time_before,
                     'buffer_time_after' => $this->buffer_time_after,
                     'buffer_time_unit' => $this->buffer_time_unit,
@@ -328,10 +332,12 @@ class AddQuoteModal extends Component
 
         $currentTenantId = Session::get('current_tenant_id');
 
+        $selectedArea = VenueArea::find($this->area_id);
+
         $tenantIds = [];
-        if($selectedEventType) {
-            $tenantIds = Tenant::where('parent_id', $selectedEventType->tenant->id)->pluck('id')->toArray();
-            $tenantIds[] = $selectedEventType->tenant->id;
+        if($selectedArea) {
+            $tenantIds = Tenant::where('parent_id', $selectedArea->tenant_id)->pluck('id')->toArray();
+            $tenantIds[] = $selectedArea->tenant_id;
         }
 
         // Query for seasons that match the date, weekday, and tenant_id
@@ -837,6 +843,8 @@ class AddQuoteModal extends Component
 
     public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues, $optionTenantIds, $people)
     {
+        Log::info("optionIds". json_encode($optionIds));
+
         // Convert the date strings to Carbon instances
         $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
         $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
@@ -877,14 +885,13 @@ class AddQuoteModal extends Component
                     if(!isset($pricesMap[$optionTenantId])) {
                         $pricesMap[$optionTenantId]["totalPrice"] = 0;
                         $pricesMap[$optionTenantId]["individualPrices"] = [];
-                        $pricesMap[$optionTenantId]["optionIds"] = [];
                         $pricesMap[$optionTenantId]["optionValues"] = [];
                     }
 
-                    if (!in_array($optionId, $pricesMap[$optionTenantId]["optionIds"])) {
-                        // Push the value into the array
-                        $pricesMap[$optionTenantId]["optionIds"][] = $optionId;
-                        $pricesMap[$optionTenantId]["optionValues"][] = $optionValue;
+                    $pricesMap[$optionTenantId]["optionValues"][$optionId] = $optionValue;
+
+                    if(!isset($pricesMap[$optionTenantId]["individualPrices"][$optionId])) {
+                        $pricesMap[$optionTenantId]["individualPrices"][$optionId] = 0;
                     }
 
                     if ($optionPrice) {
@@ -904,15 +911,10 @@ class AddQuoteModal extends Component
                         );
                         $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
                         
-                        $pricesMap[$optionTenantId]["individualPrices"][] = [
-                            'optionId' => $optionId,
-                            'price' => $optionTotalPrice,
-                        ];
+                        $pricesMap[$optionTenantId]["individualPrices"][$optionId] += $optionTotalPrice;
+
                     } else {
-                        $pricesMap[$optionTenantId]["individualPrices"][] = [
-                            'optionId' => $optionId,
-                            'price' => 0,
-                        ];
+
                     }
                 }
             }
@@ -938,6 +940,7 @@ class AddQuoteModal extends Component
         // $individualPrices = [];
 
         $pricesMap = [];
+
         while ($currentDate->lte($dateTo)) {
             // Get the day of the week for the current date (e.g., 'Mon')
             $currentDayOfWeek = $currentDate->format('D');
@@ -967,10 +970,10 @@ class AddQuoteModal extends Component
                         $pricesMap[$optionTenantId]["optionValues"] = [];
                     }
 
-                    if (!in_array($optionId, $pricesMap[$optionTenantId]["optionIds"])) {
-                        // Push the value into the array
-                        $pricesMap[$optionTenantId]["optionIds"][] = $optionId;
-                        $pricesMap[$optionTenantId]["optionValues"][] = $optionValue;
+                    $pricesMap[$optionTenantId]["optionValues"][$optionId] = $optionValue;
+
+                    if(!isset($pricesMap[$optionTenantId]["individualPrices"][$optionId])) {
+                        $pricesMap[$optionTenantId]["individualPrices"][$optionId] = 0;
                     }
 
                     if ($optionPrice) {
@@ -992,19 +995,12 @@ class AddQuoteModal extends Component
 
                         Log::info('Single Buffer Price for Option ' . $optionId . ': ' . $optionTotalPrice);
 
-
-
                         $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
                         
-                        $pricesMap[$optionTenantId]["individualPrices"][] = [
-                            'optionId' => $optionId,
-                            'price' => $optionTotalPrice,
-                        ];
+                        $pricesMap[$optionTenantId]["individualPrices"][$optionId] += $optionTotalPrice;
+
                     } else {
-                        $pricesMap[$optionTenantId]["individualPrices"][] = [
-                            'optionId' => $optionId,
-                            'price' => 0,
-                        ];
+
                     }
                 }
             }
@@ -1119,9 +1115,9 @@ class AddQuoteModal extends Component
         $filteredContacts = Contact::where('tenant_id', $currentTenantId)->get();
 
         $tenantIds = [];
-        if($selectedEventType) {
-            $tenantIds = Tenant::where('parent_id', $selectedEventType->tenant->id)->pluck('id')->toArray();
-            $tenantIds[] = $selectedEventType->tenant->id;
+        if($selectedArea) {
+            $tenantIds = Tenant::where('parent_id', $selectedArea->tenant_id)->pluck('id')->toArray();
+            $tenantIds[] = $selectedArea->tenant_id;
         }
         
         // Get the seasons for the selected date and weekday
@@ -1154,12 +1150,12 @@ class AddQuoteModal extends Component
             });
         }*/
 
-        // if ($selectedArea) {
-        //     $optionsQuery->where(function ($query) use ($selectedArea) {
-        //         $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
-        //                 ->orWhereNull('area_ids');
-        //     });
-        // }
+        if ($selectedArea && !$selectedArea->tenant->isMain()) {
+            $optionsQuery->where(function ($query) use ($selectedArea) {
+                $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
+                        ->orWhereNull('area_ids');
+            });
+        }
 
         
 

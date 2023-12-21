@@ -297,7 +297,6 @@
 
                         <!-- For 'logic', show number input -->
                         @if($option->type === 'logic')
-                        {{json_encode($selectedOptions)}}
                             <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->default_value }}" />
                         @endif
 

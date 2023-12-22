@@ -158,7 +158,7 @@
                             @endif
                         </div>
 
-                        @if($type !== "yes_no" && $type !== "always" )
+                        @if($type !== "yes_no" && $type !== "always" && $type !== "number")
                             <!-- Values -->
                             <div class="fv-row mb-7">
                                 <label class="fw-semibold fs-6 mb-2">{{ trans('general.values') }} ({{ trans('options.separatedby') }})</label>
@@ -184,16 +184,16 @@
                             </div>
 
                             
-                            <div class="col">
                                 @if($type !== "yes_no" && $type !== "logic" )
+                            <div class="col">
                                     <!-- Default Value -->
                                     <label class="{{$type === 'always'? 'required': ''}} fw-semibold fs-6 mb-2">{{ trans('general.defaultvalue') }}</label>
                                     <input type="text" wire:model.defer="default_value" name="default_value" class="form-control form-control-solid" placeholder="{{ trans('general.defaultvalue') }}">
                                     @error('default_value')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
-                                @endif
                             </div>
+                                @endif
                            
                            
                         </div>

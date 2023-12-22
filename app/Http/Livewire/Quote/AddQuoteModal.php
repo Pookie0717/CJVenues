@@ -176,8 +176,9 @@ class AddQuoteModal extends Component
         $calculatedPrice = $priceVenue + $priceOptions;
 
         try {
+            $discountquote = $this->discount ?? 0;
             // Apply discount to the calculated price
-            $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
+            $totalPrice = $this->applyDiscount($calculatedPrice, $discountquote);
         } catch (\Exception $e) {
             // Handle exceptions related to discount parsing, e.g., flash a message to the session
             session()->flash('error', $e->getMessage());
@@ -199,7 +200,7 @@ class AddQuoteModal extends Component
                 'people' => $this->people,
                 'quote_number' => $newQuoteNumber, // Assign the new quote number
                 'calculated_price' => $calculatedPrice,
-                'discount' => $this->discount,
+                'discount' => $discountquote,
                 'price' => $totalPrice,
                 'price_venue' => $priceVenue,
                 'price_options' => $priceOptionsString,

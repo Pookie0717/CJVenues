@@ -592,7 +592,7 @@ class AddQuoteModal extends Component
                 // Calculate the price based on the multiplier type for the current day
                 switch ($multiplierType) {
                     case 'daily':
-                        $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
+                        $days = $this->calculateNumberOfDays($dateFromC, $dateToC);
                         $totalPrice += $multiplierValue;
                         break;
                     case 'hourly':

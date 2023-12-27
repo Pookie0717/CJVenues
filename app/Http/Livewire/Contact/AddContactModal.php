@@ -68,7 +68,7 @@ class AddContactModal extends Component
 
         // Add the email uniqueness rule conditionally
         if (!$this->edit_mode) {
-            $rules['email'][] = Rule::unique('contacts');
+            //$rules['email'][] = Rule::unique('contacts');
         }
 
         // Validate the data

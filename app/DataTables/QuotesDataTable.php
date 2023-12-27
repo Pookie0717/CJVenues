@@ -21,25 +21,25 @@ class QuotesDataTable extends DataTable
         ->addColumn('action', function ($quote) {
             return view('pages.quotes.columns._actions', compact('quote'));
         })
-        ->addColumn('id_version', function ($quote) {
+        ->editColumn('quote_number', function ($quote) {
             return $quote->quote_number . '.' . $quote->version;
         })
-         ->addColumn('event_type', function ( $quote) {
+        ->editColumn('event_type', function ( $quote) {
             $eventType = $quote->eventType;
             return $eventType ? $eventType->event_name : 'N/A';
         })
-        ->addColumn('contact_id', function ($quote) {
+        ->editColumn('contact_id', function ($quote) {
             $eventContact = $quote->eventContact;
             return $eventContact ? $eventContact->first_name.' '.$eventContact->last_name : 'N/A';
         })
-        ->addColumn('area_id', function ($quote) {
+        ->editColumn('area_id', function ($quote) {
             $area = $quote->eventArea;
             return $area ? $area->name : 'N/A';
         })
-        ->addColumn('updated_at', function ( $quote) {
+        ->editColumn('updated_at', function ( $quote) {
             return max($quote->updated_at, $quote->created_at)->format('d-m-Y H:i:s');
         })
-        ->addColumn('status', function ( $quote) {
+        ->editColumn('status', function ( $quote) {
             $status = $quote->status;
             $badgeClass = '';
 
@@ -101,7 +101,7 @@ public function query(Quote $model)
     public function getColumns(): array
     {
         return [
-            Column::make('id_version')->title(trans('quotes.quote').' #')->addClass('text-nowrap'),
+            Column::make('quote_number')->title(trans('quotes.quote').' #')->addClass('text-nowrap'),
             Column::make('contact_id')->title(trans('quotes.contact'))->addClass('text-nowrap'),
             Column::make('status')->title(trans('quotes.status'))->addClass('text-nowrap'),
             Column::make('event_type')->title(trans('quotes.event'))->addClass('text-nowrap'),

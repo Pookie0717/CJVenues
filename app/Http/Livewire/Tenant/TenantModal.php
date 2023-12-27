@@ -263,7 +263,7 @@ class TenantModal extends Component
 
     public function render()
     {
-        $rootTenants= Tenant::where('parent_id', 0)->get();
+        $rootTenants= Tenant::where('parent_id', null)->get();
         return view('livewire.tenant.tenant-modal', compact('rootTenants'));
     }
 }

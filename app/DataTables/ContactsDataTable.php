@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Contact;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -29,9 +30,12 @@ class ContactsDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records and filter by tenant_id
-        return $model->newQuery()->where('tenant_id', $currentTenantId);
+        return $model->newQuery()->whereIn('tenant_id', $tenantIds);
     }
 
 public function html(): HtmlBuilder

@@ -17,7 +17,7 @@
                              <!--begin::Input group-->
                              <div class="fv-row mb-10">
                                 <label for="contactSelect" class="form-label">Select Contact:</label>
-                                <select class="form-select" id="contactSelect" wire:model="contact_id">
+                                <select class="form-select form-select-solid" id="contactSelect" wire:model="contact_id">
                                     <option value="">Select a contact</option>
                                     @foreach ($filteredContacts as $contact)
                                         <option value="{{ $contact->id }}">{{ $contact->name }}</option>
@@ -135,7 +135,7 @@
                              <!--begin::Input group-->
                              <div class="fv-row mb-10">
                                 <label for="eventSelect" class="form-label">Select Event Type:</label>
-                                <select class="form-select" id="eventSelect" wire:model="event_type">
+                                <select class="form-select form-select-solid" id="eventSelect" wire:model="event_type">
                                     <option value="">Select an event</option>
                                     @foreach ($filteredEventTypes as $event)
                                         <option value="{{ $event->id }}">{{ $event->event_name }}</option>
@@ -272,7 +272,7 @@
                                     <!-- Buffer Time Unit -->
                                     <div class="col">
                                         <label for="buffer_time_unit" class="form-label">Buffer Time Unit:</label>
-                                        <select class="form-select" id="buffer_time_unit" wire:model="buffer_time_unit">
+                                        <select class="form-select form-select-solid" id="buffer_time_unit" wire:model="buffer_time_unit">
                                             <option value="">Select Unit</option>
                                             <option value="hours">Hours</option>
                                             <option value="days">Days</option>
@@ -287,19 +287,19 @@
                             <!--begin::Input group-->
                             <div class="fv-row mb-10">
                                 <label for="selectedVenueId" class="form-label">Select Venue:</label>
-                                            <select class="form-select" wire:model="selectedVenueId" id="selectedVenueId">
-                                                <option value="">Select a Venue</option>
-                                                @foreach ($filteredVenues as $venue)
-                                                    <option value="{{ $venue->id }}">{{ $venue->name }}</option>
-                                                @endforeach
-                                            </select>
+                                <select class="form-select form-select-solid" wire:model="selectedVenueId" id="selectedVenueId">
+                                    <option value="">Select a Venue</option>
+                                    @foreach ($filteredVenues as $venue)
+                                        <option value="{{ $venue->id }}">{{ $venue->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <!--end::Input group-->
 
                             <!--begin::Input group-->
                             <div class="fv-row mb-10">
                                 <label for="areaSelect" class="form-label">Select Areas:</label>
-                                <select class="form-select" id="areaSelect" wire:model="area_id">
+                                <select class="form-select form-select-solid" id="areaSelect" wire:model="area_id">
                                     <option value="">Select an area</option>
                                     @foreach ($filteredAreas as $area)
                                         <option value="{{ $area->id }}">{{ $area->name }}</option>
@@ -320,7 +320,7 @@
                                     <!-- For 'yes_no', show a select dropdown with Yes and No options -->
                                     @if($option->type === 'yes_no')
                                         <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                                        <select class="form-select" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
+                                        <select class="form-select form-select-solid" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
                                             <option value="">Select Yes/No</option>
                                             <option value="yes">Yes</option>
                                             <option value="no">No</option>
@@ -354,7 +354,7 @@
                                     <!-- For 'dropdown', show dropdown for each value -->
                                     @if($option->type === 'dropdown')
                                         <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                                        <select class="form-select" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
+                                        <select class="form-select form-select-solid" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
                                             @foreach(explode('|', $option->values) as $value)
                                                 <option value="{{$value}}">{{$value}}</option>
                                             @endforeach

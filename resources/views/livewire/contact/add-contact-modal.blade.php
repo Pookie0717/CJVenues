@@ -21,20 +21,6 @@
                 <form id="kt_modal_add_contact_form" class="form" action="#" wire:submit.prevent="submit" enctype="multipart/form-data">
                     <!--begin::Scroll-->
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_contact_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_contact_header" data-kt-scroll-wrappers="#kt_modal_add_contact_scroll" data-kt-scroll-offset="300px">
-                         <!--begin::Input group-->
-                         <div class="fv-row mb-7">
-                                <label class="required fw-semibold fs-6 mb-2">{{ trans('fields.tenant') }}</label>
-                                <select class="form-select form-select-solid" wire:model.defer="tenant_id">
-                                    <option value="">Select Tenant</option>
-                                    @foreach ($tenants as $tenant)
-                                        <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('tenant_id')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                        </div>
-                        <!--end::Input group-->
                     
                         <!--begin::Input group-->
                         <div class="row mb-7">

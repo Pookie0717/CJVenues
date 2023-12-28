@@ -20,6 +20,9 @@ class ContactsDataTable extends DataTable
             ->addColumn('action', function (Contact $contact) {
                 return view('pages.contacts.columns._actions', compact('contact'));
             })
+            ->editColumn('tenant_id', function (Contact $contact) {
+                return $contact->tenant->name;
+            })
             ->editColumn('created_at', function (Contact $contact) {
                 return $contact->created_at->format('d-m-Y H:i:s');
             })
@@ -57,6 +60,7 @@ public function html(): HtmlBuilder
         return [
             Column::make('name')->title(trans('fields.name')),
             Column::make('email')->title(trans('fields.email')),
+            Column::make('tenant_id')->title(trans('fields.tenant')),
             Column::make('phone')->title(trans('fields.phone')),
             Column::make('notes')->title(trans('fields.notes')),
             Column::make('created_at')->title(trans('general.createdat'))->addClass('text-nowrap'),

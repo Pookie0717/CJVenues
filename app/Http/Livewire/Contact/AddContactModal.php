@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Contact;
 
 use Livewire\Component;
 use App\Models\Contact;
-use App\Models\Tenant;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use PragmaRX\Countries\Package\Countries;
@@ -49,7 +48,6 @@ class AddContactModal extends Component
     {
         // Define the validation rules
         $rules = [
-            'tenant_id' => 'required|number',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255'],
@@ -112,12 +110,13 @@ class AddContactModal extends Component
         }
 
         // Reset the form fields
-        $this->reset(['tenant_id', 'first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
     }
 
     public function createContact() {
         $this->edit_mode = false;
-        $this->reset(['tenant_id', 'first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
+        $this->tenant_id = Session::get('current_tenant_id');
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
     }
 
     public function deleteContact($id)
@@ -162,16 +161,10 @@ class AddContactModal extends Component
         if($country) {
             $this->states = sizeof($country) > 0 ? $country->hydrate('states')->states->pluck('name', 'postal')->toArray(): [];
         }
-        $this->state = null;
     }
 
     public function render()
     {
-        $currentTenantId = Session::get('current_tenant_id');
-        // Code for parent tenant
-        $tenant = Tenant::find($currentTenantId);
-        $tenants = Tenant::where('parent_id', $currentTenantId)->get();
-        $tenants[] = $tenant; // self and child tenant ids.
-        return view('livewire.contact.add-contact-modal', compact('tenants'));
+        return view('livewire.contact.add-contact-modal');
     }
 }

@@ -1051,7 +1051,7 @@ class AddQuoteModal extends Component
         $selectedEvent = EventType::find($this->event_type);
 
         // filtered contacts, venues and venue areas
-        $filteredContacts = Contact::where('tenant_id', $currentTenantId)->get();
+        $filteredContacts = Contact::whereIn('tenant_id', $tenantIds)->get();
 
         $tenantIds = [];
         if($selectedEvent) {

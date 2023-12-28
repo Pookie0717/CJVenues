@@ -11,6 +11,7 @@ class Contact extends Model
     use HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'first_name',
         'last_name',
         'name',
@@ -23,12 +24,12 @@ class Contact extends Model
         'country',
         'notes',
     ];
-    protected static function boot() {
-        parent::boot();
+    // protected static function boot() {
+    //     parent::boot();
 
-        self::creating(function($model) {
-            $currentTenantId = Session::get('current_tenant_id');
-            $model->tenant_id = $currentTenantId;
-        });
-    }
+    //     self::creating(function($model) {
+    //         $currentTenantId = Session::get('current_tenant_id');
+    //         $model->tenant_id = $currentTenantId;
+    //     });
+    // }
 }

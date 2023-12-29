@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Session;
 
 class AddSeasonModal extends Component
 {
+    public $tenant_id;
     public $name;
     public $date_from;
     public $date_to;
     public $priority;
     public $weekdays;
-    public $tenant_id;
     public $selectedWeekdays = []; // Array to store selected weekdays
 
     public $edit_mode = false;
@@ -45,6 +45,7 @@ class AddSeasonModal extends Component
             // If in edit mode, update the existing season record
             $season = Season::find($this->seasonId);
             $season->update([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->name,
                 'date_from' => $this->date_from,
                 'date_to' => $this->date_to,
@@ -58,6 +59,7 @@ class AddSeasonModal extends Component
         } else {
             // If not in edit mode, create a new season record
             Season::create([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->name,
                 'date_from' => $this->date_from,
                 'date_to' => $this->date_to,
@@ -77,6 +79,7 @@ class AddSeasonModal extends Component
 
     public function createSeason() {
         $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->reset(['name', 'date_from', 'date_to', 'priority', 'selectedWeekdays', 'edit_mode']);
     }
     
@@ -104,6 +107,8 @@ class AddSeasonModal extends Component
         $season = Season::find($id);
         
         $this->seasonId = $id;
+        $this->tenant_id = $season->tenant_id;
+
         $this->name = $season->name;
         $this->date_from = $season->date_from;
         $this->date_to = $season->date_to;

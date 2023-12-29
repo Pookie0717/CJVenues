@@ -54,13 +54,16 @@ class PricesDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records, filter by tenant_id, and select specific columns
         return $model->newQuery()->with('tenant')
-            ->where('tenant_id', $currentTenantId)
+            ->whereIn('tenant_id', $tenantIds)
             ->select([
                 'id', 'name', 'type',
-                'venue_id', 'area_id', 'option_id', 'price', 'multiplier',
+                'venue_id', 'area_id', 'option_id', 'price', 'multiplier', 'tenant_id'
             ]);
     }
 
@@ -107,7 +110,7 @@ class PricesDataTable extends DataTable
         return [
             Column::make('name')->title(trans('prices.name'))->addClass('text-nowrap'),
             Column::make('type')->title(trans('prices.type')),
-            // Column::make('tenant.name')->title(trans('prices.tenantname')),
+            Column::make('tenant.name')->title(trans('prices.tenantname')),
             Column::computed('property_id')->title(trans('prices.applypriceto')),
             Column::make('price')->title(trans('prices.amount')),
             Column::make('multiplier')->title(trans('prices.multiplier')),

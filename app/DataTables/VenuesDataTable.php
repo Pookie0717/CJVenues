@@ -4,6 +4,7 @@ namespace App\DataTables;
 
 use App\Models\Venue;
 use App\Models\VenueArea;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -25,8 +26,11 @@ class VenuesDataTable extends DataTable
             ->addColumn('action', function ($venue) {
                 return view('pages.venues.columns._actions', compact('venue'));
             })
+            ->editColumn('tenant_id', function (Venue $venue) {
+                return $venue->tenant->name;
+            })
             ->editColumn('created_at', function ($venue) {
-            return $venue->created_at->format('d-m-Y H:i:s'); // Change the format as needed
+                return $venue->created_at->format('d-m-Y H:i:s'); // Change the format as needed
             })
             ->editColumn('updated_at', function ($venue) {
                 return $venue->updated_at->format('d-m-Y H:i:s'); // Change the format as needed
@@ -43,10 +47,13 @@ class VenuesDataTable extends DataTable
     public function query(Venue $model)
     {
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         return $model->newQuery()
-            ->where('tenant_id', $currentTenantId) // Filter by tenant_id
-            ->select(['id', 'name', 'type', 'address', 'created_at', 'updated_at']);
+            ->whereIn('tenant_id', $tenantIds) // Filter by tenant_id
+            ->select(['id', 'tenant_id', 'name', 'type', 'address', 'created_at', 'updated_at']);
     }
 
     /**
@@ -76,6 +83,7 @@ class VenuesDataTable extends DataTable
     {
         return [
             Column::make('name')->title(trans('venues.name')),
+            Column::make('tenant_id')->title(trans('venues.tenant')),
             Column::make('type')->title(trans('venues.type')),
             Column::make('address')->title(trans('fields.address')),
             Column::make('created_at')->title(trans('general.createdat')),

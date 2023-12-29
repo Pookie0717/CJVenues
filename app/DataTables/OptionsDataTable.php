@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Option;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -19,6 +20,9 @@ class OptionsDataTable extends DataTable
             ->eloquent($query)
             ->addColumn('action', function ($option) {
                 return view('pages.options.columns._actions', compact('option'));
+            })
+            ->editColumn('tenant_id', function ($option) {
+                return $option->tenant->name;
             })
             ->editColumn('name', function ($option) {
                 return $option->name;
@@ -48,11 +52,14 @@ class OptionsDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records, filter by tenant_id, and select specific columns
         return $model->newQuery()
-            ->where('tenant_id', $currentTenantId)
-            ->select(['id', 'name', 'position', 'type', 'values']);
+            ->whereIn('tenant_id', $tenantIds)
+            ->select(['id', 'name', 'position', 'type', 'values', 'tenant_id']);
     }
 
     public function html(): HtmlBuilder
@@ -72,6 +79,7 @@ class OptionsDataTable extends DataTable
     {
         return [
             Column::make('name')->title(trans('options.name'))->addClass('text-nowrap'),
+            Column::make('tenant_id')->title(trans('fields.tenant')),
             Column::make('position')->title(trans('fields.position')),
             Column::make('type')->title(trans('options.type')),
             Column::make('values')->title(trans('general.values')),

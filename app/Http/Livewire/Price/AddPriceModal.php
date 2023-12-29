@@ -15,6 +15,8 @@ use Illuminate\Validation\Rule;
 
 class AddPriceModal extends Component
 {
+    public $tenant_id;
+
     public $name;
     public $priority;
     public $overwrite_weekday;
@@ -59,6 +61,7 @@ class AddPriceModal extends Component
             // If in edit mode, update the existing price record
             $price = Price::find($this->priceId);
             $price->update([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->name,
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
@@ -76,6 +79,7 @@ class AddPriceModal extends Component
         } else {
             // If not in edit mode, create a new price record
             Price::create([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->name,
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
@@ -100,6 +104,7 @@ class AddPriceModal extends Component
 
     public function createPrice() {
         $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
             'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'edit_mode'
         ]);
@@ -124,6 +129,8 @@ class AddPriceModal extends Component
         $price = Price::find($id);
 
         $this->priceId = $id;
+        $this->tenant_id = $price->tenant_id;
+
         $this->name = $price->name;
         $this->priority = $price->priority;
         $this->overwrite_weekday = $price->overwrite_weekday;

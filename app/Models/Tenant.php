@@ -35,6 +35,6 @@ class Tenant extends Model
 
     public function isMain()
     {
-        return $this->parent_id === 0;
+        return $this->parent_id === null;
     }
 }

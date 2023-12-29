@@ -4,6 +4,7 @@ namespace App\DataTables;
 
 use App\Models\EventType;
 use App\Models\Season;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -30,6 +31,9 @@ class EventTypesDataTable extends DataTable
                 ];
                 return $labels[$event_type->name] ?? $event_type->name;
             })
+            ->editColumn('tenant_id', function ($event_type) {
+                return $event_type->tenant->name;
+            })
             ->editColumn('event_name', function ($event_type) {
                 return $event_type->event_name;
             })
@@ -51,11 +55,15 @@ class EventTypesDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+
 
         // Query the VenueArea records, filter by tenant_id, and select specific columns
         return $model->newQuery()
-            ->where('tenant_id', $currentTenantId)
-            ->select(['id', 'name', 'event_name', 'description', 'typical_seating', 'created_at', 'updated_at']);    
+            ->whereIn('tenant_id', $tenantIds)
+            ->select(['id', 'name', 'event_name', 'description', 'typical_seating', 'created_at', 'updated_at', 'tenant_id']);    
     }
 
     public function html(): HtmlBuilder
@@ -75,6 +83,7 @@ class EventTypesDataTable extends DataTable
     {
         return [
             Column::make('event_name')->title(trans('events.name'))->addClass('text-nowrap'),
+            Column::make('tenant_id')->title(trans('events.tenant')),
             Column::make('name')->title(trans('events.categories'))->addClass('text-nowrap'),
             Column::make('description')->title(trans('events.description'))->addClass('text-nowrap'),
             Column::make('typical_seating')->title(trans('events.typicalseating'))->addClass('text-nowrap'),

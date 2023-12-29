@@ -15,6 +15,7 @@ Validator::extend('at_least_one_capacity', function ($attribute, $value, $parame
 
 class AddVenueAreaModal extends Component
 {
+    public $tenant_id;
     public $venue_id;
     public $name;
     public $capacity_noseating;
@@ -49,6 +50,7 @@ class AddVenueAreaModal extends Component
             // If in edit mode, update the existing season record
             $area = VenueArea::find($this->areaId);
             $area->update([
+                'tenant_id' => $this->tenant_id,
                 'venue_id' => $this->venue_id,
                 'name' => $this->name,
                 'capacity_noseating' => $this->capacity_noseating,
@@ -62,6 +64,7 @@ class AddVenueAreaModal extends Component
            
              // Save the new venue area to the database
             VenueArea::create([
+                'tenant_id' => $this->tenant_id,
                 'venue_id' => $this->venue_id,
                 'name' => $this->name,
                 'capacity_noseating' => $this->capacity_noseating,
@@ -87,6 +90,7 @@ class AddVenueAreaModal extends Component
 
     public function createArea() {
         $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->reset(['venue_id', 'name', 'capacity_noseating', 'capacity_seatingrows', 'capacity_seatingtables']);
     }
 
@@ -108,6 +112,8 @@ class AddVenueAreaModal extends Component
             ->where('tenant_id', $currentTenantId)->first();
 
         $this->areaId = $id;
+        $this->tenant_id = $venueArea->tenant_id;
+
         $this->venue_id = $venueArea->venue_id;
         $this->name = $venueArea->name;
         $this->capacity_noseating = $venueArea->capacity_noseating;

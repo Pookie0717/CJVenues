@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Session;
 
 class AddContactModal extends Component
 {
+    public $tenant_id;
+
     public $first_name;
     public $last_name;
     public $email;
@@ -23,7 +25,6 @@ class AddContactModal extends Component
     public $country;
     public $notes;
     public $contactId;
-    public $tenant_id;
     
     public $countries;
     public $states = [];

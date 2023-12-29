@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class AddEventTypeModal extends Component
 {
+    public $tenant_id;
     public $name;
     public $event_name;
     public $selectedEventNames = [];
@@ -73,6 +74,7 @@ class AddEventTypeModal extends Component
             // If in edit mode, update the existing event type record
             $eventType = EventType::find($this->eventTypeId);
             $eventType->update([
+                'tenant_id' => $this->tenant_id, 
                 'name' => $eventNames,
                 'event_name' => $this->event_name,
                 'typical_seating' => $this->typical_seating,
@@ -97,6 +99,7 @@ class AddEventTypeModal extends Component
         } else {
             // Save the new event type to the database
             EventType::create([
+                'tenant_id' => $this->tenant_id, 
                 'name' => implode(', ', $this->selectedEventNames),
                 'event_name' => $this->event_name,
                 'typical_seating' => $this->typical_seating,
@@ -149,6 +152,7 @@ class AddEventTypeModal extends Component
 
     public function createEventType() {
         $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
             'name',
             'event_name',
@@ -182,6 +186,8 @@ class AddEventTypeModal extends Component
     {
         $this->edit_mode = true;
         $eventType = EventType::find($id);
+
+        $this->tenant_id = $eventType->tenant_id;
 
         $this->event_name = $eventType->event_name;
         $this->selectedEventNames = explode(', ', $eventType->name);

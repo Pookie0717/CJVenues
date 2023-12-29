@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Session;
 
 class AddOptionModal extends Component
 {
+    public $tenant_id;
     public $name;
     public $position;
     public $type;
@@ -122,6 +123,7 @@ class AddOptionModal extends Component
         $this->fill($option->toArray());
 
         // Convert the comma-separated string back to an array
+        $this->tenant_id = $option->tenant_id;
         $this->season_ids = explode(',', $option->season_ids);
         $this->venue_ids = explode(',', $option->venue_ids);
         $this->area_ids = explode(',', $option->area_ids);
@@ -153,6 +155,7 @@ class AddOptionModal extends Component
 
     public function createOption() {
         $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->resetFields();
     }
 
@@ -186,6 +189,7 @@ class AddOptionModal extends Component
         $eventTypeIds = implode(',', $this->eventtype_ids);
 
         return [
+            'tenant_id' => $this->tenant_id,
             'name' => $this->name,
             'position' => $this->position,
             'type' => $this->type,

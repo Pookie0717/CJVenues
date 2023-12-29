@@ -11,6 +11,7 @@ class Price extends Model
     use HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'name',
         'value',
         'type',
@@ -48,12 +49,12 @@ class Price extends Model
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
     }
-    protected static function boot() {
-        parent::boot();
+    // protected static function boot() {
+    //     parent::boot();
 
-        self::creating(function($model) {
-            $currentTenantId = Session::get('current_tenant_id');
-            $model->tenant_id = $currentTenantId;
-        });
-    }
+    //     self::creating(function($model) {
+    //         $currentTenantId = Session::get('current_tenant_id');
+    //         $model->tenant_id = $currentTenantId;
+    //     });
+    // }
 }

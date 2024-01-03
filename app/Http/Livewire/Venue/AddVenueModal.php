@@ -6,10 +6,11 @@ use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use App\Models\Venue;
 use App\Models\VenueArea;
-
+use Illuminate\Support\Facades\Session;
 
 class AddVenueModal extends Component
 {
+    public $tenant_id;
     public $venueName;
     public $venueType;
     public $venueAddress;
@@ -98,6 +99,7 @@ class AddVenueModal extends Component
             \Log::info('Resulting Venue:', [$venue]);
 
             $venue->update([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->venueName,
                 'type' => $this->venueType,
                 'address' => $this->venueAddress,
@@ -109,6 +111,7 @@ class AddVenueModal extends Component
 
             // Save venue to the database
             $venue = Venue::create([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->venueName,
                 'type' => $this->venueType,
                 'address' => $this->venueAddress,
@@ -118,6 +121,7 @@ class AddVenueModal extends Component
             if (!empty($this->areas)) {
                 foreach ($this->areas as $area) {
                     $venue->areas()->create([
+                        'tenant_id' => $this->tenant_id,
                         'name' => $area['name'],
                         'capacity_noseating' => $area['capacity_noseating'],
                         'capacity_seatingrows' => $area['capacity_seatingrows'],
@@ -140,6 +144,8 @@ class AddVenueModal extends Component
     }
 
     public function createVenue() {
+        $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->resetFields();
         $this->resetAreas();
     }
@@ -169,6 +175,8 @@ class AddVenueModal extends Component
 
         $venue = Venue::find($id);
         $this->venueId = $id;;
+        $this->tenant_id = $venue->tenant_id;
+
         $this->venueName  = $venue->name;
         $this->venueType  = $venue->type;
         $this->venueAddress  = $venue->address;

@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Season;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -23,6 +24,9 @@ class SeasonsDataTable extends DataTable
             })
             ->editColumn('name', function ($season) {
                 return $season->name;
+            })
+            ->editColumn('tenant_id', function ($season) {
+                return $season->tenant->name;
             })
             ->editColumn('priority', function ($season) {
                 return $season->priority;
@@ -50,12 +54,15 @@ class SeasonsDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records, filter by tenant_id, and select specific columns
         return $model->newQuery()
-            ->where('tenant_id', $currentTenantId)
+            ->whereIn('tenant_id', $tenantIds)
             ->select([
-                'id', 'name', 'priority', 'date_from', 'date_to', 'weekdays'
+                'id', 'name', 'priority', 'date_from', 'date_to', 'weekdays', 'tenant_id'
             ]);
     }
 
@@ -77,6 +84,7 @@ class SeasonsDataTable extends DataTable
     {
         return [
             Column::make('name')->title(trans('seasons.name'))->addClass('text-nowrap'),
+            Column::make('tenant_id')->title(trans('seasons.tenant')),
             Column::make('date_from')->title(trans('seasons.datefrom')),
             Column::make('date_to')->title(trans('seasons.dateto')),
             Column::make('priority')->title(trans('general.priority')),

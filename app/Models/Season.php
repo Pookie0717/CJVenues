@@ -11,6 +11,7 @@ class Season extends Model
     use HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'name',
         'date_from',
         'date_to',
@@ -18,6 +19,10 @@ class Season extends Model
         'weekdays',
         'tenant_id',
     ];
+    public function getNameAttribute($name)
+    {
+        return $name.' ['.$this->tenant->name.']';
+    }
     public function prices()
     {
         return $this->hasMany(Price::class);
@@ -27,6 +32,11 @@ class Season extends Model
         return $this->hasMany(Option::class, 'season_id');
     }
 
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+    
     public static function getAllSeason()
     {
         $currentTenantId = Session::get('current_tenant_id');

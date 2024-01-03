@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\VenueArea; // Import the VenueArea model
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -24,6 +25,9 @@ class AreasDataTable extends DataTable
             ->addColumn('action', function (VenueArea $area) {
                 return view('pages.areas.columns._actions', compact('area'));
             })
+            ->editColumn('tenant_id', function (VenueArea $area) {
+                return $area->tenant->name;
+            })
             ->editColumn('venue_id', function (VenueArea $area) {
                 return $area->venue->name;
             })
@@ -41,11 +45,14 @@ class AreasDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records with the associated Venue and filter by tenant_id
         return $model->newQuery()
-            ->whereHas('venue', function ($query) use ($currentTenantId) {
-                $query->where('tenant_id', $currentTenantId);
+            ->whereHas('venue', function ($query) use ($tenantIds) {
+                $query->whereIn('tenant_id', $tenantIds);
             })
             ->with('venue');
     }
@@ -77,6 +84,7 @@ class AreasDataTable extends DataTable
     {
         return [
             Column::make('venue_id')->title(trans('areas.venue')),
+            Column::make('tenant_id')->title(trans('areas.tenant')),
             Column::make('name')->title(trans('areas.name')),
             Column::make('capacity_noseating')->title(trans('areas.capacity')." (".trans('areas.capacity_noseating').")"),
             Column::make('capacity_seatingrows')->title(trans('areas.capacity')." (".trans('areas.capacity_inrows').")"),

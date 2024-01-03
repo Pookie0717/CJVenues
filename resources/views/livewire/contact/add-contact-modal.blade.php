@@ -21,6 +21,7 @@
                 <form id="kt_modal_add_contact_form" class="form" action="#" wire:submit.prevent="submit" enctype="multipart/form-data">
                     <!--begin::Scroll-->
                     <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_contact_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_contact_header" data-kt-scroll-wrappers="#kt_modal_add_contact_scroll" data-kt-scroll-offset="300px">
+                    
                         <!--begin::Input group-->
                         <div class="row mb-7">
                             <div class="col">
@@ -102,10 +103,10 @@
                                 <label class="fs-6 fw-semibold form-label mb-2">
                                     <span>{{ trans('fields.country') }}</span>
                                 </label>
-                                <select class="form-select form-select-solid" name="country" wire:model="selectedCountry">
+                                <select class="form-select form-select-solid" name="country" wire:model="country">
                                     <option>{{ trans('fields.selectacountry') }}</option>
-                                    @foreach ($this->getCountriesProperty() as $code => $name)
-                                        <option value="{{ $code }}" {{ $code == $this->selectedCountry ? 'selected' : '' }}>{{ $name }}</option>
+                                    @foreach ($countries as $code => $name)
+                                        <option value="{{ $code }}" {{ $code == $this->country ? 'selected' : '' }}>{{ $name }}</option>
                                     @endforeach
                                 </select>
                                 @error('country')
@@ -113,17 +114,15 @@
                                 @enderror
                             </div>
 
-
-                            
-
                             <!--begin::Input group for state-->
                             <div class="col-md-4 fv-row mb-7">
                                 <label class="fs-6 fw-semibold form-label mb-2">
                                     <span>{{ trans('fields.stateprovince') }}</span>
                                 </label>
-                                <select class="form-select form-select-solid" name="state" wire:model="selectedState">
-                                    @foreach ($states as $state)
-                                        <option value="{{ $state }}">{{ $state }}</option>
+                                <select class="form-select form-select-solid" name="state" wire:model="state">
+                                    <option>{{ trans('fields.selectastateprovince') }}</option>
+                                    @foreach ($states as $e)
+                                        <option value="{{ $e }}">{{ $e }}</option>
                                     @endforeach
                                 </select>
                                 @error('state')

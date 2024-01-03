@@ -11,6 +11,7 @@ class Venue extends Model
     use HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'name',
         'type',
         'address',
@@ -32,12 +33,16 @@ class Venue extends Model
     {
         return $this->hasMany(Option::class, 'venue_id');
     }
-    protected static function boot() {
-        parent::boot();
-
-        self::creating(function($model) {
-            $currentTenantId = Session::get('current_tenant_id');
-            $model->tenant_id = $currentTenantId;
-        });
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
+    // protected static function boot() {
+    //     parent::boot();
+
+    //     self::creating(function($model) {
+    //         $currentTenantId = Session::get('current_tenant_id');
+    //         $model->tenant_id = $currentTenantId;
+    //     });
+    // }
 }

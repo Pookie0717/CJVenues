@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Contact;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -19,6 +20,9 @@ class ContactsDataTable extends DataTable
             ->addColumn('action', function (Contact $contact) {
                 return view('pages.contacts.columns._actions', compact('contact'));
             })
+            ->editColumn('tenant_id', function (Contact $contact) {
+                return $contact->tenant->name;
+            })
             ->editColumn('created_at', function (Contact $contact) {
                 return $contact->created_at->format('d-m-Y H:i:s');
             })
@@ -29,9 +33,12 @@ class ContactsDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         // Query the VenueArea records and filter by tenant_id
-        return $model->newQuery()->where('tenant_id', $currentTenantId);
+        return $model->newQuery()->whereIn('tenant_id', $tenantIds);
     }
 
 public function html(): HtmlBuilder
@@ -53,6 +60,7 @@ public function html(): HtmlBuilder
         return [
             Column::make('name')->title(trans('fields.name')),
             Column::make('email')->title(trans('fields.email')),
+            Column::make('tenant_id')->title(trans('fields.tenant')),
             Column::make('phone')->title(trans('fields.phone')),
             Column::make('notes')->title(trans('fields.notes')),
             Column::make('created_at')->title(trans('general.createdat'))->addClass('text-nowrap'),

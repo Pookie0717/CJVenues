@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\User;
+use App\Models\Tenant;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -47,11 +48,17 @@ class UsersDataTable extends DataTable
     {
         // Get the current tenant_id from the session
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
         // Query the User model using a join with the tenant_user pivot table
-        return $model->newQuery()
-            ->join('tenant_user', 'users.id', '=', 'tenant_user.user_id')
-            ->where('tenant_user.tenant_id', $currentTenantId);
+        return $model->newQuery()->with('tenants')
+            // ->join('tenant_user', 'users.id', '=', 'tenant_user.user_id')
+            // ->whereIn('tenant_user.tenant_id', $tenantIds);
+            ->whereHas('tenants', function ($query) use ($tenantIds) {
+                $query->whereIn('id', $tenantIds);
+            });
     }
 
     /**

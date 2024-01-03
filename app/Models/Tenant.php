@@ -20,10 +20,21 @@ class Tenant extends Model
         'country',
         'currency',
         'vatnumber',
+        'parent_id'
     ];
 
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function parent()
+    {
+        return $this->hasOne(Tenant::class, 'id', 'parent_id');
+    }
+
+    public function isMain()
+    {
+        return $this->parent_id === null;
     }
 }

@@ -29,6 +29,7 @@ class TenantModal extends Component
     public $country;
     public $currency;
     public $vatnumber;
+    public $parent_id;
     public $edit_mode = false;
     public $tenantId; // To store the ID of the selected tenant for editing
     public $selectedCountry;
@@ -89,6 +90,7 @@ class TenantModal extends Component
                     'stateprovince' => $this->selectedState,
                     'country' => $this->selectedCountry,
                     'currency' => $this->currency,
+                    'parent_id' => (int)$this->parent_id ,
                     'vatnumber' => $this->vatnumber,
                 ]);
 
@@ -112,6 +114,7 @@ class TenantModal extends Component
                     'stateprovince' => $this->selectedState,
                     'country' => $this->selectedCountry,
                     'currency' => $this->currency,
+                    'parent_id' => $this->parent_id,
                     'vatnumber' => $this->vatnumber,
                 ]);
             // Attach the new tenant to the currently authenticated user
@@ -142,7 +145,7 @@ class TenantModal extends Component
     }
 
     // Reset the form fields and exit edit mode
-        $this->reset(['name', 'address', 'city', 'postcode', 'stateprovince', 'country', 'currency', 'vatnumber', 'edit_mode']);
+        $this->reset(['name', 'address', 'city', 'postcode', 'stateprovince', 'country', 'currency', 'vatnumber', 'edit_mode', 'parent_id']);
 }
 
     public function deleteTenant($id)
@@ -225,7 +228,8 @@ class TenantModal extends Component
             $this->currency = $tenant->currency;
             $this->vatnumber = $tenant->vatnumber;
             $this->selectedCountry = $tenant->country;
-            
+            $this->parent_id = $tenant->parent_id;
+
             $this->updatedSelectedCountry($tenant->country);
 
             $this->selectedState = $tenant->stateprovince;
@@ -259,7 +263,7 @@ class TenantModal extends Component
 
     public function render()
     {
-
-        return view('livewire.tenant.tenant-modal');
+        $rootTenants= Tenant::where('parent_id', null)->get();
+        return view('livewire.tenant.tenant-modal', compact('rootTenants'));
     }
 }

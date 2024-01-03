@@ -8,11 +8,15 @@ use App\Models\VenueArea;
 use App\Models\Venue;
 use App\Models\Season;
 use App\Models\Option;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class AddPriceModal extends Component
 {
+    public $tenant_id;
+
     public $name;
     public $priority;
     public $overwrite_weekday;
@@ -57,6 +61,7 @@ class AddPriceModal extends Component
             // If in edit mode, update the existing price record
             $price = Price::find($this->priceId);
             $price->update([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->name,
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
@@ -67,7 +72,6 @@ class AddPriceModal extends Component
                 'multiplier' => $this->multiplier,
                 'season_id' => $this->season_id,
                 'extra_tier_type' => $extraTierTypeString,
-
             ]);
 
             // Emit an event to notify that the price was updated successfully
@@ -75,6 +79,7 @@ class AddPriceModal extends Component
         } else {
             // If not in edit mode, create a new price record
             Price::create([
+                'tenant_id' => $this->tenant_id,
                 'name' => $this->name,
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
@@ -98,6 +103,8 @@ class AddPriceModal extends Component
     }
 
     public function createPrice() {
+        $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
             'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'edit_mode'
         ]);
@@ -122,6 +129,8 @@ class AddPriceModal extends Component
         $price = Price::find($id);
 
         $this->priceId = $id;
+        $this->tenant_id = $price->tenant_id;
+
         $this->name = $price->name;
         $this->priority = $price->priority;
         $this->overwrite_weekday = $price->overwrite_weekday;
@@ -136,19 +145,19 @@ class AddPriceModal extends Component
         $this->extra_tier_type = explode(',', $price->extra_tier_type);
     }
 
-    public function selectedType($type)
-    {
-        $this->reset(['area_id', 'venue_id', 'option_id', 'tier_type']);
-    }
 
     public function render()
     {
 
         $currentTenantId = Session::get('current_tenant_id');
-        $venues = Venue::where('tenant_id', $currentTenantId)->get();
-        $venueAreas = VenueArea::where('tenant_id', $currentTenantId)->get();
-        $seasons = Season::where('tenant_id', $currentTenantId)->get();
-        $options = Option::where('tenant_id', $currentTenantId)->get();
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+
+        $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
+        $venueAreas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
+        $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
+        $options = Option::whereIn('tenant_id', $tenantIds)->get();
 
         return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options'));
     }

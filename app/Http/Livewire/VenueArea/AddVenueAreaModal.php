@@ -5,6 +5,7 @@ namespace App\Http\Livewire\VenueArea;
 use Livewire\Component;
 use App\Models\VenueArea;
 use App\Models\Venue;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 
@@ -15,6 +16,7 @@ Validator::extend('at_least_one_capacity', function ($attribute, $value, $parame
 
 class AddVenueAreaModal extends Component
 {
+    public $tenant_id;
     public $venue_id;
     public $name;
     public $capacity_noseating;
@@ -49,6 +51,7 @@ class AddVenueAreaModal extends Component
             // If in edit mode, update the existing season record
             $area = VenueArea::find($this->areaId);
             $area->update([
+                'tenant_id' => $this->tenant_id,
                 'venue_id' => $this->venue_id,
                 'name' => $this->name,
                 'capacity_noseating' => $this->capacity_noseating,
@@ -62,6 +65,7 @@ class AddVenueAreaModal extends Component
            
              // Save the new venue area to the database
             VenueArea::create([
+                'tenant_id' => $this->tenant_id,
                 'venue_id' => $this->venue_id,
                 'name' => $this->name,
                 'capacity_noseating' => $this->capacity_noseating,
@@ -80,13 +84,18 @@ class AddVenueAreaModal extends Component
     {
         
         $currentTenantId = Session::get('current_tenant_id');
-        $venues = Venue::where('tenant_id', $currentTenantId)->get();
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+
+        $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
         
         return view('livewire.venue-area.add-venue-area-modal', compact('venues'));
     }
 
     public function createArea() {
         $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->reset(['venue_id', 'name', 'capacity_noseating', 'capacity_seatingrows', 'capacity_seatingtables']);
     }
 
@@ -104,10 +113,11 @@ class AddVenueAreaModal extends Component
         $this->edit_mode = true;
 
         $currentTenantId = Session::get('current_tenant_id');
-        $venueArea = VenueArea::where('id', $id)
-            ->where('tenant_id', $currentTenantId)->first();
-
+        $venueArea = VenueArea::find($id);
+        
         $this->areaId = $id;
+        $this->tenant_id = $venueArea->tenant_id;
+
         $this->venue_id = $venueArea->venue_id;
         $this->name = $venueArea->name;
         $this->capacity_noseating = $venueArea->capacity_noseating;

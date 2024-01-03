@@ -11,6 +11,7 @@ class Option extends Model
     use HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'name',
         'position',
         'type',
@@ -25,6 +26,11 @@ class Option extends Model
         'vat',
         'always_included',
     ];
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
 
     public function prices()
     {

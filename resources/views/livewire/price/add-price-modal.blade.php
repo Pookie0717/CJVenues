@@ -84,7 +84,7 @@
                         @if($type === 'option')
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.option') }}</label>
-                            <select wire:model.defer="option_id" name="option_id" class="form-select form-select-solid mb-3 mb-lg-0">
+                            <select wire:model="option_id" name="option_id" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">{{ trans('prices.selectoption') }}</option>
                                 @foreach($options as $option)
                                     <option value="{{ $option->id }}">{{ $option->name }}</option>

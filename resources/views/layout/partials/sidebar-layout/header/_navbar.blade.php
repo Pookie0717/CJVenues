@@ -7,7 +7,15 @@
             @csrf
             <select class="form-select form-select-transparent" name="tenant" id="tenant" data-placeholder="Select an organization">
                 <option>Select an Organisation</option>
-                @foreach (auth()->user()->tenants as $tenant)
+               @php
+                $currentUser = auth()->user();
+                $tenants = \App\Models\Tenant::leftJoin('tenants as t', 'tenants.parent_id', '=', 't.id')->whereHas('users', function ($query) use ($currentUser) {
+                    $query->where('user_id', $currentUser->id);
+                })
+                ->select('tenants.id', DB::raw('CONCAT(CASE WHEN t.name IS NULL THEN "" ELSE CONCAT(t.name, " - ") END, tenants.name) AS name'))
+                ->orderBy('name')->get();
+               @endphp
+                @foreach ($tenants as $tenant)
                     <option value="{{ $tenant->id }}" {{ session('current_tenant_id') == $tenant->id ? 'selected' : '' }}>
                         {{ $tenant->name }}
                     </option>

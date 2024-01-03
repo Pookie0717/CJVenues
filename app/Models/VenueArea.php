@@ -12,6 +12,7 @@ class VenueArea extends Model
     use HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'venue_id',
         'name',
         'capacity_noseating',
@@ -25,17 +26,22 @@ class VenueArea extends Model
         return $this->belongsTo(Venue::class, 'venue_id');
     }
 
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
     public function prices()
     {
         return $this->hasMany(Price::class, 'area_id');
     }
-    protected static function boot() {
-        parent::boot();
+    // protected static function boot() {
+    //     parent::boot();
 
-        self::creating(function($model) {
-            $currentTenantId = Session::get('current_tenant_id');
-            $model->tenant_id = $currentTenantId;
-        });
-    }
+    //     self::creating(function($model) {
+    //         $currentTenantId = Session::get('current_tenant_id');
+    //         $model->tenant_id = $currentTenantId;
+    //     });
+    // }
 
 }

@@ -33,6 +33,19 @@
                         @enderror
                     </div>
 
+                    <div class="fv-row mb-7">
+                        <label class="fw-semibold fs-6 mb-2">{{ trans('tenants.parent') }}</label>
+                        <select wire:model.defer="parent_id" name="parent_id" class="form-select form-select-solid mb-3 mb-lg-0">
+                            <option>{{ trans('pritenantsces.selectparent') }}</option>
+                            @foreach($rootTenants as $tenant)
+                                <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('parent_id')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    
                     <!--begin::Input groups for address details-->
                     <div class="row">
                         <!--begin::Input group for address-->
@@ -76,9 +89,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-
-                        
 
                         <!--begin::Input group for stateprovince-->
                         <div class="col-md-4 fv-row mb-7">

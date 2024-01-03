@@ -38,9 +38,9 @@ class TenantsDataTable extends DataTable
         $currentUser = auth()->user();
 
         // Filter the tenants based on the current user's associations
-        return $model->whereHas('users', function ($query) use ($currentUser) {
+        return $model->leftJoin('tenants as t', 'tenants.parent_id', '=', 't.id')->whereHas('users', function ($query) use ($currentUser) {
             $query->where('user_id', $currentUser->id);
-        });
+        })->select('tenants.id', 'tenants.name', 't.name as parent_name');
     }
 
     /**
@@ -66,6 +66,7 @@ class TenantsDataTable extends DataTable
     {
         return [
             Column::make('name')->title(trans('tenants.name'))->addClass('text-nowrap'),
+            Column::make('parent_name')->title(trans('tenants.parent'))->addClass('text-nowrap'),
             Column::computed('actions')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

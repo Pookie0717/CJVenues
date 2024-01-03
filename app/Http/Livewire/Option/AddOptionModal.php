@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Option;
 use App\Models\Season;
 use App\Models\Venue;
+use App\Models\Tenant;
 use App\Models\VenueArea;
 use App\Models\EventType;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 
 class AddOptionModal extends Component
 {
+    public $tenant_id;
     public $name;
     public $position;
     public $type;
@@ -114,6 +116,7 @@ class AddOptionModal extends Component
         $this->fill($option->toArray());
 
         // Convert the comma-separated string back to an array
+        $this->tenant_id = $option->tenant_id;
         $this->season_ids = explode(',', $option->season_ids);
         $this->venue_ids = explode(',', $option->venue_ids);
         $this->area_ids = explode(',', $option->area_ids);
@@ -148,6 +151,8 @@ class AddOptionModal extends Component
     }
 
     public function createOption() {
+        $this->edit_mode = false;
+        $this->tenant_id = Session::get('current_tenant_id');
         $this->resetFields();
     }
 
@@ -181,6 +186,7 @@ class AddOptionModal extends Component
         $eventTypeIds = implode(',', $this->eventtype_ids);
 
         return [
+            'tenant_id' => $this->tenant_id,
             'name' => $this->name,
             'position' => $this->position,
             'type' => $this->type,
@@ -237,10 +243,15 @@ class AddOptionModal extends Component
     public function render()
     {
         $currentTenantId = Session::get('current_tenant_id');
-        $seasons = Season::where('tenant_id', $currentTenantId)->get();
-        $venues = Venue::where('tenant_id', $currentTenantId)->get();
-        $areas = VenueArea::where('tenant_id', $currentTenantId)->get();
-        $eventTypes = EventType::where('tenant_id', $currentTenantId)->get();
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+        
+        $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
+        $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
+        $areas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
+        $eventTypes = EventType::whereIn('tenant_id', $tenantIds)->get();
+
         return view('livewire.option.add-option-modal', compact('seasons', 'venues', 'areas', 'eventTypes'));
     }
 }

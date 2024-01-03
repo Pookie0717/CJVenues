@@ -38,6 +38,11 @@ class EventType extends Model
         return $this->hasMany(VenueArea::class, 'venue_area_id');
     }
 
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
     protected static function boot()
     {
         parent::boot();

@@ -223,7 +223,6 @@
                         </div>
                         <!--begin::Step 1-->
 
-                        {{json_encode($options)}}
                         <!--begin::Step 1-->
                         <div class="flex-column" data-kt-stepper-element="content">
                             <!--begin::Input group-->

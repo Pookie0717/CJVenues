@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Option;
 use App\Models\Season;
 use App\Models\Venue;
+use App\Models\Tenant;
 use App\Models\VenueArea;
 use App\Models\EventType;
 use Illuminate\Support\Facades\Log;
@@ -246,10 +247,15 @@ class AddOptionModal extends Component
     public function render()
     {
         $currentTenantId = Session::get('current_tenant_id');
-        $seasons = Season::where('tenant_id', $currentTenantId)->get();
-        $venues = Venue::where('tenant_id', $currentTenantId)->get();
-        $areas = VenueArea::where('tenant_id', $currentTenantId)->get();
-        $eventTypes = EventType::where('tenant_id', $currentTenantId)->get();
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+        
+        $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
+        $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
+        $areas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
+        $eventTypes = EventType::whereIn('tenant_id', $tenantIds)->get();
+
         return view('livewire.option.add-option-modal', compact('seasons', 'venues', 'areas', 'eventTypes'));
     }
 }

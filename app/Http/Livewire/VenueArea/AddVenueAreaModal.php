@@ -5,6 +5,7 @@ namespace App\Http\Livewire\VenueArea;
 use Livewire\Component;
 use App\Models\VenueArea;
 use App\Models\Venue;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 
@@ -83,7 +84,11 @@ class AddVenueAreaModal extends Component
     {
         
         $currentTenantId = Session::get('current_tenant_id');
-        $venues = Venue::where('tenant_id', $currentTenantId)->get();
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+
+        $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
         
         return view('livewire.venue-area.add-venue-area-modal', compact('venues'));
     }
@@ -108,9 +113,8 @@ class AddVenueAreaModal extends Component
         $this->edit_mode = true;
 
         $currentTenantId = Session::get('current_tenant_id');
-        $venueArea = VenueArea::where('id', $id)
-            ->where('tenant_id', $currentTenantId)->first();
-
+        $venueArea = VenueArea::find($id);
+        
         $this->areaId = $id;
         $this->tenant_id = $venueArea->tenant_id;
 

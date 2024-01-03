@@ -19,6 +19,10 @@ class Season extends Model
         'weekdays',
         'tenant_id',
     ];
+    public function getNameAttribute($name)
+    {
+        return $name.' ['.$this->tenant->name.']';
+    }
     public function prices()
     {
         return $this->hasMany(Price::class);

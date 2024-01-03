@@ -1040,7 +1040,6 @@ class AddQuoteModal extends Component
         $currentTenantId = Session::get('current_tenant_id');
 
         // Code for parent tenant
-        $tenant = Tenant::find($currentTenantId);
         $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
         $tenantIds[] = $currentTenantId; // self and child tenant ids.
         
@@ -1053,11 +1052,11 @@ class AddQuoteModal extends Component
         // filtered contacts, venues and venue areas
         $filteredContacts = Contact::whereIn('tenant_id', $tenantIds)->get();
 
-        $tenantIds = [];
-        if($selectedEvent) {
-            $tenantIds = Tenant::where('parent_id', $selectedEvent->tenant->id)->pluck('id')->toArray();
-            $tenantIds[] = $selectedEvent->tenant->id;
-        }
+        // $tenantIds = [];
+        // if($selectedEvent) {
+        //     $tenantIds = Tenant::where('parent_id', $selectedEvent->tenant->id)->pluck('id')->toArray();
+        //     $tenantIds[] = $selectedEvent->tenant->id;
+        // }
         
         $filteredVenues = Venue::whereIn('tenant_id', $tenantIds)->get();
 

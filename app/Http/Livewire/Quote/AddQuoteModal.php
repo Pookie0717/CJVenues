@@ -67,7 +67,6 @@ class AddQuoteModal extends Component
         $this->eventTypes = [];
 
         $this->validateQuoteData();
-        // $newQuoteNumber = $this->getNewQuoteNumber();
 
         if($this->selectedOptions) {
 
@@ -121,6 +120,12 @@ class AddQuoteModal extends Component
         // selected area's tenant priceVenue.
         $priceVenue = $priceVenue + $priceBufferVenue;
 
+        $mainPriceOptions = 0;
+        $mainTenantId = VenueArea::find($this->area_id)->tenant_id;
+        $mainPriceOptionsString = '';
+        $mainOptionIds = [];
+        $mainOptionValues = [];
+
         if($this->selectedOptions) {
 
 
@@ -160,50 +165,88 @@ class AddQuoteModal extends Component
                 
                 $calculatedPrice = $priceOptions;
 
-                if(VenueArea::find($this->area_id)->tenant_id === $tenantId) $calculatedPrice += $priceVenue;
-
-                try {
-                    // Apply discount to the calculated price
-                    $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
-                } catch (\Exception $e) {
-                    // Handle exceptions related to discount parsing, e.g., flash a message to the session
-                    session()->flash('error', $e->getMessage());
-                    return;
+                if($mainTenantId === $tenantId) {
+                    $mainPriceOptions = $calculatedPrice;
+                    $mainTenantId = $tenantId;
+                    $mainPriceOptionsString = $priceOptionsString;
+                    $mainOptionIds = $optionIds;
+                    $mainOptionValues = $optionValues;
                 }
 
-                // $cleanedOptionIds.
-                Quote::create([
-                    'contact_id' => $this->contact_id,
-                    'status' => 'Draft',
-                    'version' => '1',
-                    'date_from' => $this->date_from,
-                    'date_to' => $this->date_to,
-                    'time_from' => $timeFrom,
-                    'time_to' => $timeTo,
-                    'area_id' => $this->area_id,
-                    'event_type' => $this->event_type,
-                    'event_name' => $this->event_name,
-                    'people' => $this->people,
-                    'quote_number' => $newQuoteNumber, // Assign the new quote number
-                    'calculated_price' => $calculatedPrice,
-                    'discount' => $this->discount,
-                    'price' => $totalPrice,
-                    'price_venue' => $priceVenue,
-                    'price_options' => $priceOptionsString,
-                    'options_ids' => implode("|", $optionIds),
-                    'options_values' => implode("|", $optionValues),
-                    'buffer_time_before' => $this->buffer_time_before,
-                    'buffer_time_after' => $this->buffer_time_after,
-                    'buffer_time_unit' => $this->buffer_time_unit,
-                    'tenant_id' => $tenantId
-                ]);
-                DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
+                else {
+
+                    try {
+                        // Apply discount to the calculated price
+                        $totalPrice = $this->applyDiscount($calculatedPrice, 0);
+                    } catch (\Exception $e) {
+                        // Handle exceptions related to discount parsing, e.g., flash a message to the session
+                        session()->flash('error', $e->getMessage());
+                        return;
+                    }
+    
+                    Quote::create([
+                        'contact_id' => $this->contact_id,
+                        'status' => 'Draft',
+                        'version' => '1',
+                        'date_from' => $this->date_from,
+                        'date_to' => $this->date_to,
+                        'time_from' => $timeFrom,
+                        'time_to' => $timeTo,
+                        'area_id' => $this->area_id,
+                        'event_type' => $this->event_type,
+                        'event_name' => $this->event_name,
+                        'people' => $this->people,
+                        'quote_number' => $newQuoteNumber, // Assign the new quote number
+                        'calculated_price' => $calculatedPrice,
+                        'discount' => 0,
+                        'price' => $totalPrice,
+                        'price_venue' => 0,
+                        'price_options' => $priceOptionsString,
+                        'options_ids' => implode("|", $optionIds),
+                        'options_values' => implode("|", $optionValues),
+                        'buffer_time_before' => $this->buffer_time_before,
+                        'buffer_time_after' => $this->buffer_time_after,
+                        'buffer_time_unit' => $this->buffer_time_unit,
+                        'tenant_id' => $tenantId
+                    ]);
+                    DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
+                }
 
             }
 
         } 
 
-      
+        $newQuoteNumber = $this->getNewQuoteNumber();
+
+        $calculatedPrice = $priceVenue + $mainPriceOptions;
+        $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
+
+        Quote::create([
+            'contact_id' => $this->contact_id,
+            'status' => 'Draft',
+            'version' => '1',
+            'date_from' => $this->date_from,
+            'date_to' => $this->date_to,
+            'time_from' => $timeFrom,
+            'time_to' => $timeTo,
+            'area_id' => $this->area_id,
+            'event_type' => $this->event_type,
+            'event_name' => $this->event_name,
+            'people' => $this->people,
+            'quote_number' => $newQuoteNumber, // Assign the new quote number
+            'calculated_price' => $calculatedPrice,
+            'discount' => $this->discount,
+            'price' => $totalPrice,
+            'price_venue' => $priceVenue,
+            'price_options' => $mainPriceOptionsString,
+            'options_ids' => implode("|", $mainOptionIds),
+            'options_values' => implode("|", $mainOptionValues),
+            'buffer_time_before' => $this->buffer_time_before,
+            'buffer_time_after' => $this->buffer_time_after,
+            'buffer_time_unit' => $this->buffer_time_unit,
+            'tenant_id' => $mainTenantId
+        ]);
+        DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
        
         // Emit an event to notify that the quote was created successfully
         $this->emit('success', 'Quote successfully added');
@@ -1136,7 +1179,7 @@ class AddQuoteModal extends Component
                 foreach ($allSeasonIds as $allSeasonId) {
                     $q->orWhereRaw("FIND_IN_SET(?, season_ids)", [$allSeasonId]);
                 }
-            });
+            })->orWhereNull('season_ids')->orWhere('season_ids', '');
         });
 
         
@@ -1152,7 +1195,7 @@ class AddQuoteModal extends Component
         if ($selectedArea && !$selectedArea->tenant->isMain()) {
             $optionsQuery->where(function ($query) use ($selectedArea) {
                 $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
-                        ->orWhereNull('area_ids');
+                        ->orWhereNull('area_ids')->orWhere('area_ids', '');
             });
         }
 
@@ -1172,7 +1215,7 @@ class AddQuoteModal extends Component
             if ($option->type === 'logic') {
                 $option->value = $this->calculateLogicOptionValues($option->id);
             }
-            // $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
+            $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
         }
     }
 

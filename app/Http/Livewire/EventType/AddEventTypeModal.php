@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\EventType;
 use App\Models\Season;
 use App\Models\VenueArea;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
 
@@ -144,8 +145,12 @@ class AddEventTypeModal extends Component
     public function render()
     {
         $currentTenantId = Session::get('current_tenant_id');
-        $seasonsList = Season::where('tenant_id', $currentTenantId)->get();
-        $venueAreas = VenueArea::where('tenant_id', $currentTenantId)->get();
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+
+        $seasonsList = Season::whereIn('tenant_id', $tenantIds)->get();
+        $venueAreas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
 
         return view('livewire.event-type.add-event-type-modal', compact('seasonsList','venueAreas'));
     }

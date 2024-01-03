@@ -150,11 +150,14 @@ class AddPriceModal extends Component
     {
 
         $currentTenantId = Session::get('current_tenant_id');
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
 
-        $venues = Venue::where('tenant_id', $currentTenantId)->get();
-        $venueAreas = VenueArea::where('tenant_id', $currentTenantId)->get();
-        $seasons = Season::where('tenant_id', $currentTenantId)->get();
-        $options = Option::where('tenant_id', $currentTenantId)->get();
+        $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
+        $venueAreas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
+        $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
+        $options = Option::whereIn('tenant_id', $tenantIds)->get();
 
         return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options'));
     }

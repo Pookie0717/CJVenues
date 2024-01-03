@@ -49,6 +49,7 @@ class UsersAssignedRoleDataTable extends DataTable
             ->whereHas('roles', function ($query) {
                 $query->where('role_id', $this->role->getKey());
             });
+    }
 
     /**
      * Optional method if you want to use the html builder.

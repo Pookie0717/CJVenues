@@ -27,108 +27,19 @@
                             <!--end::Input group-->
                         </div>
 
-            <!--begin::Step 1-->
-            <div class="flex-column" data-kt-stepper-element="content">
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="eventSelect" class="form-label">Select Event:</label>
-                                    <select class="form-select" id="eventNameSelect" wire:model="eventName" wire:change="loadEventTypes">
-                                        <option value="">Select an event</option>
-                                        <option value="wedding">Wedding</option>
-                                <option value="birthday">Birthday Party</option>
-                                <option value="summer">Summer Party</option>
-                                <option value="corporate">Corporate Event</option>
-                                <!-- Add more options as needed -->
-                                    </select>
-                </div>
-                <!--end::Input group-->
-
-                 <!--begin::Input group-->
-                 <div class="fv-row mb-10">
-                    <label for="eventSelect" class="form-label">Select Event Type:</label>
-                    <select class="form-select" id="eventSelect" wire:model="event_type">
-                        <option value="">Select an event</option>
-                        @foreach ($eventTypes as $event)
-                            <option value="{{ $event->id }}">{{ $event->event_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <!--end::Input group-->
-
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="people" class="form-label">How many people will attend?</label>
-                    <input type="number" wire:model.defer="people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number of people"
-                    id="people" min="{{$selectedEvent? $selectedEvent->min_people: 0}}" max="{{$selectedEvent? $selectedEvent->max_people: 0}}"
-                    />
-
-                </div>
-                <!--end::Input group-->
-
-                <!--begin::Step 1-->
-                <div class="flex-column mb-10" data-kt-stepper-element="content">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-10">
-
-                        <div class="row">
-                            <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2" for="date_from_picker_input">Date From</label>
-                                <div class="input-group log-event" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                    <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker_basic"/>
-                                    <span class="input-group-text" data-td-target="#date_from_picker_basic" data-td-toggle="datetimepicker">
-                                        <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                    </span>
-                                </div>
-                                @error('date_from')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="col">
-                                <label class="required fw-semibold fs-6 mb-2" for="date_to_picker_input">Date To</label>
-                                <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                    <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker_basic"/>
-                                    <span class="input-group-text" data-td-target="#date_to_picker_basic" data-td-toggle="datetimepicker">
-                                        <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                    </span>
-                                </div>
-                                @error('date_to')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-
-                    <!-- Add this code inside your Blade template -->
-                    @foreach ($time_ranges as $date => $time_range)
-                        <div class="fv-row mb-10 d-none">
-                            <div class="row">
-                                <div class="col">
-                                    <label class="required fw-semibold fs-6 mb-2">Time From ({{ $date }})</label>
-                                    <div class="input-group" id="time_from_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                        <input id="time_from_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_from" class="form-control" data-td-target="#time_from_picker_{{ $loop->index }}"/>
-                                        <span class="input-group-text" data-td-target="#time_from_picker_basic_{{ $loop->index }}" data-td-toggle="datetimepicker">
-                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                        </span>
-                                    </div>
-                                    @error("time_ranges.$date.time_from")
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <div class="col">
-                                    <label class="required fw-semibold fs-6 mb-2">Time To ({{ $date }})</label>
-                                    <div class="input-group" id="time_to_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                        <input id="time_to_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_to" class="form-control" data-td-target="#time_to_picker_{{ $loop->index }}"/>
-                                        <span class="input-group-text" data-td-target="#time_to_picker_basic_{{ $loop->index }}" data-td-toggle="datetimepicker">
-                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                        </span>
-                                    </div>
-                                    @error("time_ranges.$date.time_to")
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                        <!--begin::Step 1-->
+                        <div class="flex-column" data-kt-stepper-element="content">
+                            <!--begin::Input group-->
+                            <div class="fv-row mb-10">
+                                <label for="eventSelect" class="form-label">Select Event:</label>
+                                                <select class="form-select form-select-solid" id="eventNameSelect" wire:model="event_name">
+                                                    <option value="">Select an event</option>
+                                                    <option value="wedding">Wedding</option>
+                                                    <option value="birthday">Birthday Party</option>
+                                                    <option value="summer">Summer Party</option>
+                                                    <option value="corporate">Corporate Event</option>
+                                                    <!-- Add more options as needed -->
+                                                </select>
                             </div>
                             <!--end::Input group-->
 
@@ -156,35 +67,36 @@
 
                             <!--begin::Step 1-->
                             <div class="flex-column mb-10" data-kt-stepper-element="content">
-                                <!--begin::Input group-->
+                               <!--begin::Input group-->
                                 <div class="fv-row mb-10">
-                                    <div class="row">
-                                                <div class="col">
-                                                    <label class="required fw-semibold fs-6 mb-2">Date From</label>
-                                                    <div class="input-group" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                                        <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker"/>
-                                                        <span class="input-group-text" data-td-target="#date_from_picker" data-td-toggle="datetimepicker">
-                                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                                        </span>
-                                                    </div>
-                                                    @error('date_from')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
 
-                                                <div class="col">
-                                                    <label class="required fw-semibold fs-6 mb-2">Date To</label>
-                                                    <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                                        <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker"/>
-                                                        <span class="input-group-text" data-td-target="#date_to_picker" data-td-toggle="datetimepicker">
-                                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                                        </span>
-                                                    </div>
-                                                    @error('date_to')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                                </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label class="required fw-semibold fs-6 mb-2" for="date_from_picker_input">Date From</label>
+                                            <div class="input-group log-event" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                                <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker_basic"/>
+                                                <span class="input-group-text" data-td-target="#date_from_picker_basic" data-td-toggle="datetimepicker">
+                                                    <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                                </span>
+                                            </div>
+                                            @error('date_from')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col">
+                                            <label class="required fw-semibold fs-6 mb-2" for="date_to_picker_input">Date To</label>
+                                            <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                                <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker_basic"/>
+                                                <span class="input-group-text" data-td-target="#date_to_picker_basic" data-td-toggle="datetimepicker">
+                                                    <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                                </span>
+                                            </div>
+                                            @error('date_to')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                                 <!--end::Input group-->
 
@@ -491,8 +403,8 @@
                     if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
                     if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
                 } else {
-                    if(duration < minDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - minDuration, 0));
-                    if(duration > maxDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - maxDuration, 0));
+                    if(duration < minDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - minDuration);
+                    if(duration > maxDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - maxDuration);
                 }
                 Livewire.emit('update_time_range', {index, date, values});
                 slider.noUiSlider.updateOptions({

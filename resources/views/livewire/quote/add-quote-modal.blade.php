@@ -403,8 +403,8 @@
                     if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
                     if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
                 } else {
-                    if(duration < minDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - minDuration);
-                    if(duration > maxDuration) values[0] = convertDecimalToTime(convertTimeToDecimal(values[1]) - maxDuration);
+                    if(duration < minDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - minDuration, 0));
+                    if(duration > maxDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - maxDuration, 0));
                 }
                 Livewire.emit('update_time_range', {index, date, values});
                 slider.noUiSlider.updateOptions({

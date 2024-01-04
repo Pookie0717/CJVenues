@@ -25,20 +25,10 @@ class AddContactModal extends Component
     public $country;
     public $notes;
     public $contactId;
-    
-    public $countries;
-    public $states = [];
 
     public $edit_mode = false;
 
-    public function mount()
-    {
-        $country = new Countries();
-        $this->countries = $country->all()->pluck('name.common', 'cca3')->toArray();
-        asort($this->countries);
-        $this->states = [];
-    }
-
+ 
     protected $listeners = [
         'create_contact' => 'createContact',
         'delete_contact' => 'deleteContact',
@@ -111,13 +101,13 @@ class AddContactModal extends Component
         }
 
         // Reset the form fields
-        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
     }
 
     public function createContact() {
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
-        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes', 'states']);
+        $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
     }
 
     public function deleteContact($id)
@@ -152,20 +142,20 @@ class AddContactModal extends Component
         $this->state = $contact->state;
         $this->country = $contact->country;
         $this->notes = $contact->notes;
-        $this->updatedCountry($contact->country);
-    }
-
-    public function updatedCountry($countryCode)
-    {
-        $country = new Countries();
-        $country = $country->where('cca3', $countryCode)->first();
-        if($country) {
-            $this->states = sizeof($country) > 0 ? $country->hydrate('states')->states->pluck('name', 'postal')->toArray(): [];
-        }
     }
 
     public function render()
     {
-        return view('livewire.contact.add-contact-modal');
+        $country = new Countries();
+        $countries = $country->all()->pluck('name.common', 'cca3')->toArray();
+        asort($countries);
+
+        $country = $country->where('cca3', $this->country)->first();
+        $states = [];
+        if($country) {
+            $states = sizeof($country) > 0 ? $country->hydrate('states')->states->pluck('name', 'postal')->toArray(): [];
+        }
+       
+        return view('livewire.contact.add-contact-modal', compact('countries', 'states'));
     }
 }

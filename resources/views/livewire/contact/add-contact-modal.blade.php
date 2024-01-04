@@ -106,7 +106,7 @@
                                 <select class="form-select form-select-solid" name="country" wire:model="country">
                                     <option>{{ trans('fields.selectacountry') }}</option>
                                     @foreach ($countries as $code => $name)
-                                        <option value="{{ $code }}" {{ $code == $this->country ? 'selected' : '' }}>{{ $name }}</option>
+                                        <option value="{{ $code }}">{{ $name }}</option>
                                     @endforeach
                                 </select>
                                 @error('country')

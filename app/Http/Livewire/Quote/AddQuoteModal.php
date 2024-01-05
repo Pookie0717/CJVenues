@@ -192,7 +192,7 @@ class AddQuoteModal extends Component
                         'date_to' => $this->date_to,
                         'time_from' => $timeFrom,
                         'time_to' => $timeTo,
-                        'area_id' => $this->area_id,
+                        'area_id' => 0,
                         'event_type' => $this->event_type,
                         'event_name' => $this->event_name,
                         'people' => $this->people,

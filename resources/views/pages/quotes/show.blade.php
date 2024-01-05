@@ -205,6 +205,7 @@
                                         </thead>
 
                                         <tbody>
+                                            @if($quote->price_venue != 0)
                                             <tr class="fw-bold text-gray-700 fs-5">
                                                 <td class="d-flex align-items-center text-left pt-6">
                                                     <i class="fa fa-genderless text-danger fs-2 me-2"></i>
@@ -215,6 +216,7 @@
                                                 <td class="pt-6 text-end">$ {{ number_format($quote->price_venue, 2) }}</td>
                                                 <td class="pt-6 text-dark fw-bolder text-end">$ {{ number_format($quote->price_venue, 2) }}</td>
                                             </tr>
+                                            @endif
                                             <!-- Additional row for options and priceOption -->
                                             @php
                                                 // Convert the price_options string into an array
@@ -238,9 +240,9 @@
                                                         <td class="d-flex align-items-center text-left pt-6">
                                                             <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
-                                                                {{ $optionWithValue['option']->name }}
+                                                                {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
                                                             @else
-                                                                {{ $optionWithValue['option']->name }}
+                                                                {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
                                                             @endif
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $value }}</td>

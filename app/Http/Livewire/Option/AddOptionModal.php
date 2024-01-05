@@ -243,8 +243,13 @@ class AddOptionModal extends Component
     public function render()
     {
         $currentTenantId = Session::get('current_tenant_id');
+        $tenant = Tenant::find($currentTenantId);
         $tenantIds = [];
-        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        if($tenant->isMain()) {
+            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        } else {
+            $tenantIds[] = $tenant->parent_id;
+        }
         $tenantIds[] = $currentTenantId;
         
         $seasons = Season::whereIn('tenant_id', $tenantIds)->get();

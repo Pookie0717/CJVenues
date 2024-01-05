@@ -394,17 +394,17 @@
             });
 
             slider.noUiSlider.on("change", function (values, handle) {
-                const maxDuration = Number(event.detail.selectedEvent?event.detail.selectedEvent["max_duration"]: 24);
-                const minDuration = Number(event.detail.selectedEvent?event.detail.selectedEvent["min_duration"]: 24);
-                console.log(maxDuration, minDuration)
-                const duration = convertTimeToDecimal(values[1]) - convertTimeToDecimal(values[0]);
-                if(handle) {
-                    if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
-                    if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
-                } else {
-                    if(duration < minDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - minDuration, 0));
-                    if(duration > maxDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - maxDuration, 0));
-                }
+                // const maxDuration = Number(event.detail.selectedEvent?event.detail.selectedEvent["max_duration"]: 24);
+                // const minDuration = Number(event.detail.selectedEvent?event.detail.selectedEvent["min_duration"]: 24);
+                // console.log(maxDuration, minDuration)
+                // const duration = convertTimeToDecimal(values[1]) - convertTimeToDecimal(values[0]);
+                // if(handle) {
+                //     if(duration < minDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + minDuration);
+                //     if(duration > maxDuration) values[1] = convertDecimalToTime(convertTimeToDecimal(values[0]) + maxDuration);
+                // } else {
+                //     if(duration < minDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - minDuration, 0));
+                //     if(duration > maxDuration) values[0] = convertDecimalToTime(Math.max(convertTimeToDecimal(values[1]) - maxDuration, 0));
+                // }
                 Livewire.emit('update_time_range', {index, date, values});
                 slider.noUiSlider.updateOptions({
                     start: [

@@ -84,8 +84,9 @@ class AddQuoteModal extends Component
             $cleanedOptionIds = [];
             $cleanedOptionValues = [];
             $cleanedOptionTenantIds = [];
-
+           
             foreach ($optionValues as $index => $value) {
+                Log::info("-----optionValues loop". $index . "-". $value);
                 if ($value !== '' && $value != 0) {
                     $cleanedOptionIds[] = $optionIds[$index];
                     $cleanedOptionValues[] = $value;
@@ -379,8 +380,8 @@ class AddQuoteModal extends Component
 
         $tenantIds = [];
         if($selectedArea) {
-            $tenantIds = Tenant::where('parent_id', $selectedArea->tenant_id)->pluck('id')->toArray();
-            $tenantIds[] = $selectedArea->tenant_id;
+            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+            $tenantIds[] = $currentTenantId;
         }
 
         // Query for seasons that match the date, weekday, and tenant_id
@@ -886,7 +887,6 @@ class AddQuoteModal extends Component
 
     public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues, $optionTenantIds, $people)
     {
-        Log::info("optionIds". json_encode($optionIds));
 
         // Convert the date strings to Carbon instances
         $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
@@ -1158,8 +1158,8 @@ class AddQuoteModal extends Component
 
         $tenantIds = [];
         if($selectedArea) {
-            $tenantIds = Tenant::where('parent_id', $selectedArea->tenant_id)->pluck('id')->toArray();
-            $tenantIds[] = $selectedArea->tenant_id;
+            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+            $tenantIds[] = $currentTenantId;
         }
         
         // Get the seasons for the selected date and weekday
@@ -1192,12 +1192,12 @@ class AddQuoteModal extends Component
             });
         }*/
 
-        if ($selectedArea && !$selectedArea->tenant->isMain()) {
-            $optionsQuery->where(function ($query) use ($selectedArea) {
-                $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
-                        ->orWhereNull('area_ids')->orWhere('area_ids', '');
-            });
-        }
+        // if ($selectedArea && !$selectedArea->tenant->isMain()) {
+        //     $optionsQuery->where(function ($query) use ($selectedArea) {
+        //         $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
+        //                 ->orWhereNull('area_ids')->orWhere('area_ids', '');
+        //     });
+        // }
 
         
 
@@ -1215,7 +1215,7 @@ class AddQuoteModal extends Component
             if ($option->type === 'logic') {
                 $option->value = $this->calculateLogicOptionValues($option->id);
             }
-            $this->selectedOptions[$option->id] = $option->value ?? $option->default_value;
+            $this->selectedOptions[$option->id] = $this->selectedOptions[$option->id] ?? $option->value ?? $option->default_value;
         }
     }
 

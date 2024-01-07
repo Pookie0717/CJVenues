@@ -87,7 +87,7 @@ class AddQuoteModal extends Component
            
             foreach ($optionValues as $index => $value) {
                 Log::info("-----optionValues loop". $index . "-". $value);
-                if ($value !== '' && $value != 0) {
+                if ($value !== '' && $value != 0 && $value !== 'no') {
                     $cleanedOptionIds[] = $optionIds[$index];
                     $cleanedOptionValues[] = $value;
                     $cleanedOptionTenantIds[] = Option::find($optionIds[$index])->tenant->id;
@@ -139,6 +139,8 @@ class AddQuoteModal extends Component
             // Loop through the regular option prices
             foreach ($priceOptionsStringArray as $tenantId => $item) {
 
+
+                
                 $newQuoteNumber = $this->getNewQuoteNumber();
 
                 Log::info('Option Price for ID ' . json_encode($item['totalPrice']) . ': ' . json_encode($item['individualPrices']));
@@ -152,7 +154,6 @@ class AddQuoteModal extends Component
 
                 // Your existing code to handle the price options string and calculate the final prices
                 $priceOptionsString = implode('|', array_values($item['individualPrices']));
-
 
                 $optionIds = [];
                 $optionValues = [];
@@ -253,7 +254,29 @@ class AddQuoteModal extends Component
         $this->emit('success', 'Quote successfully added');
 
         // Reset the form fields
-        $this->reset(['contact_id', 'status', 'version', 'date_from', 'date_to', 'time_from', 'time_to', 'area_id', 'event_type','event_name', 'edit_mode', 'quoteId', 'calculated_price', 'people', 'discount', 'price', 'price_venue', 'price_options', 'options_ids' , 'options_values']);
+        $this->reset([
+            'contact_id',
+            'status', 
+            'version', 
+            'date_from', 
+            'date_to', 
+            'time_from', 
+            'time_to', 
+            'area_id', 
+            'event_type',
+            'event_name', 
+            'edit_mode', 
+            'quoteId', 
+            'calculated_price', 
+            'people', 
+            'discount', 
+            'price', 
+            'price_venue', 
+            'price_options', 
+            'options_ids' , 
+            'options_values',
+            'time_ranges'
+        ]);
     }
 
     public function isValidRange() {
@@ -269,6 +292,7 @@ class AddQuoteModal extends Component
             'people' => 'required',
             'time_ranges.*.time_from' => 'required',
             'time_ranges.*.time_to' => 'required',
+            'discount' => 'required|integer',
         ]);
     }
 
@@ -911,9 +935,12 @@ class AddQuoteModal extends Component
 
             // Iterate through the matching seasons for the current date
             foreach ($matchingSeasons as $season) {
+               
                 
 
                 foreach (explode('|', $optionIds) as $index => $optionId) {
+
+
                     $optionValue = explode('|', $optionValues)[$index];
                     $optionTenantId = explode('|', $optionTenantIds)[$index];
 
@@ -937,6 +964,7 @@ class AddQuoteModal extends Component
                         $pricesMap[$optionTenantId]["individualPrices"][$optionId] = 0;
                     }
 
+                    
                     if ($optionPrice) {
                         $multiplierValue = (float)$optionPrice->price;
                         $optionTotalPrice = $this->calculateOptionPrice(

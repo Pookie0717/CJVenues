@@ -189,7 +189,7 @@
                         <div class="row mb-7">
                             <div class="col">
                                 <label class="required fw-semibold fs-6 mb-2">{{ trans('events.season') }}</label>
-                                <select wire:model="selectedSeasons" name="seasons[]" class="form-select form-select-solid" multiple>
+                                <select wire:model.defer="selectedSeasons" name="seasons[]" class="form-select form-select-solid" multiple>
                                     @foreach($seasonsList as $season)
                                         <option value="{{ $season->id }}">{{ $season->name }}</option>
                                     @endforeach

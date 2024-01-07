@@ -44,8 +44,10 @@ class UsersAssignedRoleDataTable extends DataTable
         $currentTenantId = Session::get('current_tenant_id');
 
         // Query the VenueArea records, filter by tenant_id, and filter by roles
-        return $model->newQuery()
-            ->where('tenant_id', $currentTenantId)
+        return $model->newQuery()->with('tenants')
+            ->whereHas('tenants', function ($query) use ($currentTenantId) {
+                $query->where('id', $currentTenantId);
+            })
             ->whereHas('roles', function ($query) {
                 $query->where('role_id', $this->role->getKey());
             });

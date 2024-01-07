@@ -245,14 +245,19 @@ class AddOptionModal extends Component
         $currentTenantId = Session::get('current_tenant_id');
         $tenant = Tenant::find($currentTenantId);
         $tenantIds = [];
-        // if($tenant->isMain()) {
-        //     $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-        // } else {
-        //     $tenantIds[] = $tenant->parent_id;
-        // }
+        if($tenant->isMain()) {
+            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        } else {
+            $tenantIds[] = $tenant->parent_id;
+        }
         $tenantIds[] = $currentTenantId;
         
-        $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
+        if($this->edit_mode) {
+            $optionTenantId = Option::find($this->optionId)->tenant_id;
+        } else {
+            $optionTenantId = $currentTenantId;
+        }
+        $seasons = Season::where('tenant_id', $optionTenantId)->get();
         $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
         $areas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
         $eventTypes = EventType::whereIn('tenant_id', $tenantIds)->get();

@@ -10,137 +10,6 @@
             <div class="modal-body scroll-y">
                 <!--begin::Stepper-->
                 <div class="stepper stepper-pills" id="kt_stepper_example_basic">
-                    <!--begin::Nav-->
-                    <div class="stepper-nav flex-center flex-wrap mb-10">
-                        <!--begin::Step 1-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">1</span>
-                                </div>
-                                <!--end::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 1-->
-
-                        <!--begin::Step 2-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 2?'current': ($stepperIndex > 2 ?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">2</span>
-                                </div>
-                                <!--begin::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 2-->
-
-                        <!--begin::Step 3-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 3?'current': ($stepperIndex > 3?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">3</span>
-                                </div>
-                                <!--begin::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 3-->
-
-                        <!--begin::Step 4-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 4?'current': ($stepperIndex > 4?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">4</span>
-                                </div>
-                                <!--begin::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 4-->
-                        <!--begin::Step 5-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 5?'current': ($stepperIndex > 5?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">5</span>
-                                </div>
-                                <!--begin::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 5-->
-
-                        <div class="stepper-item my-4 {{$stepperIndex == 6?'current': ($stepperIndex > 6?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">6</span>
-                                </div>
-                                <!--begin::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-
-                        <div class="stepper-item my-4 {{$stepperIndex == 7?'current': ($stepperIndex > 7?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">7</span>
-                                </div>
-                                <!--begin::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                    </div>
-                    <!--end::Nav-->
 
                     <!--begin::Form-->
                     <form class="form mx-auto " novalidate="novalidate" id="kt_stepper_example_basic_form" wire:submit.prevent="submit">
@@ -148,7 +17,9 @@
                         <div class="mb-5 scroll px-5" style="height: 60vh">
                             <!--begin::Step 1-->
                             <div class="flex-column {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="content">
-                                    <!--begin::Input group-->
+                                <span class="text-center text-primary bg-light-primary p-4">Contact</span>
+                                <div class="separator my-4"></div>
+                                <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="contactSelect" class="form-label">Select Contact:</label>
                                     <select class="form-select form-select-solid" id="contactSelect" wire:model="contact_id">
@@ -164,6 +35,8 @@
 
                             <!--begin::Step 2-->
                             <div class="flex-column {{$stepperIndex == 2?'current': ($stepperIndex > 2?'completed': '')}}" data-kt-stepper-element="content">
+                                <span class="text-center text-primary bg-light-primary p-4">Event and Event Type</span>
+                                <div class="separator my-4"></div>
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="eventNameSelect" class="form-label">Select Event:</label>
@@ -194,9 +67,11 @@
 
                             <!--begin::Step 3-->
                             <div class="flex-column {{$stepperIndex == 3?'current': ($stepperIndex > 3?'completed': '')}}" data-kt-stepper-element="content">
+                                <span class="text-center text-primary bg-light-primary p-4">How Many People will attend?</span>
+                                <div class="separator my-4"></div>
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
-                                    <label for="people" class="form-label">How many people will attend?</label>
+                                    <label for="people" class="form-label">How many people will attend</label>
                                     <input type="number" class="form-control form-control-solid mb-3 mb-lg-0"
                                         wire:model.defer="people" 
                                         placeholder="Number of people" id="people"
@@ -211,6 +86,8 @@
 
                             <!--begin::Step 4-->
                             <div class="flex-column {{$stepperIndex == 4?'current': ($stepperIndex > 4?'completed': '')}}" data-kt-stepper-element="content">
+                                <span class="text-center text-primary bg-light-primary p-4">Date and Buffer</span>
+                                <div class="separator my-4"></div>
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <div class="row">
@@ -340,6 +217,8 @@
 
                             <!--begin::Step 5-->
                             <div class="flex-column {{$stepperIndex == 5?'current': ($stepperIndex > 5?'completed': '')}}" data-kt-stepper-element="content">
+                                <span class="text-center text-primary bg-light-primary p-4">Venue and Area</span>
+                                <div class="separator my-4"></div>
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="selectedVenueId" class="form-label">Select Venue:</label>
@@ -367,102 +246,79 @@
                             <!--begin::Step 5-->
 
                             <div class="flex-column {{$stepperIndex == 6?'current': ($stepperIndex > 6?'completed': '')}}" data-kt-stepper-element="content">
-                                @if($options && sizeof($options) > 0)
+                                <span class="text-center text-primary bg-light-primary p-4">Options</span>
+                                <div class="separator my-4"></div>
                                 <!-- Loop through each option and render based on kind -->
-                                    @foreach ($options as $option)
-                                        <div class="fv-row mb-10">
-                                            <!-- For 'yes_no', show a select dropdown with Yes and No options -->
-                                            @if($option->type === 'yes_no')
-                                                <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                                                <select class="form-select form-select-solid" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
-                                                    <option value="">Select Yes/No</option>
-                                                    <option value="yes">Yes</option>
-                                                    <option value="no">No</option>
-                                                </select>
-                                            @endif
+                                @foreach ($options as $option)
+                                    <div class="fv-row mb-10">
+                                        <!-- For 'yes_no', show a select dropdown with Yes and No options -->
+                                        @if($option->type === 'yes_no')
+                                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
+                                            <select class="form-select form-select-solid" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
+                                                <option value="">Select Yes/No</option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        @endif
 
-                                            <!-- For 'check', show checkboxes for each value -->
-                                            @if($option->type === 'check')
-                                                <label class="form-label">{{ $option->name }}:</label>
+                                        <!-- For 'check', show checkboxes for each value -->
+                                        @if($option->type === 'check')
+                                            <label class="form-label">{{ $option->name }}:</label>
+                                            @foreach(explode('|', $option->values) as $value)
+                                                <div>
+                                                    <input type="checkbox" wire:change="updateCheckboxOption({{ $option->id }}, '{{ $value }}', $event.target.checked)">
+                                                    <label>{{ $value }}</label>
+                                                </div>
+                                            @endforeach
+                                        @endif
+
+                                        <!-- For 'radio', show radio buttons for each value -->
+                                        @if($option->type === 'radio')
+                                            <label class="form-label mb-5">{{ $option->name }}:</label>
+                                            @foreach(explode('|', $option->values) as $value)
+                                                <div class="form-check form-check-custom form-check-solid mb-5">
+                                                    <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}" name="selectedOptions{{ $option->id }}"/>
+                                                    <label class="form-check-label" for="selectedOptions{{ $option->id }}">
+                                                        {{ $value }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        @endif
+
+                                        <!-- For 'dropdown', show dropdown for each value -->
+                                        @if($option->type === 'dropdown')
+                                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
+                                            <select class="form-select form-select-solid" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
                                                 @foreach(explode('|', $option->values) as $value)
-                                                    <div>
-                                                        <input type="checkbox" wire:change="updateCheckboxOption({{ $option->id }}, '{{ $value }}', $event.target.checked)">
-                                                        <label>{{ $value }}</label>
-                                                    </div>
+                                                    <option value="{{$value}}">{{$value}}</option>
                                                 @endforeach
-                                            @endif
+                                            </select>
+                                        @endif
 
-                                            <!-- For 'radio', show radio buttons for each value -->
-                                            @if($option->type === 'radio')
-                                                <label class="form-label mb-5">{{ $option->name }}:</label>
-                                                @foreach(explode('|', $option->values) as $value)
-                                                    <div class="form-check form-check-custom form-check-solid mb-5">
-                                                        <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}" name="selectedOptions{{ $option->id }}"/>
-                                                        <label class="form-check-label" for="selectedOptions{{ $option->id }}">
-                                                            {{ $value }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                            @endif
+                                        <!-- For 'number', show number input -->
+                                        @if($option->type === 'number')
+                                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
+                                            <input type="number" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
+                                        @endif
 
-                                            <!-- For 'dropdown', show dropdown for each value -->
-                                            @if($option->type === 'dropdown')
-                                                <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                                                <select class="form-select form-select-solid" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
-                                                    @foreach(explode('|', $option->values) as $value)
-                                                        <option value="{{$value}}">{{$value}}</option>
-                                                    @endforeach
-                                                </select>
-                                            @endif
+                                        <!-- For 'number', show number input -->
+                                        @if($option->type === 'hidden')
+                                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
+                                            <input type="hidden" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
+                                        @endif
 
-                                            <!-- For 'number', show number input -->
-                                            @if($option->type === 'number')
-                                                <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                                                <input type="number" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
-                                            @endif
+                                        <!-- For 'logic', show number input -->
+                                        @if($option->type === 'logic')
+                                            <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->value }}" />
+                                        @endif
 
-                                            <!-- For 'number', show number input -->
-                                            @if($option->type === 'hidden')
-                                                <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                                                <input type="hidden" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
-                                            @endif
-
-                                            <!-- For 'logic', show number input -->
-                                            @if($option->type === 'logic')
-                                                <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->value }}" />
-                                            @endif
-
-                                        </div>
-                                    @endforeach
-                                @else
-                                <!--begin::Alert-->
-                                <div class="alert alert-primary w-450px mx-auto bg-primary d-flex align-items-center p-5">
-                                    <!--begin::Icon-->
-                                    <i class="ki-duotone ki-directbox-default fs-2hx text-light me-4">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                        </i>
-                                    <!--end::Icon-->
-
-                                    <!--begin::Wrapper-->
-                                    <div class="d-flex flex-column text-light">
-                                        <!--begin::Title-->
-                                        <h4 class="mb-1 text-light">Notification</h4>
-                                        <!--end::Title-->
-
-                                        <!--begin::Content-->
-                                        <span>There is no option.</span>
-                                        <!--end::Content-->
                                     </div>
-                                    <!--end::Wrapper-->
-                                </div>
-                                <!--end::Alert-->
-                                @endif
+                                @endforeach
                             </div>
                             
                             <div class="flex-column {{$stepperIndex == 7?'current': ($stepperIndex > 7?'completed': '')}}" data-kt-stepper-element="content">
+                                <span class="text-center text-primary bg-light-primary p-4">Discount</span>
+                                <div class="separator my-4"></div>
                                 <div class="fv-row mb-10">
                                     <label for="discountField" class="form-label">Discount:</label>
                                     <input type="text" wire:model.defer="discount" class="form-control form-control-solid" placeholder="Enter a number or a percentage (e.g., 20 or 15%)" id="discountField" />
@@ -523,12 +379,20 @@
 
     // Handle next step
     stepper.on("kt.stepper.next", function (stepper) {
+        // stepper.goNext(); // go next step
         Livewire.emit('set_stepper_index', 1)
+        if(stepper.passedStepIndex === 4 && document.querySelectorAll('[data-kt-stepper-element="content"]')[5].innerText.trim() == '') {
+            Livewire.emit('set_stepper_index', 1)
+        }
     });
 
     // Handle previous step
     stepper.on("kt.stepper.previous", function (stepper) {
+        // stepper.goPrevious(); // go previous step
         Livewire.emit('set_stepper_index', -1)
+        if(stepper.passedStepIndex === 6 && document.querySelectorAll('[data-kt-stepper-element="content"]')[5].innerText.trim() == '') {
+            Livewire.emit('set_stepper_index', -1)
+        }
     });
 
     document.addEventListener('livewire:load', function () {
@@ -537,7 +401,6 @@
         })
     });
 
-    
 </script>
 
 <script>

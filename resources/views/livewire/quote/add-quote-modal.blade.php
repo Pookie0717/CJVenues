@@ -219,7 +219,7 @@
                                 <span class="text-center text-primary bg-light-primary p-4">Date and Buffer</span>
                                 <div class="separator my-4"></div>
                                 <!--begin::Input group-->
-                                <div class="fv-row mb-10">
+                                <div class="fv-row mb-4">
                                     <div class="row">
                                         <div class="col">
                                             <label class="required fw-semibold fs-6 mb-2" for="date_from_picker_input">Date From</label>
@@ -288,7 +288,7 @@
                                     </div>
                                 @endforeach
 
-                                <div class="fv-row mb-10">
+                                <div class="fv-row mt-10">
                                     <div class="row">
                                         <!-- Buffer Time Before the Event Start -->
                                         <div class="col">

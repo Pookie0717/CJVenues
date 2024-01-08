@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Session;
 
 class AddQuoteModal extends Component
 {
+    public $stepperIndex = 1;
     public $contact_id;
     public $status;
     public $version;
@@ -53,13 +54,17 @@ class AddQuoteModal extends Component
 
     public $edit_mode = false;
 
-    public $is_invalid_range = true;
-
     protected $listeners = [
         'delete_quote' => 'deleteQuote',
         'update_time_range' => 'updateTimeRange',
-        'update_date_range' => 'updateDateRange'
+        'update_date_range' => 'updateDateRange',
+        'set_stepper_index' => 'setStepperIndex',
     ];
+
+    public function setStepperIndex($type) {
+        $this->stepperIndex += intval($type);
+        $this->dispatchBrowserEvent('stepper-index-updated', ['index' => $this->stepperIndex]);
+    }
 
     public function submit()
     {
@@ -255,6 +260,7 @@ class AddQuoteModal extends Component
 
         // Reset the form fields
         $this->reset([
+            'stepperIndex',
             'contact_id',
             'status', 
             'version', 
@@ -319,9 +325,6 @@ class AddQuoteModal extends Component
         $this->date_from = $range[0];
         $this->date_to = $range[1];
         $this->calculateTimeRanges();
-        $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
-        $end = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_to);
-        $this->is_invalid_range = $start->gt($end);
     }
 
     public function updateTimeRange($data) {

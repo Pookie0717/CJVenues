@@ -207,14 +207,12 @@
                                 </div>
                                 <!--end::Input group-->
 
-                                @if(sizeof($filteredContacts) == 0)
                                 <div class="fv-row mb-10">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_contact">
                                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                                         {{ trans('contacts.addcontact') }}
                                     </button>
                                 </div>
-                                @endif
                             </div>
                             <!--begin::Step 1-->
 

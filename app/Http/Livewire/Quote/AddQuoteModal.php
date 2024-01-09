@@ -59,9 +59,10 @@ class AddQuoteModal extends Component
         'update_time_range' => 'updateTimeRange',
         'update_date_range' => 'updateDateRange',
         'set_stepper_index' => 'setStepperIndex',
+        'update_filtered_contact_list' => 'updateFilteredContactList',
     ];
 
-    public function createQuote() {
+    public function updateFilteredContactList() {
         $currentTenantId = Session::get('current_tenant_id');
 
         // Code for parent tenant
@@ -70,6 +71,10 @@ class AddQuoteModal extends Component
         
         // filtered contacts, venues and venue areas
         $this->filteredContacts = Contact::whereIn('tenant_id', $tenantIds)->get();
+    }
+
+    public function createQuote() {
+        $this->updateFilteredContactList();
     }
 
     public function setStepperIndex($index) {

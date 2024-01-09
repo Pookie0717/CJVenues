@@ -1,16 +1,16 @@
 <div class="modal fade" id="kt_modal_add_quote" tabindex="-1" aria-hidden="true" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered mw-1000px">
-        <div class="modal-content ">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content shadow-none">
             <div class="modal-header" id="kt_modal_add_quote_header">
                 <h2 class="fw-bold">Add Quote</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     {!! getIcon('cross','fs-1') !!}
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-20 overflow-hidden">
                 <!--begin::Stepper-->
                 <div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row" id="kt_stepper">
-                    <div class="d-flex flex-row-auto w-100 w-lg-200px">
+                    <div class="d-flex flex-row-auto w-100 w-lg-350px">
                         <div class="stepper-nav flex-center">
                             <!--begin::Step 1-->
                             <div class="stepper-item {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="nav">
@@ -208,11 +208,12 @@
                                 <!--end::Input group-->
 
                                 <div class="fv-row mb-10">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_contact">
+                                    <button type="button" class="btn btn-primary" data-bs-stacked-modal="#kt_modal_add_contact">
                                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                                         {{ trans('contacts.addcontact') }}
                                     </button>
                                 </div>
+
                             </div>
                             <!--begin::Step 1-->
 
@@ -642,7 +643,18 @@
         </div>
     </div>
 </div>
+
 @push('scripts')
+
+<script>
+    document.addEventListener('livewire:load', function () {
+        Livewire.on('quote_contact_success', function (msg) {
+            $('#kt_modal_add_contact').modal('hide');
+            toastr.success(msg);
+            Livewire.emit('update_filtered_contact_list')
+        });
+    });
+</script>
 
 <script>
 

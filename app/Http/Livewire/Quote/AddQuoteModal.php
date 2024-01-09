@@ -27,8 +27,6 @@ class AddQuoteModal extends Component
     public $version;
     public $date_from;
     public $date_to;
-    public $time_from;
-    public $time_to;
     public $area_id;
     public $event_type;
     public $event_name;
@@ -52,18 +50,31 @@ class AddQuoteModal extends Component
     public $buffer_time_unit = "days";
 
 
+    public $filteredContacts = [];
     public $edit_mode = false;
 
     protected $listeners = [
+        'create_quote' => 'createQuote',
         'delete_quote' => 'deleteQuote',
         'update_time_range' => 'updateTimeRange',
         'update_date_range' => 'updateDateRange',
         'set_stepper_index' => 'setStepperIndex',
     ];
 
-    public function setStepperIndex($type) {
-        $this->stepperIndex += intval($type);
-        $this->dispatchBrowserEvent('stepper-index-updated', ['index' => $this->stepperIndex]);
+    public function createQuote() {
+        $currentTenantId = Session::get('current_tenant_id');
+
+        // Code for parent tenant
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId; // self and child tenant ids.
+        
+        // filtered contacts, venues and venue areas
+        $this->filteredContacts = Contact::whereIn('tenant_id', $tenantIds)->get();
+    }
+
+    public function setStepperIndex($index) {
+        $this->stepperIndex = $index;
+        $this->dispatchBrowserEvent('stepper-index-updated', ['index' => $index]);
     }
 
     public function submit()
@@ -1124,7 +1135,7 @@ class AddQuoteModal extends Component
         $selectedEvent = EventType::find($this->event_type);
 
         // filtered contacts, venues and venue areas
-        $filteredContacts = Contact::whereIn('tenant_id', $tenantIds)->get();
+        $this->filteredContacts = Contact::whereIn('tenant_id', $tenantIds)->get();
 
         // $tenantIds = [];
         // if($selectedEvent) {
@@ -1144,7 +1155,7 @@ class AddQuoteModal extends Component
             'selectedEvent' => $selectedEvent,
         ]);
 
-        return view('livewire.quote.add-quote-modal', compact('filteredContacts', 'filteredAreas', 'filteredEventTypes', 'filteredVenues', 'options', 'selectedEvent'));
+        return view('livewire.quote.add-quote-modal', compact('filteredAreas', 'filteredEventTypes', 'filteredVenues', 'options', 'selectedEvent'));
     }
 
     public function updatedAreaId()

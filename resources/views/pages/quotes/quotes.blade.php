@@ -27,7 +27,7 @@
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                     <!--begin::Add quote-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_quote">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_quote" data-kt-action="create_row">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
                         {{ trans('quotes.addquote') }}
                     </button>
@@ -37,6 +37,10 @@
 
                 <!--begin::Modal-->
                 <livewire:quote.add-quote-modal></livewire:quote.add-quote-modal>
+                <!--end::Modal-->
+
+                 <!--begin::Modal-->
+                 <livewire:contact.add-contact-modal></livewire:contact.add-contact-modal>
                 <!--end::Modal-->
             </div>
             <!--end::Card toolbar-->
@@ -62,8 +66,16 @@
             });
             document.addEventListener('livewire:load', function () {
                 Livewire.on('success', function () {
-                    $('#kt_modal_add_quote').modal('hide'); 
+                    $('#kt_modal_add_quote').modal('hide');
+                    $('#kt_modal_add_contact').modal('hide'); 
                     window.LaravelDataTables['quotes-table'].ajax.reload(); 
+                });
+            });
+            document.addEventListener('livewire:load', function () {
+                document.querySelectorAll('[data-kt-action="create_row"]').forEach(function (element) {
+                    element.addEventListener('click', function (e) {
+                        Livewire.emit('create_quote');
+                    });
                 });
             });
         </script>

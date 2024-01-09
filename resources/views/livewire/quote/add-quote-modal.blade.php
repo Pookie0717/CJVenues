@@ -1,5 +1,5 @@
 <div class="modal fade" id="kt_modal_add_quote" tabindex="-1" aria-hidden="true" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered mw-850px">
+    <div class="modal-dialog modal-dialog-centered mw-1000px">
         <div class="modal-content ">
             <div class="modal-header" id="kt_modal_add_quote_header">
                 <h2 class="fw-bold">Add Quote</h2>
@@ -7,148 +7,194 @@
                     {!! getIcon('cross','fs-1') !!}
                 </div>
             </div>
-            <div class="modal-body scroll-y">
+            <div class="modal-body">
                 <!--begin::Stepper-->
-                <div class="stepper stepper-pills" id="kt_stepper_example_basic">
-                    <!--begin::Nav-->
-                    <div class="stepper-nav flex-center flex-wrap mb-10 d-none">
-                        <!--begin::Step 1-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">1</span>
+                <div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row" id="kt_stepper">
+                    <div class="d-flex flex-row-auto w-100 w-lg-200px">
+                        <div class="stepper-nav flex-center">
+                            <!--begin::Step 1-->
+                            <div class="stepper-item {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">1</span>
+                                    </div>
+                                    <!--end::Icon-->
+
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <div class="stepper-desc">
+                                            Contact
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
                                 </div>
-                                <!--end::Icon-->
+                                <!--end::Wrapper-->
+
+                                <!--begin::Line-->
+                                <div class="stepper-line h-40px"></div>
+                                <!--end::Line-->
                             </div>
-                            <!--end::Wrapper-->
+                            <!--end::Step 1-->
 
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 1-->
-
-                        <!--begin::Step 2-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 2?'current': ($stepperIndex > 2 ?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">2</span>
+                            <!--begin::Step 2-->
+                            <div class="stepper-item {{$stepperIndex == 2?'current': ($stepperIndex > 2 ?'completed': '')}}" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">2</span>
+                                    </div>
+                                    <!--begin::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <div class="stepper-desc">
+                                            Event
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
                                 </div>
-                                <!--begin::Icon-->
+                                <!--end::Wrapper-->
+
+                                <!--begin::Line-->
+                                <div class="stepper-line h-40px"></div>
+                                <!--end::Line-->
                             </div>
-                            <!--end::Wrapper-->
+                            <!--end::Step 2-->
 
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 2-->
-
-                        <!--begin::Step 3-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 3?'current': ($stepperIndex > 3?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">3</span>
+                            <!--begin::Step 3-->
+                            <div class="stepper-item {{$stepperIndex == 3?'current': ($stepperIndex > 3?'completed': '')}}" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">3</span>
+                                    </div>
+                                    <!--begin::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <div class="stepper-desc">
+                                            People
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
                                 </div>
-                                <!--begin::Icon-->
+                                <!--end::Wrapper-->
+
+                                <!--begin::Line-->
+                                <div class="stepper-line h-40px"></div>
+                                <!--end::Line-->
                             </div>
-                            <!--end::Wrapper-->
+                            <!--end::Step 3-->
 
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 3-->
-
-                        <!--begin::Step 4-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 4?'current': ($stepperIndex > 4?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">4</span>
+                            <!--begin::Step 4-->
+                            <div class="stepper-item {{$stepperIndex == 4?'current': ($stepperIndex > 4?'completed': '')}}" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">4</span>
+                                    </div>
+                                    <!--begin::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <div class="stepper-desc">
+                                            Date and Buffer
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
                                 </div>
-                                <!--begin::Icon-->
-                            </div>
-                            <!--end::Wrapper-->
+                                <!--end::Wrapper-->
 
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 4-->
-                        <!--begin::Step 5-->
-                        <div class="stepper-item my-4 {{$stepperIndex == 5?'current': ($stepperIndex > 5?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">5</span>
+                                <!--begin::Line-->
+                                <div class="stepper-line h-40px"></div>
+                                <!--end::Line-->
+                            </div>
+                            <!--end::Step 4-->
+                            <!--begin::Step 5-->
+                            <div class="stepper-item {{$stepperIndex == 5?'current': ($stepperIndex > 5?'completed': '')}}" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">5</span>
+                                    </div>
+                                    <!--begin::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <div class="stepper-desc">
+                                        Venue and Area
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
                                 </div>
-                                <!--begin::Icon-->
+                                <!--end::Wrapper-->
+
+                                <!--begin::Line-->
+                                <div class="stepper-line h-40px"></div>
+                                <!--end::Line-->
                             </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
-                        <!--end::Step 5-->
-
-                        <div class="stepper-item my-4 {{$stepperIndex == 6?'current': ($stepperIndex > 6?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">6</span>
+                            <!--end::Step 5-->
+                            
+                            <div class="stepper-item {{$stepperIndex == 6?'current': ($stepperIndex > 6?'completed': '')}} {{sizeof($options) == 0?'d-none': ''}}" data-kt-stepper-element="nav">
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">6</span>
+                                    </div>
+                                    <!--begin::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <div class="stepper-desc">
+                                            Options
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
                                 </div>
-                                <!--begin::Icon-->
+                                <!--end::Wrapper-->
+
+                                <!--begin::Line-->
+                                <div class="stepper-line h-40px"></div>
+                                <!--end::Line-->
                             </div>
-                            <!--end::Wrapper-->
 
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
-                        </div>
+                            <div class="stepper-item {{$stepperIndex == 7?'current': ($stepperIndex > 7?'completed': '')}}" data-kt-stepper-element="nav">
 
-                        <div class="stepper-item my-4 {{$stepperIndex == 7?'current': ($stepperIndex > 7?'completed': '')}}" data-kt-stepper-element="nav">
-                            <!--begin::Wrapper-->
-                            <div class="stepper-wrapper d-flex align-items-center">
-                                <!--begin::Icon-->
-                                <div class="stepper-icon w-40px h-40px">
-                                    <i class="stepper-check fas fa-check"></i>
-                                    <span class="stepper-number">7</span>
+
+                                <!--begin::Wrapper-->
+                                <div class="stepper-wrapper d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <div class="stepper-icon w-40px h-40px">
+                                        <i class="stepper-check fas fa-check"></i>
+                                        <span class="stepper-number">{{sizeof($options) == 0?'6': '7'}}</span>
+                                    </div>
+                                    <!--begin::Icon-->
+                                    <!--begin::Label-->
+                                    <div class="stepper-label">
+                                        <div class="stepper-desc">
+                                            Review
+                                        </div>
+                                    </div>
+                                    <!--end::Label-->
                                 </div>
-                                <!--begin::Icon-->
+                                <!--end::Wrapper-->
                             </div>
-                            <!--end::Wrapper-->
-
-                            <!--begin::Line-->
-                            <div class="stepper-line h-40px"></div>
-                            <!--end::Line-->
                         </div>
                     </div>
-                    <!--end::Nav-->
                     <!--begin::Form-->
-                    <form class="form mx-auto " novalidate="novalidate" id="kt_stepper_example_basic_form" wire:submit.prevent="submit">
+                    <form class="form w-100" novalidate="novalidate" wire:submit.prevent="submit">
                         <!--begin::Group-->
-                        <div class="mb-5 scroll px-5" style="height: 60vh">
+                        <div class="w-100 d-flex justify-content-center align-items-center" style="height: 75vh">
                             <!--begin::Step 1-->
-                            <div class="flex-column {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="content">
-                                <span class="text-center text-primary bg-light-primary p-4">Contact</span>
-                                <div class="separator my-4"></div>
+                            <div class="flex-column w-100 {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="content">
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="contactSelect" class="form-label">Select Contact:</label>
@@ -160,13 +206,20 @@
                                     </select>
                                 </div>
                                 <!--end::Input group-->
+
+                                @if(sizeof($filteredContacts) == 0)
+                                <div class="fv-row mb-10">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_contact">
+                                        {!! getIcon('plus', 'fs-2', '', 'i') !!}
+                                        {{ trans('contacts.addcontact') }}
+                                    </button>
+                                </div>
+                                @endif
                             </div>
                             <!--begin::Step 1-->
 
                             <!--begin::Step 2-->
-                            <div class="flex-column {{$stepperIndex == 2?'current': ($stepperIndex > 2?'completed': '')}}" data-kt-stepper-element="content">
-                                <span class="text-center text-primary bg-light-primary p-4">Event and Event Type</span>
-                                <div class="separator my-4"></div>
+                            <div class="flex-column w-100 {{$stepperIndex == 2?'current': ($stepperIndex > 2?'completed': '')}}" data-kt-stepper-element="content">
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="eventNameSelect" class="form-label">Select Event:</label>
@@ -196,9 +249,7 @@
                             <!--begin::Step 2-->
 
                             <!--begin::Step 3-->
-                            <div class="flex-column {{$stepperIndex == 3?'current': ($stepperIndex > 3?'completed': '')}}" data-kt-stepper-element="content">
-                                <span class="text-center text-primary bg-light-primary p-4">How Many People will attend?</span>
-                                <div class="separator my-4"></div>
+                            <div class="flex-column w-100 {{$stepperIndex == 3?'current': ($stepperIndex > 3?'completed': '')}}" data-kt-stepper-element="content">
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="people" class="form-label">How many people will attend</label>
@@ -215,11 +266,9 @@
                             <!--begin::Step 3-->
 
                             <!--begin::Step 4-->
-                            <div class="flex-column {{$stepperIndex == 4?'current': ($stepperIndex > 4?'completed': '')}}" data-kt-stepper-element="content">
-                                <span class="text-center text-primary bg-light-primary p-4">Date and Buffer</span>
-                                <div class="separator my-4"></div>
+                            <div class="flex-column w-100 {{$stepperIndex == 4?'current': ($stepperIndex > 4?'completed': '')}}" data-kt-stepper-element="content">
                                 <!--begin::Input group-->
-                                <div class="fv-row mb-4">
+                                <div class="fv-row mb-10">
                                     <div class="row">
                                         <div class="col">
                                             <label class="required fw-semibold fs-6 mb-2" for="date_from_picker_input">Date From</label>
@@ -250,8 +299,9 @@
                                 </div>
                                 <!--end::Input group-->
 
-                                <!-- Add this code inside your Blade template -->
-                                @foreach ($time_ranges as $date => $time_range)
+                               <div class="scroll px-20 overflow-x-hidden" style="max-height: 50vh">
+                                 <!-- Add this code inside your Blade template -->
+                                 @foreach ($time_ranges as $date => $time_range)
                                     <div class="fv-row mb-10 d-none">
                                         <div class="row">
                                             <div class="col">
@@ -282,13 +332,14 @@
                                         </div>
                                     </div>
 
-                                    <div class="mx-10">
+                                    <div class="">
                                         <label class="fw-semibold fs-6 mb-4 pb-5">@if(sizeof($time_ranges) !== 1){{ $date }}@endif</label>
                                         <div id="event_time_slider_{{ $loop->index }}" class="my-4"></div>
                                     </div>
                                 @endforeach
+                               </div>
 
-                                <div class="fv-row mt-10">
+                                <div class="fv-row my-10">
                                     <div class="row">
                                         <!-- Buffer Time Before the Event Start -->
                                         <div class="col">
@@ -346,9 +397,7 @@
                             <!--begin::Step 4-->
 
                             <!--begin::Step 5-->
-                            <div class="flex-column {{$stepperIndex == 5?'current': ($stepperIndex > 5?'completed': '')}}" data-kt-stepper-element="content">
-                                <span class="text-center text-primary bg-light-primary p-4">Venue and Area</span>
-                                <div class="separator my-4"></div>
+                            <div class="flex-column w-100 {{$stepperIndex == 5?'current': ($stepperIndex > 5?'completed': '')}}" data-kt-stepper-element="content">
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="selectedVenueId" class="form-label">Select Venue:</label>
@@ -375,9 +424,7 @@
                             </div>
                             <!--begin::Step 5-->
 
-                            <div class="flex-column {{$stepperIndex == 6?'current': ($stepperIndex > 6?'completed': '')}}" data-kt-stepper-element="content">
-                                <span class="text-center text-primary bg-light-primary p-4">Options</span>
-                                <div class="separator my-4"></div>
+                            <div class="flex-column w-100 {{$stepperIndex == 6?'current': ($stepperIndex > 6?'completed': '')}} {{sizeof($options) == 0? 'd-none': ''}}" data-kt-stepper-element="content">
                                 <div id="option-content">
                                     <!-- Loop through each option and render based on kind -->
                                     @foreach ($options as $option)
@@ -447,10 +494,108 @@
                                     @endforeach
                                 </div>
                             </div>
-                            
-                            <div class="flex-column {{$stepperIndex == 7?'current': ($stepperIndex > 7?'completed': '')}}" data-kt-stepper-element="content">
-                                <span class="text-center text-primary bg-light-primary p-4">Discount</span>
-                                <div class="separator my-4"></div>
+                    
+
+                            <div class="flex-column w-100 {{$stepperIndex == 7?'current': ($stepperIndex > 7?'completed': '')}}" data-kt-stepper-element="content">
+                               <div class="mb-10 px-4 scroll overflow-x-hidden" style="height: 60vh">
+                                    <!--begin::Input group-->
+                                    <div class="form-floating mb-7">
+                                        <input type="text" class="form-control form-control-solid" disabled value="{{$contact_id?collect($filteredContacts)->where('id', $contact_id)->first()->name: 'N/A'}}"/>
+                                        <label>Contact:</label>
+                                    </div>
+                                    <!--end::Input group-->
+
+                                    <!--begin::Input group-->
+                                    <div class="form-floating mb-7">
+                                        <input type="text" class="form-control form-control-solid" disabled value="{{$event_name??'N/A'}} - {{$event_type?collect($filteredEventTypes)->where('id', $event_type)->first()->name: 'N/A'}}"/>
+                                        <label>Event:</label>
+                                    </div>
+                                    <!--end::Input group-->
+
+                                    <!--begin::Input group-->
+                                    <div class="form-floating mb-7">
+                                        <input type="text" class="form-control form-control-solid" disabled value="{{$people??'N/A'}}"/>
+                                        <label>People:</label>
+                                    </div>
+                                    <!--end::Input group-->
+
+                                <div class="row">
+                                        <div class="col">
+                                            <!--begin::Input group-->
+                                            <div class="form-floating mb-7">
+                                                <input type="text" class="form-control form-control-solid" disabled value="{{$date_from??'N/A'}}"/>
+                                                <label>Date From:</label>
+                                            </div>
+                                            <!--end::Input group-->
+                                        </div>
+
+                                        <div class="col">
+                                            <!--begin::Input group-->
+                                            <div class="form-floating mb-7">
+                                                <input type="text" class="form-control form-control-solid" disabled value="{{$date_to??'N/A'}}"/>
+                                                <label>Date To:</label>
+                                            </div>
+                                            <!--end::Input group-->
+                                        </div>
+                                </div>
+
+                                <div class="row px-10">
+                                    @foreach ($time_ranges as $date => $time_range)
+                                        <div class="col-4">
+                                            <!--begin::Input group-->
+                                            <div class="form-floating mb-7">
+                                                <input type="text" class="form-control form-control-solid" disabled value="{{$time_range['time_from']}} ~ {{$time_range['time_to']}}"/>
+                                                <label>{{$date}}:</label>
+                                            </div>
+                                            <!--end::Input group-->
+                                        </div>
+                                    @endforeach
+                                    </div>
+
+                                <div class="row">
+                                        <div class="col">
+                                            <!--begin::Input group-->
+                                            <div class="form-floating mb-7">
+                                                <input type="text" class="form-control form-control-solid" disabled value="{{$buffer_time_before??'N/A'}} {{$buffer_time_unit}}"/>
+                                                <label>Buffer Time Before the Event Start:</label>
+                                            </div>
+                                            <!--end::Input group-->
+                                        </div>
+
+                                        <div class="col">
+                                            <!--begin::Input group-->
+                                            <div class="form-floating mb-7">
+                                                <input type="text" class="form-control form-control-solid" disabled value="{{$buffer_time_after??'N/A'}} {{$buffer_time_unit}}"/>
+                                                <label>Buffer Time After the Event End:</label>
+                                            </div>
+                                            <!--end::Input group-->
+                                        </div>
+                                </div>
+
+                                    <!--begin::Input group-->
+                                    <div class="form-floating mb-7">
+                                        <input type="text" class="form-control form-control-solid" disabled value="{{$selectedVenueId?collect($filteredVenues)->where('id', $selectedVenueId)->first()->name: 'N/A'}}"/>
+                                        <label>Venue:</label>
+                                    </div>
+                                    <!--end::Input group-->
+
+                                    <!--begin::Input group-->
+                                    <div class="form-floating mb-7">
+                                        <input type="text" class="form-control form-control-solid" disabled value="{{$area_id?collect($filteredAreas)->where('id', $area_id)->first()->name: 'N/A'}}"/>
+                                        <label>Venue Area:</label>
+                                    </div>
+                                    <!--end::Input group-->
+
+                                    @foreach($selectedOptions as $optionId => $optionValue)
+                                    <!--begin::Input group-->
+                                    <div class="form-floating mb-7">
+                                        <input type="text" class="form-control form-control-solid" disabled value="{{$optionValue}}"/>
+                                        <label>{{collect($options)->where('id', $optionId)->first()->name}}</label>
+                                    </div>
+                                    <!--end::Input group-->
+                                    @endforeach
+                               </div>
+
                                 <div class="fv-row mb-10">
                                     <label for="discountField" class="form-label">Discount:</label>
                                     <input type="text" wire:model.defer="discount" class="form-control form-control-solid" placeholder="Enter a number or a percentage (e.g., 20 or 15%)" id="discountField" />
@@ -475,7 +620,7 @@
 
                             <!--begin::Wrapper-->
                             <div>
-                                <button type="submit" class="btn btn-primary" data-kt-stepper-action="submit" @if(sizeof($time_ranges) === 0 || !$selectedEvent) disabled @endif>
+                                <button type="submit" class="btn btn-primary" id="submit_button" data-kt-stepper-action="submit" @if(sizeof($time_ranges) === 0 || !$selectedEvent) disabled @endif>
                                     <span class="indicator-label" wire:loading.remove wire:target="submit">
                                         Submit
                                     </span>
@@ -504,27 +649,22 @@
 <script>
 
     // Stepper lement
-    var element = document.querySelector("#kt_stepper_example_basic");
+    var element = document.querySelector("#kt_stepper");
 
     // Initialize Stepper
     var stepper = new KTStepper(element);
 
     // Handle next step
-    stepper.on("kt.stepper.next", function (stepper) {
-        // stepper.goNext(); // go next step
-        Livewire.emit('set_stepper_index', 1)
-        if(stepper.passedStepIndex === 4 && document.getElementById('option-content').innerText.trim() == '') {
-            Livewire.emit('set_stepper_index', 1)
-        }
+    stepper.on("kt.stepper.next", function (s) {
+        
+        if(s.currentStepIndex === 5 && document.getElementById('option-content').innerText.trim() == '') Livewire.emit('set_stepper_index', s.currentStepIndex + 2)
+        else Livewire.emit('set_stepper_index', s.currentStepIndex + 1)
     });
 
     // Handle previous step
-    stepper.on("kt.stepper.previous", function (stepper) {
-        // stepper.goPrevious(); // go previous step
-        Livewire.emit('set_stepper_index', -1)
-        if(stepper.passedStepIndex === 6 && document.getElementById('option-content').innerText.trim() == '') {
-            Livewire.emit('set_stepper_index', -1)
-        }
+    stepper.on("kt.stepper.previous", function (s) {
+        if(s.currentStepIndex === 7 && document.getElementById('option-content').innerText.trim() == '') Livewire.emit('set_stepper_index', s.currentStepIndex - 2)
+        else Livewire.emit('set_stepper_index', s.currentStepIndex - 1)
     });
 
     document.addEventListener('livewire:load', function () {
@@ -760,11 +900,11 @@
         } else if(Number(this.value) > Number(this.max)) {
             toastr.warning('Buffer Time After the Event End setting is incorrect!');
             this.value = this.max;
-            // @this.set('buffer_time_after', this.value);
+            @this.set('buffer_time_after', this.value);
         } else if(Number(this.value) < Number(this.min)) {
             toastr.warning('Buffer Time After the Event End setting is incorrect!');
             this.value = this.min;
-            // @this.set('buffer_time_after', this.value);
+            @this.set('buffer_time_after', this.value);
         }
     });
     
@@ -796,9 +936,9 @@
     });
 
     
-    // bufferTimeUnitSelect.addEventListener('change', function() {
-    //     @this.set('buffer_time_unit', this.value);
-    // })
+    bufferTimeUnitSelect.addEventListener('change', function() {
+         @this.set('buffer_time_unit', this.value);
+    })
 </script>
 
 @endpush

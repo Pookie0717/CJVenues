@@ -82,7 +82,7 @@ class AddContactModal extends Component
         } else {
             // Save the new contact to the database
             Contact::create([
-                'tenant_id' => $this->tenant_id,
+                'tenant_id' => Session::get('current_tenant_id'),
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
                 'name' => $this->first_name . ' ' . $this->last_name,

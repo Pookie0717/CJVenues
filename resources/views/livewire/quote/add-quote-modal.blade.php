@@ -7,7 +7,7 @@
                     {!! getIcon('cross','fs-1') !!}
                 </div>
             </div>
-            <div class="modal-body p-20 overflow-hidden">
+            <div class="modal-body px-10 px-lg-20">
                 <!--begin::Stepper-->
                 <div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row" id="kt_stepper">
                     <div class="d-flex flex-row-auto w-100 w-lg-350px">
@@ -192,7 +192,7 @@
                     <!--begin::Form-->
                     <form class="form w-100" novalidate="novalidate" wire:submit.prevent="submit">
                         <!--begin::Group-->
-                        <div class="w-100 d-flex justify-content-center align-items-center" style="height: 75vh">
+                        <div class="w-100 d-flex justify-content-center align-items-center scroll px-4 mb-10" style="height: calc(100vh - 240px)">
                             <!--begin::Step 1-->
                             <div class="flex-column w-100 {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="content">
                                 <!--begin::Input group-->
@@ -207,12 +207,7 @@
                                 </div>
                                 <!--end::Input group-->
 
-                                <div class="fv-row mb-10">
-                                    <button type="button" class="btn btn-primary" data-bs-stacked-modal="#kt_modal_add_contact">
-                                        {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                                        {{ trans('contacts.addcontact') }}
-                                    </button>
-                                </div>
+                                <livewire:quote.add-contact-form></livewire:quotep.add-contact-form>
 
                             </div>
                             <!--begin::Step 1-->
@@ -298,7 +293,7 @@
                                 </div>
                                 <!--end::Input group-->
 
-                               <div class="scroll px-20 overflow-x-hidden" style="max-height: 50vh">
+                               <div class="scroll py-10 px-20" style="max-height: calc(100vh - 450px)">
                                  <!-- Add this code inside your Blade template -->
                                  @foreach ($time_ranges as $date => $time_range)
                                     <div class="fv-row mb-10 d-none">
@@ -648,8 +643,7 @@
 
 <script>
     document.addEventListener('livewire:load', function () {
-        Livewire.on('quote_contact_success', function (msg) {
-            $('#kt_modal_add_contact').modal('hide');
+        Livewire.on('create_contact_success', function (msg) {
             toastr.success(msg);
             Livewire.emit('update_filtered_contact_list')
         });

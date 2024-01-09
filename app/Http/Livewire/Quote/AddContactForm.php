@@ -10,7 +10,7 @@ use PragmaRX\Countries\Package\Countries;
 use Illuminate\Support\Facades\Session;
 
 
-class AddContactModal extends Component
+class AddContactForm extends Component
 {
     public $first_name;
     public $last_name;
@@ -24,7 +24,11 @@ class AddContactModal extends Component
     public $notes;
     public $contactId;
 
-    public function submit()
+    protected $listeners = [
+        'contact_form_submit' => 'createContact',
+    ];
+
+    public function createContact()
     {
         // Define the validation rules
         $rules = [
@@ -39,6 +43,9 @@ class AddContactModal extends Component
             'country' => 'required|string|max:255',
             'notes' => 'nullable|string|max:500',
         ];
+
+         // Validate the data
+         $this->validate($rules);
 
        // Save the new contact to the database
        Contact::create([
@@ -57,7 +64,7 @@ class AddContactModal extends Component
         ]);
 
         // Emit an event to notify that the contact was created successfully
-        $this->emit('quote_contact_success', 'Contact successfully added');
+        $this->emit('create_contact_success', 'Contact successfully added');
 
         // Reset the form fields
         $this->reset(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'postcode', 'state', 'country', 'notes']);
@@ -75,6 +82,6 @@ class AddContactModal extends Component
             $states = sizeof($country) > 0 ? $country->hydrate('states')->states->pluck('name', 'postal')->toArray(): [];
         }
        
-        return view('livewire.quote.add-contact-modal', compact('countries', 'states'));
+        return view('livewire.quote.add-contact-form', compact('countries', 'states'));
     }
 }

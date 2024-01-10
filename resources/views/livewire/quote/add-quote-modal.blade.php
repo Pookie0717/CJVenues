@@ -602,6 +602,8 @@
                         </div>
                         <!--end::Group-->
 
+                        <div class="separator border-3 mb-4"></div>
+
                         <!--begin::Actions-->
                         <div class="d-flex flex-stack">
                             <!--begin::Wrapper-->

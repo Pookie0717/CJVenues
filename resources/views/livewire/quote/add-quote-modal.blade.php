@@ -7,11 +7,11 @@
                     {!! getIcon('cross','fs-1') !!}
                 </div>
             </div>
-            <div class="modal-body px-10 px-lg-20">
+            <div class="modal-body p-10 p-lg-20">
                 <!--begin::Stepper-->
                 <div class="stepper stepper-pills stepper-column d-flex flex-column flex-lg-row" id="kt_stepper">
                     <div class="d-flex flex-row-auto w-100 w-lg-350px">
-                        <div class="stepper-nav flex-center">
+                        <div class="stepper-nav mb-10">
                             <!--begin::Step 1-->
                             <div class="stepper-item {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="nav">
                                 <!--begin::Wrapper-->
@@ -192,7 +192,7 @@
                     <!--begin::Form-->
                     <form class="form w-100" novalidate="novalidate" wire:submit.prevent="submit">
                         <!--begin::Group-->
-                        <div class="w-100 d-flex justify-content-center align-items-center scroll px-4 mb-10" style="height: calc(100vh - 240px)">
+                        <div class="w-100 d-flex justify-content-center px-4 mb-10" style="min-height: 50vh">
                             <!--begin::Step 1-->
                             <div class="flex-column w-100 {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="content">
                                 <!--begin::Input group-->
@@ -293,7 +293,7 @@
                                 </div>
                                 <!--end::Input group-->
 
-                               <div class="scroll py-10 px-20" style="max-height: calc(100vh - 450px)">
+                               <div class="px-20">
                                  <!-- Add this code inside your Blade template -->
                                  @foreach ($time_ranges as $date => $time_range)
                                     <div class="fv-row mb-10 d-none">
@@ -491,7 +491,7 @@
                     
 
                             <div class="flex-column w-100 {{$stepperIndex == 7?'current': ($stepperIndex > 7?'completed': '')}}" data-kt-stepper-element="content">
-                               <div class="mb-10 px-4 scroll overflow-x-hidden" style="height: 60vh">
+                               <div class="mb-10 px-4 overflow-x-hidden">
                                     <!--begin::Input group-->
                                     <div class="form-floating mb-7">
                                         <input type="text" class="form-control form-control-solid" disabled value="{{$contact_id?collect($filteredContacts)->where('id', $contact_id)->first()->name: 'N/A'}}"/>

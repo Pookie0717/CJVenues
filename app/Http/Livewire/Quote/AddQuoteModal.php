@@ -282,8 +282,6 @@ class AddQuoteModal extends Component
             'version', 
             'date_from', 
             'date_to', 
-            'time_from', 
-            'time_to', 
             'area_id', 
             'event_type',
             'event_name', 

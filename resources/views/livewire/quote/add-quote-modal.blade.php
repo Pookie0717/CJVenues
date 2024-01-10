@@ -585,7 +585,7 @@
                                     <!--begin::Input group-->
                                     <div class="form-floating mb-7">
                                         <input type="text" class="form-control form-control-solid" readonly value="{{$optionValue}}"/>
-                                        <label>{{collect($options)->where('id', $optionId)->first()->name}}</label>
+                                        <label>{{collect($options)->where('id', $optionId)->first()?collect($options)->where('id', $optionId)->first()->name: 'N/A'}}</label>
                                     </div>
                                     <!--end::Input group-->
                                     @endif

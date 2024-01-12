@@ -462,16 +462,37 @@ class AddQuoteModal extends Component
         return 'unknown';
     }
 
-   private function getOptionPriceForSeason($optionId, $seasonId)
+//    private function getOptionPriceForSeason($optionId, $seasonId)
+//     {
+//         return Option::find($optionId)->prices()
+//             ->where('type', 'option')
+//             ->where('season_id', $seasonId)
+//             ->where('extra_tier_type', 'like', '%event%')
+//             ->first();
+//     }
+
+//     private function getOptionBufferPriceForSeason($optionId, $seasonId)
+//     {
+//         return Option::find($optionId)->prices()
+//             ->where('type', 'option')
+//             ->where('season_id', $seasonId)
+//             ->where(function($query) {
+//                 $query->where('extra_tier_type', 'like', '%buffer_before%')
+//                       ->orWhere('extra_tier_type', 'like', '%buffer_after%');
+//             })
+//             ->first();
+//     }
+
+    private function getOptionPricesForSeason($optionId, $seasonId)
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
             ->where('season_id', $seasonId)
             ->where('extra_tier_type', 'like', '%event%')
-            ->first();
+            ->get();
     }
 
-    private function getOptionBufferPriceForSeason($optionId, $seasonId)
+    private function getOptionBufferPricesForSeason($optionId, $seasonId)
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
@@ -480,7 +501,7 @@ class AddQuoteModal extends Component
                 $query->where('extra_tier_type', 'like', '%buffer_before%')
                       ->orWhere('extra_tier_type', 'like', '%buffer_after%');
             })
-            ->first();
+            ->get();
     }
 
     // Helper method to calculate the number of days between date_from and date_to
@@ -966,7 +987,7 @@ class AddQuoteModal extends Component
                         continue;
                     }
 
-                    $optionPrice = $this->getOptionPriceForSeason($optionId, $season->id);
+                    $optionPrices = $this->getOptionPricesForSeason($optionId, $season->id);
                     $optionType = $this->getOptionType($optionId);
 
                     if(!isset($pricesMap[$optionTenantId])) {
@@ -982,25 +1003,26 @@ class AddQuoteModal extends Component
                     }
 
                     
-                    if ($optionPrice) {
-                        $multiplierValue = (float)$optionPrice->price;
-                        $optionTotalPrice = $this->calculateOptionPrice(
-                            $optionType,
-                            $optionValue,
-                            $optionPrice,
-                            $optionPrice->multiplier,
-                            $multiplierValue,
-                            $currentDate,
-                            $dateTo,
-                            $timeFrom,
-                            $timeTo,
-                            $optionId,
-                            $people
-                        );
-                        $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
-                        
-                        $pricesMap[$optionTenantId]["individualPrices"][$optionId] += $optionTotalPrice;
-
+                    if (sizeof($optionPrices) > 0) {
+                        foreach($optionPrices as $optionPrice) {
+                            $multiplierValue = (float)$optionPrice->price;
+                            $optionTotalPrice = $this->calculateOptionPrice(
+                                $optionType,
+                                $optionValue,
+                                $optionPrice,
+                                $optionPrice->multiplier,
+                                $multiplierValue,
+                                $currentDate,
+                                $dateTo,
+                                $timeFrom,
+                                $timeTo,
+                                $optionId,
+                                $people
+                            );
+                            $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
+                            
+                            $pricesMap[$optionTenantId]["individualPrices"][$optionId] += $optionTotalPrice;
+                        }
                     } else {
 
                     }
@@ -1048,7 +1070,7 @@ class AddQuoteModal extends Component
                         continue;
                     }
 
-                    $optionPrice = $this->getOptionBufferPriceForSeason($optionId, $season->id);
+                    $optionPrices = $this->getOptionBufferPricesForSeason($optionId, $season->id);
                     $optionType = $this->getOptionType($optionId);
 
                     if(!isset($pricesMap[$optionTenantId])) {
@@ -1064,29 +1086,30 @@ class AddQuoteModal extends Component
                         $pricesMap[$optionTenantId]["individualPrices"][$optionId] = 0;
                     }
 
-                    if ($optionPrice) {
-                        $multiplierValue = (float)$optionPrice->price;
-                        $optionTotalPrice = $this->calculateOptionBufferPrice(
-                            $optionType,
-                            $optionValue,
-                            $optionPrice,
-                            $optionPrice->multiplier,
-                            $multiplierValue,
-                            $bufferTimeBefore, 
-                            $bufferTimeAfter,
-                            $bufferTimeUnit,
-                            $optionId,
-                            $people
-                        );
-
-                        Log::info('optionPrice ' . $optionId . ': ' . $optionPrice);
-
-                        Log::info('Single Buffer Price for Option ' . $optionId . ': ' . $optionTotalPrice);
-
-                        $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
-                        
-                        $pricesMap[$optionTenantId]["individualPrices"][$optionId] += $optionTotalPrice;
-
+                    if (sizeof($optionPrices) > 0) {
+                        foreach($optionPrices as $optionPrice) {
+                            $multiplierValue = (float)$optionPrice->price;
+                            $optionTotalPrice = $this->calculateOptionBufferPrice(
+                                $optionType,
+                                $optionValue,
+                                $optionPrice,
+                                $optionPrice->multiplier,
+                                $multiplierValue,
+                                $bufferTimeBefore, 
+                                $bufferTimeAfter,
+                                $bufferTimeUnit,
+                                $optionId,
+                                $people
+                            );
+    
+                            Log::info('optionPrice ' . $optionId . ': ' . $optionPrice);
+    
+                            Log::info('Single Buffer Price for Option ' . $optionId . ': ' . $optionTotalPrice);
+    
+                            $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
+                            
+                            $pricesMap[$optionTenantId]["individualPrices"][$optionId] += $optionTotalPrice;
+                        }
                     } else {
 
                     }

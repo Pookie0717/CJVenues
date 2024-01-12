@@ -137,8 +137,8 @@
             <!--end::Input group-->
         </div>
         <div class="px-10 px-lg-20 mb-4">
-            <button class="btn btn-secondary" id="contact_form_submit">
-                <span class="indicator-label">Add contact</span>
+            <button class="btn btn-primary" id="contact_form_submit">
+                <span class="indicator-label">Create contact</span>
             </button>
         </div>
 </div>

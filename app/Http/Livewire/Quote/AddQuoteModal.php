@@ -1163,16 +1163,19 @@ class AddQuoteModal extends Component
 
     public function updatedAreaId()
     {
+        $this->selectedOptions = [];
         $this->loadOptions();
     }
 
     public function updatedSelectedVenueId()
     {
+        $this->selectedOptions = [];
         $this->loadOptions();
     }
 
     public function updatedSeasonId()
     {
+        $this->selectedOptions = [];
         $this->loadOptions();
     }
 
@@ -1202,10 +1205,8 @@ class AddQuoteModal extends Component
         $filteredContacts = Contact::where('tenant_id', $currentTenantId)->get();
 
         $tenantIds = [];
-        if($selectedArea) {
-            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-            $tenantIds[] = $currentTenantId;
-        }
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
         
         // Get the seasons for the selected date and weekday
         $seasonIds = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->pluck('id')->toArray();
@@ -1228,6 +1229,12 @@ class AddQuoteModal extends Component
         });
 
         
+        if ($selectedEventType) {
+            $optionsQuery->where(function ($query) use ($selectedEventType) {
+                $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventType->id])
+                        ->orWhereNull('eventtype_ids')->orWhere('eventtype_ids', '');
+            });
+        }
 
         // Refine additional filters
         /*if ($selectedVenue) {
@@ -1237,23 +1244,14 @@ class AddQuoteModal extends Component
             });
         }*/
 
-        // if ($selectedArea && !$selectedArea->tenant->isMain()) {
-        //     $optionsQuery->where(function ($query) use ($selectedArea) {
-        //         $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
-        //                 ->orWhereNull('area_ids')->orWhere('area_ids', '');
-        //     });
-        // }
+        if ($selectedArea) {
+            $optionsQuery->where(function ($query) use ($selectedArea) {
+                $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
+                        ->orWhereNull('area_ids')->orWhere('area_ids', '');
+            });
+        }
 
         
-
-        // if ($selectedEventType) {
-        //     $optionsQuery->where(function ($query) use ($selectedEventType) {
-        //         $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventType->id])
-        //                 ->orWhereNull('eventtype_ids');
-        //     });
-        // }
-        
-            
         $this->options = $optionsQuery->get();
         // Set values for specific logic options and default values
         foreach ($this->options as $option) {

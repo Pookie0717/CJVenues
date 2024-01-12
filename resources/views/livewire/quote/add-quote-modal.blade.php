@@ -195,7 +195,6 @@
                         <div class="w-100 d-flex justify-content-center px-4 mb-10" style="min-height: 50vh">
                             <!--begin::Step 1-->
                             <div class="flex-column w-100 {{$stepperIndex == 1?'current': ($stepperIndex > 1?'completed': '')}}" data-kt-stepper-element="content">
-                                <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <label for="contactSelect" class="form-label">Select Contact:</label>
                                     <select class="form-select form-select-solid" id="contactSelect" wire:model="contact_id">
@@ -205,9 +204,21 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <!--end::Input group-->
 
-                                <livewire:quote.add-contact-form></livewire:quotep.add-contact-form>
+                                <div class="accordion accordion-icon-collapse" id="kt_accordion_3">
+                                    <div class="mb-5">
+                                        <div class="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_item">
+                                            <span class="accordion-icon">
+                                                <i class="ki-duotone ki-plus-square fs-3 accordion-icon-off"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                                                <i class="ki-duotone ki-minus-square fs-3 accordion-icon-on"><span class="path1"></span><span class="path2"></span></i>
+                                            </span>
+                                            <h3 class="fs-4 fw-semibold mb-0 ms-4">Add Contact</h3>
+                                        </div>
+                                        <div id="kt_accordion_item" class="fs-6 collapse ps-10 pt-10" data-bs-parent="#kt_accordion_3">
+                                            <livewire:quote.add-contact-form></livewire:quotep.add-contact-form>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                             <!--begin::Step 1-->

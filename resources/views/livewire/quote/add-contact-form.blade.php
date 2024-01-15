@@ -1,5 +1,5 @@
 <div wire:ignore.self>
-        <div class="d-flex flex-column px-10 px-lg-20">
+        <div class="d-flex flex-column">
             <!--begin::Input group-->
             <div class="row mb-4">
                 <div class="col">
@@ -136,7 +136,7 @@
             </div>
             <!--end::Input group-->
         </div>
-        <div class="px-10 px-lg-20 mb-4">
+        <div class="mb-4">
             <button class="btn btn-primary" id="contact_form_submit">
                 <span class="indicator-label">Create contact</span>
             </button>

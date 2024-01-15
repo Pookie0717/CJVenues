@@ -214,7 +214,7 @@
                                             </span>
                                             <h3 class="fs-4 fw-semibold mb-0 ms-4">Add Contact</h3>
                                         </div>
-                                        <div id="kt_accordion_item" class="fs-6 collapse ps-10 pt-10" data-bs-parent="#kt_accordion_3">
+                                        <div id="kt_accordion_item" class="fs-6 collapse pt-10" data-bs-parent="#kt_accordion_3">
                                             <livewire:quote.add-contact-form></livewire:quotep.add-contact-form>
                                         </div>
                                     </div>

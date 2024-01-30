@@ -124,35 +124,43 @@
 
 
                         <div class="row fv-row mb-7">
-                        <!-- Price -->
-                        
-                        <div class="col mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.price') }}</label>
-                            <input type="text" wire:model="price" name="price" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Price"/>
-                            @error('price')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                            <!-- Price -->
+                            
+                            <div class="col mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.price') }}</label>
+                                <input type="text" wire:model="price" name="price" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Price"/>
+                                @error('price')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
 
-                         <!-- Multiplier -->
-                        <div class="col mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.multiplier') }}</label>
-                            <select wire:model="multiplier" name="multiplier" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">{{ trans('general.select') }}</option>
-                                <option value="event">{{ trans('prices.multiplier_perevent') }}</option>
-                                <option value="event_pp">{{ trans('prices.multiplier_perperson') }}</option>
-                                <option value="daily">{{ trans('prices.multiplier_perday') }}</option>
-                                <option value="daily_pp">{{ trans('prices.multiplier_perdayperperson') }}</option>
-                                <option value="hourly">{{ trans('prices.multiplier_perhour') }}</option>
-                                <option value="hourly_pp">{{ trans('prices.multiplier_perhourperperson') }}</option>
-                            </select>
-                            @error('multiplier')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                            <!-- Multiplier -->
+                            <div class="col mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.multiplier') }}</label>
+                                <select wire:model="multiplier" name="multiplier" class="form-select form-select-solid mb-3 mb-lg-0">
+                                    <option value="">{{ trans('general.select') }}</option>
+                                    <option value="event">{{ trans('prices.multiplier_perevent') }}</option>
+                                    <option value="event_pp">{{ trans('prices.multiplier_perperson') }}</option>
+                                    <option value="daily">{{ trans('prices.multiplier_perday') }}</option>
+                                    <option value="daily_pp">{{ trans('prices.multiplier_perdayperperson') }}</option>
+                                    <option value="hourly">{{ trans('prices.multiplier_perhour') }}</option>
+                                    <option value="hourly_pp">{{ trans('prices.multiplier_perhourperperson') }}</option>
+                                    <option value="every_x_p">{{ trans('prices.multiplier_everyxpeople') }}</option>
+                                    <option value="every_x_d">{{ trans('prices.multiplier_everyxdays') }}</option>
+                                    <option value="every_x_h">{{ trans('prices.multiplier_everyxhours') }}</option>
+                                </select>
+                                @error('multiplier')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
 
-                        
-
+                            <div class="col mb-7 {{$dX? '': 'd-none'}}">
+                                <label class="required fw-semibold fs-6 mb-2">Value of x</label>
+                                <input type="text" wire:model="x" name="x" class="form-control form-control-solid mb-3 mb-lg-0" placeholder=""/>
+                                @error('x')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
                     </div>

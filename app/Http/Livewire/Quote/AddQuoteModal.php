@@ -717,7 +717,7 @@ class AddQuoteModal extends Component
         return $totalPrice;
     }
 
-    private function calculateOptionPrice($optionType, $optionValue, $optionPrice, $multiplierType, $multiplierValue, $dateFrom, $dateTo, $timeFrom, $timeTo, $optionId, $people)
+    private function calculateOptionPrice($optionType, $optionValue, $optionPrice, $multiplierType, $x, $multiplierValue, $dateFrom, $dateTo, $timeFrom, $timeTo, $optionId, $people)
     {
         $price = 0;
 
@@ -739,9 +739,23 @@ class AddQuoteModal extends Component
             case 'event_pp':
                 $price = $this->calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, 1, $optionId, $people, $hours, $days);
                 break;
+
+            case 'every_x_p':
+                $price = $this->calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, 1, $optionId, $people, $hours, $days);
+                break;
+            case 'every_x_d':
+                $price = $this->calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, $days / $x, $optionId, $people, $hours, $days);
+                break;
+            case 'every_x_h':
+                $price = $this->calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, $hours / $x, $optionId, $people, $hours, $days);
+                break;
         }
         if (str_ends_with($multiplierType, '_pp')) {
             $price *= $people;
+        }
+
+        if (str_ends_with($multiplierType, '_x_p')) {
+            $price *= ($people / $x);
         }
         return $price;
     }
@@ -1011,6 +1025,7 @@ class AddQuoteModal extends Component
                                 $optionValue,
                                 $optionPrice,
                                 $optionPrice->multiplier,
+                                $optionPrice->x,
                                 $multiplierValue,
                                 $currentDate,
                                 $dateTo,

@@ -227,10 +227,11 @@
 
                                             @foreach($optionsWithValues as $index => $optionWithValue)
                                              
+                                           
                                                 @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
                                                   @php
                                                     $price = floatval($priceOptionsArray[$index]);
-                                                    if($optionWithValue['value'] == 'yes') {
+                                                    if($optionWithValue['type'] == 'radio' || $optionWithValue['value'] == 'yes') {
                                                         $value = 1;
                                                     } else {
                                                         $value = floatval($optionWithValue['value']);
@@ -244,6 +245,7 @@
                                                             @else
                                                                 {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
                                                             @endif
+
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $value }}</td>
                                                         <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>

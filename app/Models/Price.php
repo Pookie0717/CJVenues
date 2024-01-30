@@ -20,6 +20,7 @@ class Price extends Model
         'option_id',
         'price',
         'multiplier',
+        'x',
         'season_id',
         'extra_tier_type'
     ];

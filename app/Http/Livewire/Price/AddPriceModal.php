@@ -30,6 +30,7 @@ class AddPriceModal extends Component
     public $season_id;
     public $tier_type;
     public $extra_tier_type = [];
+    public $x = 1;
 
     public $edit_mode = false;
 
@@ -49,6 +50,7 @@ class AddPriceModal extends Component
             'option_id' => 'nullable|integer',
             'price' => 'required|string',
             'multiplier' => 'nullable|string|max:255',
+            'x' => 'required|integer|min:1',
             'extra_tier_type' => 'array',
             'extra_tier_type.*' => 'in:buffer_before,buffer_after,event',
         ];
@@ -70,6 +72,7 @@ class AddPriceModal extends Component
                 'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
+                'x' => $this->x,
                 'season_id' => $this->season_id,
                 'extra_tier_type' => $extraTierTypeString,
             ]);
@@ -88,6 +91,7 @@ class AddPriceModal extends Component
                 'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
+                'x' => $this->x,
                 'season_id' => $this->season_id,
                 'extra_tier_type' => $extraTierTypeString,
             ]);
@@ -98,7 +102,7 @@ class AddPriceModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'edit_mode'
+            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode'
         ]);
     }
 
@@ -106,7 +110,7 @@ class AddPriceModal extends Component
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'edit_mode'
+            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode'
         ]);
     }
 
@@ -141,6 +145,7 @@ class AddPriceModal extends Component
         $this->tier_type = $price->tier_type;
         $this->price = $price->price;
         $this->multiplier = $price->multiplier;
+        $this->x = $price->x;
         $this->season_id = $price->season_id;
         $this->extra_tier_type = explode(',', $price->extra_tier_type);
     }
@@ -159,6 +164,8 @@ class AddPriceModal extends Component
         $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
         $options = Option::whereIn('tenant_id', $tenantIds)->get();
 
-        return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options'));
+        $dX = stristr($this->multiplier, 'every');
+
+        return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options', 'dX'));
     }
 }

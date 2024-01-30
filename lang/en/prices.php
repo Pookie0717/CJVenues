@@ -33,8 +33,8 @@ return [
     'multiplier_perhour' => 'Per Hour',
     'multiplier_perdayperperson' => 'Per Day and Person',
     'multiplier_perhourperperson' => 'Per Hour and Person',
+    'multiplier_everyxhours' => 'Every x Hours',
+    'multiplier_everyxdays' => 'Every x Days',
+    'multiplier_everyxpeople' => 'Every x People',
     'amount' => 'Amount',
-
-
-
 ];

@@ -45,7 +45,7 @@ class PricesDataTable extends DataTable
                 return $price->price;
             })
             ->editColumn('multiplier', function ($price) {
-                return $this->getMultiLabel($price->multiplier);
+                return $this->getMultiLabel($price->multiplier, $price->x);
             })
             ->rawColumns(['action']);
     }
@@ -63,7 +63,7 @@ class PricesDataTable extends DataTable
             ->whereIn('tenant_id', $tenantIds)
             ->select([
                 'id', 'name', 'type',
-                'venue_id', 'area_id', 'option_id', 'price', 'multiplier', 'tenant_id'
+                'venue_id', 'area_id', 'option_id', 'price', 'multiplier', 'x', 'tenant_id'
             ]);
     }
 
@@ -78,7 +78,7 @@ class PricesDataTable extends DataTable
         return $labels[$type] ?? $type;
     }
 
-    public function getMultiLabel($Multi)
+    public function getMultiLabel($Multi, $X)
     {
         $labels = [
             'event' => 'Per Event',
@@ -87,6 +87,10 @@ class PricesDataTable extends DataTable
             'daily_pp' => 'Per Day / PP',
             'hourly' => 'Per Hour',
             'hourly_pp' => 'Per Hour / PP',
+            'hourly_pp' => 'Per Hour / PP',
+            'every_x_p' => 'Every ' . $X . ' people',
+            'every_x_d' => 'Every ' . $X . ' days',
+            'every_x_h' => 'Every ' . $X . ' hours',
         ];
 
         return $labels[$Multi] ?? $Multi;

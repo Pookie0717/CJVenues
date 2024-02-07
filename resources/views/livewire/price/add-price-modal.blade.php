@@ -96,11 +96,24 @@
                         </div>
                         @endif
 
+                        <script>
+                            function limitSelect(element, maxCount) {
+                                var selectedCount = 0;
+                                for (var i = 0; i < element.options.length; i++) {
+                                    if (element.options[i].selected) selectedCount++;
+                                    if (selectedCount > maxCount) {
+                                        element.options[i].selected = false;
+                                        return false;
+                                    }
+                                }
+                            }
+                        </script>
+
                         <!-- Season Dropdown -->
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.season') }}</label>
-                            <select wire:model.defer="season_id" name="season_id" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">{{ trans('prices.selectseason') }}</option>
+                            <select wire:model.defer="season_ids" name="season_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple @if($edit_mode) onchange="limitSelect(this, 1);"@endif>
+                                <!-- <option value="">{{ trans('prices.selectseason') }}</option> -->
                                 @foreach($seasons as $season)
                                     <option value="{{ $season->id }}">{{ $season->name }}</option>
                                 @endforeach

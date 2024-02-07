@@ -27,7 +27,7 @@ class AddPriceModal extends Component
     public $price;
     public $multiplier;
     public $priceId;
-    public $season_id;
+    public $season_ids;
     public $tier_type;
     public $extra_tier_type = [];
     public $x = 1;
@@ -51,6 +51,8 @@ class AddPriceModal extends Component
             'price' => 'required|string',
             'multiplier' => 'nullable|string|max:255',
             'x' => 'required|integer|min:1',
+            'season_ids' => 'required|array',
+            'season_ids.*' => 'exists:seasons,id',
             'extra_tier_type' => 'array',
             'extra_tier_type.*' => 'in:buffer_before,buffer_after,event',
         ];
@@ -73,7 +75,7 @@ class AddPriceModal extends Component
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
                 'x' => $this->x,
-                'season_id' => $this->season_id,
+                'season_id' => $this->season_ids[0],
                 'extra_tier_type' => $extraTierTypeString,
             ]);
 
@@ -81,20 +83,23 @@ class AddPriceModal extends Component
             $this->emit('success', 'Price successfully updated');
         } else {
             // If not in edit mode, create a new price record
-            Price::create([
-                'tenant_id' => $this->tenant_id,
-                'name' => $this->name,
-                'type' => $this->type,
-                'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
-                'area_id' => ($this->type === 'area') ? $this->area_id : null,
-                'option_id' => ($this->type === 'option') ? $this->option_id : null,
-                'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
-                'price' => $this->price,
-                'multiplier' => $this->multiplier,
-                'x' => $this->x,
-                'season_id' => $this->season_id,
-                'extra_tier_type' => $extraTierTypeString,
-            ]);
+
+            foreach($this->season_ids as $seasonId) {
+                Price::create([
+                    'tenant_id' => $this->tenant_id,
+                    'name' => $this->name,
+                    'type' => $this->type,
+                    'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
+                    'area_id' => ($this->type === 'area') ? $this->area_id : null,
+                    'option_id' => ($this->type === 'option') ? $this->option_id : null,
+                    'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
+                    'price' => $this->price,
+                    'multiplier' => $this->multiplier,
+                    'x' => $this->x,
+                    'season_id' => $seasonId,
+                    'extra_tier_type' => $extraTierTypeString,
+                ]);
+            }
 
             // Emit an event to notify that the price was created successfully
             $this->emit('success', 'Price successfully added');
@@ -146,7 +151,7 @@ class AddPriceModal extends Component
         $this->price = $price->price;
         $this->multiplier = $price->multiplier;
         $this->x = $price->x;
-        $this->season_id = $price->season_id;
+        $this->season_ids = [$price->season_id];
         $this->extra_tier_type = explode(',', $price->extra_tier_type);
     }
 

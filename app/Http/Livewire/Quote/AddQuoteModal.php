@@ -489,6 +489,10 @@ class AddQuoteModal extends Component
             ->where('type', 'option')
             ->where('season_id', $seasonId)
             ->where('extra_tier_type', 'like', '%event%')
+            ->where(function($query) {
+                $query->where('area_id', 'like', $this->area_id)
+                      ->orWhere('area_id', null);
+            })
             ->get();
     }
 
@@ -500,6 +504,10 @@ class AddQuoteModal extends Component
             ->where(function($query) {
                 $query->where('extra_tier_type', 'like', '%buffer_before%')
                       ->orWhere('extra_tier_type', 'like', '%buffer_after%');
+            })
+            ->where(function($query) {
+                $query->where('area_id', 'like', $this->area_id)
+                      ->orWhere('area_id', null);
             })
             ->get();
     }

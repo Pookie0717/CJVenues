@@ -18,6 +18,8 @@ return [
     'type' => 'Type',
     'type_area' => 'Area',
     'type_option' => 'Option',
+    'type_staff' => 'Staff',
+    'type_venue' => "Venue",
     'type_event' => 'Event',
     'season' => 'Season',
     'selectseason' => 'Select season',

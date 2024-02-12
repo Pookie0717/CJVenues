@@ -28,6 +28,7 @@
                                 <option value="area">{{ trans('prices.type_area') }}</option>
                                 <option value="option">{{ trans('prices.type_option') }}</option>
                                 <option value="venue">{{ trans('prices.type_venue') }}</option>
+                                <option value="staff">{{ trans('prices.type_staff') }}</option>
                                 <!--<option value="per_person">Per Person</option>
                                 <option value="pp_tier">Per Tier</option>-->
                             </select>
@@ -52,7 +53,7 @@
                             @if($type)
                                 <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.'.$type) }}</label>
                                 <select wire:model="{{$type}}_id" name="{{$type}}_id" class="form-select form-select-solid mb-3 mb-lg-0">
-                                    <option value="">{{ trans('prices.selectarea') }}</option>
+                                    <option value="">{{ trans('prices.select'.$type) }}</option>
                                 @if($type === 'area')
                                     @foreach($venueAreas as $area)
                                         <option value="{{ $area->id }}">{{ $area->name }}</option>
@@ -64,6 +65,10 @@
                                 @elseif($type === 'option')
                                     @foreach($options as $option)
                                         <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                    @endforeach
+                                @elseif($type === 'staff')
+                                    @foreach($staffs as $staff)
+                                        <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                                     @endforeach
                                 @endif
                             </select>

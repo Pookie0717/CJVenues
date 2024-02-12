@@ -18,6 +18,7 @@ class Price extends Model
         'venue_id',
         'area_id',
         'option_id',
+        'staff_id',
         'price',
         'multiplier',
         'x',
@@ -40,6 +41,10 @@ class Price extends Model
     public function option()
     {
         return $this->belongsTo(Option::class, 'option_id');
+    }
+    public function stsaff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
     }
     public function season()
     {

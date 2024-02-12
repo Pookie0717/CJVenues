@@ -16,6 +16,7 @@ use App\Http\Controllers\VenuesManagementController;
 use App\Http\Controllers\AreasManagementController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\staffController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,6 +60,10 @@ Route::get('setlocale/{locale}', 'App\Http\Controllers\LocalizationController@se
 
     Route::resource('/bookings', BookingsController::class)->names([
         'index' => 'bookings'
+    ]);
+
+    Route::resource('/staff', staffController::class)->names([
+        'index' => 'staff'
     ]);
 
     Route::resource('/prices', PricesController::class)->names([

@@ -1,11 +1,11 @@
 <x-default-layout>
 
     @section('title')
-        {{ trans('prices.prices') }}
+        {{ trans('prices.type_staff') }}
     @endsection
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('prices') }}  <!-- Update breadcrumb -->
+        {{ Breadcrumbs::render('staff') }}  <!-- Update breadcrumb -->
     @endsection
 
     <div class="card">
@@ -16,7 +16,7 @@
                 <!--begin::Search-->
                 <div class="d-flex align-items-center position-relative my-1">
                     {!! getIcon('magnifier', 'fs-3 position-absolute ms-5') !!}
-                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search price" id="mySearchInput"/>
+                    <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-13" placeholder="Search staff" id="mySearchInput"/>
                 </div>
                 <!--end::Search-->
             </div>
@@ -26,17 +26,17 @@
             <div class="card-toolbar">
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                    <!--begin::Add price-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_price" data-kt-action="create_row">
+                    <!--begin::Add staff-->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_add_staff" data-kt-action="create_row">
                         {!! getIcon('plus', 'fs-2', '', 'i') !!}
-                        Add price
+                        Add staff
                     </button>
-                    <!--end::Add price-->
+                    <!--end::Add staff-->
                 </div>
                 <!--end::Toolbar-->
 
                 <!--begin::Modal-->
-                <livewire:price.add-price-modal></livewire:price.add-price-modal>
+                <livewire:staffs.add-staff-modal></livewire:staffs.add-staff-modal>
                 <!--end::Modal-->
             </div>
             <!--end::Card toolbar-->
@@ -47,7 +47,7 @@
         <div class="card-body py-4">
             <!--begin::Table-->
             <div class="table-responsive">
-                {{ $dataTable->table() }}  <!-- Make sure you have a pricesDataTable -->
+                {{ $dataTable->table() }}  <!-- Make sure you have a staffDataTable -->
             </div>
             <!--end::Table-->
         </div>
@@ -58,19 +58,19 @@
         {{ $dataTable->scripts() }}
         <script>
             document.getElementById('mySearchInput').addEventListener('keyup', function () {
-                window.LaravelDataTables['prices-table'].search(this.value).draw();  <!-- Update table name -->
+                window.LaravelDataTables['staff-table'].search(this.value).draw();  <!-- Update table name -->
             });
             document.addEventListener('livewire:load', function () {
                 Livewire.on('success', function () {
-                    $('#kt_modal_add_price').modal('hide');  <!-- Update modal ID -->
-                    window.LaravelDataTables['prices-table'].ajax.reload();  <!-- Update table name -->
+                    $('#kt_modal_add_staff').modal('hide');  <!-- Update modal ID -->
+                    window.LaravelDataTables['staff-table'].ajax.reload();  <!-- Update table name -->
                 });
             });
 
             document.addEventListener('livewire:load', function () {
                 document.querySelectorAll('[data-kt-action="create_row"]').forEach(function (element) {
                     element.addEventListener('click', function (e) {
-                        Livewire.emit('create_price');
+                        Livewire.emit('create_staff');
                     });
                 });
             });

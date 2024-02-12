@@ -71,6 +71,12 @@ Breadcrumbs::for('prices', function ($trail) {
     $trail->push('Prices', route('prices'));
 });
 
+// Home > Staff
+Breadcrumbs::for('staff', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Staff', route('staff'));
+});
+
 // Home > Quotes
 Breadcrumbs::for('quotes', function ($trail) {
     $trail->parent('home');

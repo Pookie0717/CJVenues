@@ -63,7 +63,7 @@ class PricesDataTable extends DataTable
             ->whereIn('tenant_id', $tenantIds)
             ->select([
                 'id', 'name', 'type',
-                'venue_id', 'area_id', 'option_id', 'price', 'multiplier', 'x', 'tenant_id'
+                'venue_id', 'area_id', 'option_id', 'price', 'multiplier', 'x', 'tenant_id', 'staff_id'
             ]);
     }
 
@@ -73,6 +73,7 @@ class PricesDataTable extends DataTable
             'area' => 'Area',
             'venue' => 'Venue',
             'option' => 'Option',
+            'staff' => 'Staff',
         ];
 
         return $labels[$type] ?? $type;

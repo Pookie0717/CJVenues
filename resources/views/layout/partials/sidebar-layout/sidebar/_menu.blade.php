@@ -58,6 +58,18 @@
 					<!--begin:Menu item-->
 					<div class="menu-item">
 						<!--begin:Menu link-->
+						<a class="menu-link {{ request()->routeIs('staff') ? 'active' : '' }}" href="{{ route('staff') }}">
+							<span class="menu-bullet">
+								<span class="bullet bullet-dot"></span>
+							</span>
+							<span class="menu-title">Staff</span>
+						</a>
+						<!--end:Menu link-->
+					</div>
+					<!--end:Menu item-->
+					<!--begin:Menu item-->
+					<div class="menu-item">
+						<!--begin:Menu link-->
 						<a class="menu-link {{ request()->routeIs('prices') ? 'active' : '' }}" href="{{ route('prices') }}">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot"></span>

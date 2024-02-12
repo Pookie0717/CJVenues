@@ -9,6 +9,7 @@ use App\Models\Venue;
 use App\Models\Season;
 use App\Models\Option;
 use App\Models\Tenant;
+use App\Models\Staffs;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -23,6 +24,7 @@ class AddPriceModal extends Component
     public $type;
     public $venue_id;
     public $area_id;
+    public $staff_id;
     public $option_area_id;
     public $option_id;
     public $price;
@@ -48,6 +50,7 @@ class AddPriceModal extends Component
             'type' => 'required',
             'venue_id' => 'nullable|integer',
             'area_id' => 'nullable|integer',
+            'staff_id' => 'nullable|integer',
             'option_id' => 'nullable|integer',
             'price' => 'required|string',
             'multiplier' => 'nullable|string|max:255',
@@ -71,6 +74,7 @@ class AddPriceModal extends Component
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
                 'area_id' => ($this->type === 'area') ? $this->area_id: ($this->type === 'option'? $this->option_area_id: null),
+                'staff_id' => ($this->type === 'staff') ? $this->staff_id : null,
                 'option_id' => ($this->type === 'option') ? $this->option_id : null,
                 'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
                 'price' => $this->price,
@@ -92,6 +96,7 @@ class AddPriceModal extends Component
                     'type' => $this->type,
                     'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
                     'area_id' => ($this->type === 'area') ? $this->area_id: ($this->type === 'option'? $this->option_area_id: null),
+                    'staff_id' => $this->type === 'staff' ? $this->staff_id : null,
                     'option_id' => ($this->type === 'option') ? $this->option_id : null,
                     'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
                     'price' => $this->price,
@@ -108,7 +113,7 @@ class AddPriceModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id'
+            'name', 'type', 'venue_id', 'area_id', 'staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id'
         ]);
     }
 
@@ -116,7 +121,7 @@ class AddPriceModal extends Component
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id'
+            'name', 'type', 'venue_id', 'area_id','staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id'
         ]);
     }
 
@@ -147,6 +152,7 @@ class AddPriceModal extends Component
         $this->type = $price->type;
         $this->venue_id = $price->venue_id;
         $this->area_id = $price->area_id;
+        $this->staff_id = $price->staff_id;
         $this->option_id = $price->option_id;
         $this->tier_type = $price->tier_type;
         $this->price = $price->price;
@@ -159,6 +165,7 @@ class AddPriceModal extends Component
 
     public function render()
     {
+        Log::info($this->staff_id);
         $currentTenantId = Session::get('current_tenant_id');
         $tenantIds = [];
         $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
@@ -168,6 +175,7 @@ class AddPriceModal extends Component
         $venueAreas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
         $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
         $options = Option::whereIn('tenant_id', $tenantIds)->get();
+        $staffs = Staffs::whereIn('tenant_id', $tenantIds)->get();
 
         $dX = stristr($this->multiplier, 'every');
         
@@ -177,6 +185,6 @@ class AddPriceModal extends Component
             $areaIds = explode(',', $selectedOption->area_ids);
             $optionAreas = VenueArea::whereIn('id', $areaIds)->get();
         }
-        return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options', 'dX', 'optionAreas'));
+        return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options', 'dX', 'optionAreas', 'staffs'));
     }
 }

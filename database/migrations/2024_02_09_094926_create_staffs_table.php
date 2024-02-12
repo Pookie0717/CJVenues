@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
 
             $table->string('name');
-            $table->enum('type', ['waiters', 'venue manager', 'toilet staff', 'cleaners'])->unique();
-            $table->text('venue_ids')->nullable();
+            $table->enum('type', ['waiters', 'venue manager', 'toilet staff', 'cleaners']);
+            // $table->text('venue_ids')->nullable();
             $table->text('area_ids')->nullable();
             $table->string('value')->nullable();
             $table->unsignedBigInteger('tenant_id');

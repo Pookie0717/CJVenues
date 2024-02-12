@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // Add new columns
         Schema::table('prices', function (Blueprint $table) {
-            $table->enum('type', ['area', 'option', 'venue']);
+            $table->enum('type', ['area', 'option', 'venue', 'staff']);
             $table->unsignedBigInteger('venue_id')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
             $table->unsignedBigInteger('option_id')->nullable();

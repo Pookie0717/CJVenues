@@ -15,6 +15,10 @@ class Staffs extends Model
         'value',
         'area_ids',
         'tenant_id',
+        'from',
+        'to',
+        'count',
+        'duration_type'
     ];
 
     // Define relationships with other models if needed

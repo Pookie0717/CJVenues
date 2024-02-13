@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_staff_header">
-                <h2 class="fw-bold">{{ trans('staff.addstaff') }}</h2>
+                <h2 class="fw-bold">{{ trans('Add staff') }}</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     {!! getIcon('cross','fs-1') !!}
                 </div>
@@ -64,9 +64,34 @@
                         <div class="row fv-row mb-7">
                             <!-- value -->
                             <div class="col mb-7">
-                                <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.value') }}</label>
-                                <input type="text" wire:model="value" name="value" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="value"/>
-                                @error('value')
+                                <label class="fw-semibold fs-6 mb-2">{{ trans('staff.from') }}</label>
+                                <input type="number" wire:model.defer="from" name="from" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="from"/>
+                                @error('from')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col mb-7">
+                                <label class="fw-semibold fs-6 mb-2">{{ trans('staff.to') }}</label>
+                                <input type="number" wire:model.defer="to" name="to" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="to"/>
+                                @error('to')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col mb-7">
+                                <label class="fw-semibold fs-6 mb-2">{{ trans('staff.duartion_type') }}</label>
+                                <select wire:model.defer="duration_type" name="duration_type" class="form-select form-select-solid mb-3 mb-lg-0">
+                                    <option value="hour">{{ trans('Hour') }}</option>
+                                    <option value="day">{{ trans('Day') }}</option>
+                                    <option value="people">{{ trans('People') }}</option>
+                                </select>
+                                @error('type')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col mb-7">
+                                <label class="fw-semibold fs-6 mb-2">{{ trans('staff.count') }}</label>
+                                <input type="number" wire:model.defer="count" name="count" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="count"/>
+                                @error('count')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>

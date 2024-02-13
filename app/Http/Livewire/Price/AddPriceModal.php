@@ -165,7 +165,6 @@ class AddPriceModal extends Component
 
     public function render()
     {
-        Log::info($this->staff_id);
         $currentTenantId = Session::get('current_tenant_id');
         $tenantIds = [];
         $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();

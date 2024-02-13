@@ -7,6 +7,7 @@ use App\Models\Venue;
 use App\Models\VenueArea;
 use App\Models\Option;
 use App\Models\Tenant;
+use App\Models\Staffs;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
@@ -37,6 +38,8 @@ class PricesDataTable extends DataTable
                     return VenueArea::find($price->area_id)->name ?? 'N/A';
                 } elseif ($price->option_id != 0) {
                     return Option::find($price->option_id)->name ?? 'N/A';
+                } elseif ($price->staff_id != 0) {
+                    return Staffs::find($price->staff_id)->name ?? 'N/A';
                 } else {
                     return 'N/A';
                 }

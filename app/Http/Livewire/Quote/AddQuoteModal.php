@@ -142,7 +142,7 @@ class AddQuoteModal extends Component
         $timeFrom = implode('|', $timeFromArray);
         $timeTo = implode('|', $timeToArray);
 
-        $priceBufferVenue = $this->calculateBufferPriceVenue($this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit, $this->area_id);
+        $priceBufferVenue = $this->calculateBufferPriceVenue($this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit, $this->area_id, $this->staff_ids);
 
         // Log::info('Buffer Price Venue: ' . $priceBufferVenue);
 
@@ -572,7 +572,7 @@ class AddQuoteModal extends Component
         return $totalHours;
     }
 
-    private function calculateBufferPriceVenue($bufferBefore, $bufferAfter, $bufferUnit, $areaId) {
+    private function calculateBufferPriceVenue($bufferBefore, $bufferAfter, $bufferUnit, $areaId, $staff_ids) {
         // 1. Get the associated venue and area
         $venue = Venue::whereHas('areas', function ($query) use ($areaId) {
             $query->where('id', $areaId);
@@ -610,6 +610,26 @@ class AddQuoteModal extends Component
             }
         }
 
+        $staff_arr = explode('|', $staff_ids);
+        foreach($staff_arr as $staff_arr_val) {
+            $staff_price = Price::where('staff_id', $staff_arr_val)->get();
+            if($staff_price->count() > 0) {
+                if($bufferUnit === 'days') {
+                    if($staff_price[0]['multiplier'] === 'hourly') {
+                        $totalBufferPrice += (($bufferBefore + $bufferAfter) * 8) * $staff_price[0]['price'];
+                    } else {
+                        $totalBufferPrice += ($bufferBefore + $bufferAfter) * $staff_price[0]['price'];
+                    }
+                } else {
+                    if($staff_price[0]['multiplier'] === 'daily') {
+                        $totalBufferPrice += ($staff_price[0]['price'] / 8) * ($bufferBefore + $bufferAfter);
+                    } else {
+                        $totalBufferPrice += $staff_price[0]['price'] * ($bufferBefore + $bufferAfter);
+                    }
+                }
+            }
+        }
+        Log::info($totalBufferPrice);
         return $totalBufferPrice;
     }
 

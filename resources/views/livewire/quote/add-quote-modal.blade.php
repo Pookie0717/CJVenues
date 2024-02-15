@@ -557,23 +557,23 @@
                                     </div>
 
                                 <div class="row">
-                                        <div class="col">
-                                            <!--begin::Input group-->
-                                            <div class="form-floating mb-7">
-                                                <input type="text" class="form-control form-control-solid" disabled value="{{$buffer_time_before??'N/A'}} {{$buffer_time_unit}}"/>
-                                                <label>Buffer Time Before the Event Start:</label>
-                                            </div>
-                                            <!--end::Input group-->
+                                    <div class="col">
+                                        <!--begin::Input group-->
+                                        <div class="form-floating mb-7">
+                                            <input type="text" class="form-control form-control-solid" disabled value="{{$buffer_time_before??'N/A'}} {{$buffer_time_unit}}"/>
+                                            <label>Buffer Time Before the Event Start:</label>
                                         </div>
+                                        <!--end::Input group-->
+                                    </div>
 
-                                        <div class="col">
-                                            <!--begin::Input group-->
-                                            <div class="form-floating mb-7">
-                                                <input type="text" class="form-control form-control-solid" disabled value="{{$buffer_time_after??'N/A'}} {{$buffer_time_unit}}"/>
-                                                <label>Buffer Time After the Event End:</label>
-                                            </div>
-                                            <!--end::Input group-->
+                                    <div class="col">
+                                        <!--begin::Input group-->
+                                        <div class="form-floating mb-7">
+                                            <input type="text" class="form-control form-control-solid" disabled value="{{$buffer_time_after??'N/A'}} {{$buffer_time_unit}}"/>
+                                            <label>Buffer Time After the Event End:</label>
                                         </div>
+                                        <!--end::Input group-->
+                                    </div>
                                 </div>
 
                                     <!--begin::Input group-->
@@ -600,8 +600,41 @@
                                     <!--end::Input group-->
                                     @endif
                                     @endforeach
-                               </div>
-
+                                </div>
+                                <div class="row mb-10">
+                                    <div class="form-floating col mb-7">
+                                    @if ($waiters !== 0)
+                                        <input type="text" class="form-control form-control-solid" readonly value="{{ $waiters['name'] }}"/>
+                                    @else
+                                        <input type="text" class="form-control form-control-solid" readonly value="No waiter available"/>
+                                    @endif
+                                    <label>Waiters</label>
+                                    </div>
+                                    <div class="form-floating col mb-7">
+                                    @if ($venueManagers !== 0)
+                                        <input type="text" class="form-control form-control-solid" readonly value="{{ $venueManagers['name'] }}"/>
+                                    @else
+                                        <input type="text" class="form-control form-control-solid" readonly value="No venue manager available"/>
+                                    @endif
+                                        <label>Venue Managers</label>
+                                    </div>
+                                    <div class="form-floating col mb-7">
+                                    @if ($toiletStaffs !== 0)
+                                        <input type="text" class="form-control form-control-solid" readonly value="{{ $toiletStaffs['name'] }}"/>
+                                    @else
+                                        <input type="text" class="form-control form-control-solid" readonly value="No toilet staff available"/>
+                                    @endif
+                                        <label>Toilet Staffs</label>
+                                    </div>
+                                    <div class="form-floating col mb-7">
+                                    @if ($cleaners !== 0)
+                                        <input type="text" class="form-control form-control-solid" readonly value="{{ $cleaners['name'] }}"/>
+                                    @else
+                                        <input type="text" class="form-control form-control-solid" readonly value="No cleaner available"/>
+                                    @endif
+                                        <label>Cleaners</label>
+                                    </div>
+                                </div>
                                 <div class="fv-row mb-10">
                                     <label for="discountField" class="form-label">Discount:</label>
                                     <input type="text" wire:model.defer="discount" class="form-control form-control-solid" placeholder="Enter a number or a percentage (e.g., 20 or 15%)" id="discountField" />

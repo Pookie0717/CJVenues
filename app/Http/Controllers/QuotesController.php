@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quote;
 use App\Models\Contact;
 use App\Models\Season;
+use App\Models\Staffs;
 use App\Models\Option;
 use App\Models\Tenant;
 use App\Models\BlockedArea;
@@ -74,7 +75,7 @@ class QuotesController extends Controller
 
 
 
-    public function show(Quote $quote, Contact $contact, Season $season, Option $option)
+    public function show(Quote $quote, Contact $contact, Season $season, Option $option, Staffs $staffs)
     {
         // Get the quote_number from the current $quote object
         $quote_number = $quote->quote_number;
@@ -93,6 +94,13 @@ class QuotesController extends Controller
 
         $associatedContact = Contact::where('id', $contact_id)
             ->get();
+
+        $staffIds = explode('|', $quote->staff_ids);
+        $waiter = Staffs::where('id', $staffIds[0])->get();
+        $venueManagers = Staffs::where('id', $staffIds[1])->get();
+        Log::info($venueManagers);
+        $toiletStaffs = Staffs::where('id', $staffIds[2])->get();
+        $cleaners = Staffs::where('id', $staffIds[3])->get();
 
         // Extract option IDs and values
         $optionIds = explode('|', $quote->options_ids);
@@ -154,7 +162,7 @@ class QuotesController extends Controller
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
 
-        return view('pages.quotes.show', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant'), ['hashedId' => $hashedId]);
+        return view('pages.quotes.show', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners'), ['hashedId' => $hashedId]);
     }
 
     public function showPublic($hashedId, Contact $contact, Season $season, Option $option)

@@ -52,5 +52,10 @@ return [
     'area' => 'Area',
     'createdupdate' => 'Created / Updated',
     'event_kind' => 'Type of Event',
+    'staff' => 'Staff',
+    'waiter' => 'Waiter',
+    'cleaner' => 'Cleaner',
+    'venue_manager' => 'Venue Manager',
+    'toilet_staff' => 'Toilet Staff'
 
 ];

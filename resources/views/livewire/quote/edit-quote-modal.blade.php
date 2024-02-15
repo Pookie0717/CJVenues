@@ -16,12 +16,12 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="contactSelect" class="form-label">Select Contact:</label>
-                                    <select class="form-select" id="contactSelect" wire:model="contact_id">
-                                        <option value="">Select a contact</option>
-                                        @foreach ($contacts as $contact)
-                                            <option value="{{ $contact->id }}">{{ $contact->name }}</option>
-                                        @endforeach
-                                    </select>
+                    <select class="form-select" id="contactSelect" wire:model="contact_id">
+                        <option value="">Select a contact</option>
+                        @foreach ($contacts as $contact)
+                            <option value="{{ $contact->id }}">{{ $contact->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <!--end::Input group-->
             </div>
@@ -32,14 +32,14 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-10">
                     <label for="eventSelect" class="form-label">Select Event:</label>
-                                    <select class="form-select" id="eventNameSelect" wire:model="eventName" wire:change="loadEventTypes">
-                                        <option value="">Select an event</option>
-                                        <option value="wedding">Wedding</option>
-                                <option value="birthday">Birthday Party</option>
-                                <option value="summer">Summer Party</option>
-                                <option value="corporate">Corporate Event</option>
-                                <!-- Add more options as needed -->
-                                    </select>
+                    <select class="form-select" id="eventNameSelect" wire:model="eventName" wire:change="loadEventTypes">
+                        <option value="">Select an event</option>
+                        <option value="wedding">Wedding</option>
+                        <option value="birthday">Birthday Party</option>
+                        <option value="summer">Summer Party</option>
+                        <option value="corporate">Corporate Event</option>
+                        <!-- Add more options as needed -->
+                    </select>
                 </div>
                 <!--end::Input group-->
 
@@ -70,32 +70,32 @@
                     <!--begin::Input group-->
                     <div class="fv-row mb-10">
                         <div class="row">
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Date From</label>
-                                        <div class="input-group" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker"/>
-                                            <span class="input-group-text" data-td-target="#date_from_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('date_from')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                        <div class="col">
+                            <label class="required fw-semibold fs-6 mb-2">Date From</label>
+                            <div class="input-group" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker"/>
+                                <span class="input-group-text" data-td-target="#date_from_picker" data-td-toggle="datetimepicker">
+                                    <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                </span>
+                            </div>
+                            @error('date_from')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                                    <div class="col">
-                                        <label class="required fw-semibold fs-6 mb-2">Date To</label>
-                                        <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                            <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker"/>
-                                            <span class="input-group-text" data-td-target="#date_to_picker" data-td-toggle="datetimepicker">
-                                                <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                            </span>
-                                        </div>
-                                        @error('date_to')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    </div>
+                        <div class="col">
+                            <label class="required fw-semibold fs-6 mb-2">Date To</label>
+                            <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                                <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker"/>
+                                <span class="input-group-text" data-td-target="#date_to_picker" data-td-toggle="datetimepicker">
+                                    <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                </span>
+                            </div>
+                            @error('date_to')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        </div>
                     </div>
                     <!--end::Input group-->
 

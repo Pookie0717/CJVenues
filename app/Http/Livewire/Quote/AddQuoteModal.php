@@ -10,6 +10,7 @@ use App\Models\VenueArea;
 use App\Models\Venue;
 use App\Models\Price;
 use App\Models\Season;
+use App\Models\Staffs;
 use App\Models\Tenant;
 use App\Models\EventType;
 use Illuminate\Validation\Rule;
@@ -48,7 +49,11 @@ class AddQuoteModal extends Component
     public $buffer_time_before;
     public $buffer_time_after;
     public $buffer_time_unit = "days";
-
+    public $waiters = 0;
+    public $venueManagers = 0;
+    public $toiletStaffs = 0;
+    public $cleaners = 0;
+    public $staff_ids;
 
     public $filteredContacts = [];
     public $edit_mode = false;
@@ -86,7 +91,13 @@ class AddQuoteModal extends Component
     {
         
         $this->eventTypes = [];
-
+        $staff_ids_arr = [
+            $this->waiters ? $this->waiters['id'] : $this->waiters, 
+            $this->venueManagers ? $this->venueManagers['id'] : $this->venueManagers,
+            $this->toiletStaffs ? $this->toiletStaffs['id'] : $this->toiletStaffs,
+            $this->cleaners ? $this->cleaners['id'] : $this->cleaners
+        ];
+        $this->staff_ids = implode('|', $staff_ids_arr);
         $this->validateQuoteData();
 
         if($this->selectedOptions) {
@@ -94,7 +105,7 @@ class AddQuoteModal extends Component
             // Convert selected options to a comma-separated string format
             $optionIdsIm = implode('|', array_keys($this->selectedOptions));
 
-            Log::info("-----optionIdsIm". json_encode($optionIdsIm));
+            // Log::info("-----optionIdsIm". json_encode($optionIdsIm));
 
             $optionValuesIm = implode('|', array_values($this->selectedOptions));
 
@@ -107,7 +118,7 @@ class AddQuoteModal extends Component
             $cleanedOptionTenantIds = [];
            
             foreach ($optionValues as $index => $value) {
-                Log::info("-----optionValues loop". $index . "-". $value);
+                // Log::info("-----optionValues loop". $index . "-". $value);
                 if ($value !== '' && $value != 0 && $value !== 'no') {
                     $cleanedOptionIds[] = $optionIds[$index];
                     $cleanedOptionValues[] = $value;
@@ -133,11 +144,11 @@ class AddQuoteModal extends Component
 
         $priceBufferVenue = $this->calculateBufferPriceVenue($this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit, $this->area_id);
 
-        Log::info('Buffer Price Venue: ' . $priceBufferVenue);
+        // Log::info('Buffer Price Venue: ' . $priceBufferVenue);
 
-        $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $timeFrom, $timeTo, $this->area_id);
+        $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $timeFrom, $timeTo, $this->area_id, $this->staff_ids);
 
-        Log::info('Price Venue: ' . $priceVenue);
+        // Log::info('Price Venue: ' . $priceVenue);
 
         // selected area's tenant priceVenue.
         $priceVenue = $priceVenue + $priceBufferVenue;
@@ -164,7 +175,7 @@ class AddQuoteModal extends Component
                 
                 $newQuoteNumber = $this->getNewQuoteNumber();
 
-                Log::info('Option Price for ID ' . json_encode($item['totalPrice']) . ': ' . json_encode($item['individualPrices']));
+                // Log::info('Option Price for ID ' . json_encode($item['totalPrice']) . ': ' . json_encode($item['individualPrices']));
 
                  // Update the total price
                  $item['totalPrice'] = $item['totalPrice'] + $priceBufferOptionsStringArray[$tenantId]['totalPrice']; 
@@ -230,7 +241,8 @@ class AddQuoteModal extends Component
                         'buffer_time_before' => $this->buffer_time_before,
                         'buffer_time_after' => $this->buffer_time_after,
                         'buffer_time_unit' => $this->buffer_time_unit,
-                        'tenant_id' => $tenantId
+                        'tenant_id' => $tenantId,
+                        'staff_ids' => $this->staff_ids,
                     ]);
                     DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
                 }
@@ -267,7 +279,8 @@ class AddQuoteModal extends Component
             'buffer_time_before' => $this->buffer_time_before,
             'buffer_time_after' => $this->buffer_time_after,
             'buffer_time_unit' => $this->buffer_time_unit,
-            'tenant_id' => $mainTenantId
+            'tenant_id' => $mainTenantId,
+            'staff_ids' => $this->staff_ids,
         ]);
         DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
        
@@ -295,7 +308,8 @@ class AddQuoteModal extends Component
             'price_options', 
             'options_ids' , 
             'options_values',
-            'time_ranges'
+            'time_ranges',
+            'staff_ids'
         ]);
     }
 
@@ -648,7 +662,7 @@ class AddQuoteModal extends Component
     }
 
 
-    public function calculatePriceVenue($dateFrom, $dateTo, $timeFrom, $timeTo, $areaId)
+    public function calculatePriceVenue($dateFrom, $dateTo, $timeFrom, $timeTo, $areaId, $staff_ids)
     {
         // Get the associated venue and area
         $venue = Venue::whereHas('areas', function ($query) use ($areaId) {
@@ -721,6 +735,29 @@ class AddQuoteModal extends Component
             }
             // Move to the next day
             $currentDate->addDay();
+            $staff_arr = explode('|', $staff_ids);
+            foreach($staff_arr as $staff_arr_val) {
+                $staff_price = Price::where('staff_id', $staff_arr_val)->get();
+                if($staff_price->count() > 0) {
+                    $multiplierType = $staff_price[0]['multiplier'];
+                    $selected_date_from = explode('-', $this->date_from);
+                    $selected_date_to = explode('-', $this->date_to);
+                    $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
+                    switch ($multiplierType) {
+                        case 'daily':
+                            $staff_price[0]['price'] = $staff_price[0]['price'] * $selected_date_between;
+                            $totalPrice += $staff_price[0]['price'];
+                            break;
+                        case 'hourly':
+                            $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
+                            $totalPrice += $staff_price[0]['price'] * $hours;
+                            break;
+                        case 'event':
+                            $totalPrice += $staff_price[0]['price'];
+                            break;
+                    }
+                }
+            }
         }
         return $totalPrice;
     }
@@ -784,7 +821,7 @@ class AddQuoteModal extends Component
         $days = ceil($totalBufferHours / 8);
         $hours = $totalBufferHours;
 
-        Log::info('Buffer Hours ' . $hours);
+        // Log::info('Buffer Hours ' . $hours);
 
 
         switch ($multiplierType) {
@@ -807,9 +844,9 @@ class AddQuoteModal extends Component
             $price *= $people;
         }
 
-        Log::info('Type Option ' . $optionId . ': ' . $optionType);
-        Log::info('Multiplier Type for Option ' . $optionId . ': ' . $multiplierType);
-        Log::info('Price for Option ' . $optionId . ': ' . $price);
+        // Log::info('Type Option ' . $optionId . ': ' . $optionType);
+        // Log::info('Multiplier Type for Option ' . $optionId . ': ' . $multiplierType);
+        // Log::info('Price for Option ' . $optionId . ': ' . $price);
 
         return $price;
     }
@@ -1125,9 +1162,9 @@ class AddQuoteModal extends Component
                                 $people
                             );
     
-                            Log::info('optionPrice ' . $optionId . ': ' . $optionPrice);
+                            // Log::info('optionPrice ' . $optionId . ': ' . $optionPrice);
     
-                            Log::info('Single Buffer Price for Option ' . $optionId . ': ' . $optionTotalPrice);
+                            // Log::info('Single Buffer Price for Option ' . $optionId . ': ' . $optionTotalPrice);
     
                             $pricesMap[$optionTenantId]["totalPrice"] += $optionTotalPrice;
                             
@@ -1228,6 +1265,75 @@ class AddQuoteModal extends Component
 
     private function loadOptions()
     {
+        // Get count of staffs
+        $get_waiters = [];
+        $get_cleaners = [];
+        $get_toiletStaffs = [];
+        $get_venueManagers = [];
+        $areaId = $this->area_id;
+        $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($areaId) {
+            $areaIds = explode(',', $staff->area_ids);
+            return in_array($areaId, $areaIds);
+        });
+        $get_cleaners = Staffs::where('type', 'cleaners')->get()->filter(function ($staff) use ($areaId) {
+            $areaIds = explode(',', $staff->area_ids);
+            return in_array($areaId, $areaIds);
+        });
+        $get_toiletStaffs = Staffs::where('type', 'toilet staff')->get()->filter(function ($staff) use ($areaId) {
+            $areaIds = explode(',', $staff->area_ids);
+            return in_array($areaId, $areaIds);
+        });
+        $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($areaId) {
+            $areaIds = explode(',', $staff->area_ids);
+            return in_array($areaId, $areaIds);
+        });
+        $selected_date_from = explode('-', $this->date_from);
+        $selected_date_to = explode('-', $this->date_to);
+        $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
+        foreach ($get_waiters as $get_waiter) {
+            if ($get_waiter['duration_type'] === 'people' && $get_waiter['from'] <= $this->people && $get_waiter['to'] >= $this->people) {
+                if (!$this->waiters || $this->waiters['count'] < $get_waiter['count']) {
+                    $this->waiters = $get_waiter;
+                }
+            } elseif ($get_waiter['duration_type'] === 'day' && $get_waiter['from'] <= $selected_date_between && $selected_date_between <= $get_waiter['to']) {
+                if (!$this->waiters || $this->waiters['count'] < $get_waiter['count']) {
+                    $this->waiters = $get_waiter;
+                }
+            }
+        }
+        foreach ($get_toiletStaffs as $get_toiletStaff) {
+            if ($get_toiletStaff['duration_type'] === 'people' && $get_toiletStaff['from'] <= $this->people && $get_toiletStaff['to'] >= $this->people) {
+                if (!$this->toiletStaffs || $this->toiletStaffs['count'] < $get_toiletStaff['count']) {
+                    $this->toiletStaffs = $get_toiletStaff;
+                }
+            } elseif ($get_toiletStaff['duration_type'] === 'day' && $get_toiletStaff['from'] <= $selected_date_between && $selected_date_between <= $get_toiletStaff['to']) {
+                if (!$this->toiletStaffs || $this->toiletStaffs['count'] < $get_toiletStaff['count']) {
+                    $this->toiletStaffs = $get_toiletStaff;
+                }
+            }
+        }
+        foreach ($get_cleaners as $get_cleaner) {
+            if ($get_cleaner['duration_type'] === 'people' && $get_cleaner['from'] <= $this->people && $get_cleaner['to'] >= $this->people) {
+                if (!$this->cleaners || $this->cleaners['count'] < $get_cleaner['count']) {
+                    $this->cleaners = $get_cleaner;
+                }
+            } elseif ($get_cleaner['duration_type'] === 'day' && $get_cleaner['from'] <= $selected_date_between && $selected_date_between <= $get_cleaner['to']) {
+                if (!$this->cleaners || $this->cleaners['count'] < $get_cleaner['count']) {
+                    $this->cleaners = $get_cleaner;
+                }
+            }
+        }
+        foreach ($get_venueManagers as $get_venueManager) {
+            if ($get_venueManager['duration_type'] === 'people' && $get_venueManager['from'] <= $this->people && $get_venueManager['to'] >= $this->people) {
+                if (!$this->venueManagers || $this->venueManagers['count'] < $get_venueManager['count']) {
+                    $this->venueManagers = $get_venueManager;
+                }
+            } elseif ($get_venueManager['duration_type'] === 'day' && $get_venueManager['from'] <= $selected_date_between && $selected_date_between <= $get_venueManager['to']) {
+                if (!$this->venueManagers || $this->venueManagers['count'] < $get_venueManager['count']) {
+                    $this->venueManagers = $get_venueManager;
+                }
+            }
+        }
 
         // Check if the required fields are set
         if (!$this->date_from || !$this->area_id) {

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_staff_header">
-                <h2 class="fw-bold">{{ trans('Add staff') }}</h2>
+                <h2 class="fw-bold">{{ trans('add_staff') }}</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     {!! getIcon('cross','fs-1') !!}
                 </div>
@@ -25,10 +25,10 @@
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.type') }}</label>
                             <select wire:model="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">{{ trans('general.select') }}</option>
-                                <option value="waiters">{{ trans('waiters') }}</option>
-                                <option value="venue manager">{{ trans('venue manager') }}</option>
-                                <option value="toilet staff">{{ trans('toilet staff') }}</option>
-                                <option value="cleaners">{{ trans('cleaners') }}</option>
+                                <option value="waiters">{{ trans('staff.waiters') }}</option>
+                                <option value="venue manager">{{ trans('staff.venue_manager') }}</option>
+                                <option value="toilet staff">{{ trans('staff.toilet_staff') }}</option>
+                                <option value="cleaners">{{ trans('staff.cleaners') }}</option>
                             </select>
                             @error('type')
                                 <span class="text-danger">{{ $message }}</span>
@@ -80,9 +80,9 @@
                             <div class="col mb-7">
                                 <label class="fw-semibold fs-6 mb-2">{{ trans('staff.duartion_type') }}</label>
                                 <select wire:model.defer="duration_type" name="duration_type" class="form-select form-select-solid mb-3 mb-lg-0">
-                                    <option value="hour">{{ trans('Hour') }}</option>
-                                    <option value="day">{{ trans('Day') }}</option>
-                                    <option value="people">{{ trans('People') }}</option>
+                                    <option value="hour">{{ trans('staff.hours') }}</option>
+                                    <option value="day">{{ trans('staff.days') }}</option>
+                                    <option value="people">{{ trans('staff.people') }}</option>
                                 </select>
                                 @error('type')
                                     <span class="text-danger">{{ $message }}</span>

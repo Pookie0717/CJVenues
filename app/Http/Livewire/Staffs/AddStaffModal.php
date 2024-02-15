@@ -25,10 +25,10 @@ class AddStaffModal extends Component
     public $edit_mode = false;
     public $staff;
     public $area_id_string;
-    public $from;
-    public $to;
-    public $count;
-    public $duration_type;
+    public $from = null;
+    public $to = null;
+    public $count = null;
+    public $duration_type = 'hour';
 
     protected $listeners = [
         'create_staff' => 'createStaff',
@@ -42,13 +42,14 @@ class AddStaffModal extends Component
             'name' => 'required|string|max:255',
             'type' => 'required|max:255',
             'area_ids' => 'required|nullable|array',
-            'from' => 'nullable|integer',
-            'to' => 'nullable|integer',
-            'count' => 'nullable|integer',
-            'duration_type' => 'string|max:255'
+            'duration_type' => 'string|max:255',
+            'from' => 'integer|nullable',
+            'to' => 'integer|nullable',
+            'count' => 'integer|nullable'
         ];
 
         $this->validate($rules);
+        Log::info($this->count);
         $this->area_id_string = implode(',', $this->area_ids);
 
         if ($this->edit_mode) {
@@ -59,11 +60,11 @@ class AddStaffModal extends Component
                 'type' => $this->type,
                 'area_ids' => $this->area_id_string,
                 'tenant_id' => $this->tenant_id,
-                'from' => $this->from,
-                'to' => $this->to,
-                'count' => $this->count,
+                'from' => $this->from ? $this->from : null,
+                'to' => $this->to ? $this->to : null,
+                'count' => $this->count ? $this->count : null,
                 'value' => $this->value,
-                'duration_type' => $this->duration_type
+                'duration_type' => $this->duration_type ? $this->duration_type : 'day',
             ]);
 
             // Emit an event to notify that the price was updated successfully
@@ -75,9 +76,9 @@ class AddStaffModal extends Component
                 'type' => $this->type,
                 'area_ids' => $this->area_id_string,
                 'tenant_id' => $this->tenant_id,
-                'from' => $this->from,
-                'to' => $this->to,
-                'count' => $this->count,
+                'from' => $this->from ? $this->from : null,
+                'to' => $this->to ? $this->to : null,
+                'count' => $this->count ? $this->count : null,
                 'value' => $this->value,
                 'duration_type' => $this->duration_type
             ]);

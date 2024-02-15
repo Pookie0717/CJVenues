@@ -124,6 +124,42 @@
                                 <!--end::Col-->
                             </div>
                             <!--end::Row-->
+                            <!--begin::Row-->
+                            <div class='row mb-12'>
+                                <div class="col">
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.waiter') }}:</div>
+                                    @if($waiter->count() > 0)
+                                        <div class="fw-bold fs-6 text-gray-800">{{ $waiter[0]['name'] }}</div>
+                                    @else
+                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No Venue Manager available' }}</div>
+                                    @endif
+                                </div>
+                                <div class="col">
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.cleaner') }}:</div>
+                                    @if($cleaners->count() > 0)
+                                        <div class="fw-bold fs-6 text-gray-800">{{ $cleaners[0]['name'] }}</div>
+                                    @else
+                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No cleaner available' }}</div>
+                                    @endif
+                                </div>
+                                <div class="col">
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.venue_manager') }}:</div>
+                                    @if($venueManagers->count())
+                                        <div class="fw-bold fs-6 text-gray-800">{{ $venueManagers[0]['name'] }}</div>
+                                    @else
+                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No venue manager available' }}</div>
+                                    @endif
+                                </div>
+                                <div class="col">
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.toilet_staff') }}:</div>
+                                    @if($toiletStaffs->count())
+                                        <div class="fw-bold fs-6 text-gray-800">{{ $toiletStaffs[0]['name'] }}</div>
+                                    @else
+                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No toilet staff available' }}</div>
+                                    @endif
+                                </div>
+                            </div>
+                            <!--end::Row-->
 
                             <!--begin::Row-->
                             <div class="row g-5 mb-12">

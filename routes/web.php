@@ -16,7 +16,7 @@ use App\Http\Controllers\VenuesManagementController;
 use App\Http\Controllers\AreasManagementController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\TenantController;
-use App\Http\Controllers\staffController;
+use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
 /*

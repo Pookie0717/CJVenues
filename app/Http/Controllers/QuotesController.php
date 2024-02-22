@@ -112,9 +112,10 @@ class QuotesController extends Controller
 
         //calculate the price
         $staff_arr = explode('|', $quote->staff_ids);
-        $index = 0;
-        foreach($staff_arr as $staff_arr_val) {
+        for($index = 0;$index < 4;$index++) {
+            $staff_arr_val = isset($staff_arr[$index]) ? $staff_arr[$index] : null;
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();
+            $staff_items = Staffs::where('id', $staff_arr_val)->get();
             if($staff_price->count() > 0) {
                 $multiplierType = $staff_price[0]['multiplier'];
                 $selected_date_from = explode('-', $quote->date_from);
@@ -143,10 +144,16 @@ class QuotesController extends Controller
                         else $cleanersPrice = $staff_price[0]['price'] * $hours;
                         break;
                     case 'event':
-                        if ($index === 0) $waiterPrice = $staff_price[0]['price'] * $hours;
-                        else if ($index === 1) $venueManagersPrice = $staff_price[0]['price'] * $hours;
-                        else if ($index === 2) $toiletStaffsPrice = $staff_price[0]['price'] * $hours;
-                        else $cleanersPrice = $staff_price[0]['price'] * $hours;
+                        if ($index === 0) $waiterPrice = $staff_price[0]['price'];
+                        else if ($index === 1) $venueManagersPrice = $staff_price[0]['price'];
+                        else if ($index === 2) $toiletStaffsPrice = $staff_price[0]['price'];
+                        else $cleanersPrice = $staff_price[0]['price'];
+                        break;
+                    case 'event_pp':
+                        if ($index === 0 && $staff_arr[$index + 4] !== 'null') $waiterPrice = $staff_price[0]['price'] * explode(',', $staff_items[0]['count'])[$staff_arr[$index + 4]];
+                        else if ($index === 1 && $staff_arr[$index + 4] !== 'null') $venueManagersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]]; 
+                        else if ($index === 2 && $staff_arr[$index + 4] !== 'null') $toiletStaffsPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                        else if($index === 3 && $staff_arr[$index + 4] !== 'null') $cleanersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
                         break;
                 }
             }

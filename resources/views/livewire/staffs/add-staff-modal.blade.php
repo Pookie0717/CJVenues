@@ -7,9 +7,9 @@
                     {!! getIcon('cross','fs-1') !!}
                 </div>
             </div>
-            <div class="modal-body flex-center  px-5 my-7">
+            <div class="modal-body flex-center px-5 my-7">
                 <form id="kt_modal_add_staff_form" class="form" wire:submit.prevent="submit">
-                    <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_staff_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_staff_header" data-kt-scroll-wrappers="#kt_modal_add_staff_scroll" data-kt-scroll-offset="300px">
+                    <div class="d-flex flex-column scroll-y px-5 px-lg-5" id="kt_modal_add_staff_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_staff_header" data-kt-scroll-wrappers="#kt_modal_add_staff_scroll" data-kt-scroll-offset="300px">
                         
                         <!-- Name -->
                         <div class="fv-row mb-7">
@@ -97,14 +97,17 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col mb-7">
+                                <div class="col mb-7 ml-2">
                                     <label class="fw-semibold fs-6 mb-2">{{ trans('staff.count') }}</label>
                                     <input type="number" wire:model="count.{{$i}}" name="count" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="count"/>
                                     @error('count')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="text-end">
+                                <div class="col mb-7 text-end">
+                                    <div>
+                                        <label class="fw-semibold fs-6 mb-7">{{ trans('') }}</label>
+                                    </div>
                                     <button type="button" wire:click="removeItem({{ $i }})" class="btn btn-danger btn-sm">Remove</button>
                                 </div>
                             </div>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\DataTables\staffDataTable;
+use App\DataTables\StaffDataTable;
 
 class StaffController extends Controller
 {

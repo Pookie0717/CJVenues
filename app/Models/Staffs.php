@@ -12,7 +12,6 @@ class Staffs extends Model
     protected $fillable = [
         'name',
         'type',
-        'value',
         'area_ids',
         'tenant_id',
         'from',

@@ -259,11 +259,7 @@
                                                 $priceOptionsArray = explode('|', $quote->price_options);
                                             @endphp
 
-
-
                                             @foreach($optionsWithValues as $index => $optionWithValue)
-                                             
-                                           
                                                 @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
                                                   @php
                                                     $price = floatval($priceOptionsArray[$index]);
@@ -281,7 +277,6 @@
                                                             @else
                                                                 {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
                                                             @endif
-
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $value }}</td>
                                                         <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>
@@ -291,7 +286,58 @@
                                                     </tr>
                                                 @endif
                                             @endforeach
-
+                                            @if (count($waiter) !== 0)
+                                                <tr class="fw-bold text-gray-700 fs-5">
+                                                    <td class="d-flex align-items-center text-left pt-6">
+                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                        {{$waiter[0]['name']}}
+                                                    </td>
+                                                    <td class="pt-6 text-end">{{ $value }}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $waiterPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-dark fw-bolder text-end">
+                                                        $ {{ isset($waiterPrice) ? number_format($waiterPrice, 2) : 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (count($venueManagers) !== 0)
+                                                <tr class="fw-bold text-gray-700 fs-5">
+                                                    <td class="d-flex align-items-center text-left pt-6">
+                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                        {{$venueManagers[0]['name']}}
+                                                    </td>
+                                                    <td class="pt-6 text-end">{{ $value }}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $venueManagersPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-dark fw-bolder text-end">
+                                                        $ {{ isset($venueManagersPrice) ? number_format($venueManagersPrice, 2) : 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (count($toiletStaffs) !== 0)
+                                                <tr class="fw-bold text-gray-700 fs-5">
+                                                    <td class="d-flex align-items-center text-left pt-6">
+                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                        {{$toiletStaffs[0]['name']}}
+                                                    </td>
+                                                    <td class="pt-6 text-end">{{ $value }}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $toiletStaffsPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-dark fw-bolder text-end">
+                                                        $ {{ isset($toiletStaffsPrice) ? number_format($toiletStaffsPrice, 2) : 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (count($cleaners) !== 0)
+                                                <tr class="fw-bold text-gray-700 fs-5">
+                                                    <td class="d-flex align-items-center text-left pt-6">
+                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                        {{$cleaners[0]['name']}}
+                                                    </td>
+                                                    <td class="pt-6 text-end">{{ $value }}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $cleanersPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-dark fw-bolder text-end">
+                                                        $ {{ isset($cleanersPrice) ? number_format($cleanersPrice, 2) : 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>

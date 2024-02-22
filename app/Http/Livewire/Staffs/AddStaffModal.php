@@ -20,15 +20,19 @@ class AddStaffModal extends Component
     public $venue_ids;
     public $area_ids;
     public $tenant_id;
-    public $value;
     public $venueAreas;
     public $edit_mode = false;
     public $staff;
     public $area_id_string;
-    public $from = null;
-    public $to = null;
-    public $count = null;
-    public $duration_type = 'hour';
+    public $from;
+    public $from_arr_string;
+    public $to;
+    public $to_arr_string;
+    public $count;
+    public $count_arr_string;
+    public $duration_type;
+    public $duration_type_string;
+    public $items_count = 1;
 
     protected $listeners = [
         'create_staff' => 'createStaff',
@@ -42,15 +46,22 @@ class AddStaffModal extends Component
             'name' => 'required|string|max:255',
             'type' => 'required|max:255',
             'area_ids' => 'required|nullable|array',
-            'duration_type' => 'string|max:255',
-            'from' => 'integer|nullable',
-            'to' => 'integer|nullable',
-            'count' => 'integer|nullable'
+            'duration_type' => 'array|nullable',
+            'from' => 'array|nullable',
+            'to' => 'array|nullable',
+            'count' => 'array|nullable'
         ];
 
         $this->validate($rules);
-        Log::info($this->count);
+        if (!isset($this->duration_type[$this->items_count])) {
+            $this->duration_type[$this->items_count] = 'hour';
+        }
+
         $this->area_id_string = implode(',', $this->area_ids);
+        $this->from_arr_string = implode(',', $this->from);
+        $this->to_arr_string = implode(',', $this->to);
+        $this->count_arr_string = implode(',', $this->count);
+        $this->duration_type_string = implode(',', $this->duration_type);
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing staff record
@@ -60,11 +71,10 @@ class AddStaffModal extends Component
                 'type' => $this->type,
                 'area_ids' => $this->area_id_string,
                 'tenant_id' => $this->tenant_id,
-                'from' => $this->from ? $this->from : null,
-                'to' => $this->to ? $this->to : null,
-                'count' => $this->count ? $this->count : null,
-                'value' => $this->value,
-                'duration_type' => $this->duration_type ? $this->duration_type : 'day',
+                'from' => $this->from_arr_string ? $this->from_arr_string : null,
+                'to' => $this->to_arr_string ? $this->to_arr_string : null,
+                'count' => $this->count_arr_string ? $this->count_arr_string : null,
+                'duration_type' => $this->duration_type_string,
             ]);
 
             // Emit an event to notify that the price was updated successfully
@@ -76,11 +86,10 @@ class AddStaffModal extends Component
                 'type' => $this->type,
                 'area_ids' => $this->area_id_string,
                 'tenant_id' => $this->tenant_id,
-                'from' => $this->from ? $this->from : null,
-                'to' => $this->to ? $this->to : null,
-                'count' => $this->count ? $this->count : null,
-                'value' => $this->value,
-                'duration_type' => $this->duration_type
+                'from' => $this->from_arr_string,
+                'to' => $this->to_arr_string,
+                'count' => $this->count_arr_string,
+                'duration_type' => $this->duration_type_string
             ]);
             // Emit an event to notify that the price was created successfully
             $this->emit('success', 'Staff successfully added');
@@ -88,7 +97,7 @@ class AddStaffModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_ids', 'area_ids', 'value', 'from', 'to', 'count', 'duration_type'
+            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count'
         ]);
     }
 
@@ -96,7 +105,7 @@ class AddStaffModal extends Component
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
-            'name', 'type', 'venue_ids', 'area_ids', 'value', 'from', 'to', 'count', 'duration_type'
+            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count'
         ]);
     }
 
@@ -117,17 +126,32 @@ class AddStaffModal extends Component
         $this->edit_mode = true;
 
         $staff = Staffs::find($id);
-
         $this->staffId = $id;
+        $this->items_count = count(explode(',', $staff->duration_type));
         $this->tenant_id = $staff->tenant_id;
         $this->name = $staff->name;
         $this->type = $staff->type;
         $this->area_ids = explode(',', $staff->area_ids);
-        $this->value = $staff->value;
-        $this->from = $staff->from;
-        $this->to = $staff->to;
-        $this->count = $staff->count;
-        $this->duration_type = $staff->duration_type;
+        $this->from = explode(',', $staff->from);
+        $this->to = explode(',', $staff->to);
+        $this->count = explode(',', $staff->count);
+        $this->duration_type = explode(',', $staff->duration_type);
+    }
+
+    public function addItem() {
+        if (!isset($this->duration_type[$this->items_count])) {
+            $this->duration_type[$this->items_count] = 'hour';
+        }
+        $this->items_count += 1;
+    }
+
+    public function removeItem() {
+        if (!isset($this->duration_type[$this->items_count])) {
+            $this->duration_type[$this->items_count] = 'hour';
+        }
+        if($this->items_count > 1) {
+            $this->items_count -= 1;
+        }
     }
 
     public function render()

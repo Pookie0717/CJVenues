@@ -62,7 +62,7 @@ Route::get('setlocale/{locale}', 'App\Http\Controllers\LocalizationController@se
         'index' => 'bookings'
     ]);
 
-    Route::resource('/staff', staffController::class)->names([
+    Route::resource('/staff', StaffController::class)->names([
         'index' => 'staff'
     ]);
 

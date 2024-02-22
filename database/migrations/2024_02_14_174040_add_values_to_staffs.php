@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('staffs', function (Blueprint $table) {
-            $table->unsignedBigInteger('from')->nullable();
-            $table->unsignedBigInteger('to')->nullable();
-            $table->enum('duration_type', ['hour', 'day', 'people',]);
-            $table->unsignedBigInteger('count')->nullable();
+            $table->string('from')->nullable();
+            $table->string('to')->nullable();
+            $table->string('duration_type');
+            $table->string('count')->nullable();
         });
     }
 
@@ -25,7 +25,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('staffs', function (Blueprint $table) {
-            //
+            $table->dropColumn('from');
+            $table->dropColumn('to');
+            $table->dropColumn('duration_type');
+            $table->dropColumn('count');
         });
     }
 };

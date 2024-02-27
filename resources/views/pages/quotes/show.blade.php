@@ -125,7 +125,7 @@
                             </div>
                             <!--end::Row-->
                             <!--begin::Row-->
-                            <div class='row mb-12'>
+                            <!-- <div class='row mb-12'>
                                 <div class="col">
                                     <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.waiter') }}:</div>
                                     @if($waiter->count() > 0)
@@ -158,7 +158,7 @@
                                         <div class="fw-bold fs-6 text-gray-800">{{ 'No toilet staff available' }}</div>
                                     @endif
                                 </div>
-                            </div>
+                            </div> -->
                             <!--end::Row-->
 
                             <!--begin::Row-->

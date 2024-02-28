@@ -104,7 +104,6 @@ class AddQuoteModal extends Component
             return $value === null ? 'null' : $value;
         }, $merged_staff_ids_arr);
         $this->staff_ids = implode('|', $merged_staff_ids_arr);
-        Log::info($this->staff_ids);
         $this->validateQuoteData();
 
         if($this->selectedOptions) {
@@ -154,7 +153,6 @@ class AddQuoteModal extends Component
         // Log::info('Buffer Price Venue: ' . $priceBufferVenue);
 
         $priceVenue = $this->calculatePriceVenue($this->date_from, $this->date_to, $timeFrom, $timeTo, $this->area_id, $this->staff_ids);
-
         // Log::info('Price Venue: ' . $priceVenue);
 
         // selected area's tenant priceVenue.
@@ -188,9 +186,10 @@ class AddQuoteModal extends Component
                  $item['totalPrice'] = $item['totalPrice'] + $priceBufferOptionsStringArray[$tenantId]['totalPrice']; 
                 
                 foreach($item['individualPrices'] as $optionId => $optionTotalPrice) {
-                    $item['individualPrices'][$optionId] += $priceBufferOptionsStringArray[$tenantId]['individualPrices'][$optionId];
-                } 
+                    $item['individualPrices'][$optionId] = $item['individualPrices'][$optionId] + $priceBufferOptionsStringArray[$tenantId]['individualPrices'][$optionId];
+                }
 
+                Log::info($item);
                 // Your existing code to handle the price options string and calculate the final prices
                 $priceOptionsString = implode('|', array_values($item['individualPrices']));
 
@@ -483,26 +482,26 @@ class AddQuoteModal extends Component
         return 'unknown';
     }
 
-//    private function getOptionPriceForSeason($optionId, $seasonId)
-//     {
-//         return Option::find($optionId)->prices()
-//             ->where('type', 'option')
-//             ->where('season_id', $seasonId)
-//             ->where('extra_tier_type', 'like', '%event%')
-//             ->first();
-//     }
+   private function getOptionPriceForSeason($optionId, $seasonId)
+    {
+        return Option::find($optionId)->prices()
+            ->where('type', 'option')
+            ->where('season_id', $seasonId)
+            ->where('extra_tier_type', 'like', '%event%')
+            ->first();
+    }
 
-//     private function getOptionBufferPriceForSeason($optionId, $seasonId)
-//     {
-//         return Option::find($optionId)->prices()
-//             ->where('type', 'option')
-//             ->where('season_id', $seasonId)
-//             ->where(function($query) {
-//                 $query->where('extra_tier_type', 'like', '%buffer_before%')
-//                       ->orWhere('extra_tier_type', 'like', '%buffer_after%');
-//             })
-//             ->first();
-//     }
+    private function getOptionBufferPriceForSeason($optionId, $seasonId)
+    {
+        return Option::find($optionId)->prices()
+            ->where('type', 'option')
+            ->where('season_id', $seasonId)
+            ->where(function($query) {
+                $query->where('extra_tier_type', 'like', '%buffer_before%')
+                      ->orWhere('extra_tier_type', 'like', '%buffer_after%');
+            })
+            ->first();
+    }
 
     private function getOptionPricesForSeason($optionId, $seasonId)
     {
@@ -886,10 +885,6 @@ class AddQuoteModal extends Component
             $price *= $people;
         }
 
-        // Log::info('Type Option ' . $optionId . ': ' . $optionType);
-        // Log::info('Multiplier Type for Option ' . $optionId . ': ' . $multiplierType);
-        // Log::info('Price for Option ' . $optionId . ': ' . $price);
-
         return $price;
     }
 
@@ -937,8 +932,7 @@ class AddQuoteModal extends Component
 
             $price = $multiplierValue * (float)$logicOptionValue * $quantity;
         
-          }
-
+        }
         return $price;
     }
 
@@ -1149,7 +1143,7 @@ class AddQuoteModal extends Component
 
         // Iterate through each day in the date range
         $currentDate = $dateFrom->copy();
-        // $individualPrices = [];
+        $individualPrices = [];
 
         $pricesMap = [];
 

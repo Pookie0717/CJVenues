@@ -268,7 +268,7 @@
                                                     } else {
                                                         $value = floatval($optionWithValue['value']);
                                                     }
-                                                  @endphp
+                                                @endphp
                                                     <tr class="fw-bold text-gray-700 fs-5">
                                                         <td class="d-flex align-items-center text-left pt-6">
                                                             <i class="fa fa-genderless text-danger fs-2 me-2"></i>
@@ -278,8 +278,8 @@
                                                                 {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
                                                             @endif
                                                         </td>
-                                                        <td class="pt-6 text-end">{{ $value }}</td>
-                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>
+                                                            <td class="pt-6 text-end">{{ $value }}</td>
+                                                            <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>

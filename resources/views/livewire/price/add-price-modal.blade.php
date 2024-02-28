@@ -109,7 +109,7 @@
                         <!-- Season Dropdown -->
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.season') }}</label>
-                            <select wire:model.defer="season_ids" name="season_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple @if($edit_mode) onchange="limitSelect(this, 1);"@endif>
+                            <select wire:model.defer="season_ids" name="season_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
                                 <!-- <option value="">{{ trans('prices.selectseason') }}</option> -->
                                 @foreach($seasons as $season)
                                     <option value="{{ $season->id }}">{{ $season->name }}</option>

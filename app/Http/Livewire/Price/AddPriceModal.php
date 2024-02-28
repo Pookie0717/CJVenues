@@ -80,7 +80,7 @@ class AddPriceModal extends Component
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
                 'x' => $this->x,
-                'season_id' => $this->season_ids[0],
+                'season_id' => implode(',', $this->season_ids),
                 'extra_tier_type' => $extraTierTypeString,
             ]);
 
@@ -89,7 +89,8 @@ class AddPriceModal extends Component
         } else {
             // If not in edit mode, create a new price record
 
-            foreach($this->season_ids as $seasonId) {
+            // foreach($this->season_ids as $seasonId) {
+                Log::info(implode(',', $this->season_ids));
                 Price::create([
                     'tenant_id' => $this->tenant_id,
                     'name' => $this->name,
@@ -102,10 +103,10 @@ class AddPriceModal extends Component
                     'price' => $this->price,
                     'multiplier' => $this->multiplier,
                     'x' => $this->x,
-                    'season_id' => $seasonId,
+                    'season_id' => implode(',', $this->season_ids),
                     'extra_tier_type' => $extraTierTypeString,
                 ]);
-            }
+            // }
 
             // Emit an event to notify that the price was created successfully
             $this->emit('success', 'Price successfully added');
@@ -113,7 +114,7 @@ class AddPriceModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id', 'staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id'
+            'name', 'type', 'venue_id', 'area_id', 'staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id', 'season_ids', 'extra_tier_type'
         ]);
     }
 
@@ -121,7 +122,7 @@ class AddPriceModal extends Component
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id','staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id'
+            'name', 'type', 'venue_id', 'area_id','staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id', 'season_ids', 'extra_tier_type'
         ]);
     }
 
@@ -158,7 +159,7 @@ class AddPriceModal extends Component
         $this->price = $price->price;
         $this->multiplier = $price->multiplier;
         $this->x = $price->x;
-        $this->season_ids = [$price->season_id];
+        $this->season_ids = explode(',', $price->season_id);
         $this->extra_tier_type = explode(',', $price->extra_tier_type);
     }
 

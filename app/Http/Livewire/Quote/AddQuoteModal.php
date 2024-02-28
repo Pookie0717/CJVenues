@@ -99,7 +99,7 @@ class AddQuoteModal extends Component
             $this->cleaners ? $this->cleaners['id'] : $this->cleaners,
         ];
         $merged_staff_ids_arr = array_merge($staff_ids_arr, $this->staff_arr_index);
-        Log::info($merged_staff_ids_arr);
+        // Log::info($merged_staff_ids_arr);
         $merged_staff_ids_arr = array_map(function($value) {
             return $value === null ? 'null' : $value;
         }, $merged_staff_ids_arr);

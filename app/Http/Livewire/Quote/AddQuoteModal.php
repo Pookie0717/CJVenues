@@ -90,7 +90,7 @@ class AddQuoteModal extends Component
 
     public function submit()
     {
-        
+        $this->applyStaffs();
         $this->eventTypes = [];
         $staff_ids_arr = [
             $this->waiters ? $this->waiters['id'] : $this->waiters, 
@@ -248,7 +248,6 @@ class AddQuoteModal extends Component
                         'buffer_time_after' => $this->buffer_time_after,
                         'buffer_time_unit' => $this->buffer_time_unit,
                         'tenant_id' => $tenantId,
-                        'staff_ids' => $this->staff_ids,
                     ]);
                     DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
                 }
@@ -482,7 +481,7 @@ class AddQuoteModal extends Component
         return 'unknown';
     }
 
-   private function getOptionPriceForSeason($optionId, $seasonId)
+    private function getOptionPriceForSeason($optionId, $seasonId)
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
@@ -1301,6 +1300,113 @@ class AddQuoteModal extends Component
 
     private function loadOptions()
     {
+        // Check if the required fields are set
+        if (!$this->date_from || !$this->area_id) {
+            $this->options = collect(); // No options to display if date is not set
+            return;
+        }
+
+        // Convert the date strings to Carbon instances
+        $dateFrom = Carbon::createFromFormat('d-m-Y', $this->date_from);
+        $currentDate = $dateFrom;
+        $currentDayOfWeek = $currentDate->format('D');
+
+        // Find the associated venue ID for the selected area
+        $selectedArea = VenueArea::find($this->area_id);
+        $selectedVenue = optional($selectedArea)->venue ?? null;
+        $selectedEventType = EventType::find($this->event_type);
+
+        $currentTenantId = Session::get('current_tenant_id');
+        
+        // filtered contacts, venues and venue areas
+        $filteredContacts = Contact::where('tenant_id', $currentTenantId)->get();
+
+        $tenantIds = [];
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+        
+        // Get the seasons for the selected date and weekday
+        $seasonIds = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->pluck('id')->toArray();
+
+        // Get the "All" season ID
+        $allSeasonIds = Season::where("name", "All")->whereIn('tenant_id', $tenantIds)->get()->pluck('id')->toArray();
+
+        $optionsQuery = Option::orderBy('position')
+        ->whereIn('tenant_id', $tenantIds)
+        ->where(function ($query) use ($seasonIds, $allSeasonIds) {
+            $query->where(function ($q) use ($seasonIds) {
+                foreach ($seasonIds as $seasonId) {
+                    $q->orWhereRaw("FIND_IN_SET(?, season_ids)", [$seasonId]);
+                }
+            })->orWhere(function ($q) use ($allSeasonIds) {
+                foreach ($allSeasonIds as $allSeasonId) {
+                    $q->orWhereRaw("FIND_IN_SET(?, season_ids)", [$allSeasonId]);
+                }
+            })->orWhereNull('season_ids')->orWhere('season_ids', '');
+        });
+
+        
+        if ($selectedEventType) {
+            $optionsQuery->where(function ($query) use ($selectedEventType) {
+                $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventType->id])
+                        ->orWhereNull('eventtype_ids')->orWhere('eventtype_ids', '');
+            });
+        }
+
+        // Refine additional filters
+        /*if ($selectedVenue) {
+            $optionsQuery->where(function ($query) use ($selectedVenue) {
+                $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenue->id])
+                        ->orWhereNull('venue_ids');
+            });
+        }*/
+
+        if ($selectedArea) {
+            $optionsQuery->where(function ($query) use ($selectedArea) {
+                $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
+                        ->orWhereNull('area_ids')->orWhere('area_ids', '');
+            });
+        }
+
+        
+        $this->options = $optionsQuery->get();
+        // Set values for specific logic options and default values
+        foreach ($this->options as $option) {
+            if ($option->type === 'logic') {
+                $option->value = $this->calculateLogicOptionValues($option->id);
+            }
+            $this->selectedOptions[$option->id] = $this->selectedOptions[$option->id] ?? $option->value ?? $option->default_value;
+        }
+    }
+
+    private function applyDiscount($calculatedPrice, $discount)
+    {
+        // Remove whitespace and parse discount
+        $discount = trim($discount);
+
+        // Check if the discount is a percentage
+        if (str_ends_with($discount, '%')) {
+            $percentage = rtrim($discount, '%');
+            if (is_numeric($percentage)) {
+                // Calculate the discount as a percentage of the calculated price
+                $discountAmount = ($percentage / 100) * $calculatedPrice;
+            } else {
+                // Handle invalid percentage format
+                throw new \Exception("Invalid discount percentage format");
+            }
+        } elseif (is_numeric($discount)) {
+            // If the discount is a numeric value, treat it as a flat amount
+            $discountAmount = $discount;
+        } else {
+            // Handle invalid discount format
+            throw new \Exception("Invalid discount format");
+        }
+
+        // Subtract the discount amount from the calculated price
+        return max($calculatedPrice - $discountAmount, 0); // Ensure the total doesn't go below 0
+    }
+    private function applyStaffs()
+    {
         // Get count of staffs
         $areaId = $this->area_id;
         $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($areaId) {
@@ -1484,111 +1590,5 @@ class AddQuoteModal extends Component
                 }
             }
         }
-        // Check if the required fields are set
-        if (!$this->date_from || !$this->area_id) {
-            $this->options = collect(); // No options to display if date is not set
-            return;
-        }
-
-        // Convert the date strings to Carbon instances
-        $dateFrom = Carbon::createFromFormat('d-m-Y', $this->date_from);
-        $currentDate = $dateFrom;
-        $currentDayOfWeek = $currentDate->format('D');
-
-        // Find the associated venue ID for the selected area
-        $selectedArea = VenueArea::find($this->area_id);
-        $selectedVenue = optional($selectedArea)->venue ?? null;
-        $selectedEventType = EventType::find($this->event_type);
-
-        $currentTenantId = Session::get('current_tenant_id');
-        
-        // filtered contacts, venues and venue areas
-        $filteredContacts = Contact::where('tenant_id', $currentTenantId)->get();
-
-        $tenantIds = [];
-        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-        $tenantIds[] = $currentTenantId;
-        
-        // Get the seasons for the selected date and weekday
-        $seasonIds = $this->getSeasonsForDateAndWeekday($currentDate, $currentDayOfWeek)->pluck('id')->toArray();
-
-        // Get the "All" season ID
-        $allSeasonIds = Season::where("name", "All")->whereIn('tenant_id', $tenantIds)->get()->pluck('id')->toArray();
-
-        $optionsQuery = Option::orderBy('position')
-        ->whereIn('tenant_id', $tenantIds)
-        ->where(function ($query) use ($seasonIds, $allSeasonIds) {
-            $query->where(function ($q) use ($seasonIds) {
-                foreach ($seasonIds as $seasonId) {
-                    $q->orWhereRaw("FIND_IN_SET(?, season_ids)", [$seasonId]);
-                }
-            })->orWhere(function ($q) use ($allSeasonIds) {
-                foreach ($allSeasonIds as $allSeasonId) {
-                    $q->orWhereRaw("FIND_IN_SET(?, season_ids)", [$allSeasonId]);
-                }
-            })->orWhereNull('season_ids')->orWhere('season_ids', '');
-        });
-
-        
-        if ($selectedEventType) {
-            $optionsQuery->where(function ($query) use ($selectedEventType) {
-                $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventType->id])
-                        ->orWhereNull('eventtype_ids')->orWhere('eventtype_ids', '');
-            });
-        }
-
-        // Refine additional filters
-        /*if ($selectedVenue) {
-            $optionsQuery->where(function ($query) use ($selectedVenue) {
-                $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenue->id])
-                        ->orWhereNull('venue_ids');
-            });
-        }*/
-
-        if ($selectedArea) {
-            $optionsQuery->where(function ($query) use ($selectedArea) {
-                $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
-                        ->orWhereNull('area_ids')->orWhere('area_ids', '');
-            });
-        }
-
-        
-        $this->options = $optionsQuery->get();
-        // Set values for specific logic options and default values
-        foreach ($this->options as $option) {
-            if ($option->type === 'logic') {
-                $option->value = $this->calculateLogicOptionValues($option->id);
-            }
-            $this->selectedOptions[$option->id] = $this->selectedOptions[$option->id] ?? $option->value ?? $option->default_value;
-        }
     }
-
-    private function applyDiscount($calculatedPrice, $discount)
-    {
-        // Remove whitespace and parse discount
-        $discount = trim($discount);
-
-        // Check if the discount is a percentage
-        if (str_ends_with($discount, '%')) {
-            $percentage = rtrim($discount, '%');
-            if (is_numeric($percentage)) {
-                // Calculate the discount as a percentage of the calculated price
-                $discountAmount = ($percentage / 100) * $calculatedPrice;
-            } else {
-                // Handle invalid percentage format
-                throw new \Exception("Invalid discount percentage format");
-            }
-        } elseif (is_numeric($discount)) {
-            // If the discount is a numeric value, treat it as a flat amount
-            $discountAmount = $discount;
-        } else {
-            // Handle invalid discount format
-            throw new \Exception("Invalid discount format");
-        }
-
-        // Subtract the discount amount from the calculated price
-        return max($calculatedPrice - $discountAmount, 0); // Ensure the total doesn't go below 0
-    }
-
-
 }

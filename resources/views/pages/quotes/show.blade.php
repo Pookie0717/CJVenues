@@ -257,17 +257,19 @@
                                             @php
                                                 // Convert the price_options string into an array
                                                 $priceOptionsArray = explode('|', $quote->price_options);
+                                                $value = 1;
                                             @endphp
 
                                             @foreach($optionsWithValues as $index => $optionWithValue)
                                                 @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
-                                                  @php
+                                                @php
                                                     $price = floatval($priceOptionsArray[$index]);
                                                     if($optionWithValue['type'] == 'radio' || $optionWithValue['value'] == 'yes') {
                                                         $value = 1;
                                                     } else {
                                                         $value = floatval($optionWithValue['value']);
                                                     }
+                                                    
                                                 @endphp
                                                     <tr class="fw-bold text-gray-700 fs-5">
                                                         <td class="d-flex align-items-center text-left pt-6">
@@ -278,8 +280,8 @@
                                                                 {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
                                                             @endif
                                                         </td>
-                                                            <td class="pt-6 text-end">{{ $value }}</td>
-                                                            <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>
+                                                        <td class="pt-6 text-end">{{ $value }}</td>
+                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>

@@ -786,13 +786,13 @@ class AddQuoteModal extends Component
                             $temp = $this->waiters !== 0 ? explode(',', $this->waiters['count']) : null;
                             $index = $temp && $this->staff_arr_index[0] ? $temp[$this->staff_arr_index[0]] : 1;
                             $totalPrice += $staff_price[0]['price'] * $index;
-                            $temp = $this->toiletStaffs !== 0 ? explode(',', $this->waiters['count']) : null;
+                            $temp = $this->toiletStaffs !== 0 ? explode(',', $this->toiletStaffs['count']) : null;
                             $index = $temp &&  $this->staff_arr_index[1]? $temp[$this->staff_arr_index[1]] : 1;
                             $totalPrice += $staff_price[0]['price'] * $index;
-                            $temp = $this->venueManagers !== 0 ? explode(',', $this->waiters['count']) : null;
+                            $temp = $this->venueManagers !== 0 ? explode(',', $this->venueManagers['count']) : null;
                             $index = $temp && $this->staff_arr_index[2] ? $temp[$this->staff_arr_index[2]] : 1;
                             $totalPrice += $staff_price[0]['price'] * $index;
-                            $temp = $this->cleaners !== 0 ? explode(',', $this->waiters['count']) : null;
+                            $temp = $this->cleaners !== 0 ? explode(',', $this->cleaners['count']) : null;
                             $index = $temp && $this->staff_arr_index[3] ? $temp[$this->staff_arr_index[3]] : 1;
                             $totalPrice += $staff_price[0]['price'] * $index;
                             break;

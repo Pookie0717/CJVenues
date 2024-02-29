@@ -46,17 +46,23 @@ class AddStaffModal extends Component
             'name' => 'required|string|max:255',
             'type' => 'required|max:255',
             'area_ids' => 'required|nullable|array',
-            'duration_type' => 'array|nullable',
-            'from' => 'array|nullable',
-            'to' => 'array|nullable',
-            'count' => 'array|nullable'
+            'duration_type' => 'array',
+            'from' => 'required|array',
+            'to' => 'required|array',
+            'count' => 'required|array'
         ];
 
         $this->validate($rules);
-        if (!isset($this->duration_type[$this->items_count]) && !$this->edit_mode) {
-            $this->duration_type[$this->items_count] = 'hour';
+        Log::info($this->duration_type);
+        for($i = 1;$i <= $this->items_count;$i++) {
+            if (!isset($this->duration_type[$i])) {
+                $this->duration_type[$this->items_count] = 'hour';
+            }
+            $this->from[$i] = isset($this->from[$i]) ? $this->from[$i] : 0;
+            $this->to[$i] = isset($this->to[$i]) ? $this->to[$i] : 0;
+            $this->count[$i] = isset($this->count[$i]) ? $this->count[$i] : 0;
         }
-
+        
         $this->area_id_string = implode(',', $this->area_ids);
         $this->from_arr_string = implode(',', $this->from);
         $this->to_arr_string = implode(',', $this->to);
@@ -126,32 +132,39 @@ class AddStaffModal extends Component
         $this->edit_mode = true;
 
         $staff = Staffs::find($id);
+        $this->type = $staff->type;
         $this->staffId = $id;
         $this->items_count = count(explode(',', $staff->duration_type));
         $this->tenant_id = $staff->tenant_id;
         $this->name = $staff->name;
-        $this->type = $staff->type;
-        $this->area_ids = explode(',', $staff->area_ids);
-        $this->from = explode(',', $staff->from);
-        $this->to = explode(',', $staff->to);
-        $this->count = explode(',', $staff->count);
-        $this->duration_type = explode(',', $staff->duration_type);
+        $this->area_ids= explode(',', $staff->area_ids);
+        $from = explode(',', $staff->from);
+        $to = explode(',', $staff->to);
+        $count = explode(',', $staff->count);
+        $duration_type = explode(',', $staff->duration_type);
+        for($i = 1;$i <= $this->items_count;$i++) {
+            $j = $i - 1;
+            $this->from[$i] = $from[$j];
+            $this->to[$i] = $to[$j];
+            $this->count[$i] = $count[$j];
+            $this->duration_type[$i] = $duration_type[$j];
+        }
     }
 
     public function addItem() {
-        if (!isset($this->duration_type[$this->items_count])) {
-            $this->duration_type[$this->items_count] = 'hour';
-        }
+        $this->duration_type[$this->items_count] = 'hour';
+        Log::info($this->duration_type);
         $this->items_count += 1;
     }
 
-    public function removeItem() {
-        if (!isset($this->duration_type[$this->items_count])) {
-            $this->duration_type[$this->items_count] = 'hour';
-        }
+    public function removeItem($index) {
         if($this->items_count > 1) {
             $this->items_count -= 1;
         }
+        unset($this->from[$index]);
+        unset($this->to[$index]);
+        unset($this->count[$index]);
+        unset($this->duration_type[$index]);
     }
 
     public function render()

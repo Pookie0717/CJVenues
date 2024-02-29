@@ -69,18 +69,18 @@
                                 <span class="pulse-ring"></span>
                             </a>
                         </div> -->
-                        @for($i = 0;$i < $items_count;$i++)
+                        @for($i = 1;$i <= $items_count;$i++)
                             <div class="row fv-row mb-7">
                                 <!-- value -->
                                 <div class="col mb-7">
-                                    <label class="fw-semibold fs-6 mb-2">{{ trans('staff.from') }}</label>
+                                    <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.from') }}</label>
                                     <input type="number" wire:model="from.{{$i}}" name="from" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="from"/>
                                     @error('from')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col mb-7">
-                                    <label class="fw-semibold fs-6 mb-2">{{ trans('staff.to') }}</label>
+                                    <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.to') }}</label>
                                     <input type="number" wire:model="to.{{$i}}" name="to" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="to"/>
                                     @error('to')
                                         <span class="text-danger">{{ $message }}</span>
@@ -98,7 +98,7 @@
                                     @enderror
                                 </div>
                                 <div class="col mb-7 ml-2">
-                                    <label class="fw-semibold fs-6 mb-2">{{ trans('staff.count') }}</label>
+                                    <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.count') }}</label>
                                     <input type="number" wire:model="count.{{$i}}" name="count" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="count"/>
                                     @error('count')
                                         <span class="text-danger">{{ $message }}</span>

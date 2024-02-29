@@ -21,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $table->enum('type', ['area', 'option', 'venue'])->change();
+        
     }
 };

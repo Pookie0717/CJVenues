@@ -80,7 +80,7 @@ class AddPriceModal extends Component
                 'price' => $this->price,
                 'multiplier' => $this->multiplier,
                 'x' => $this->x,
-                'season_id' => implode(',', $this->season_ids),
+                'season_ids' => implode(',', $this->season_ids),
                 'extra_tier_type' => $extraTierTypeString,
             ]);
 
@@ -103,7 +103,7 @@ class AddPriceModal extends Component
                     'price' => $this->price,
                     'multiplier' => $this->multiplier,
                     'x' => $this->x,
-                    'season_id' => implode(',', $this->season_ids),
+                    'season_ids' => implode(',', $this->season_ids),
                     'extra_tier_type' => $extraTierTypeString,
                 ]);
             // }
@@ -159,7 +159,7 @@ class AddPriceModal extends Component
         $this->price = $price->price;
         $this->multiplier = $price->multiplier;
         $this->x = $price->x;
-        $this->season_ids = explode(',', $price->season_id);
+        $this->season_ids = explode(',', $price->season_ids);
         $this->extra_tier_type = explode(',', $price->extra_tier_type);
     }
 

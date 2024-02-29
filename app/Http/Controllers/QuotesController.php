@@ -130,7 +130,7 @@ class QuotesController extends Controller
                         else $cleanersPrice = $staff_price[0]['price'];
                         break;
                     case 'hourly':
-                        $dateFromC = Carbon::createFromFormat('d-m-Y', $dateFrom);
+                        $dateFromC = Carbon::createFromFormat('d-m-Y', $quote->date_from);
                         $currentDate = $dateFromC->copy();
                         $dateFrom = Carbon::createFromFormat('d-m-Y', $quote->date_from);
                         $dateTo = Carbon::createFromFormat('d-m-Y', $quote->date_to);
@@ -303,7 +303,6 @@ class QuotesController extends Controller
                 'type'   => $selectedOption->type
             ];
         }
-        Log::info($optionsWithValues);
 
         $allSeasons = Season::orderBy('priority', 'desc')->where('tenant_id', $quote->tenant_id)->get();
 

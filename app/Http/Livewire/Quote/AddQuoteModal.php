@@ -486,7 +486,7 @@ class AddQuoteModal extends Component
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
-            ->where('season_id', $seasonId)
+            ->where('season_ids', $seasonId)
             ->where('extra_tier_type', 'like', '%event%')
             ->first();
     }
@@ -495,7 +495,7 @@ class AddQuoteModal extends Component
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
-            ->where('season_id', $seasonId)
+            ->where('season_ids', $seasonId)
             ->where(function($query) {
                 $query->where('extra_tier_type', 'like', '%buffer_before%')
                       ->orWhere('extra_tier_type', 'like', '%buffer_after%');
@@ -507,7 +507,7 @@ class AddQuoteModal extends Component
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
-            ->where('season_id', $seasonId)
+            ->where('season_ids', $seasonId)
             ->where('extra_tier_type', 'like', '%event%')
             ->where(function($query) {
                 $query->where('area_id', 'like', $this->area_id)
@@ -520,7 +520,7 @@ class AddQuoteModal extends Component
     {
         return Option::find($optionId)->prices()
             ->where('type', 'option')
-            ->where('season_id', $seasonId)
+            ->where('season_ids', $seasonId)
             ->where(function($query) {
                 $query->where('extra_tier_type', 'like', '%buffer_before%')
                       ->orWhere('extra_tier_type', 'like', '%buffer_after%');
@@ -650,7 +650,7 @@ class AddQuoteModal extends Component
                          ->where('area_id', $areaId);
             });
         })
-        ->where('season_id', $seasonId)
+        ->where('season_ids', $seasonId)
         ->where(function ($query) {
             $query->where('extra_tier_type', 'like', '%buffer_before%')
                   ->orWhere('extra_tier_type', 'like', '%buffer_after%');
@@ -719,14 +719,14 @@ class AddQuoteModal extends Component
                  // Check if there is a price associated with the area for this season
                 $areaPrice = $area->prices()
                     ->where('type', 'area')
-                    ->where('season_id', $season->id)
+                    ->where('season_ids', $season->id)
                     ->where('extra_tier_type', 'like', '%event%')
                     ->first();
 
                 // Check if there is a price associated with the venue for this season
                 $venuePrice = $venue->prices()
                     ->where('type', 'venue')
-                    ->where('season_id', $season->id)
+                    ->where('season_ids', $season->id)
                     ->where('extra_tier_type', 'like', '%event%')
                     ->first();
 

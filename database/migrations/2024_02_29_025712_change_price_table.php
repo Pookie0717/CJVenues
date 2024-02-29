@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('prices', function (Blueprint $table) {
+            $table->dropForeign('prices_season_id_foreign');
             $table->dropColumn('season_id');
-            $table->string('season_id')->nullable();
+            $table->string('season_ids')->nullable();
         });
     }
 
@@ -23,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('prices', function (Blueprint $table) {
-            $table->dropColumn('season_id');
+            $table->dropForeign('season_ids')->nullable();
+            $table->unsignedBigInteger('season_id');
+            $table->foreign('prices_season_id_foreign');
         });
     }
 };

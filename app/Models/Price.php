@@ -22,7 +22,7 @@ class Price extends Model
         'price',
         'multiplier',
         'x',
-        'season_id',
+        'season_ids',
         'extra_tier_type'
     ];
 

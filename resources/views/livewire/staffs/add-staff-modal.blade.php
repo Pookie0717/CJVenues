@@ -69,6 +69,9 @@
                                 <span class="pulse-ring"></span>
                             </a>
                         </div> -->
+                        @php
+                            $items_count = $items_count > 1 ? $items_count - 1 : 1;
+                        @endphp
                         @for($i = 0;$i < $items_count;$i++)
                             <div class="row fv-row mb-7">
                                 <!-- value -->

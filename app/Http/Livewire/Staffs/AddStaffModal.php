@@ -53,7 +53,7 @@ class AddStaffModal extends Component
         ];
 
         $this->validate($rules);
-        if (!isset($this->duration_type[$this->items_count])) {
+        if (!isset($this->duration_type[$this->items_count]) && !$this->edit_mode) {
             $this->duration_type[$this->items_count] = 'hour';
         }
 

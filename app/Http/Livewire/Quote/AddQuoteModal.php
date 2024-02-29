@@ -790,10 +790,10 @@ class AddQuoteModal extends Component
                             $index = $temp &&  $this->staff_arr_index[1]? $temp[$this->staff_arr_index[1]] : 1;
                             $totalPrice += $staff_price[0]['price'] * $index;
                             $temp = $this->venueManagers !== 0 ? explode(',', $this->waiters['count']) : null;
-                            $index = $temp && $this->staff_arr_index[0] ? $temp[$this->staff_arr_index[2]] : 1;
+                            $index = $temp && $this->staff_arr_index[2] ? $temp[$this->staff_arr_index[2]] : 1;
                             $totalPrice += $staff_price[0]['price'] * $index;
                             $temp = $this->cleaners !== 0 ? explode(',', $this->waiters['count']) : null;
-                            $index = $temp && $this->staff_arr_index[0] ? $temp[$this->staff_arr_index[3]] : 1;
+                            $index = $temp && $this->staff_arr_index[3] ? $temp[$this->staff_arr_index[3]] : 1;
                             $totalPrice += $staff_price[0]['price'] * $index;
                             break;
                     }
@@ -1375,7 +1375,7 @@ class AddQuoteModal extends Component
                             if(!$this->cleaners) {
                                 $this->cleaners = $cleaner;
                                 $this->staff_arr_index[1] = $i;
-                            } elseif ($cleaner['count'] < $staff_count_arr[$i]) {
+                            } elseif ($this->cleaners['count'] < $staff_count_arr[$i]) {
                                 $this->cleaners = $cleaner;
                                 $this->staff_arr_index[1] = $i;
                             }
@@ -1385,7 +1385,7 @@ class AddQuoteModal extends Component
                             if(!$this->cleaners) {
                                 $this->cleaners = $cleaner;
                                 $this->staff_arr_index[1] = $i;
-                            } elseif ($cleaner['count'] < $staff_count_arr[$i]) {
+                            } elseif ($this->cleaners['count'] < $staff_count_arr[$i]) {
                                 $this->cleaners = $cleaner;
                                 $this->staff_arr_index[1] = $i;
                             }
@@ -1394,7 +1394,7 @@ class AddQuoteModal extends Component
                         if(!$this->cleaners) {
                             $this->cleaners = $cleaner;
                             $this->staff_arr_index[1] = $i;
-                        } elseif ($cleaner['count'] < $staff_count_arr[$i]) {
+                        } elseif ($this->cleaners['count'] < $staff_count_arr[$i]) {
                             $this->cleaners = $cleaner;
                             $this->staff_arr_index[1] = $i;
                         }
@@ -1415,7 +1415,7 @@ class AddQuoteModal extends Component
                             if(!$this->toiletStaffs) {
                                 $this->toiletStaffs = $toiletStaff;
                                 $this->staff_arr_index[2] = $i;
-                            } elseif ($toiletStaff['count'] < $staff_count_arr[$i]) {
+                            } elseif ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
                                 $this->toiletStaffs = $toiletStaff;
                                 $this->staff_arr_index[2] = $i;
                             }
@@ -1425,7 +1425,7 @@ class AddQuoteModal extends Component
                             if(!$this->toiletStaffs) {
                                 $this->toiletStaffs = $toiletStaff;
                                 $this->staff_arr_index[2] = $i;
-                            } elseif ($toiletStaff['count'] < $staff_count_arr[$i]) {
+                            } elseif ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
                                 $this->toiletStaffs = $toiletStaff;
                                 $this->staff_arr_index[2] = $i;
                             }
@@ -1434,7 +1434,7 @@ class AddQuoteModal extends Component
                         if(!$this->toiletStaffs) {
                             $this->toiletStaffs = $toiletStaff;
                             $this->staff_arr_index[2] = $i;
-                        } elseif ($toiletStaff['count'] < $staff_count_arr[$i]) {
+                        } elseif ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
                             $this->toiletStaffs = $toiletStaff;
                             $this->staff_arr_index[2] = $i;
                         }
@@ -1449,13 +1449,14 @@ class AddQuoteModal extends Component
                 $staff_count_arr = explode(',', $venueManager['count']);
                 $staff_duration_arr = explode(',', $venueManager['duration_type']);
                 $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
+                Log::info(count($staff_duration_arr));
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
                     if ($staff_duration_arr[$i] === 'people') {
                         if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
                             if(!$this->venueManagers) {
                                 $this->venueManagers = $venueManager;
                                 $this->staff_arr_index[3] = $i;
-                            } elseif ($venueManager['count'] < $staff_count_arr[$i]) {
+                            } elseif ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                                 $this->venueManagers = $venueManager;
                                 $this->staff_arr_index[3] = $i;
                             }
@@ -1465,7 +1466,7 @@ class AddQuoteModal extends Component
                             if(!$this->venueManagers) {
                                 $this->venueManagers = $venueManager;
                                 $this->staff_arr_index[3] = $i;
-                            } elseif ($venueManager['count'] < $staff_count_arr[$i]) {
+                            } elseif ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                                 $this->venueManagers = $venueManager;
                                 $this->staff_arr_index[3] = $i;
                             }
@@ -1474,7 +1475,7 @@ class AddQuoteModal extends Component
                         if(!$this->venueManagers) {
                             $this->venueManagers = $venueManager;
                             $this->staff_arr_index[3] = $i;
-                        } elseif ($venueManager['count'] < $staff_count_arr[$i]) {
+                        } elseif ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                             $this->venueManagers = $venueManager;
                             $this->staff_arr_index[3] = $i;
                         }

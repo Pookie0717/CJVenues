@@ -90,6 +90,7 @@ class AddQuoteModal extends Component
 
     public function submit()
     {
+        $this->validateQuoteData();
         $this->applyStaffs();
         $staff_ids_arr = [
             $this->waiters ? $this->waiters['id'] : $this->waiters, 
@@ -100,12 +101,10 @@ class AddQuoteModal extends Component
 
         $this->eventTypes = [];
         $merged_staff_ids_arr = array_merge($staff_ids_arr, $this->staff_arr_index);
-        // Log::info($merged_staff_ids_arr);
         $merged_staff_ids_arr = array_map(function($value) {
             return $value === null ? 'null' : $value;
         }, $merged_staff_ids_arr);
         $this->staff_ids = implode('|', $merged_staff_ids_arr);
-        $this->validateQuoteData();
 
         if($this->selectedOptions) {
 
@@ -204,7 +203,7 @@ class AddQuoteModal extends Component
                 
                 $calculatedPrice = $priceOptions;
 
-                if($mainTenantId === $tenantId) {
+                if($mainTenantId == $tenantId) {
                     $mainPriceOptions = $calculatedPrice;
                     $mainTenantId = $tenantId;
                     $mainPriceOptionsString = $priceOptionsString;
@@ -654,14 +653,14 @@ class AddQuoteModal extends Component
         foreach($staff_arr as $staff_arr_val) {
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();
             if($staff_price->count() > 0) {
-                if($bufferUnit === 'days') {
-                    if($staff_price[0]['multiplier'] === 'hourly') {
+                if($bufferUnit == 'days') {
+                    if($staff_price[0]['multiplier'] == 'hourly') {
                         $totalBufferPrice += (($bufferBefore + $bufferAfter) * 8) * $staff_price[0]['price'];
                     } else {
                         $totalBufferPrice += ($bufferBefore + $bufferAfter) * $staff_price[0]['price'];
                     }
                 } else {
-                    if($staff_price[0]['multiplier'] === 'daily') {
+                    if($staff_price[0]['multiplier'] == 'daily') {
                         $totalBufferPrice += ($staff_price[0]['price'] / 8) * ($bufferBefore + $bufferAfter);
                     } else {
                         $totalBufferPrice += $staff_price[0]['price'] * ($bufferBefore + $bufferAfter);
@@ -808,13 +807,11 @@ class AddQuoteModal extends Component
         foreach($staff_arr as $staff_arr_val) {
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();
             $staff_count = Staffs::where('id', $staff_arr_val)->get();
-            
             if($staff_price->count() > 0) {
                 $multiplierType = $staff_price[0]['multiplier'];
                 $selected_date_from = explode('-', $this->date_from);
                 $selected_date_to = explode('-', $this->date_to);
                 $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
-                Log::info($this->staff_arr_index);
                 switch ($multiplierType) {
                     case 'daily':
                         $staff_price[0]['price'] = $staff_price[0]['price'] * $selected_date_between;
@@ -828,34 +825,36 @@ class AddQuoteModal extends Component
                         $totalPrice = $totalPrice + $staff_price[0]['price'];
                         break;
                     case 'event_pp':
-                        if($staff_count[0]['type'] === 'waiters') {
-                            $temp = explode(',', $this->waiters['count']);
-                            if($this->staff_arr_index[0] !== null) {
-                                $index = $temp[$this->staff_arr_index[0]];
-                                $totalPrice += $staff_price[0]['price'] * $index;
-                            }
-                        };
-                        if($staff_count[0]['type'] === 'cleaners') {
-                            $temp = explode(',', $this->cleaners['count']);
-                            if($this->staff_arr_index[1] !== null) {
-                                $index = $temp[$this->staff_arr_index[1]];
-                                $totalPrice += $staff_price[0]['price'] * $index;
-                                Log::info("asdfasdfasfdsd     ".$totalPrice);
-                            }
-                        };
-                        if($staff_count[0]['type'] === 'toilet staff') {
-                            $temp = explode(',', $this->toiletStaffs['count']);
-                            if($this->staff_arr_index[2] !== null) {
-                                $index = $temp[$this->staff_arr_index[2]];
-                                $totalPrice += $staff_price[0]['price'] * $index;
-                            }
-                        };
-                        if($staff_count[0]['type'] === 'venue manager') {
-                            $temp = explode(',', $this->venueManagers['count']);
-                            if($this->staff_arr_index[3] !== null) {
-                                $index = $temp[$this->staff_arr_index[3]];
-                                $totalPrice += $staff_price[0]['price'] * $index;
-                            }
+                        switch($staff_count[0]['type']) {
+                            case 'waiters':
+                                $temp = explode(',', $this->waiters['count']);
+                                if($this->staff_arr_index[0] !== null) {
+                                    $index = $temp[$this->staff_arr_index[0]];
+                                    $totalPrice += $staff_price[0]['price'] * $index;
+                                }
+                                break;
+                            case 'cleaners':
+                                $temp = explode(',', $this->cleaners['count']);
+                                if($this->staff_arr_index[1] !== null) {
+                                    $index = $temp[$this->staff_arr_index[1]];
+                                    $totalPrice += $staff_price[0]['price'] * $index;
+                                    Log::info("asdfasdfasfdsd     ".$totalPrice);
+                                }
+                                break;
+                            case 'toilet staff':
+                                $temp = explode(',', $this->toiletStaffs['count']);
+                                if($this->staff_arr_index[2] !== null) {
+                                    $index = $temp[$this->staff_arr_index[2]];
+                                    $totalPrice += $staff_price[0]['price'] * $index;
+                                }
+                                break;
+                            case 'venue manager':
+                                $temp = explode(',', $this->venueManagers['count']);
+                                if($this->staff_arr_index[3] !== null) {
+                                    $index = $temp[$this->staff_arr_index[3]];
+                                    $totalPrice += $staff_price[0]['price'] * $index;
+                                }
+                                break;
                         }
                         break;
                 }
@@ -965,13 +964,13 @@ class AddQuoteModal extends Component
     {
         $price = 0;
 
-        if ($optionType === 'yes_no') {
-            $price = $optionValue === 'yes' ? $multiplierValue * $quantity : 0;
-        } else if ($optionType === 'always') {
+        if ($optionType == 'yes_no') {
+            $price = $optionValue == 'yes' ? $multiplierValue * $quantity : 0;
+        } else if ($optionType == 'always') {
             $price = $multiplierValue * $quantity * $this->getDefaultOptionValue($optionId);
-        } else if ($optionType === 'number') {
+        } else if ($optionType == 'number') {
             $price = $multiplierValue * (float)$optionValue * $quantity;
-        } else if ($optionType === 'radio' || $optionType === 'checkbox') {
+        } else if ($optionType == 'radio' || $optionType == 'checkbox') {
             $optionValues = explode('|', $this->getOptionValues($optionId));
             $selectedValue = $optionValue;
             $prices = explode('|', $optionPrice->price);
@@ -983,7 +982,7 @@ class AddQuoteModal extends Component
             } else {
                 // Log when the selected value index is not found or the price is not set
             }
-        } else if ($optionType === 'logic') {
+        } else if ($optionType == 'logic') {
 
             $optionValues = explode('|', $this->getOptionValues($optionId));
 
@@ -1054,7 +1053,7 @@ class AddQuoteModal extends Component
             foreach ($andConditions as $andCondition) {
                 // Split each condition into field, operator, and value
                 $parts = preg_split('/(<=|>=|==|!=|<|>)/', $andCondition, -1, PREG_SPLIT_DELIM_CAPTURE);
-                if (count($parts) === 3) {
+                if (count($parts) == 3) {
                     list($field, $operator, $value) = array_map('trim', $parts);
 
                     // Evaluate the condition
@@ -1434,7 +1433,7 @@ class AddQuoteModal extends Component
         $this->options = $optionsQuery->get();
         // Set values for specific logic options and default values
         foreach ($this->options as $option) {
-            if ($option->type === 'logic') {
+            if ($option->type == 'logic') {
                 $option->value = $this->calculateLogicOptionValues($option->id);
             }
             $this->selectedOptions[$option->id] = $this->selectedOptions[$option->id] ?? $option->value ?? $option->default_value;
@@ -1471,28 +1470,30 @@ class AddQuoteModal extends Component
     {
         // Get count of staffs
         $areaId = $this->area_id;
-        $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($areaId) {
-            $areaIds = explode(',', $staff->area_ids);
-            return in_array($areaId, $areaIds);
+        $currentTenantId = Session::get('current_tenant_id');
+        $tenantId_val = $currentTenantId;
+        Log::info($tenantId_val);
+        $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($tenantId_val) {
+            $tenantId_col = $staff->tenant_id;
+            return $tenantId_val == $tenantId_col;
         });
-        $get_cleaners = Staffs::where('type', 'cleaners')->get()->filter(function ($staff) use ($areaId) {
-            $areaIds = explode(',', $staff->area_ids);
-            return in_array($areaId, $areaIds);
+        $get_cleaners = Staffs::where('type', 'cleaners')->get()->filter(function ($staff) use ($tenantId_val) {
+            $tenantId_col = $staff->tenant_id;
+            return $tenantId_val == $tenantId_col;
         });
-        $get_toiletStaffs = Staffs::where('type', 'toilet staff')->get()->filter(function ($staff) use ($areaId) {
-            $areaIds = explode(',', $staff->area_ids);
-            return in_array($areaId, $areaIds);
+        $get_toiletStaffs = Staffs::where('type', 'toilet staff')->get()->filter(function ($staff) use ($tenantId_val) {
+            $tenantId_col = $staff->tenant_id;
+            return $tenantId_val == $tenantId_col;
         });
-        $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($areaId) {
-            $areaIds = explode(',', $staff->area_ids);
-            return in_array($areaId, $areaIds);
+        $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($tenantId_val) {
+            $tenantId_col = $staff->tenant_id;
+            return $tenantId_val == $tenantId_col;
         });
         $selected_date_from = explode('-', $this->date_from);
         $selected_date_to = explode('-', $this->date_to);
         $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
 
         $calculatedPrice = 0;
-
         if ($get_waiters->isNotEmpty()) {
             foreach ($get_waiters as $waiter) {
                 $staff_from_arr = explode(',', $waiter['from']);
@@ -1550,30 +1551,30 @@ class AddQuoteModal extends Component
                             if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
                                 if(!$this->cleaners) {
                                     $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[1] = $i;
+                                    $this->staff_arr_index[3] = $i;
                                 } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
                                     $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[1] = $i;
+                                    $this->staff_arr_index[3] = $i;
                                 }
                             }
                         case 'people':
                             if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
                                 if(!$this->cleaners) {
                                     $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[1] = $i;
+                                    $this->staff_arr_index[3] = $i;
                                 } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
                                     $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[1] = $i;
+                                    $this->staff_arr_index[3] = $i;
                                 }
                             }
                             break;
                         case 'hour':
                             if(!$this->cleaners) {
                                 $this->cleaners = $cleaner;
-                                $this->staff_arr_index[1] = $i;
+                                $this->staff_arr_index[3] = $i;
                             } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
                                 $this->cleaners = $cleaner;
-                                $this->staff_arr_index[1] = $i;
+                                $this->staff_arr_index[3] = $i;
                             }
                             break;
                     }
@@ -1631,17 +1632,16 @@ class AddQuoteModal extends Component
                 $staff_count_arr = explode(',', $venueManager['count']);
                 $staff_duration_arr = explode(',', $venueManager['duration_type']);
                 $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
-                Log::info(count($staff_duration_arr));
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
                     switch($staff_duration_arr[$i]) {
                         case 'day':
                             if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
                                 if(!$this->venueManagers) {
                                     $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[3] = $i;
+                                    $this->staff_arr_index[1] = $i;
                                 } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                                     $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[3] = $i;
+                                    $this->staff_arr_index[1] = $i;
                                 }
                             }
                             break;
@@ -1649,20 +1649,20 @@ class AddQuoteModal extends Component
                             if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
                                 if(!$this->venueManagers) {
                                     $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[3] = $i;
+                                    $this->staff_arr_index[1] = $i;
                                 } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                                     $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[3] = $i;
+                                    $this->staff_arr_index[1] = $i;
                                 }
                             }
                             break;
                         case 'hour':
                             if(!$this->venueManagers) {
                                 $this->venueManagers = $venueManager;
-                                $this->staff_arr_index[3] = $i;
+                                $this->staff_arr_index[1] = $i;
                             } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                                 $this->venueManagers = $venueManager;
-                                $this->staff_arr_index[3] = $i;
+                                $this->staff_arr_index[1] = $i;
                             }
                             break;
                     }

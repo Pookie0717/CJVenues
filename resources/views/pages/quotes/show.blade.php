@@ -261,7 +261,7 @@
                                                         {{$waiter[0]['name']}}
                                                     </td>
                                                     <td class="pt-6 text-end">{{ $waiter[0]['quantity'] }}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $waiterPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $waiterPrice / (float) $waiter[0]['quantity'], 2) }}</td>
                                                     <td class="pt-6 text-dark fw-bolder text-end">
                                                         $ {{ isset($waiterPrice) ? number_format($waiterPrice, 2) : 'N/A' }}
                                                     </td>

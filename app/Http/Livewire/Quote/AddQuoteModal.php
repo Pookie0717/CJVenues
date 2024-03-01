@@ -264,7 +264,7 @@ class AddQuoteModal extends Component
             $timeTo = implode('|', $timeToArray);
             $newQuoteNumber = $this->getNewQuoteNumber();
 
-            $totalPrice = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
+            $totalPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
 
             Quote::create([
                 'contact_id' => $this->contact_id,
@@ -279,9 +279,9 @@ class AddQuoteModal extends Component
                 'event_name' => $this->event_name,
                 'people' => $this->people,
                 'quote_number' => $newQuoteNumber, // Assign the new quote number
-                'calculated_price' => $totalPrice,
+                'calculated_price' => $totalPrice_val,
                 'discount' => 0,
-                'price' => $totalPrice,
+                'price' => $totalPrice_val,
                 'price_venue' => 0,
                 'price_options' => $mainPriceOptionsString,
                 'buffer_time_before' => $this->buffer_time_before,

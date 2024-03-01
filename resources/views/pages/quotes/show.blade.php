@@ -123,43 +123,7 @@
                                 </div>
                                 <!--end::Col-->
                             </div>
-                            <!--end::Row-->
-                            <!--begin::Row-->
-                            <!-- <div class='row mb-12'>
-                                <div class="col">
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.waiter') }}:</div>
-                                    @if($waiter->count() > 0)
-                                        <div class="fw-bold fs-6 text-gray-800">{{ $waiter[0]['name'] }}</div>
-                                    @else
-                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No Venue Manager available' }}</div>
-                                    @endif
-                                </div>
-                                <div class="col">
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.cleaner') }}:</div>
-                                    @if($cleaners->count() > 0)
-                                        <div class="fw-bold fs-6 text-gray-800">{{ $cleaners[0]['name'] }}</div>
-                                    @else
-                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No cleaner available' }}</div>
-                                    @endif
-                                </div>
-                                <div class="col">
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.venue_manager') }}:</div>
-                                    @if($venueManagers->count())
-                                        <div class="fw-bold fs-6 text-gray-800">{{ $venueManagers[0]['name'] }}</div>
-                                    @else
-                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No venue manager available' }}</div>
-                                    @endif
-                                </div>
-                                <div class="col">
-                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.toilet_staff') }}:</div>
-                                    @if($toiletStaffs->count())
-                                        <div class="fw-bold fs-6 text-gray-800">{{ $toiletStaffs[0]['name'] }}</div>
-                                    @else
-                                        <div class="fw-bold fs-6 text-gray-800">{{ 'No toilet staff available' }}</div>
-                                    @endif
-                                </div>
-                            </div> -->
-                            <!--end::Row-->
+                            <!--end::Row--> 
 
                             <!--begin::Row-->
                             <div class="row g-5 mb-12">
@@ -257,7 +221,6 @@
                                             @php
                                                 // Convert the price_options string into an array
                                                 $priceOptionsArray = explode('|', $quote->price_options);
-                                                $value = 1;
                                             @endphp
 
                                             @foreach($optionsWithValues as $index => $optionWithValue)
@@ -288,13 +251,16 @@
                                                     </tr>
                                                 @endif
                                             @endforeach
+                                            @php
+                                                $value = 1;
+                                            @endphp
                                             @if (count($waiter) !== 0)
                                                 <tr class="fw-bold text-gray-700 fs-5">
                                                     <td class="d-flex align-items-center text-left pt-6">
                                                         <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                         {{$waiter[0]['name']}}
                                                     </td>
-                                                    <td class="pt-6 text-end">{{ $value }}</td>
+                                                    <td class="pt-6 text-end">{{ $waiter[0]['quantity'] }}</td>
                                                     <td class="pt-6 text-end">$ {{ number_format( (float) $waiterPrice / (float) $value, 2) }}</td>
                                                     <td class="pt-6 text-dark fw-bolder text-end">
                                                         $ {{ isset($waiterPrice) ? number_format($waiterPrice, 2) : 'N/A' }}
@@ -307,8 +273,8 @@
                                                         <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                         {{$venueManagers[0]['name']}}
                                                     </td>
-                                                    <td class="pt-6 text-end">{{ $value }}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $venueManagersPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-end">{{ $venueManagers[0]['quantity'] }}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $venueManagersPrice / (float) $venueManagers[0]['quantity'], 2) }}</td>
                                                     <td class="pt-6 text-dark fw-bolder text-end">
                                                         $ {{ isset($venueManagersPrice) ? number_format($venueManagersPrice, 2) : 'N/A' }}
                                                     </td>
@@ -320,8 +286,8 @@
                                                         <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                         {{$toiletStaffs[0]['name']}}
                                                     </td>
-                                                    <td class="pt-6 text-end">{{ $value }}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $toiletStaffsPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-end">{{ $toiletStaffs[0]['quantity'] }}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $toiletStaffsPrice / (float) $toiletStaffs[0]['quantity'], 2) }}</td>
                                                     <td class="pt-6 text-dark fw-bolder text-end">
                                                         $ {{ isset($toiletStaffsPrice) ? number_format($toiletStaffsPrice, 2) : 'N/A' }}
                                                     </td>
@@ -333,8 +299,8 @@
                                                         <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                         {{$cleaners[0]['name']}}
                                                     </td>
-                                                    <td class="pt-6 text-end">{{ $value }}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $cleanersPrice / (float) $value, 2) }}</td>
+                                                    <td class="pt-6 text-end">{{$cleaners[0]['quantity']}}</td>
+                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $cleanersPrice / (float) $cleaners[0]['quantity'], 2) }}</td>
                                                     <td class="pt-6 text-dark fw-bolder text-end">
                                                         $ {{ isset($cleanersPrice) ? number_format($cleanersPrice, 2) : 'N/A' }}
                                                     </td>

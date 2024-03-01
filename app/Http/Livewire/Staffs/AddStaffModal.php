@@ -129,7 +129,6 @@ class AddStaffModal extends Component
     public function updateStaff($id)
     {
         $this->edit_mode = true;
-
         $staff = Staffs::find($id);
         $this->type = $staff->type;
         $this->staffId = $id;

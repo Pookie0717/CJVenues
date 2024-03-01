@@ -257,6 +257,8 @@ class AddQuoteModal extends Component
                 $timeFromArray[] = $time_range['time_from'];
                 $timeToArray[] = $time_range['time_to'];
             }
+
+            $currentTenantId = Session::get('current_tenant_id');
     
             $timeFrom = implode('|', $timeFromArray);
             $timeTo = implode('|', $timeToArray);
@@ -285,7 +287,7 @@ class AddQuoteModal extends Component
                 'buffer_time_before' => $this->buffer_time_before,
                 'buffer_time_after' => $this->buffer_time_after,
                 'buffer_time_unit' => $this->buffer_time_unit,
-                'tenant_id' => $mainTenantId,
+                'tenant_id' => $currentTenantId,
                 'staff_ids' => $this->staff_ids,
             ]);
             DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);

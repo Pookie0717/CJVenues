@@ -700,15 +700,15 @@ class AddQuoteModal extends Component
                 $bufferDaysBefore = ceil(intval($bufferBefore) / 8);
                 $bufferDaysAfter = ceil(intval($bufferAfter) / 8);
                 return ($bufferDaysBefore + $bufferDaysAfter) * $price->price;
-            } elseif ($price->multiplier == 'hourly') {
+            } else if ($price->multiplier == 'hourly') {
                 // If both buffer and price are in hours, calculate directly
                 return (intval($bufferBefore) + intval($bufferAfter)) * $price->price;
             }
-        } elseif ($bufferUnit == 'days') {
+        } else if ($bufferUnit == 'days') {
             if ($price->multiplier == 'daily') {
                 // If both buffer and price are in days, calculate directly
                 return (intval($bufferBefore) + intval($bufferAfter)) * $price->price;
-            } elseif ($price->multiplier == 'hourly') {
+            } else if ($price->multiplier == 'hourly') {
                 // Convert buffer days to hours considering a day as 8 hours
                 $bufferHoursBefore = intval($bufferBefore) * 8;
                 $bufferHoursAfter = intval($bufferAfter) * 8;
@@ -967,11 +967,11 @@ class AddQuoteModal extends Component
 
         if ($optionType === 'yes_no') {
             $price = $optionValue === 'yes' ? $multiplierValue * $quantity : 0;
-        } elseif ($optionType === 'always') {
+        } else if ($optionType === 'always') {
             $price = $multiplierValue * $quantity * $this->getDefaultOptionValue($optionId);
-        } elseif ($optionType === 'number') {
+        } else if ($optionType === 'number') {
             $price = $multiplierValue * (float)$optionValue * $quantity;
-        } elseif ($optionType === 'radio' || $optionType === 'checkbox') {
+        } else if ($optionType === 'radio' || $optionType === 'checkbox') {
             $optionValues = explode('|', $this->getOptionValues($optionId));
             $selectedValue = $optionValue;
             $prices = explode('|', $optionPrice->price);
@@ -983,7 +983,7 @@ class AddQuoteModal extends Component
             } else {
                 // Log when the selected value index is not found or the price is not set
             }
-        } elseif ($optionType === 'logic') {
+        } else if ($optionType === 'logic') {
 
             $optionValues = explode('|', $this->getOptionValues($optionId));
 
@@ -1456,7 +1456,7 @@ class AddQuoteModal extends Component
                 // Handle invalid percentage format
                 throw new \Exception("Invalid discount percentage format");
             }
-        } elseif (is_numeric($discount)) {
+        } else if (is_numeric($discount)) {
             // If the discount is a numeric value, treat it as a flat amount
             $discountAmount = $discount;
         } else {
@@ -1501,31 +1501,31 @@ class AddQuoteModal extends Component
                 $staff_duration_arr = explode(',', $waiter['duration_type']);
                 $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    if ($staff_duration_arr[$i] === 'people') {
-                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                            if(!$this->waiters) {
-                                $this->waiters = $waiter;
-                                $this->staff_arr_index[0] = $i;
-                            } elseif ($this->waiters['count'] < $staff_count_arr[$i]) {
-                                $this->waiters = $waiter;
-                                $this->staff_arr_index[0] = $i;
-                            }
-                        }
-                    } elseif ($staff_duration_arr[$i] === 'day') {
+                    if ($staff_duration_arr[$i] == 'day') {
                         if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
                             if(!$this->waiters) {
                                 $this->waiters = $waiter;
                                 $this->staff_arr_index[0] = $i;
-                            } elseif ($this->waiters['count'] < $staff_count_arr[$i]) {
+                            } else if ($this->waiters['count'] < $staff_count_arr[$i]) {
                                 $this->waiters = $waiter;
                                 $this->staff_arr_index[0] = $i;
                             }
                         }
-                    } elseif ($staff_duration_arr[$i] === 'hour') {
+                    } else if ($staff_duration_arr[$i] == 'people') {
+                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
+                            if(!$this->waiters) {
+                                $this->waiters = $waiter;
+                                $this->staff_arr_index[0] = $i;
+                            } else if ($this->waiters['count'] < $staff_count_arr[$i]) {
+                                $this->waiters = $waiter;
+                                $this->staff_arr_index[0] = $i;
+                            }
+                        }
+                    }  else if ($staff_duration_arr[$i] == 'hour') {
                         if(!$this->waiters) {
                             $this->waiters = $waiter;
                             $this->staff_arr_index[0] = $i;
-                        } elseif ($this->waiters['count'] < $staff_count_arr[$i]) {
+                        } else if ($this->waiters['count'] < $staff_count_arr[$i]) {
                             $this->waiters = $waiter;
                             $this->staff_arr_index[0] = $i;
                         }
@@ -1541,31 +1541,31 @@ class AddQuoteModal extends Component
                 $staff_duration_arr = explode(',', $cleaner['duration_type']);
                 $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    if ($staff_duration_arr[$i] === 'people') {
-                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                            if(!$this->cleaners) {
-                                $this->cleaners = $cleaner;
-                                $this->staff_arr_index[1] = $i;
-                            } elseif ($this->cleaners['count'] < $staff_count_arr[$i]) {
-                                $this->cleaners = $cleaner;
-                                $this->staff_arr_index[1] = $i;
-                            }
-                        }
-                    } elseif($staff_duration_arr[$i] === 'day') {
+                    if($staff_duration_arr[$i] === 'day') {
                         if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
                             if(!$this->cleaners) {
                                 $this->cleaners = $cleaner;
                                 $this->staff_arr_index[1] = $i;
-                            } elseif ($this->cleaners['count'] < $staff_count_arr[$i]) {
+                            } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
                                 $this->cleaners = $cleaner;
                                 $this->staff_arr_index[1] = $i;
                             }
                         }
-                    } elseif ($staff_duration_arr[$i] === 'hour') {
+                    } else if ($staff_duration_arr[$i] === 'people') {
+                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
+                            if(!$this->cleaners) {
+                                $this->cleaners = $cleaner;
+                                $this->staff_arr_index[1] = $i;
+                            } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
+                                $this->cleaners = $cleaner;
+                                $this->staff_arr_index[1] = $i;
+                            }
+                        }
+                    } else if ($staff_duration_arr[$i] === 'hour') {
                         if(!$this->cleaners) {
                             $this->cleaners = $cleaner;
                             $this->staff_arr_index[1] = $i;
-                        } elseif ($this->cleaners['count'] < $staff_count_arr[$i]) {
+                        } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
                             $this->cleaners = $cleaner;
                             $this->staff_arr_index[1] = $i;
                         }
@@ -1581,31 +1581,31 @@ class AddQuoteModal extends Component
                 $staff_duration_arr = explode(',', $toiletStaff['duration_type']);
                 $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    if ($staff_duration_arr[$i] === 'people') {
-                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                            if(!$this->toiletStaffs) {
-                                $this->toiletStaffs = $toiletStaff;
-                                $this->staff_arr_index[2] = $i;
-                            } elseif ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
-                                $this->toiletStaffs = $toiletStaff;
-                                $this->staff_arr_index[2] = $i;
-                            }
-                        }
-                    } elseif($staff_duration_arr[$i] === 'day') {
+                    if($staff_duration_arr[$i] === 'day') {
                         if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
                             if(!$this->toiletStaffs) {
                                 $this->toiletStaffs = $toiletStaff;
                                 $this->staff_arr_index[2] = $i;
-                            } elseif ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
+                            } else if ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
                                 $this->toiletStaffs = $toiletStaff;
                                 $this->staff_arr_index[2] = $i;
                             }
                         }
-                    } elseif ($staff_duration_arr[$i] === 'hour') {
+                    } else if ($staff_duration_arr[$i] === 'people') {
+                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
+                            if(!$this->toiletStaffs) {
+                                $this->toiletStaffs = $toiletStaff;
+                                $this->staff_arr_index[2] = $i;
+                            } else if ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
+                                $this->toiletStaffs = $toiletStaff;
+                                $this->staff_arr_index[2] = $i;
+                            }
+                        }
+                    } else if ($staff_duration_arr[$i] === 'hour') {
                         if(!$this->toiletStaffs) {
                             $this->toiletStaffs = $toiletStaff;
                             $this->staff_arr_index[2] = $i;
-                        } elseif ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
+                        } else if ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
                             $this->toiletStaffs = $toiletStaff;
                             $this->staff_arr_index[2] = $i;
                         }
@@ -1622,31 +1622,31 @@ class AddQuoteModal extends Component
                 $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
                 Log::info(count($staff_duration_arr));
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    if ($staff_duration_arr[$i] === 'people') {
-                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                            if(!$this->venueManagers) {
-                                $this->venueManagers = $venueManager;
-                                $this->staff_arr_index[3] = $i;
-                            } elseif ($this->venueManagers['count'] < $staff_count_arr[$i]) {
-                                $this->venueManagers = $venueManager;
-                                $this->staff_arr_index[3] = $i;
-                            }
-                        }
-                    } elseif($staff_duration_arr[$i] === 'day') {
+                    if($staff_duration_arr[$i] === 'day') {
                         if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
                             if(!$this->venueManagers) {
                                 $this->venueManagers = $venueManager;
                                 $this->staff_arr_index[3] = $i;
-                            } elseif ($this->venueManagers['count'] < $staff_count_arr[$i]) {
+                            } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                                 $this->venueManagers = $venueManager;
                                 $this->staff_arr_index[3] = $i;
                             }
                         }
-                    } elseif ($staff_duration_arr[$i] === 'hour') {
+                    } else if ($staff_duration_arr[$i] === 'people') {
+                        if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
+                            if(!$this->venueManagers) {
+                                $this->venueManagers = $venueManager;
+                                $this->staff_arr_index[3] = $i;
+                            } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
+                                $this->venueManagers = $venueManager;
+                                $this->staff_arr_index[3] = $i;
+                            }
+                        }
+                    } else if ($staff_duration_arr[$i] === 'hour') {
                         if(!$this->venueManagers) {
                             $this->venueManagers = $venueManager;
                             $this->staff_arr_index[3] = $i;
-                        } elseif ($this->venueManagers['count'] < $staff_count_arr[$i]) {
+                        } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
                             $this->venueManagers = $venueManager;
                             $this->staff_arr_index[3] = $i;
                         }

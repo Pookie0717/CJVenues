@@ -46,7 +46,6 @@ class AddStaffModal extends Component
             'name' => 'required|string|max:255',
             'type' => 'required|max:255',
             'area_ids' => 'required|nullable|array',
-            'duration_type' => 'array',
             'from' => 'required|array',
             'to' => 'required|array',
             'count' => 'required|array'

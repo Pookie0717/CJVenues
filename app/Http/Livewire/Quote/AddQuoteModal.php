@@ -1494,15 +1494,16 @@ class AddQuoteModal extends Component
         $selected_date_from = explode('-', $this->date_from);
         $selected_date_to = explode('-', $this->date_to);
         $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
-
         $calculatedPrice = 0;
+        Log::info($get_waiters);
         if ($get_waiters->isNotEmpty()) {
             foreach ($get_waiters as $waiter) {
                 $staff_from_arr = explode(',', $waiter['from']);
                 $staff_to_arr = explode(',', $waiter['to']);
                 $staff_count_arr = explode(',', $waiter['count']);
                 $staff_duration_arr = explode(',', $waiter['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
+                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
+                Log::info($count_staff_duration_arr);
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
                     switch($staff_duration_arr[$i]) {
                         case 'day':
@@ -1546,7 +1547,7 @@ class AddQuoteModal extends Component
                 $staff_to_arr = explode(',', $cleaner['to']);
                 $staff_count_arr = explode(',', $cleaner['count']);
                 $staff_duration_arr = explode(',', $cleaner['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
+                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
                     switch($staff_duration_arr[$i]) {
                         case 'day':
@@ -1589,7 +1590,7 @@ class AddQuoteModal extends Component
                 $staff_to_arr = explode(',', $toiletStaff['to']);
                 $staff_count_arr = explode(',', $toiletStaff['count']);
                 $staff_duration_arr = explode(',', $toiletStaff['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
+                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
                     switch($staff_duration_arr[$i]) {
                         case 'day':
@@ -1633,7 +1634,7 @@ class AddQuoteModal extends Component
                 $staff_to_arr = explode(',', $venueManager['to']);
                 $staff_count_arr = explode(',', $venueManager['count']);
                 $staff_duration_arr = explode(',', $venueManager['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) - 1 : count($staff_duration_arr);
+                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
                 for($i = 0;$i < $count_staff_duration_arr;$i++) {
                     switch($staff_duration_arr[$i]) {
                         case 'day':

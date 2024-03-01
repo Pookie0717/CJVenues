@@ -836,7 +836,7 @@ class AddQuoteModal extends Component
                             }
                         };
                         if($staff_count[0]['type'] === 'cleaners') {
-                            $temp = explode(',', $this->toiletStaffs['count']);
+                            $temp = explode(',', $this->cleaners['count']);
                             if($this->staff_arr_index[1] !== null) {
                                 $index = $temp[$this->staff_arr_index[1]];
                                 $totalPrice += $staff_price[0]['price'] * $index;
@@ -844,7 +844,7 @@ class AddQuoteModal extends Component
                             }
                         };
                         if($staff_count[0]['type'] === 'toilet staff') {
-                            $temp = explode(',', $this->venueManagers['count']);
+                            $temp = explode(',', $this->toiletStaffs['count']);
                             if($this->staff_arr_index[2] !== null) {
                                 $index = $temp[$this->staff_arr_index[2]];
                                 $totalPrice += $staff_price[0]['price'] * $index;

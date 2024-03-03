@@ -161,6 +161,10 @@ class AddPriceModal extends Component
         $this->x = $price->x;
         $this->season_ids = explode(',', $price->season_ids);
         $this->extra_tier_type = explode(',', $price->extra_tier_type);
+        $selectedOption = Option::find($price->option_id);
+        if(isset($selectedOption)) {
+            $this->option_area_id = $price->area_id;
+        }
     }
 
 
@@ -178,13 +182,12 @@ class AddPriceModal extends Component
         $staffs = Staffs::whereIn('tenant_id', $tenantIds)->get();
 
         $dX = stristr($this->multiplier, 'every');
-        
-        $optionAreas = [];
         $selectedOption = Option::find($this->option_id);
+        $optionAreas = [];
         if($this->type === 'option' && $selectedOption) {
             $areaIds = explode(',', $selectedOption->area_ids);
             $optionAreas = VenueArea::whereIn('id', $areaIds)->get();
         }
-        return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options', 'dX', 'optionAreas', 'staffs'));
+        return view('livewire.price.add-price-modal', compact('venues', 'venueAreas', 'seasons', 'options', 'optionAreas', 'dX', 'staffs'));
     }
 }

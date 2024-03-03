@@ -83,8 +83,8 @@
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.area') }}</label>
                             <select wire:model.defer="option_area_id" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">{{ trans('prices.selectarea') }}</option>
-                                @foreach($optionAreas as $e)
-                                    <option value="{{ $e->id }}">{{ $e->name }}</option>
+                                @foreach($optionAreas as $optionArea)
+                                    <option value="{{ $optionArea->id }}">{{ $optionArea->name }}</option>
                                 @endforeach
                             </select>
                             @error('option_id')

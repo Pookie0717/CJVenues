@@ -39,4 +39,10 @@ return [
     'multiplier_everyxdays' => 'Every x Days',
     'multiplier_everyxpeople' => 'Every x People',
     'amount' => 'Amount',
+    'prices' => 'Prices',
+    'area' => 'Area',
+    'option' => 'Option',
+    'selectarea' => 'Select Area',
+    'selectoption' => 'Select Option',
+
 ];

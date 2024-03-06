@@ -39,9 +39,15 @@
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.area') }}</label>
                             <select wire:model.defer="area_ids" name="area_ids[]" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
+                            @if($parentTanantId[0] !== null)
+                                @foreach($venueArea as $area)
+                                    <option value="{{ $area['id'] }}">{{ $area['name'] }}</option>
+                                @endforeach
+                            @else
                                 @foreach($venueArea as $area)
                                     <option value="{{ $area->id }}">{{ $area->name }}</option>
                                 @endforeach
+                            @endif
                             </select>
                             @error('area_ids')
                                 <span class="text-danger">{{ $message }}</span>

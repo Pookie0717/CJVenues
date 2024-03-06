@@ -52,7 +52,6 @@ class AddStaffModal extends Component
         ];
 
         $this->validate($rules);
-        Log::info($this->duration_type);
         for($i = 1;$i <= $this->items_count;$i++) {
             if (!isset($this->duration_type[$i])) {
                 $this->duration_type[$this->items_count] = 'hour';
@@ -151,7 +150,6 @@ class AddStaffModal extends Component
 
     public function addItem() {
         $this->duration_type[$this->items_count] = 'hour';
-        Log::info($this->duration_type);
         $this->items_count += 1;
     }
 
@@ -174,23 +172,22 @@ class AddStaffModal extends Component
         $parentTanantId = Tenant::where('id', $currentTenantId)->pluck('parent_id')->toArray();
         $tenantIds[] = $currentTenantId;
         $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
-        Log::info($currentTenantId);
         if($parentTanantId[0] !== null) {
-            $venueAreaChild = VenueArea::whereIn('tenant_id', $tenantIds)->get();
-            $venueAreaParent = VenueArea::whereIn('tenant_id', $parentTanantId)->get();
-            Log::info($venueAreaChild);
-            Log::info($venueAreaParent);
+            $venueAreaChild = VenueArea::whereIn('tenant_id', $tenantIds)->get()->toArray();
+            $venueAreaParent = VenueArea::whereIn('tenant_id', $parentTanantId)->get()->toArray();
             if(count($venueAreaParent) !== 0) {
                 if(count($venueAreaChild) !== 0) {
                     $venueArea = array_merge($venueAreaParent, $venueAreaChild);
+                } else {
+                    $venueArea = $venueAreaParent;
                 }
-                $venueArea = $venueAreaParent;
-                Log::info($venueArea);
+            } else {
+                $venueArea = $venueAreaChild;
             }
         } else {
             $venueArea = VenueArea::whereIn('tenant_id', $tenantIds)->get();
-            Log::info($tenantIds);
         }
-        return view('livewire.staffs.add-staff-modal', compact('venues', 'venueArea'));
+
+        return view('livewire.staffs.add-staff-modal', compact('venues', 'venueArea', 'parentTanantId'));
     }
 }

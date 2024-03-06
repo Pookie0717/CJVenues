@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered mw-650px">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_staff_header">
-                <h2 class="fw-bold">{{ trans('add_staff') }}</h2>
+                <h2 class="fw-bold">{{ trans('staff.add_staff') }}</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
                     {!! getIcon('cross','fs-1') !!}
                 </div>

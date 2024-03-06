@@ -39,6 +39,4 @@ return [
     'multiplier_everyxdays' => 'Every x Days',
     'multiplier_everyxpeople' => 'Every x People',
     'amount' => 'Amount',
-
-
 ];

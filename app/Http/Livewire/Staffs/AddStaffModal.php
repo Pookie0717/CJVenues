@@ -169,12 +169,28 @@ class AddStaffModal extends Component
     {
         $currentTenantId = Session::get('current_tenant_id');
         $tenantIds = [];
+        $venueArea = [];
         $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $parentTanantId = Tenant::where('id', $currentTenantId)->pluck('parent_id')->toArray();
         $tenantIds[] = $currentTenantId;
-
         $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
-        $venueArea = VenueArea::whereIn('tenant_id', $tenantIds)->get();
-
+        Log::info($currentTenantId);
+        if($parentTanantId[0] !== null) {
+            $venueAreaChild = VenueArea::whereIn('tenant_id', $tenantIds)->get();
+            $venueAreaParent = VenueArea::whereIn('tenant_id', $parentTanantId)->get();
+            Log::info($venueAreaChild);
+            Log::info($venueAreaParent);
+            if(count($venueAreaParent) !== 0) {
+                if(count($venueAreaChild) !== 0) {
+                    $venueArea = array_merge($venueAreaParent, $venueAreaChild);
+                }
+                $venueArea = $venueAreaParent;
+                Log::info($venueArea);
+            }
+        } else {
+            $venueArea = VenueArea::whereIn('tenant_id', $tenantIds)->get();
+            Log::info($tenantIds);
+        }
         return view('livewire.staffs.add-staff-modal', compact('venues', 'venueArea'));
     }
 }

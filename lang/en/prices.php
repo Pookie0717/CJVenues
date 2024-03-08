@@ -44,5 +44,8 @@ return [
     'option' => 'Option',
     'selectarea' => 'Select Area',
     'selectoption' => 'Select Option',
+    'selectvenue' => 'Select Venue',
+    'selectstaff' => 'Select Staff',
+    'staff' => 'Staff',
 
 ];

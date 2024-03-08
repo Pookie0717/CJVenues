@@ -81,7 +81,7 @@
                         @if(sizeof($optionAreas) > 0)
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('prices.area') }}</label>
-                            <select wire:model.defer="option_area_id" class="form-select form-select-solid mb-3 mb-lg-0">
+                            <select wire:model="option_area_ids" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
                                 <option value="">{{ trans('prices.selectarea') }}</option>
                                 @foreach($optionAreas as $optionArea)
                                     <option value="{{ $optionArea->id }}">{{ $optionArea->name }}</option>

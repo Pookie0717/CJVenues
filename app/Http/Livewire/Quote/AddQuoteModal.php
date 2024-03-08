@@ -1431,7 +1431,6 @@ class AddQuoteModal extends Component
             });
         }
 
-        
         $this->options = $optionsQuery->get();
         // Set values for specific logic options and default values
         foreach ($this->options as $option) {
@@ -1473,24 +1472,49 @@ class AddQuoteModal extends Component
         // Get count of staffs
         $areaId = $this->area_id;
         $currentTenantId = Session::get('current_tenant_id');
-        $tenantId_val = $currentTenantId;
-        Log::info($tenantId_val);
-        $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($tenantId_val) {
+        // $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        // $tenantIds[] = $currentTenantId; // self and child tenant ids.
+
+        $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($currentTenantId) {
             $tenantId_col = $staff->tenant_id;
-            return $tenantId_val == $tenantId_col;
+            return $currentTenantId == $tenantId_col;
         });
-        $get_cleaners = Staffs::where('type', 'cleaners')->get()->filter(function ($staff) use ($tenantId_val) {
+        $get_cleaners = Staffs::where('type', 'cleaners')->get()->filter(function ($staff) use ($currentTenantId) {
             $tenantId_col = $staff->tenant_id;
-            return $tenantId_val == $tenantId_col;
+            return $currentTenantId == $tenantId_col;
         });
-        $get_toiletStaffs = Staffs::where('type', 'toilet staff')->get()->filter(function ($staff) use ($tenantId_val) {
+        $get_toiletStaffs = Staffs::where('type', 'toilet staff')->get()->filter(function ($staff) use ($currentTenantId) {
             $tenantId_col = $staff->tenant_id;
-            return $tenantId_val == $tenantId_col;
+            return $currentTenantId == $tenantId_col;
         });
-        $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($tenantId_val) {
+        $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($currentTenantId) {
             $tenantId_col = $staff->tenant_id;
-            return $tenantId_val == $tenantId_col;
+            return $currentTenantId == $tenantId_col;
         });
+        // $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($tenantIds) {
+        //     $tenantId_col = $staff->tenant_id;
+        //     foreach($tenantIds as $tenantId_val_item) {
+        //         return $tenantId_val == $tenantId_col;
+        //     }
+        // });
+        // $get_cleaners = Staffs::where('type', 'cleaners')->get()->filter(function ($staff) use ($tenantIds) {
+        //     $tenantId_col = $staff->tenant_id;
+        //     foreach($tenantIds as $tenantId_val_item) {
+        //         return $tenantId_val == $tenantId_col;
+        //     }
+        // });
+        // $get_toiletStaffs = Staffs::where('type', 'toilet staff')->get()->filter(function ($staff) use ($tenantIds) {
+        //     $tenantId_col = $staff->tenant_id;
+        //     foreach($tenantIds as $tenantId_val_item) {
+        //         return $tenantId_val == $tenantId_col;
+        //     }
+        // });
+        // $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($tenantIds) {
+        //     $tenantId_col = $staff->tenant_id;
+        //     foreach($tenantIds as $tenantId_val_item) {
+        //         return $tenantId_val == $tenantId_col;
+        //     }
+        // });
         $selected_date_from = explode('-', $this->date_from);
         $selected_date_to = explode('-', $this->date_to);
         $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));

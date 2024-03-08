@@ -25,7 +25,7 @@ class AddPriceModal extends Component
     public $venue_id;
     public $area_id;
     public $staff_id;
-    public $option_area_id;
+    public $option_area_ids;
     public $option_id;
     public $price;
     public $multiplier;
@@ -73,7 +73,8 @@ class AddPriceModal extends Component
                 'name' => $this->name,
                 'type' => $this->type,
                 'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
-                'area_id' => ($this->type === 'area') ? $this->area_id: ($this->type === 'option'? $this->option_area_id: null),
+                'area_id' => ($this->type === 'area') ? $this->area_id : null,
+                'option_area_ids' => ($this->type === 'option') ? implode(',', $this->option_area_ids) : null,
                 'staff_id' => ($this->type === 'staff') ? $this->staff_id : null,
                 'option_id' => ($this->type === 'option') ? $this->option_id : null,
                 'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
@@ -96,7 +97,8 @@ class AddPriceModal extends Component
                     'name' => $this->name,
                     'type' => $this->type,
                     'venue_id' => ($this->type === 'venue') ? $this->venue_id : null,
-                    'area_id' => ($this->type === 'area') ? $this->area_id: ($this->type === 'option'? $this->option_area_id: null),
+                    'area_id' => ($this->type === 'area') ? $this->area_id : null,
+                    'option_area_ids' => ($this->type === 'option') ? implode(',', $this->option_area_ids) : null,
                     'staff_id' => $this->type === 'staff' ? $this->staff_id : null,
                     'option_id' => ($this->type === 'option') ? $this->option_id : null,
                     'tier_type' => ($this->type === 'pp_tier') ? $this->tier_type : null,
@@ -114,7 +116,7 @@ class AddPriceModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id', 'staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id', 'season_ids', 'extra_tier_type'
+            'name', 'type', 'venue_id', 'area_id', 'staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_ids', 'season_ids', 'extra_tier_type'
         ]);
     }
 
@@ -122,7 +124,7 @@ class AddPriceModal extends Component
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
-            'name', 'type', 'venue_id', 'area_id','staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_id', 'season_ids', 'extra_tier_type'
+            'name', 'type', 'venue_id', 'area_id','staff_id', 'option_id', 'tier_type', 'price', 'multiplier', 'x', 'edit_mode', 'option_area_ids', 'season_ids', 'extra_tier_type'
         ]);
     }
 
@@ -161,10 +163,7 @@ class AddPriceModal extends Component
         $this->x = $price->x;
         $this->season_ids = explode(',', $price->season_ids);
         $this->extra_tier_type = explode(',', $price->extra_tier_type);
-        $selectedOption = Option::find($price->option_id);
-        if(isset($selectedOption)) {
-            $this->option_area_id = $price->area_id;
-        }
+        $this->option_area_ids = explode(',', $price->option_area_ids);
     }
 
 

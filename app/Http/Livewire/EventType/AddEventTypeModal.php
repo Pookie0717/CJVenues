@@ -27,7 +27,7 @@ class AddEventTypeModal extends Component
     public $max_people;
     public $opening_time = "00:00";
     public $closing_time = "23:30";
-    public $venue_area_id;
+    public $venue_area_ids;
     public $min_buffer_before;
     public $max_buffer_before;
     public $min_buffer_after;
@@ -61,7 +61,7 @@ class AddEventTypeModal extends Component
             'max_people' => 'required|integer',
             'opening_time' => 'required|string|max:255',
             'closing_time' => 'required|string|max:255',
-            'venue_area_id' => 'required|exists:venue_areas,id',
+            'venue_area_ids' => 'required|array',
             'min_buffer_before' => 'nullable|integer',
             'max_buffer_before' => 'nullable|integer',
             'min_buffer_after' => 'nullable|integer',
@@ -70,6 +70,7 @@ class AddEventTypeModal extends Component
 
         $eventNames = implode(', ', $this->selectedEventNames);
         $seasons = implode(', ', $this->selectedSeasons);
+        $venueAreaIds = implode(',', $this->venue_area_ids);
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing event type record
@@ -88,7 +89,7 @@ class AddEventTypeModal extends Component
                 'max_people' => $this->max_people,
                 'opening_time' => $this->opening_time,
                 'closing_time' => $this->closing_time,
-                'venue_area_id' => $this->venue_area_id,
+                'venue_area_ids' => $venueAreaIds,
                 'min_buffer_before' => $this->min_buffer_before,
                 'max_buffer_before' => $this->max_buffer_before,
                 'min_buffer_after' => $this->min_buffer_after,
@@ -113,7 +114,7 @@ class AddEventTypeModal extends Component
                 'max_people' => $this->max_people,
                 'opening_time' => $this->opening_time,
                 'closing_time' => $this->closing_time,
-                'venue_area_id' => $this->venue_area_id,
+                'venue_area_ids' => $venueAreaIds,
                 'min_buffer_before' => $this->min_buffer_before,
                 'max_buffer_before' => $this->max_buffer_before,
                 'min_buffer_after' => $this->min_buffer_after,
@@ -135,9 +136,14 @@ class AddEventTypeModal extends Component
                 'max_duration',
                 'selectedSeasons',
                 'min_people',
+                'max_people',
                 'opening_time',
                 'closing_time',
-                'venue_area_id',
+                'venue_area_ids',
+                'min_buffer_before',
+                'max_buffer_before',
+                'min_buffer_after',
+                'max_buffer_after',
             ]);
         }
     }
@@ -169,9 +175,14 @@ class AddEventTypeModal extends Component
             'max_duration',
             'selectedSeasons',
             'min_people',
+            'max_people',
             'opening_time',
             'closing_time',
-            'venue_area_id',
+            'venue_area_ids',
+            'min_buffer_before',
+            'max_buffer_before',
+            'min_buffer_after',
+            'max_buffer_after',
         ]);
     }
     
@@ -207,7 +218,7 @@ class AddEventTypeModal extends Component
         $this->opening_time = $eventType->opening_time;
         $this->closing_time = $eventType->closing_time;
         $this->eventTypeId = $eventType->id;
-        $this->venue_area_id = $eventType->venue_area_id;
+        $this->venue_area_ids = explode(',', $eventType->venue_area_ids);
         $this->min_buffer_before = $eventType->min_buffer_before;
         $this->max_buffer_before = $eventType->max_buffer_before;
         $this->min_buffer_after = $eventType->min_buffer_after;

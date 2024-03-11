@@ -141,13 +141,12 @@
 
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('events.venuearea') }}</label>
-                            <select wire:model.defer="venue_area_id" name="venue_area_id" class="form-select form-select-solid">
-                                <option value="">{{ trans('general.select') }}</option>
+                            <select wire:model.defer="venue_area_ids" name="venue_area_ids" class="form-select form-select-solid" multiple>
                                 @foreach($venueAreas as $venueArea)
                                     <option value="{{ $venueArea->id }}">{{ $venueArea->name }}</option>
                                 @endforeach
                             </select>
-                            @error('venue_area_id')
+                            @error('venue_area_ids')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>

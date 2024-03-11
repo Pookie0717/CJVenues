@@ -26,17 +26,17 @@ class EventType extends Model
         'opening_time',
         'closing_time',
         'availability',
-        'venue_area_id',
+        'venue_area_ids',
         'min_buffer_before',
         'max_buffer_before',
         'min_buffer_after',
         'max_buffer_after',
     ];
 
-    public function venueAreas()
-    {
-        return $this->hasMany(VenueArea::class, 'venue_area_id');
-    }
+    // public function venueAreas()
+    // {
+    //     return $this->hasMany(VenueArea::class, 'venue_area_id');
+    // }
 
     public function tenant()
     {

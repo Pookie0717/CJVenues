@@ -496,6 +496,25 @@
 
                                         </div>
                                     @endforeach
+                                    <label class="form-label">Drinks:</label>
+                                    <div class="form-check form-check-custom form-check-solid mb-5">
+                                        <input wire:click="updateDrinkState('noDrink')" class="form-check-input" type="checkbox"/>
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            No Drinks
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-custom form-check-solid mb-5" id="soft-drinks-checkbox">
+                                        <input wire:click="updateDrinkState('softDrink')" class="form-check-input" type="checkbox" @if(!$isDrink) disabled @endif/>
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            Soft Drinks
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-custom form-check-solid mb-5" id="cocktails-checkbox">
+                                        <input wire:click="updateDrinkState('cocktails')" class="form-check-input" type="checkbox" @if(!$isDrink) disabled @endif/>
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            Cocktails
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                     

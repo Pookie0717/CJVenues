@@ -53,8 +53,15 @@ class AddQuoteModal extends Component
     public $venueManagers = 0;
     public $toiletStaffs = 0;
     public $cleaners = 0;
+    public $softDrinks = 0;
+    public $cocktails = 0;
     public $staff_ids;
-    public $staff_arr_index = [null, null, null, null];
+    public $staff_arr_index = [null, null, null, null, null, null];
+
+    public $isDrink = true;
+
+    public $isSoftDrink;
+    public $isCocktails;
 
     public $filteredContacts = [];
     public $edit_mode = false;
@@ -97,6 +104,8 @@ class AddQuoteModal extends Component
             $this->venueManagers ? $this->venueManagers['id'] : $this->venueManagers,
             $this->toiletStaffs ? $this->toiletStaffs['id'] : $this->toiletStaffs,
             $this->cleaners ? $this->cleaners['id'] : $this->cleaners,
+            $this->softDrinks ? $this->softDrinks['id'] : $this->softDrinks,
+            $this->cocktails ? $this->cocktails['id'] : $this->cocktails,
         ];
 
         $this->eventTypes = [];
@@ -840,7 +849,6 @@ class AddQuoteModal extends Component
                                 if($this->staff_arr_index[1] !== null) {
                                     $index = $temp[$this->staff_arr_index[1]];
                                     $totalPrice += $staff_price[0]['price'] * $index;
-                                    Log::info("asdfasdfasfdsd     ".$totalPrice);
                                 }
                                 break;
                             case 'toilet staff':
@@ -854,6 +862,20 @@ class AddQuoteModal extends Component
                                 $temp = explode(',', $this->venueManagers['count']);
                                 if($this->staff_arr_index[3] !== null) {
                                     $index = $temp[$this->staff_arr_index[3]];
+                                    $totalPrice += $staff_price[0]['price'] * $index;
+                                }
+                                break;
+                            case 'soft drinks':
+                                $temp = explode(',', $this->venueManagers['count']);
+                                if($this->staff_arr_index[3] !== null) {
+                                    $index = $temp[$this->staff_arr_index[4]];
+                                    $totalPrice += $staff_price[0]['price'] * $index;
+                                }
+                                break;
+                            case 'cocktails':
+                                $temp = explode(',', $this->venueManagers['count']);
+                                if($this->staff_arr_index[3] !== null) {
+                                    $index = $temp[$this->staff_arr_index[5]];
                                     $totalPrice += $staff_price[0]['price'] * $index;
                                 }
                                 break;
@@ -1338,8 +1360,9 @@ class AddQuoteModal extends Component
             'timeRanges' => $this->time_ranges,
             'selectedEvent' => $selectedEvent,
         ]);
+        $isDrink = $this->isDrink;
 
-        return view('livewire.quote.add-quote-modal', compact('filteredAreas', 'filteredEventTypes', 'filteredVenues', 'options', 'selectedEvent'));
+        return view('livewire.quote.add-quote-modal', compact('filteredAreas', 'filteredEventTypes', 'filteredVenues', 'options', 'selectedEvent', 'isDrink'));
     }
 
     public function updatedAreaId()
@@ -1467,6 +1490,20 @@ class AddQuoteModal extends Component
         // Subtract the discount amount from the calculated price
         return max($calculatedPrice - $discountAmount, 0); // Ensure the total doesn't go below 0
     }
+
+    public function updateDrinkState($value) 
+    {
+        if($value == 'softDrink') {
+            $this->isSoftDrink = !$this->isSoftDrink;
+        } else if($value == 'cocktails') {
+            $this->isCocktails = !$this->isCocktails;
+        } else {
+            $this->isDrink = !$this->isDrink;
+            $this->isSoftDrink = false;
+            $this->isCocktails = false;
+        }
+    }
+
     private function applyStaffs()
     {
         // Get count of staffs
@@ -1488,6 +1525,14 @@ class AddQuoteModal extends Component
             return $currentTenantId == $tenantId_col;
         });
         $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($currentTenantId) {
+            $tenantId_col = $staff->tenant_id;
+            return $currentTenantId == $tenantId_col;
+        });
+        $get_softDrink = Staffs::where('type', 'soft drinks')->get()->filter(function ($staff) use ($currentTenantId) {
+            $tenantId_col = $staff->tenant_id;
+            return $currentTenantId == $tenantId_col;
+        });
+        $get_cocktails = Staffs::where('type', 'cocktails')->get()->filter(function ($staff) use ($currentTenantId) {
             $tenantId_col = $staff->tenant_id;
             return $currentTenantId == $tenantId_col;
         });
@@ -1519,179 +1564,59 @@ class AddQuoteModal extends Component
         $selected_date_to = explode('-', $this->date_to);
         $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
         $calculatedPrice = 0;
-        Log::info($get_waiters);
-        if ($get_waiters->isNotEmpty()) {
-            foreach ($get_waiters as $waiter) {
-                $staff_from_arr = explode(',', $waiter['from']);
-                $staff_to_arr = explode(',', $waiter['to']);
-                $staff_count_arr = explode(',', $waiter['count']);
-                $staff_duration_arr = explode(',', $waiter['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
-                Log::info($count_staff_duration_arr);
-                for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    switch($staff_duration_arr[$i]) {
-                        case 'day':
-                            if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
-                                if(!$this->waiters) {
-                                    $this->waiters = $waiter;
-                                    $this->staff_arr_index[0] = $i;
-                                } else if ($this->waiters['count'] < $staff_count_arr[$i]) {
-                                    $this->waiters = $waiter;
-                                    $this->staff_arr_index[0] = $i;
+        
+        // Initialize the waiters, cleaners, toilet staffs, venue managers, soft drinks, and cocktails variables
+        $staffTypes = [
+            'waiters' => $get_waiters,
+            'cleaners' => $get_cleaners,
+            'toiletStaffs' => $get_toiletStaffs,
+            'venueManagers' => $get_venueManagers,
+            'softDrinks' => $this->isSoftDrink ? $get_softDrink : collect(),
+            'cocktails' => $this->isCocktails ?  $get_cocktails : collect()
+        ];
+        
+        foreach ($staffTypes as $key => $staffType) {
+            if ($staffType->isNotEmpty()) {
+                foreach ($staffType as $staff) {
+                    $staff_from_arr = explode(',', $staff['from']);
+                    $staff_to_arr = explode(',', $staff['to']);
+                    $staff_count_arr = explode(',', $staff['count']);
+                    $staff_duration_arr = explode(',', $staff['duration_type']);
+                    $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
+                    for ($i = 0; $i < $count_staff_duration_arr; $i++) {
+                        switch ($staff_duration_arr[$i]) {
+                            case 'day':
+                                if ($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
+                                    if (!$this->{$key}) {
+                                        $this->{$key} = $staff;
+                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                    } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
+                                        $this->{$key} = $staff;
+                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                    }
                                 }
-                            }
-                            break;
-                        case 'people':
-                            if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                                if(!$this->waiters) {
-                                    $this->waiters = $waiter;
-                                    $this->staff_arr_index[0] = $i;
-                                } else if ($this->waiters['count'] < $staff_count_arr[$i]) {
-                                    $this->waiters = $waiter;
-                                    $this->staff_arr_index[0] = $i;
+                                break;
+                            case 'people':
+                                if ($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
+                                    if (!$this->{$key}) {
+                                        $this->{$key} = $staff;
+                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                    } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
+                                        $this->{$key} = $staff;
+                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                    }
                                 }
-                            }
-                            break;
-                        case 'hour':
-                            if(!$this->waiters) {
-                                $this->waiters = $waiter;
-                                $this->staff_arr_index[0] = $i;
-                            } else if ($this->waiters['count'] < $staff_count_arr[$i]) {
-                                $this->waiters = $waiter;
-                                $this->staff_arr_index[0] = $i;
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-        if ($get_cleaners->isNotEmpty()) {
-            foreach ($get_cleaners as $cleaner) {
-                $staff_from_arr = explode(',', $cleaner['from']);
-                $staff_to_arr = explode(',', $cleaner['to']);
-                $staff_count_arr = explode(',', $cleaner['count']);
-                $staff_duration_arr = explode(',', $cleaner['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
-                for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    switch($staff_duration_arr[$i]) {
-                        case 'day':
-                            if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
-                                if(!$this->cleaners) {
-                                    $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[3] = $i;
-                                } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
-                                    $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[3] = $i;
+                                break;
+                            case 'hour':
+                                if (!$this->{$key}) {
+                                    $this->{$key} = $staff;
+                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
+                                    $this->{$key} = $staff;
+                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
                                 }
-                            }
-                        case 'people':
-                            if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                                if(!$this->cleaners) {
-                                    $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[3] = $i;
-                                } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
-                                    $this->cleaners = $cleaner;
-                                    $this->staff_arr_index[3] = $i;
-                                }
-                            }
-                            break;
-                        case 'hour':
-                            if(!$this->cleaners) {
-                                $this->cleaners = $cleaner;
-                                $this->staff_arr_index[3] = $i;
-                            } else if ($this->cleaners['count'] < $staff_count_arr[$i]) {
-                                $this->cleaners = $cleaner;
-                                $this->staff_arr_index[3] = $i;
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-        if ($get_toiletStaffs->isNotEmpty()) {
-            foreach ($get_toiletStaffs as $toiletStaff) {
-                $staff_from_arr = explode(',', $toiletStaff['from']);
-                $staff_to_arr = explode(',', $toiletStaff['to']);
-                $staff_count_arr = explode(',', $toiletStaff['count']);
-                $staff_duration_arr = explode(',', $toiletStaff['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
-                for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    switch($staff_duration_arr[$i]) {
-                        case 'day':
-                            if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
-                                if(!$this->toiletStaffs) {
-                                    $this->toiletStaffs = $toiletStaff;
-                                    $this->staff_arr_index[2] = $i;
-                                } else if ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
-                                    $this->toiletStaffs = $toiletStaff;
-                                    $this->staff_arr_index[2] = $i;
-                                }
-                            }
-                            break;
-                        case 'people':
-                            if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                                if(!$this->toiletStaffs) {
-                                    $this->toiletStaffs = $toiletStaff;
-                                    $this->staff_arr_index[2] = $i;
-                                } else if ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
-                                    $this->toiletStaffs = $toiletStaff;
-                                    $this->staff_arr_index[2] = $i;
-                                }
-                            }
-                            break;
-                        case 'hour':
-                            if(!$this->toiletStaffs) {
-                                $this->toiletStaffs = $toiletStaff;
-                                $this->staff_arr_index[2] = $i;
-                            } else if ($this->toiletStaffs['count'] < $staff_count_arr[$i]) {
-                                $this->toiletStaffs = $toiletStaff;
-                                $this->staff_arr_index[2] = $i;
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-        if ($get_venueManagers->isNotEmpty()) {
-            foreach ($get_venueManagers as $venueManager) {
-                $staff_from_arr = explode(',', $venueManager['from']);
-                $staff_to_arr = explode(',', $venueManager['to']);
-                $staff_count_arr = explode(',', $venueManager['count']);
-                $staff_duration_arr = explode(',', $venueManager['duration_type']);
-                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
-                for($i = 0;$i < $count_staff_duration_arr;$i++) {
-                    switch($staff_duration_arr[$i]) {
-                        case 'day':
-                            if($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
-                                if(!$this->venueManagers) {
-                                    $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[1] = $i;
-                                } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
-                                    $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[1] = $i;
-                                }
-                            }
-                            break;
-                        case 'people':
-                            if($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                                if(!$this->venueManagers) {
-                                    $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[1] = $i;
-                                } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
-                                    $this->venueManagers = $venueManager;
-                                    $this->staff_arr_index[1] = $i;
-                                }
-                            }
-                            break;
-                        case 'hour':
-                            if(!$this->venueManagers) {
-                                $this->venueManagers = $venueManager;
-                                $this->staff_arr_index[1] = $i;
-                            } else if ($this->venueManagers['count'] < $staff_count_arr[$i]) {
-                                $this->venueManagers = $venueManager;
-                                $this->staff_arr_index[1] = $i;
-                            }
-                            break;
+                                break;
+                        }
                     }
                 }
             }

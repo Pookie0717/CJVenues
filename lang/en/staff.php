@@ -39,4 +39,6 @@ return [
     'multiplier_everyxdays' => 'Every x Days',
     'multiplier_everyxpeople' => 'Every x People',
     'amount' => 'Amount',
+    'soft_drinks' => 'Soft Drinks',
+    'cocktails' => 'Cocktails'
 ];

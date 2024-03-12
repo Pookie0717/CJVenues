@@ -49,7 +49,7 @@ class Price extends Model
     }
     public function season()
     {
-        return $this->belongsTo(Season::class, 'season_id');
+        return $this->belongsTo(Season::class, 'season_ids');
     }
 
     public function tenant()

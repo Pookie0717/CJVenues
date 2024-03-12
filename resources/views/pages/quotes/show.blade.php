@@ -253,59 +253,30 @@
                                             @endforeach
                                             @php
                                                 $value = 1;
+                                                $staffTypes = [
+                                                    'waiter' => ['data' => $waiter, 'price' => $waiterPrice],
+                                                    'venueManager' => ['data' => $venueManagers, 'price' => $venueManagersPrice],
+                                                    'toiletStaff' => ['data' => $toiletStaffs, 'price' => $toiletStaffsPrice],
+                                                    'cleaner' => ['data' => $cleaners, 'price' => $cleanersPrice],
+                                                    'softDrink' => ['data' => $softDrink, 'price' => $softDrinkPrice],
+                                                    'cocktail' => ['data' => $cocktail, 'price' => $cocktailPrice]
+                                                ];
                                             @endphp
-                                            @if (count($waiter) !== 0)
-                                                <tr class="fw-bold text-gray-700 fs-5">
-                                                    <td class="d-flex align-items-center text-left pt-6">
-                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                        {{$waiter[0]['name']}}
-                                                    </td>
-                                                    <td class="pt-6 text-end">{{ $waiter[0]['quantity'] }}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $waiterPrice / (float) $waiter[0]['quantity'], 2) }}</td>
-                                                    <td class="pt-6 text-dark fw-bolder text-end">
-                                                        $ {{ isset($waiterPrice) ? number_format($waiterPrice, 2) : 'N/A' }}
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (count($venueManagers) !== 0)
-                                                <tr class="fw-bold text-gray-700 fs-5">
-                                                    <td class="d-flex align-items-center text-left pt-6">
-                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                        {{$venueManagers[0]['name']}}
-                                                    </td>
-                                                    <td class="pt-6 text-end">{{ $venueManagers[0]['quantity'] }}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $venueManagersPrice / (float) $venueManagers[0]['quantity'], 2) }}</td>
-                                                    <td class="pt-6 text-dark fw-bolder text-end">
-                                                        $ {{ isset($venueManagersPrice) ? number_format($venueManagersPrice, 2) : 'N/A' }}
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (count($toiletStaffs) !== 0)
-                                                <tr class="fw-bold text-gray-700 fs-5">
-                                                    <td class="d-flex align-items-center text-left pt-6">
-                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                        {{$toiletStaffs[0]['name']}}
-                                                    </td>
-                                                    <td class="pt-6 text-end">{{ $toiletStaffs[0]['quantity'] }}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $toiletStaffsPrice / (float) $toiletStaffs[0]['quantity'], 2) }}</td>
-                                                    <td class="pt-6 text-dark fw-bolder text-end">
-                                                        $ {{ isset($toiletStaffsPrice) ? number_format($toiletStaffsPrice, 2) : 'N/A' }}
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (count($cleaners) !== 0)
-                                                <tr class="fw-bold text-gray-700 fs-5">
-                                                    <td class="d-flex align-items-center text-left pt-6">
-                                                        <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                        {{$cleaners[0]['name']}}
-                                                    </td>
-                                                    <td class="pt-6 text-end">{{$cleaners[0]['quantity']}}</td>
-                                                    <td class="pt-6 text-end">$ {{ number_format( (float) $cleanersPrice / (float) $cleaners[0]['quantity'], 2) }}</td>
-                                                    <td class="pt-6 text-dark fw-bolder text-end">
-                                                        $ {{ isset($cleanersPrice) ? number_format($cleanersPrice, 2) : 'N/A' }}
-                                                    </td>
-                                                </tr>
-                                            @endif
+                                            @foreach ($staffTypes as $staffType => $staffData)
+                                                @if (count($staffData['data']) !== 0)
+                                                    <tr class="fw-bold text-gray-700 fs-5">
+                                                        <td class="d-flex align-items-center text-left pt-6">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            {{ $staffData['data'][0]['name'] }}
+                                                        </td>
+                                                        <td class="pt-6 text-end">{{ $staffData['data'][0]['quantity'] }}</td>
+                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $staffData['price'] / (float) $staffData['data'][0]['quantity'], 2) }}</td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end">
+                                                            $ {{ isset($staffData['price']) ? number_format($staffData['price'], 2) : 'N/A' }}
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>

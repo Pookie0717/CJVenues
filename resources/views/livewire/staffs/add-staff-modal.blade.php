@@ -29,6 +29,8 @@
                                 <option value="venue manager">{{ trans('staff.venue_manager') }}</option>
                                 <option value="toilet staff">{{ trans('staff.toilet_staff') }}</option>
                                 <option value="cleaners">{{ trans('staff.cleaners') }}</option>
+                                <option value="soft drinks">{{ trans('staff.soft_drinks') }}</option>
+                                <option value="cocktails">{{ trans('staff.cocktails') }}</option>
                             </select>
                             @error('type')
                                 <span class="text-danger">{{ $message }}</span>

@@ -277,7 +277,7 @@
                                                             @if($staffData['data'][0]['quantity'] != 0)
                                                                 ${{ number_format((float) $staffData['price'] / (float) $staffData['data'][0]['quantity'], 2) }}
                                                             @else
-                                                                Division by zero error
+                                                                N/A
                                                             @endif
                                                         </td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">

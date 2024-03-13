@@ -98,7 +98,7 @@ class QuotesController extends Controller
 
         $staffIds = explode('|', $quote->staff_ids);
         if(count($staffIds) <= 1) {
-            $staffIds = [0, 0, 0, 0];
+            $staffIds = [0, 0, 0, 0, 0, 0];
         }
         $waiter = Staffs::where('id', $staffIds[0])->get();
         $venueManagers = Staffs::where('id', $staffIds[1])->get();

@@ -273,7 +273,13 @@
                                                             {{ $staffData['data'][0]['name'] }}
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $staffData['data'][0]['quantity'] }}</td>
-                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $staffData['price'] / (float) $staffData['data'][0]['quantity'], 2) }}</td>
+                                                        <td class="pt-6 text-end">
+                                                            @if($staffData['data'][0]['quantity'] != 0)
+                                                                ${{ number_format((float) $staffData['price'] / (float) $staffData['data'][0]['quantity'], 2) }}
+                                                            @else
+                                                                Division by zero error
+                                                            @endif
+                                                        </td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($staffData['price']) ? number_format($staffData['price'], 2) : 'N/A' }}
                                                         </td>

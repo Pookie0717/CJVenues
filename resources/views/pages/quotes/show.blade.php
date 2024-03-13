@@ -27,9 +27,12 @@
                             <!--end::Logo-->
 
                             <!--begin::Action-->
-                            <button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}">
-                                {{ trans('quotes.book') }}
-                            </button>
+                            <div>
+                                <button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}">
+                                    {{ trans('quotes.book') }}
+                                </button>
+                                <livewire:export-pdf />
+                            </div>
                             <!--end::Action-->
                             
                         </div>

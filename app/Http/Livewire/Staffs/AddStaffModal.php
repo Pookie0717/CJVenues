@@ -33,6 +33,9 @@ class AddStaffModal extends Component
     public $duration_type;
     public $duration_type_string;
     public $items_count = 1;
+    public $option = [];
+    public $option_value;
+    public $option_value_arr_string;
 
     protected $listeners = [
         'create_staff' => 'createStaff',
@@ -48,7 +51,9 @@ class AddStaffModal extends Component
             'area_ids' => 'required|nullable|array',
             'from' => 'required|array',
             'to' => 'required|array',
-            'count' => 'required|array'
+            'count' => 'required|array',
+            'option' => 'nullable',
+            'option_value' => 'array|nullable'
         ];
 
         $this->validate($rules);
@@ -66,6 +71,7 @@ class AddStaffModal extends Component
         $this->to_arr_string = implode(',', $this->to);
         $this->count_arr_string = implode(',', $this->count);
         $this->duration_type_string = implode(',', $this->duration_type);
+        $this->option_value_arr_string = implode(',', $this->option_value);
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing staff record
@@ -79,6 +85,8 @@ class AddStaffModal extends Component
                 'to' => $this->to_arr_string ? $this->to_arr_string : null,
                 'count' => $this->count_arr_string ? $this->count_arr_string : null,
                 'duration_type' => $this->duration_type_string,
+                'options' => $this->option,
+                'option_values' => $this->option_value_arr_string
             ]);
 
             // Emit an event to notify that the price was updated successfully
@@ -93,7 +101,9 @@ class AddStaffModal extends Component
                 'from' => $this->from_arr_string,
                 'to' => $this->to_arr_string,
                 'count' => $this->count_arr_string,
-                'duration_type' => $this->duration_type_string
+                'duration_type' => $this->duration_type_string,
+                'options' => $this->option,
+                'option_values' => $this->option_value_arr_string
             ]);
             // Emit an event to notify that the price was created successfully
             $this->emit('success', 'Staff successfully added');
@@ -101,7 +111,7 @@ class AddStaffModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count'
+            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count', 'option', 'option_value'
         ]);
     }
 
@@ -109,7 +119,7 @@ class AddStaffModal extends Component
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
-            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count'
+            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count', 'option', 'option_value'
         ]);
     }
 
@@ -146,6 +156,8 @@ class AddStaffModal extends Component
             $this->count[$i] = $count[$j];
             $this->duration_type[$i] = $duration_type[$j];
         }
+        $this->option = $staff->options;
+        $this->option_value = explode(',', $staff->option_values);
     }
 
     public function addItem() {
@@ -165,6 +177,7 @@ class AddStaffModal extends Component
 
     public function render()
     {
+        Log::info($this->option);
         $currentTenantId = Session::get('current_tenant_id');
         $tenantIds = [];
         $venueArea = [];
@@ -172,6 +185,12 @@ class AddStaffModal extends Component
         $parentTanantId = Tenant::where('id', $currentTenantId)->pluck('parent_id')->toArray();
         $tenantIds[] = $currentTenantId;
         $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
+        $options_arr = Option::whereIn('tenant_id', $tenantIds)->get();
+        $option_value_arr = [];
+        if((int) $this->option > 0) {
+            $selected_option_arr = Option::where('id', (int) $this->option)->get();
+            $option_value_arr = explode('|', $selected_option_arr[0]['values']);
+        }
         if($parentTanantId[0] !== null) {
             $venueAreaChild = VenueArea::whereIn('tenant_id', $tenantIds)->get()->toArray();
             $venueAreaParent = VenueArea::whereIn('tenant_id', $parentTanantId)->get()->toArray();
@@ -188,6 +207,6 @@ class AddStaffModal extends Component
             $venueArea = VenueArea::whereIn('tenant_id', $tenantIds)->get();
         }
 
-        return view('livewire.staffs.add-staff-modal', compact('venues', 'venueArea', 'parentTanantId'));
+        return view('livewire.staffs.add-staff-modal', compact('venues', 'venueArea', 'parentTanantId', 'options_arr', 'option_value_arr'));
     }
 }

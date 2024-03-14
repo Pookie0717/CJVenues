@@ -9,7 +9,6 @@ class ExportPdf extends Component
 {
     public function exportPdf()
     {
-        
         // (Optional) Set the paper size and orientation
         $dompdf->setPaper('A4', 'portrait');
 

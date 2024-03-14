@@ -14,7 +14,7 @@
                         <!-- Name -->
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.name') }}</label>
-                            <input type="text" wire:model="name" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Name"/>
+                            <input type="text" wire:model.defer="name" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Name"/>
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -23,14 +23,12 @@
                         <!-- Type -->
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.type') }}</label>
-                            <select wire:model="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
+                            <select wire:model.defer="type" name="type" class="form-select form-select-solid mb-3 mb-lg-0">
                                 <option value="">{{ trans('general.select') }}</option>
                                 <option value="waiters">{{ trans('staff.waiters') }}</option>
                                 <option value="venue manager">{{ trans('staff.venue_manager') }}</option>
                                 <option value="toilet staff">{{ trans('staff.toilet_staff') }}</option>
                                 <option value="cleaners">{{ trans('staff.cleaners') }}</option>
-                                <option value="soft drinks">{{ trans('staff.soft_drinks') }}</option>
-                                <option value="cocktails">{{ trans('staff.cocktails') }}</option>
                             </select>
                             @error('type')
                                 <span class="text-danger">{{ $message }}</span>
@@ -52,6 +50,27 @@
                             @endif
                             </select>
                             @error('area_ids')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <!-- Option, Option values (conditional) -->
+                        <div class="fv-row mb-7">
+                            <label class="fw-semibold fs-6 mb-2">{{ trans('staff.option') }}</label>
+                            <select wire:model="option" name="option" class="form-select form-select-solid mb-3 mb-lg-0">
+                                <option value="">{{ trans('general.select') }}</option>
+                                @foreach($options_arr as $option_item)
+                                    <option value="{{ $option_item['id'] }}">{{ $option_item['name'] }}</option>
+                                @endforeach
+                            </select>
+                            @if (!is_array($option))
+                                <label class="fw-semibold fs-6 mb-2">{{ trans('staff.option_value') }}</label>
+                                <select wire:model.defer="option_value" name="option_value" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
+                                    @foreach($option_value_arr as $option_value_arr_item)
+                                        <option value="{{ $option_value_arr_item }}">{{ $option_value_arr_item }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
+                            @error('option')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -82,14 +101,14 @@
                                 <!-- value -->
                                 <div class="col mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.from') }}</label>
-                                    <input type="number" wire:model="from.{{$i}}" name="from" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="from"/>
+                                    <input type="number" wire:model.defer="from.{{$i}}" name="from" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="from"/>
                                     @error('from')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="col mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.to') }}</label>
-                                    <input type="number" wire:model="to.{{$i}}" name="to" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="to"/>
+                                    <input type="number" wire:model.defer="to.{{$i}}" name="to" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="to"/>
                                     @error('to')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -107,7 +126,7 @@
                                 </div>
                                 <div class="col mb-7 ml-2">
                                     <label class="required fw-semibold fs-6 mb-2">{{ trans('staff.count') }}</label>
-                                    <input type="number" wire:model="count.{{$i}}" name="count" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="count"/>
+                                    <input type="number" wire:model.defer="count.{{$i}}" name="count" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="count"/>
                                     @error('count')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror

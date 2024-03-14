@@ -496,8 +496,8 @@
 
                                         </div>
                                     @endforeach
-                                    <label class="form-label">Drinks:</label>
-                                    <div class="form-check form-check-custom form-check-solid mb-5">
+                                    <!-- <label class="form-label">Drinks:</label> -->
+                                    <!-- <div class="form-check form-check-custom form-check-solid mb-5">
                                         <input wire:click="updateDrinkState('noDrink')" class="form-check-input" type="checkbox"/>
                                         <label class="form-check-label" for="flexCheckDefault">
                                             No Drinks
@@ -514,7 +514,7 @@
                                         <label class="form-check-label" for="flexCheckDefault">
                                             Cocktails
                                         </label>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                     

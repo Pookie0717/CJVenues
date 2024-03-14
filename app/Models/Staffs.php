@@ -17,7 +17,9 @@ class Staffs extends Model
         'from',
         'to',
         'count',
-        'duration_type'
+        'duration_type',
+        'options',
+        'option_values'
     ];
 
     // Define relationships with other models if needed

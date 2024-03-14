@@ -40,5 +40,7 @@ return [
     'multiplier_everyxpeople' => 'Every x People',
     'amount' => 'Amount',
     'soft_drinks' => 'Soft Drinks',
-    'cocktails' => 'Cocktails'
+    'cocktails' => 'Cocktails',
+    'option' => 'Option',
+    'option_value' => 'Option Value'
 ];

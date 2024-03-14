@@ -261,8 +261,6 @@
                                                     'venueManager' => ['data' => $venueManagers, 'price' => $venueManagersPrice],
                                                     'toiletStaff' => ['data' => $toiletStaffs, 'price' => $toiletStaffsPrice],
                                                     'cleaner' => ['data' => $cleaners, 'price' => $cleanersPrice],
-                                                    'softDrink' => ['data' => $softDrink, 'price' => $softDrinkPrice],
-                                                    'cocktail' => ['data' => $cocktail, 'price' => $cocktailPrice]
                                                 ];
                                             @endphp
                                             @foreach ($staffTypes as $staffType => $staffData)

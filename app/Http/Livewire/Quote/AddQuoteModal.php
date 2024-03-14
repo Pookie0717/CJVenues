@@ -56,7 +56,7 @@ class AddQuoteModal extends Component
     public $softDrinks = 0;
     public $cocktails = 0;
     public $staff_ids;
-    public $staff_arr_index = [null, null, null, null, null, null];
+    public $staff_arr_index = [null, null, null, null,];
 
     public $isDrink = true;
 
@@ -104,8 +104,6 @@ class AddQuoteModal extends Component
             $this->venueManagers ? $this->venueManagers['id'] : $this->venueManagers,
             $this->toiletStaffs ? $this->toiletStaffs['id'] : $this->toiletStaffs,
             $this->cleaners ? $this->cleaners['id'] : $this->cleaners,
-            $this->softDrinks ? $this->softDrinks['id'] : $this->softDrinks,
-            $this->cocktails ? $this->cocktails['id'] : $this->cocktails,
         ];
 
         $this->eventTypes = [];
@@ -1528,14 +1526,6 @@ class AddQuoteModal extends Component
             $tenantId_col = $staff->tenant_id;
             return $currentTenantId == $tenantId_col;
         });
-        $get_softDrink = Staffs::where('type', 'soft drinks')->get()->filter(function ($staff) use ($currentTenantId) {
-            $tenantId_col = $staff->tenant_id;
-            return $currentTenantId == $tenantId_col;
-        });
-        $get_cocktails = Staffs::where('type', 'cocktails')->get()->filter(function ($staff) use ($currentTenantId) {
-            $tenantId_col = $staff->tenant_id;
-            return $currentTenantId == $tenantId_col;
-        });
         // $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($tenantIds) {
         //     $tenantId_col = $staff->tenant_id;
         //     foreach($tenantIds as $tenantId_val_item) {
@@ -1571,51 +1561,56 @@ class AddQuoteModal extends Component
             'cleaners' => $get_cleaners,
             'toiletStaffs' => $get_toiletStaffs,
             'venueManagers' => $get_venueManagers,
-            'softDrinks' => $this->isSoftDrink ? $get_softDrink : collect(),
-            'cocktails' => $this->isCocktails ?  $get_cocktails : collect()
         ];
         
         foreach ($staffTypes as $key => $staffType) {
             if ($staffType->isNotEmpty()) {
                 foreach ($staffType as $staff) {
-                    $staff_from_arr = explode(',', $staff['from']);
-                    $staff_to_arr = explode(',', $staff['to']);
-                    $staff_count_arr = explode(',', $staff['count']);
-                    $staff_duration_arr = explode(',', $staff['duration_type']);
-                    $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
-                    for ($i = 0; $i < $count_staff_duration_arr; $i++) {
-                        switch ($staff_duration_arr[$i]) {
-                            case 'day':
-                                if ($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
-                                    if (!$this->{$key}) {
-                                        $this->{$key} = $staff;
-                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
-                                    } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
-                                        $this->{$key} = $staff;
-                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                    foreach($this->selectedOptions as $selectedOption) {
+                        $staff_option_values = explode(',', $staff['option_values']);
+                        foreach($staff_option_values as $staff_option_value) {
+                            if($staff_option_value == $selectedOption){
+                                $staff_from_arr = explode(',', $staff['from']);
+                                $staff_to_arr = explode(',', $staff['to']);
+                                $staff_count_arr = explode(',', $staff['count']);
+                                $staff_duration_arr = explode(',', $staff['duration_type']);
+                                $count_staff_duration_arr = count($staff_duration_arr) > 1 ? count($staff_duration_arr) : count($staff_duration_arr);
+                                for ($i = 0; $i < $count_staff_duration_arr; $i++) {
+                                    switch ($staff_duration_arr[$i]) {
+                                        case 'day':
+                                            if ($staff_from_arr[$i] <= $selected_date_between && $staff_to_arr[$i] >= $selected_date_between) {
+                                                if (!$this->{$key}) {
+                                                    $this->{$key} = $staff;
+                                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                                } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
+                                                    $this->{$key} = $staff;
+                                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                                }
+                                            }
+                                            break;
+                                        case 'people':
+                                            if ($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
+                                                if (!$this->{$key}) {
+                                                    $this->{$key} = $staff;
+                                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                                } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
+                                                    $this->{$key} = $staff;
+                                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                                }
+                                            }
+                                            break;
+                                        case 'hour':
+                                            if (!$this->{$key}) {
+                                                $this->{$key} = $staff;
+                                                $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                            } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
+                                                $this->{$key} = $staff;
+                                                $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
+                                            }
+                                            break;
                                     }
                                 }
-                                break;
-                            case 'people':
-                                if ($staff_from_arr[$i] < $this->people && $staff_to_arr[$i] > $this->people) {
-                                    if (!$this->{$key}) {
-                                        $this->{$key} = $staff;
-                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
-                                    } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
-                                        $this->{$key} = $staff;
-                                        $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
-                                    }
-                                }
-                                break;
-                            case 'hour':
-                                if (!$this->{$key}) {
-                                    $this->{$key} = $staff;
-                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
-                                } elseif ($this->{$key}['count'] < $staff_count_arr[$i]) {
-                                    $this->{$key} = $staff;
-                                    $this->staff_arr_index[array_search($key, array_keys($staffTypes))] = $i;
-                                }
-                                break;
+                            }
                         }
                     }
                 }

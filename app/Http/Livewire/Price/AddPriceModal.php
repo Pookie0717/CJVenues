@@ -184,7 +184,7 @@ class AddPriceModal extends Component
 
         $optionAreas = [];
         $selectedOption = Option::find($this->option_id);
-                if($this->type === 'option' && $selectedOption) {
+        if($this->type === 'option' && $selectedOption) {
             $areaIds = explode(',', $selectedOption->area_ids);
             $optionAreas = VenueArea::whereIn('id', $areaIds)->get();
         }

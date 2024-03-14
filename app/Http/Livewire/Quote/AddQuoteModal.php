@@ -194,7 +194,6 @@ class AddQuoteModal extends Component
                     $item['individualPrices'][$optionId] = $item['individualPrices'][$optionId] + $priceBufferOptionsStringArray[$tenantId]['individualPrices'][$optionId];
                 }
 
-                // Log::info($item);
                 // Your existing code to handle the price options string and calculate the final prices
                 $priceOptionsString = implode('|', array_values($item['individualPrices']));
 
@@ -1210,7 +1209,7 @@ class AddQuoteModal extends Component
             // Move to the next day
             $currentDate->addDay();
         }
-
+        Log::info($pricesMap);
         return $pricesMap;
     }
 

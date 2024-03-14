@@ -257,7 +257,11 @@ class AddOptionModal extends Component
         } else {
             $optionTenantId = $currentTenantId;
         }
-        $seasons = Season::where('tenant_id', $optionTenantId)->get();
+        $seasons = collect([]);
+
+        foreach ($tenantIds as $tenantId) {
+            $seasons = $seasons->merge(Season::where('tenant_id', $tenantId)->get());
+        }
         $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
         $areas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
         $eventTypes = EventType::whereIn('tenant_id', $tenantIds)->get();

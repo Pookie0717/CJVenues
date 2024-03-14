@@ -122,7 +122,7 @@ class QuotesController extends Controller
 
         //calculate the price
         $staff_arr = explode('|', $quote->staff_ids);
-        for($index = 0;$index < 6;$index + 1) {
+        for($index = 0;$index < 4;$index + 1) {
             $staff_arr_val = isset($staff_arr[$index]) ? $staff_arr[$index] : null;
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();
             $staff_items = Staffs::where('id', $staff_arr_val)->get();
@@ -197,18 +197,18 @@ class QuotesController extends Controller
                         }
                         break;
                     case 'event_pp':
-                        if ($index == 0 && $staff_arr[$index + 6] !== 'null') {
-                            $waiterPrice = $staff_price[0]['price'] * explode(',', $staff_items[0]['count'])[$staff_arr[$index + 6]];
-                            $waiter[0]['quantity'] = explode(',', $staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if ($index == 1 && $staff_arr[$index + 6] !== 'null') {
-                            $venueManagersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]]; 
-                            $venueManagers[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if ($index == 2 && $staff_arr[$index + 6] !== 'null') {
-                            $toiletStaffsPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                            $toiletStaffs[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if($index == 3 && $staff_arr[$index + 6] !== 'null') {
-                            $cleanersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                            $cleaners[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
+                        if ($index == 0 && $staff_arr[$index + 4] !== 'null') {
+                            $waiterPrice = $staff_price[0]['price'] * explode(',', $staff_items[0]['count'])[$staff_arr[$index + 4]];
+                            $waiter[0]['quantity'] = explode(',', $staff_items[0]['count'])[$staff_arr[$index + 4]];
+                        } else if ($index == 1 && $staff_arr[$index + 4] !== 'null') {
+                            $venueManagersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]]; 
+                            $venueManagers[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                        } else if ($index == 2 && $staff_arr[$index + 4] !== 'null') {
+                            $toiletStaffsPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                            $toiletStaffs[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                        } else if($index == 3 && $staff_arr[$index + 4] !== 'null') {
+                            $cleanersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                            $cleaners[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
                         }
                         break;
                 }

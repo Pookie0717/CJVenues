@@ -56,19 +56,29 @@
                         <!-- Option, Option values (conditional) -->
                         <div class="fv-row mb-7">
                             <label class="fw-semibold fs-6 mb-2">{{ trans('staff.option') }}</label>
-                            <select wire:model="option" name="option" class="form-select form-select-solid mb-3 mb-lg-0">
-                                <option value="">{{ trans('general.select') }}</option>
-                                @foreach($options_arr as $option_item)
-                                    <option value="{{ $option_item['id'] }}">{{ $option_item['name'] }}</option>
-                                @endforeach
-                            </select>
-                            @if (!is_array($option))
-                                <label class="fw-semibold fs-6 mb-2">{{ trans('staff.option_value') }}</label>
-                                <select wire:model.defer="option_value" name="option_value" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
-                                    @foreach($option_value_arr as $option_value_arr_item)
-                                        <option value="{{ $option_value_arr_item }}">{{ $option_value_arr_item }}</option>
+                            <div class="form-check form-check-custom form-check-solid mb-5">
+                                <input class="form-check-input" type="radio" wire:model="isOption" value="true"></input>
+                                <label class="form-check-label">Yes</label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid mb-5">
+                                <input class="form-check-input" type="radio" wire:model="isOption" value="false"></input>
+                                <label class="form-check-label">No</label>
+                            </div>
+                            @if ($isOption == 'true')
+                                <select wire:model="option" name="option" class="form-select form-select-solid mb-3 mb-lg-0">
+                                    <option value="">{{ trans('general.select') }}</option>
+                                    @foreach($options_arr as $option_item)
+                                        <option value="{{ $option_item['id'] }}">{{ $option_item['name'] }}</option>
                                     @endforeach
                                 </select>
+                                @if (!is_array($option))
+                                    <label class="fw-semibold fs-6 mb-2">{{ trans('staff.option_value') }}</label>
+                                    <select wire:model.defer="option_value" name="option_value" class="form-select form-select-solid mb-3 mb-lg-0" multiple>
+                                        @foreach($option_value_arr as $option_value_arr_item)
+                                            <option value="{{ $option_value_arr_item }}">{{ $option_value_arr_item }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
                             @endif
                             @error('option')
                                 <span class="text-danger">{{ $message }}</span>

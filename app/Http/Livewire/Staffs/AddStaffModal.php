@@ -36,6 +36,7 @@ class AddStaffModal extends Component
     public $option = [];
     public $option_value;
     public $option_value_arr_string;
+    public $isOption = false;
 
     protected $listeners = [
         'create_staff' => 'createStaff',
@@ -71,7 +72,7 @@ class AddStaffModal extends Component
         $this->to_arr_string = implode(',', $this->to);
         $this->count_arr_string = implode(',', $this->count);
         $this->duration_type_string = implode(',', $this->duration_type);
-        $this->option_value_arr_string = implode(',', $this->option_value);
+        $this->option_value_arr_string = $this->isOption == 'true' ? implode(',', $this->option_value) : null;
 
         if ($this->edit_mode) {
             // If in edit mode, update the existing staff record
@@ -85,8 +86,8 @@ class AddStaffModal extends Component
                 'to' => $this->to_arr_string ? $this->to_arr_string : null,
                 'count' => $this->count_arr_string ? $this->count_arr_string : null,
                 'duration_type' => $this->duration_type_string,
-                'options' => $this->option,
-                'option_values' => $this->option_value_arr_string
+                'options' => $this->option && $this->isOption == 'true' ? $this->option : null,
+                'option_values' => $this->option_value_arr_string && $this->option ? $this->option_value_arr_string : null
             ]);
 
             // Emit an event to notify that the price was updated successfully
@@ -98,12 +99,12 @@ class AddStaffModal extends Component
                 'type' => $this->type,
                 'area_ids' => $this->area_id_string,
                 'tenant_id' => $this->tenant_id,
-                'from' => $this->from_arr_string,
-                'to' => $this->to_arr_string,
-                'count' => $this->count_arr_string,
+                'from' => $this->from_arr_string ? $this->from_arr_string : null,
+                'to' => $this->to_arr_string ? $this->to_arr_string : null,
+                'count' => $this->count_arr_string ? $this->count_arr_string : null,
                 'duration_type' => $this->duration_type_string,
-                'options' => $this->option,
-                'option_values' => $this->option_value_arr_string
+                'options' => $this->option && $this->isOption == 'true' ? $this->option : null,
+                'option_values' => $this->option_value_arr_string && $this->option ? $this->option_value_arr_string : null
             ]);
             // Emit an event to notify that the price was created successfully
             $this->emit('success', 'Staff successfully added');
@@ -111,7 +112,7 @@ class AddStaffModal extends Component
 
         // Reset the form fields and exit edit mode
         $this->reset([
-            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count', 'option', 'option_value'
+            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count', 'option', 'option_value', 'isOption'
         ]);
     }
 
@@ -119,7 +120,7 @@ class AddStaffModal extends Component
         $this->edit_mode = false;
         $this->tenant_id = Session::get('current_tenant_id');
         $this->reset([
-            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count', 'option', 'option_value'
+            'name', 'type', 'venue_ids', 'area_ids', 'from', 'to', 'count', 'duration_type', 'items_count', 'option', 'option_value', 'isOption'
         ]);
     }
 
@@ -158,6 +159,7 @@ class AddStaffModal extends Component
         }
         $this->option = $staff->options;
         $this->option_value = explode(',', $staff->option_values);
+        $this->isOption = $this->option ? 'true' : 'false';
     }
 
     public function addItem() {

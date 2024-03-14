@@ -184,15 +184,15 @@ class QuotesController extends Controller
                                 break;
                             case 1:
                                 $venueManagersPrice = $staff_price[0]['price'];
-                                if(!isset($venueManagers)) $venueManagers[0]['quantity'] = 1;
+                                $venueManagers[0]['quantity'] = 1;
                                 break;
                             case 2:
                                 $toiletStaffsPrice = $staff_price[0]['price'];
-                                if(!isset($toiletStaffs)) $toiletStaffs[0]['quantity'] = 1;
+                                $toiletStaffs[0]['quantity'] = 1;
                                 break;
                             case 3:
                                 $cleanersPrice = $staff_price[0]['price'];
-                                if(!isset($cleaners)) $cleaners[0]['quantity'] = 1;
+                                $cleaners[0]['quantity'] = 1;
                                 break;
                         }
                         break;

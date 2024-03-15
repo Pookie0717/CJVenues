@@ -181,7 +181,6 @@ class AddQuoteModal extends Component
 
                 // Update the total price
                 $priceOptionsStringArray['totalPrice'] = $priceOptionsStringArray['totalPrice'] + $priceBufferOptionsStringArray['totalPrice']; 
-                
                 foreach($priceOptionsStringArray['individualPrices'] as $optionId => $optionTotalPrice) {
                     $priceOptionsStringArray['individualPrices'][$optionId] = $priceOptionsStringArray['individualPrices'][$optionId] + $priceBufferOptionsStringArray['individualPrices'][$optionId];
                 }
@@ -197,7 +196,6 @@ class AddQuoteModal extends Component
                 } 
 
                 $priceOptions = array_sum(array_map('floatval', array_values($priceOptionsStringArray['individualPrices'])));
-                
                 $calculatedPrice = $priceOptions;
 
                 if($mainTenantId == $priceOptionsStringArray['optionTenantId']) {
@@ -206,9 +204,7 @@ class AddQuoteModal extends Component
                     $mainPriceOptionsString = $priceOptionsString;
                     $mainOptionIds = $optionIds;
                     $mainOptionValues = $optionValues;
-                }
-
-                else {
+                } else {
 
                     try {
                         // Apply discount to the calculated price
@@ -284,8 +280,8 @@ class AddQuoteModal extends Component
         }
         $newQuoteNumber = $this->getNewQuoteNumber();
 
-        $calculatedPrice1 = $priceVenue + $mainPriceOptions;
-        $totalPrice = $this->applyDiscount($calculatedPrice1, $this->discount);
+        $calculatedPrice = $priceVenue + $mainPriceOptions;
+        $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
         Quote::create([
             'contact_id' => $this->contact_id,
             'status' => 'Draft',
@@ -299,7 +295,7 @@ class AddQuoteModal extends Component
             'event_name' => $this->event_name,
             'people' => $this->people,
             'quote_number' => $newQuoteNumber, // Assign the new quote number
-            'calculated_price' => $calculatedPrice1,
+            'calculated_price' => $calculatedPrice,
             'discount' => $this->discount,
             'price' => $totalPrice,
             'price_venue' => $priceVenue,
@@ -422,7 +418,6 @@ class AddQuoteModal extends Component
                     'time_from' => $time_from,
                     'time_to' => $time_to,
                 ];
-                Log::info($this->time_ranges);
                 $start->addDay();
             }
             $this->dispatchBrowserEvent('date-range-updated', 
@@ -563,7 +558,7 @@ class AddQuoteModal extends Component
         $endDate = $dateTo;
 
         $diffInDays = $startDate->diffInDays($endDate);
-        $diffInDays = $diffInDays;
+        $diffInDays = $diffInDays + 1;
         // Ensure at least 1 day is counted
         return max($diffInDays, 1);
     }
@@ -890,7 +885,7 @@ class AddQuoteModal extends Component
                 break;
         }
         if (str_ends_with($multiplierType, '_pp')) {
-            $price *= $people;
+            $price += $people * $days;
         }
 
         if (str_ends_with($multiplierType, '_x_p')) {
@@ -1144,7 +1139,8 @@ class AddQuoteModal extends Component
                     
                     if (sizeof($optionPrices) > 0) {
                         foreach($optionPrices as $optionPrice) {
-                            $multiplierValue = (float)$optionPrice->price;
+                            $multiplierValue = $optionPrice->price;
+                            Log::info($multiplierValue);
                             $optionTotalPrice = $this->calculateOptionPrice(
                                 $optionType,
                                 $optionValue,
@@ -1160,11 +1156,8 @@ class AddQuoteModal extends Component
                                 $people
                             );
                             $pricesMap["totalPrice"] += $optionTotalPrice;
-                            
                             $pricesMap["individualPrices"][$optionId] += $optionTotalPrice;
                         }
-                    } else {
-
                     }
                 }
             }
@@ -1194,7 +1187,7 @@ class AddQuoteModal extends Component
         $pricesMap["optionIds"] = [];
         $pricesMap["optionValues"] = [];
 
-        while ($currentDate->lte($dateTo)) {
+        // while ($currentDate->lte($dateTo)) {
             // Get the day of the week for the current date (e.g., 'Mon')
             $currentDayOfWeek = $currentDate->format('D');
 
@@ -1247,16 +1240,12 @@ class AddQuoteModal extends Component
                             
                             $pricesMap["individualPrices"][$optionId] += $optionTotalPrice;
                         }
-                    } else {
-
                     }
                 }
             }
-
             // Move to the next day
             $currentDate->addDay();
-        }
-
+        // }
         return $pricesMap;
     }
 

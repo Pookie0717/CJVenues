@@ -570,7 +570,7 @@ class AddQuoteModal extends Component
         $endDate = $dateTo;
 
         $diffInDays = $startDate->diffInDays($endDate);
-        $diffInDays = $diffInDays + 1;
+        $diffInDays = $diffInDays;
         // Ensure at least 1 day is counted
         return max($diffInDays, 1);
     }
@@ -598,7 +598,7 @@ class AddQuoteModal extends Component
             $toMinutes = intval($hoursTo[1]);
 
             // Calculate the difference in hours for the current day
-            $hoursDifference = ($toHours - $fromHours) + ($toMinutes - $fromMinutes) / 60;
+            $hoursDifference = (($toHours - $fromHours) + ($toMinutes - $fromMinutes) / 60) + 1;
 
             // Store the total hours for the current day
             $totalHoursPerDay[] = $hoursDifference;

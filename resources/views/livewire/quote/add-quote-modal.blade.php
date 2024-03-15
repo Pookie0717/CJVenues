@@ -619,7 +619,8 @@
                                     <!--end::Input group-->
                                     @endif
                                     @endforeach
-                                </div>                                <div class="fv-row mb-10">
+                                </div>                                
+                                <div class="fv-row mb-10">
                                     <label for="discountField" class="form-label">Discount:</label>
                                     <input type="text" wire:model.defer="discount" class="form-control form-control-solid" placeholder="Enter a number or a percentage (e.g., 20 or 15%)" id="discountField" />
                                     @error('discount')

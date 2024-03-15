@@ -197,17 +197,18 @@ class QuotesController extends Controller
                         }
                         break;
                     case 'event_pp':
+                        $people = $quote->people;
                         if ($index == 0 && $staff_arr[$index + 4] !== 'null') {
-                            $waiterPrice = $staff_price[0]['price'] * explode(',', $staff_items[0]['count'])[$staff_arr[$index + 4]];
+                            $waiterPrice = $staff_price[0]['price'] * explode(',', $staff_items[0]['count'])[$staff_arr[$index + 4]] * $people;
                             $waiter[0]['quantity'] = explode(',', $staff_items[0]['count'])[$staff_arr[$index + 4]];
                         } else if ($index == 1 && $staff_arr[$index + 4] !== 'null') {
-                            $venueManagersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]]; 
+                            $venueManagersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]] * $people; 
                             $venueManagers[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
                         } else if ($index == 2 && $staff_arr[$index + 4] !== 'null') {
-                            $toiletStaffsPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                            $toiletStaffsPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]] * $people;
                             $toiletStaffs[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
                         } else if($index == 3 && $staff_arr[$index + 4] !== 'null') {
-                            $cleanersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                            $cleanersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]] * $people;
                             $cleaners[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
                         }
                         break;

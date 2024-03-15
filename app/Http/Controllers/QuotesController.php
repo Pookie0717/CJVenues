@@ -102,16 +102,16 @@ class QuotesController extends Controller
         $toiletStaffs = Staffs::where('id', $staffIds[2])->get();
         $cleaners = Staffs::where('id', $staffIds[3])->get();
 
-        if(!isset($waiter)) {
+        if(count($waiter)>0) {
             $waiter[0]['quantity'] = 1;
         }
-        if(!isset($venueManagers)){
+        if(count($venueManagers)>0){
             $venueManagers[0]['quantity'] = 1;
         }
-        if(!isset($toiletStaffs)){
+        if(count($toiletStaffs)>0){
             $toiletStaffs[0]['quantity'] = 1;
         }
-        if(!isset($cleaners)){
+        if(count($cleaners)>0){
             $cleaners[0]['quantity'] = 1;
         }
 
@@ -136,16 +136,12 @@ class QuotesController extends Controller
                         $staff_price[0]['price'] = $staff_price[0]['price'] * $selected_date_between;
                         if ($index == 0) {
                             $waiterPrice = $staff_price[0]['price'];
-                            $waiter[0]['quantity'] = $selected_date_between;
                         } else if ($index == 1) {
                             $venueManagersPrice = $staff_price[0]['price'];
-                            $venueManagers[0]['quantity'] = $selected_date_between;
                         } else if ($index == 2) {
                             $toiletStaffsPrice = $staff_price[0]['price'];
-                            $toiletStaffs[0]['quantity'] = $selected_date_between;
                         } else if ($index == 3) {
                             $cleanersPrice = $staff_price[0]['price'];
-                            $cleaners[0]['quantity'] = $selected_date_between;
                         }
                         break;
                     case 'hourly':
@@ -160,19 +156,15 @@ class QuotesController extends Controller
                         switch($index) {
                             case 0:
                                 $waiterPrice = $staff_price[0]['price'] * $hours;
-                                $waiter[0]['quantity'] = $hours;
                                 break;
                             case 1:
                                 $venueManagersPrice = $staff_price[0]['price'] * $hours;
-                                $venueManagers[0]['quantity'] = $hours;
                                 break;
                             case 2:
                                 $toiletStaffsPrice = $staff_price[0]['price'] * $hours;
-                                $toiletStaffs[0]['quantity'] = $hours;
                                 break;
                             case 3:
                                 $cleanersPrice = $staff_price[0]['price'] * $hours;
-                                $cleaners[0]['quantity'] = $hours;
                                 break;
                         }
                         break;

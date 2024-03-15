@@ -250,15 +250,8 @@ class AddQuoteModal extends Component
         }
 
         if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
-            foreach ($this->time_ranges as $time_range) {
-                $timeFromArray[] = $time_range['time_from'];
-                $timeToArray[] = $time_range['time_to'];
-            }
 
             $currentTenantId = Session::get('current_tenant_id');
-    
-            $timeFrom = implode('|', $timeFromArray);
-            $timeTo = implode('|', $timeToArray);
             $newQuoteNumber = $this->getNewQuoteNumber();
 
             $totalPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
@@ -289,11 +282,10 @@ class AddQuoteModal extends Component
             ]);
             DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
         }
-
         $newQuoteNumber = $this->getNewQuoteNumber();
 
-        $calculatedPrice = $priceVenue + $mainPriceOptions;
-        $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
+        $calculatedPrice1 = $priceVenue + $mainPriceOptions;
+        $totalPrice = $this->applyDiscount($calculatedPrice1, $this->discount);
         Quote::create([
             'contact_id' => $this->contact_id,
             'status' => 'Draft',
@@ -307,7 +299,7 @@ class AddQuoteModal extends Component
             'event_name' => $this->event_name,
             'people' => $this->people,
             'quote_number' => $newQuoteNumber, // Assign the new quote number
-            'calculated_price' => $calculatedPrice,
+            'calculated_price' => $calculatedPrice1,
             'discount' => $this->discount,
             'price' => $totalPrice,
             'price_venue' => $priceVenue,
@@ -420,6 +412,7 @@ class AddQuoteModal extends Component
             $start = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_from);
             $end = \Carbon\Carbon::createFromFormat('d-m-Y', $this->date_to);
 
+
             // Initialize an array to store time ranges
             $this->time_ranges = [];
 
@@ -429,7 +422,7 @@ class AddQuoteModal extends Component
                     'time_from' => $time_from,
                     'time_to' => $time_to,
                 ];
-
+                Log::info($this->time_ranges);
                 $start->addDay();
             }
             $this->dispatchBrowserEvent('date-range-updated', 
@@ -598,7 +591,7 @@ class AddQuoteModal extends Component
             $toMinutes = intval($hoursTo[1]);
 
             // Calculate the difference in hours for the current day
-            $hoursDifference = (($toHours - $fromHours) + ($toMinutes - $fromMinutes) / 60) + 1;
+            $hoursDifference = (($toHours - $fromHours) + ($toMinutes - $fromMinutes) / 60);
 
             // Store the total hours for the current day
             $totalHoursPerDay[] = $hoursDifference;
@@ -609,7 +602,7 @@ class AddQuoteModal extends Component
         return $totalHours;
     }
 
-    private function calculateBufferPriceVenue($bufferBefore, $bufferAfter, $bufferUnit, $areaId, $staff_ids) {
+    private function calculateBufferPriceVenue($bufferBefore, $bufferAfter, $bufferUnit, $areaId) {
         // 1. Get the associated venue and area
         $venue = Venue::whereHas('areas', function ($query) use ($areaId) {
             $query->where('id', $areaId);
@@ -646,7 +639,10 @@ class AddQuoteModal extends Component
                 $totalBufferPrice += $this->applyBufferPriceLogic($price, $bufferBefore, $bufferAfter, $bufferUnit);
             }
         }
+        return $totalBufferPrice;
+    }
 
+    private function staffPrice($staff_ids) {
         $staff_arr = explode('|', $staff_ids);
         foreach($staff_arr as $staff_arr_val) {
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();
@@ -666,7 +662,7 @@ class AddQuoteModal extends Component
                 }
             }
         }
-        return $totalBufferPrice;
+        
     }
 
     private function fetchBufferPricesVenue($venueId, $areaId, $seasonId, $bufferUnit) {
@@ -687,7 +683,7 @@ class AddQuoteModal extends Component
                   ->orWhere('extra_tier_type', 'like', '%buffer_after%');
         })
         ->get();
-}
+    }
 
     private function applyBufferPriceLogic($price, $bufferBefore, $bufferAfter, $bufferUnit) {
         // Convert buffer times based on unit and multiplier type
@@ -833,8 +829,8 @@ class AddQuoteModal extends Component
                                 break;
                             case 'cleaners':
                                 $temp = explode(',', $this->cleaners['count']);
-                                if($this->staff_arr_index[1] !== null) {
-                                    $index = $temp[$this->staff_arr_index[1]];
+                                if($this->staff_arr_index[3] !== null) {
+                                    $index = $temp[$this->staff_arr_index[3]];
                                     $totalPrice += $staff_price[0]['price'] * $index * $this->people;
                                 }
                                 break;
@@ -847,8 +843,8 @@ class AddQuoteModal extends Component
                                 break;
                             case 'venue manager':
                                 $temp = explode(',', $this->venueManagers['count']);
-                                if($this->staff_arr_index[3] !== null) {
-                                    $index = $temp[$this->staff_arr_index[3]];
+                                if($this->staff_arr_index[1] !== null) {
+                                    $index = $temp[$this->staff_arr_index[1]];
                                     $totalPrice += $staff_price[0]['price'] * $index * $this->people;
                                 }
                                 break;
@@ -1516,9 +1512,9 @@ class AddQuoteModal extends Component
         // Initialize the waiters, cleaners, toilet staffs, venue managers, soft drinks, and cocktails variables
         $staffTypes = [
             'waiters' => $get_waiters,
-            'cleaners' => $get_cleaners,
-            'toiletStaffs' => $get_toiletStaffs,
             'venueManagers' => $get_venueManagers,
+            'toiletStaffs' => $get_toiletStaffs,
+            'cleaners' => $get_cleaners,
         ];
         
         foreach ($staffTypes as $key => $staffType) {

@@ -176,7 +176,16 @@ class AddPriceModal extends Component
 
         $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
         $venueAreas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
-        $seasons = Season::whereIn('tenant_id', $tenantIds)->get();
+        if($this->edit_mode) {
+            $optionTenantId = Option::find($this->optionId)->tenant_id;
+        } else {
+            $optionTenantId = $currentTenantId;
+        }
+        $seasons = collect([]);
+
+        foreach ($tenantIds as $tenantId) {
+            $seasons = $seasons->merge(Season::where('tenant_id', $tenantId)->get());
+        }
         $options = Option::whereIn('tenant_id', $tenantIds)->get();
         $staffs = Staffs::whereIn('tenant_id', $tenantIds)->get();
 

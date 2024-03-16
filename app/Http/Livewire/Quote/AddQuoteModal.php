@@ -113,37 +113,6 @@ class AddQuoteModal extends Component
         }, $merged_staff_ids_arr);
         $this->staff_ids = implode('|', $merged_staff_ids_arr);
 
-        if($this->selectedOptions) {
-
-            // Convert selected options to a comma-separated string format
-            $optionIdsIm = implode('|', array_keys($this->selectedOptions));
-
-            // Log::info("-----optionIdsIm". json_encode($optionIdsIm));
-
-            $optionValuesIm = implode('|', array_values($this->selectedOptions));
-
-            $optionIds = explode('|', $optionIdsIm);
-
-            $optionValues = explode('|', $optionValuesIm);
-
-            $cleanedOptionIds = [];
-            $cleanedOptionValues = [];
-            $cleanedOptionTenantIds = [];
-           
-            foreach ($optionValues as $index => $value) {
-                // Log::info("-----optionValues loop". $index . "-". $value);
-                if ($value !== '' && $value != 0 && $value !== 'no') {
-                    $cleanedOptionIds[] = $optionIds[$index];
-                    $cleanedOptionValues[] = $value;
-                    $cleanedOptionTenantIds[] = Option::find($optionIds[$index])->tenant->id;
-                }
-            }
-
-            $optionIds = implode('|', $cleanedOptionIds);
-            $optionValues = implode('|', $cleanedOptionValues);
-            $optionTenantIds = implode('|', $cleanedOptionTenantIds);
-        } 
-
         $timeFromArray = [];
         $timeToArray = [];
 
@@ -168,6 +137,39 @@ class AddQuoteModal extends Component
         $mainOptionValues = [];
 
         if($this->selectedOptions) {
+            // Convert selected options to a comma-separated string format
+            $optionIdsIm = implode('|', array_keys($this->selectedOptions));
+
+            // Log::info("-----optionIdsIm". json_encode($optionIdsIm));
+
+            $optionValuesIm = implode('|', array_values($this->selectedOptions));
+
+            $optionIds = explode('|', $optionIdsIm);
+
+            $optionValues = explode('|', $optionValuesIm);
+
+            $cleanedOptionIds = [];
+            $cleanedOptionValues = [];
+            $cleanedOptionTenantIds = [];
+
+            foreach ($optionIds as $index => $value) {
+                $option_arr = Option::where('id', $value)->get();
+                if(($option_arr[0]['type'] == 'always') || ($optionValues[$index] !== '' && $optionValues[$index] != 0 && $optionValues[$index] !== 'no')) {
+                    if($option_arr[0]['type'] == 'always') {
+                        $cleanedOptionIds[] = $value;
+                        $cleanedOptionValues[] = 'always';
+                        $cleanedOptionTenantIds[] = Option::find($value)->tenant->id;
+                    } else {
+                        $cleanedOptionIds[] = $value;
+                        $cleanedOptionValues[] = $optionValues[$index];
+                        $cleanedOptionTenantIds[] = Option::find($value)->tenant->id;
+                    }
+                }
+            }
+
+            $optionIds = implode('|', $cleanedOptionIds);
+            $optionValues = implode('|', $cleanedOptionValues);
+            $optionTenantIds = implode('|', $cleanedOptionTenantIds);
             // Calculate regular and buffer prices for options
             $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $optionTenantIds, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
 
@@ -182,7 +184,11 @@ class AddQuoteModal extends Component
                 // Update the total price
                 $priceOptionsStringArray['totalPrice'] = $priceOptionsStringArray['totalPrice'] + $priceBufferOptionsStringArray['totalPrice']; 
                 foreach($priceOptionsStringArray['individualPrices'] as $optionId => $optionTotalPrice) {
-                    $priceOptionsStringArray['individualPrices'][$optionId] = $priceOptionsStringArray['individualPrices'][$optionId] + $priceBufferOptionsStringArray['individualPrices'][$optionId];
+                    if (isset($priceOptionsStringArray['individualPrices'][$optionId]) && isset($priceBufferOptionsStringArray['individualPrices'][$optionId])) {
+                        $priceOptionsStringArray['individualPrices'][$optionId] += $priceBufferOptionsStringArray['individualPrices'][$optionId];
+                    } else {
+                        // Handle the case where the key doesn't exist
+                    }
                 }
 
                 // Your existing code to handle the price options string and calculate the final prices
@@ -951,14 +957,13 @@ class AddQuoteModal extends Component
     private function calculatePriceBasedOnType($optionType, $optionValue, $optionPrice, $multiplierValue, $quantity, $optionId, $people, $hours, $days)
     {
         $price = 0;
-
         if ($optionType == 'yes_no') {
             $price = $optionValue == 'yes' ? $multiplierValue * $quantity : 0;
-        } else if ($optionType == 'always') {
+        } elseif ($optionType == 'always') {
             $price = $multiplierValue * $quantity * $this->getDefaultOptionValue($optionId);
-        } else if ($optionType == 'number') {
+        } elseif ($optionType == 'number') {
             $price = $multiplierValue * (float)$optionValue * $quantity;
-        } else if ($optionType == 'radio' || $optionType == 'checkbox') {
+        } elseif ($optionType == 'radio' || $optionType == 'checkbox') {
             $optionValues = explode('|', $this->getOptionValues($optionId));
             $selectedValue = $optionValue;
             $prices = explode('|', $optionPrice->price);
@@ -970,7 +975,7 @@ class AddQuoteModal extends Component
             } else {
                 // Log when the selected value index is not found or the price is not set
             }
-        } else if ($optionType == 'logic') {
+        } elseif ($optionType == 'logic') {
 
             $optionValues = explode('|', $this->getOptionValues($optionId));
 
@@ -1092,7 +1097,6 @@ class AddQuoteModal extends Component
 
     public function calculatePriceOptions($dateFrom, $dateTo, $timeFrom, $timeTo, $optionIds, $optionValues, $optionTenantIds, $people)
     {
-
         // Convert the date strings to Carbon instances
         $dateFrom = Carbon::createFromFormat('d-m-Y', $dateFrom);
         $dateTo = Carbon::createFromFormat('d-m-Y', $dateTo);
@@ -1140,7 +1144,6 @@ class AddQuoteModal extends Component
                     if (sizeof($optionPrices) > 0) {
                         foreach($optionPrices as $optionPrice) {
                             $multiplierValue = $optionPrice->price;
-                            Log::info($multiplierValue);
                             $optionTotalPrice = $this->calculateOptionPrice(
                                 $optionType,
                                 $optionValue,
@@ -1291,8 +1294,8 @@ class AddQuoteModal extends Component
 
         // $tenantIds = [];
         // if($selectedEvent) {
-        //     $tenantIds = Tenant::where('parent_id', $selectedEvent->tenant->id)->pluck('id')->toArray();
-        //     $tenantIds[] = $selectedEvent->tenant->id;
+            //     $tenantIds = Tenant::where('parent_id', $selectedEvent->tenant->id)->pluck('id')->toArray();
+            //     $tenantIds[] = $selectedEvent->tenant->id;
         // }
         
         $filteredVenues = Venue::whereIn('tenant_id', $tenantIds)->get();
@@ -1380,24 +1383,24 @@ class AddQuoteModal extends Component
         if ($selectedEventType) {
             $optionsQuery->where(function ($query) use ($selectedEventType) {
                 $query->whereRaw('FIND_IN_SET(?, eventtype_ids) > 0', [$selectedEventType->id])
-                        ->orWhereNull('eventtype_ids')->orWhere('eventtype_ids', '');
+                ->orWhereNull('eventtype_ids')->orWhere('eventtype_ids', '');
             });
         }
-
+        
         // Refine additional filters
         if ($selectedVenue) {
             $optionsQuery->where(function ($query) use ($selectedVenue) {
                 $query->whereRaw('FIND_IN_SET(?, venue_ids) > 0', [$selectedVenue->id])
-                        ->orWhereNull('venue_ids');
+                ->orWhereNull('venue_ids');
             });
         }
         if ($selectedArea) {
             $optionsQuery->where(function ($query) use ($selectedArea) {
                 $query->whereRaw('FIND_IN_SET(?, area_ids) > 0', [$selectedArea->id])
-                        ->orWhereNull('area_ids')->orWhere('area_ids', '');
+                ->orWhereNull('area_ids')->orWhere('area_ids', '');
             });
         }
-
+        
         $this->options = $optionsQuery->get();
         // Set values for specific logic options and default values
         foreach ($this->options as $option) {

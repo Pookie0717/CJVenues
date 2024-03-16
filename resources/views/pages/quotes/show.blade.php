@@ -230,7 +230,7 @@
                                                 @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
                                                 @php
                                                     $price = floatval($priceOptionsArray[$index]);
-                                                    if($optionWithValue['type'] == 'radio' || $optionWithValue['value'] == 'yes') {
+                                                    if($optionWithValue['type'] == 'radio' || $optionWithValue['type'] == 'always' || $optionWithValue['value'] == 'yes') {
                                                         $value = 1;
                                                     } else {
                                                         $value = floatval($optionWithValue['value']);
@@ -247,7 +247,14 @@
                                                             @endif
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $value }}</td>
-                                                        <td class="pt-6 text-end">$ {{ number_format( (float) $priceOptionsArray[$index] / (float) $value, 2) }}</td>
+                                                        <td class="pt-6 text-end">
+                                                            @if($value != 0)
+                                                                ${{ number_format((float) $priceOptionsArray[$index] / (float) $value, 2) }}
+                                                            @else
+                                                                <!-- Handle the case where $value is zero -->
+                                                                N/A
+                                                            @endif
+                                                        </td>
                                                         <td class="pt-6 text-dark fw-bolder text-end">
                                                             $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
                                                         </td>

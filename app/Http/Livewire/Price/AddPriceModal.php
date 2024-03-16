@@ -170,17 +170,21 @@ class AddPriceModal extends Component
     public function render()
     {
         $currentTenantId = Session::get('current_tenant_id');
-        $tenantIds = [];
-        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-        $tenantIds[] = $currentTenantId;
+        // $tenantIds = [];
+        // $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        // $tenantIds[] = $currentTenantId;
 
+        $tenant = Tenant::find($currentTenantId);
+        $tenantIds = [];
+        if($tenant->isMain()) {
+            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        } else {
+            $tenantIds[] = $tenant->parent_id;
+        }
+        $tenantIds[] = $currentTenantId;
         $venues = Venue::whereIn('tenant_id', $tenantIds)->get();
         $venueAreas = VenueArea::whereIn('tenant_id', $tenantIds)->get();
-        if($this->edit_mode) {
-            $optionTenantId = Option::find($this->optionId)->tenant_id;
-        } else {
-            $optionTenantId = $currentTenantId;
-        }
+
         $seasons = collect([]);
 
         foreach ($tenantIds as $tenantId) {

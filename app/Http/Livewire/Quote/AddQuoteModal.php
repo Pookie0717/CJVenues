@@ -507,54 +507,49 @@ class AddQuoteModal extends Component
         return 'unknown';
     }
 
-    private function getOptionPriceForSeason($optionId, $seasonId)
-    {
-        return Option::find($optionId)->prices()
-            ->where('type', 'option')
-            ->where('season_ids', $seasonId)
-            ->where('extra_tier_type', 'like', '%event%')
-            ->first();
-    }
-
-    private function getOptionBufferPriceForSeason($optionId, $seasonId)
-    {
-        return Option::find($optionId)->prices()
-            ->where('type', 'option')
-            ->where('season_ids', $seasonId)
-            ->where(function($query) {
-                $query->where('extra_tier_type', 'like', '%buffer_before%')
-                      ->orWhere('extra_tier_type', 'like', '%buffer_after%');
-            })
-            ->first();
-    }
-
     private function getOptionPricesForSeason($optionId, $seasonId)
     {
-        return Option::find($optionId)->prices()
+        $options = Option::find($optionId)->prices()
             ->where('type', 'option')
             ->where('season_ids', $seasonId)
             ->where('extra_tier_type', 'like', '%event%')
             ->where(function($query) {
-                $query->where('area_id', 'like', $this->area_id)
-                      ->orWhere('area_id', null);
+                $query->where('area_id', $this->area_id)
+                    ->orWhere('area_id', null);
             })
             ->get();
+        if(count($options) > 1) {
+            foreach($options as $option) {
+                if($option['option_area_ids'] == $this->area_id) {
+                    return [$option];
+                }
+            }
+        } else {
+            return $options;
+        }
+        
     }
 
     private function getOptionBufferPricesForSeason($optionId, $seasonId)
     {
-        return Option::find($optionId)->prices()
+        $options = Option::find($optionId)->prices()
             ->where('type', 'option')
             ->where('season_ids', $seasonId)
+            ->where('extra_tier_type', '%buffer_before%', '%buffer_after%')
             ->where(function($query) {
-                $query->where('extra_tier_type', 'like', '%buffer_before%')
-                      ->orWhere('extra_tier_type', 'like', '%buffer_after%');
-            })
-            ->where(function($query) {
-                $query->where('area_id', 'like', $this->area_id)
-                      ->orWhere('area_id', null);
+                $query->where('area_id', $this->area_id)
+                    ->orWhere('area_id', null);
             })
             ->get();
+        if(count($options) > 1) {
+            foreach($options as $option) {
+                if($option['option_area_ids'] == $this->area_id) {
+                    return [$option];
+                }
+            }
+        } else {
+            return $options;
+        }
     }
 
     // Helper method to calculate the number of days between date_from and date_to
@@ -936,7 +931,7 @@ class AddQuoteModal extends Component
                 break;
         }
         if (str_ends_with($multiplierType, '_pp')) {
-            $price *= $people;
+            $price += $people * $days;
         }
 
         return $price;
@@ -1141,7 +1136,7 @@ class AddQuoteModal extends Component
                         $pricesMap["individualPrices"][$optionId] = 0;
                     }
                     
-                    if (sizeof($optionPrices) > 0) {
+                    if (!is_null($optionPrices) && is_countable($optionPrices) && sizeof($optionPrices) > 0) {
                         foreach($optionPrices as $optionPrice) {
                             $multiplierValue = $optionPrice->price;
                             $optionTotalPrice = $this->calculateOptionPrice(
@@ -1219,7 +1214,7 @@ class AddQuoteModal extends Component
                         $pricesMap["individualPrices"][$optionId] = 0;
                     }
 
-                    if (sizeof($optionPrices) > 0) {
+                    if (!is_null($optionPrices) && is_countable($optionPrices) && sizeof($optionPrices) > 0) {
                         foreach($optionPrices as $optionPrice) {
                             $multiplierValue = (float)$optionPrice->price;
                             $optionTotalPrice = $this->calculateOptionBufferPrice(

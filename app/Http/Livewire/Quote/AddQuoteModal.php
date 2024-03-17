@@ -53,10 +53,10 @@ class AddQuoteModal extends Component
     public $venueManagers = 0;
     public $toiletStaffs = 0;
     public $cleaners = 0;
-    public $softDrinks = 0;
-    public $cocktails = 0;
+    public $barStaff = 0;
+    public $other = 0;
     public $staff_ids;
-    public $staff_arr_index = [null, null, null, null,];
+    public $staff_arr_index = [null, null, null, null, null, null];
 
     public $isDrink = true;
 
@@ -104,6 +104,8 @@ class AddQuoteModal extends Component
             $this->venueManagers ? $this->venueManagers['id'] : $this->venueManagers,
             $this->toiletStaffs ? $this->toiletStaffs['id'] : $this->toiletStaffs,
             $this->cleaners ? $this->cleaners['id'] : $this->cleaners,
+            $this->barStaff ? $this->barStaff['id'] : $this->barStaff,
+            $this->other ? $this->other['id'] : $this->other,
         ];
 
         $this->eventTypes = [];
@@ -1466,6 +1468,12 @@ class AddQuoteModal extends Component
         $get_venueManagers = Staffs::where('type', 'venue manager')->get()->filter(function ($staff) use ($tenantIds) {
             return in_array($staff->tenant_id, $tenantIds);
         });
+        $get_barStaff = Staffs::where('type', 'bar staff')->get()->filter(function ($staff) use ($tenantIds) {
+            return in_array($staff->tenant_id, $tenantIds);
+        });
+        $get_other = Staffs::where('type', 'other')->get()->filter(function ($staff) use ($tenantIds) {
+            return in_array($staff->tenant_id, $tenantIds);
+        });
 
         // $get_waiters = Staffs::where('type', 'waiters')->get()->filter(function ($staff) use ($tenantIds) {
         //     $tenantId_col = $staff->tenant_id;
@@ -1502,6 +1510,8 @@ class AddQuoteModal extends Component
             'venueManagers' => $get_venueManagers,
             'toiletStaffs' => $get_toiletStaffs,
             'cleaners' => $get_cleaners,
+            'bar staff' => $get_barStaff,
+            'other' => $get_other,
         ];
         
         foreach ($staffTypes as $key => $staffType) {

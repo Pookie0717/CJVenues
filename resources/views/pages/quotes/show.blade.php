@@ -268,6 +268,8 @@
                                                     'venueManager' => ['data' => $venueManagers, 'price' => $venueManagersPrice],
                                                     'toiletStaff' => ['data' => $toiletStaffs, 'price' => $toiletStaffsPrice],
                                                     'cleaner' => ['data' => $cleaners, 'price' => $cleanersPrice],
+                                                    'barStaff' => ['data' => $barStaff, 'price' => $barStaffPrice],
+                                                    'other' => ['data' => $other, 'price' => $otherPrice],
                                                 ];
                                             @endphp
                                             @foreach ($staffTypes as $staffType => $staffData)

@@ -95,12 +95,14 @@ class QuotesController extends Controller
 
         $staffIds = explode('|', $quote->staff_ids);
         if(count($staffIds) <= 1) {
-            $staffIds = [0, 0, 0, 0,];
+            $staffIds = [0, 0, 0, 0, 0, 0];
         }
         $waiter = Staffs::where('id', $staffIds[0])->get();
         $venueManagers = Staffs::where('id', $staffIds[1])->get();
         $toiletStaffs = Staffs::where('id', $staffIds[2])->get();
         $cleaners = Staffs::where('id', $staffIds[3])->get();
+        $barStaff = Staffs::where('id', $staffIds[4])->get();
+        $other = Staffs::where('id', $staffIds[5])->get();
 
         if(count($waiter)>0) {
             $waiter[0]['quantity'] = 1;
@@ -114,15 +116,23 @@ class QuotesController extends Controller
         if(count($cleaners)>0){
             $cleaners[0]['quantity'] = 1;
         }
+        if(count($barStaff)>0){
+            $barStaff[0]['quantity'] = 1;
+        }
+        if(count($other)>0){
+            $other[0]['quantity'] = 1;
+        }
 
         $waiterPrice = 0;
         $venueManagersPrice = 0;
         $toiletStaffsPrice = 0;
         $cleanersPrice = 0;
+        $barStaffPrice = 0;
+        $otherPrice = 0;
 
         //calculate the price
         $staff_arr = explode('|', $quote->staff_ids);
-        for($index = 0;$index < 4;$index + 1) {
+        for($index = 0;$index < 6;$index + 1) {
             $staff_arr_val = isset($staff_arr[$index]) ? $staff_arr[$index] : null;
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();
             $staff_items = Staffs::where('id', $staff_arr_val)->get();
@@ -142,6 +152,10 @@ class QuotesController extends Controller
                             $toiletStaffsPrice = $staff_price[0]['price'];
                         } else if ($index == 3) {
                             $cleanersPrice = $staff_price[0]['price'];
+                        } else if ($index == 4) {
+                            $barStaffPrice = $staff_price[0]['price'];
+                        } else if ($index == 5) {
+                            $otherPrice = $staff_price[0]['price'];
                         }
                         break;
                     case 'hourly':
@@ -166,6 +180,12 @@ class QuotesController extends Controller
                             case 3:
                                 $cleanersPrice = $staff_price[0]['price'] * $hours;
                                 break;
+                            case 4:
+                                $barStaffPrice = $staff_price[0]['price'] * $hours;
+                                break;
+                            case 5:
+                                $otherPrice = $staff_price[0]['price'] * $hours;
+                                break;
                         }
                         break;
                     case 'event':
@@ -186,6 +206,14 @@ class QuotesController extends Controller
                                 $cleanersPrice = $staff_price[0]['price'];
                                 if($cleanersPrice > 0) $cleaners[0]['quantity'] = 1;
                                 break;
+                            case 4:
+                                $barStaffPrice = $staff_price[0]['price'];
+                                if($barStaffPrice > 0) $barStaff[0]['quantity'] = 1;
+                                break;
+                            case 5:
+                                $otherPrice = $staff_price[0]['price'];
+                                if($otherPrice > 0) $other[0]['quantity'] = 1;
+                                break;
                         }
                         break;
                     case 'event_pp':
@@ -202,6 +230,12 @@ class QuotesController extends Controller
                         } else if($index == 3 && $staff_arr[$index + 4] !== 'null') {
                             $cleanersPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]] * $people;
                             $cleaners[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 4]];
+                        } else if($index == 4 && $staff_arr[$index + 5] !== 'null') {
+                            $barStaffPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 5]] * $people;
+                            $barStaff[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 5]];
+                        } else if($index == 5 && $staff_arr[$index + 6] !== 'null') {
+                            $otherPrice = $staff_price[0]['price'] * explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]] * $people;
+                            $other[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
                         }
                         break;
                 }
@@ -269,7 +303,7 @@ class QuotesController extends Controller
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
 
-        return view('pages.quotes.show', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', ), ['hashedId' => $hashedId]);
+        return view('pages.quotes.show', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice' ), ['hashedId' => $hashedId]);
     }
 
     private function calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo) //remove the date eventually

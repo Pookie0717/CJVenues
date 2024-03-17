@@ -108,6 +108,15 @@ class AddQuoteModal extends Component
             $this->other ? $this->other['id'] : $this->other,
         ];
 
+        $staff_item_arr = [
+            $this->waiters,
+            $this->venueManagers,
+            $this->toiletStaffs,
+            $this->cleaners,
+            $this->barStaff,
+            $this->other,
+        ];
+
         $this->eventTypes = [];
         $merged_staff_ids_arr = array_merge($staff_ids_arr, $this->staff_arr_index);
         $merged_staff_ids_arr = array_map(function($value) {
@@ -210,15 +219,9 @@ class AddQuoteModal extends Component
                     $optionValues[] = $priceOptionsStringArray["optionValues"][$optionId];
                 } 
 
-                //calculate staff price
-                $staffPrice_val = 0;
-                if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
-                    $staffPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
-                }
-
                 //caluclate option price
                 $priceOptions = array_sum(array_map('floatval', array_values($priceOptionsStringArray['individualPrices'])));
-                $calculatedPrice = $priceOptions + $staffPrice_val;
+                $calculatedPrice = $priceOptions;
     
                 if($mainTenantId == $priceOptionsStringArray['optionTenantId']) {
                     $mainPriceOptions = $calculatedPrice;
@@ -227,6 +230,29 @@ class AddQuoteModal extends Component
                     $mainOptionIds = $optionIds;
                     $mainOptionValues = $optionValues;
                 } else {
+                    $staff_ids_arr_option = $staff_ids_arr;
+                    foreach($staff_item_arr as $index => $staff_item) {
+                        if($staff_item !== 0) {
+                            if($staff_item['tenant_id'] == $priceOptionsStringArray['optionTenantId']) {
+                                $staff_ids_arr_option[$index] = $staff_item['id'];
+                            } else {
+                                $staff_ids_arr_option[$index] = 0;
+                            }
+                        }
+                    }
+            
+                    $merged_staff_ids_arr = array_merge($staff_ids_arr_option, $this->staff_arr_index);
+                    $merged_staff_ids_arr = array_map(function($value) {
+                        return $value === null ? 'null' : $value;
+                    }, $merged_staff_ids_arr);
+                    $this->staff_ids = implode('|', $merged_staff_ids_arr);
+
+                    //calculate staff price
+                    $staffPrice_val = 0;
+                    if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
+                        $staffPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
+                    }
+                    $calculatedPrice += $staffPrice_val;
                     try {
                         // Apply discount to the calculated price
                         $totalPrice = $this->applyDiscount($calculatedPrice, 0);
@@ -260,6 +286,7 @@ class AddQuoteModal extends Component
                         'buffer_time_after' => $this->buffer_time_after,
                         'buffer_time_unit' => $this->buffer_time_unit,
                         'tenant_id' => $priceOptionsStringArray['optionTenantId'],
+                        'staff_ids' => $this->staff_ids,
                     ]);
                     DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
                 }
@@ -267,8 +294,30 @@ class AddQuoteModal extends Component
         }
 
         $newQuoteNumber = $this->getNewQuoteNumber();
+        $staff_ids_arr_option = $staff_ids_arr;
+        foreach($staff_item_arr as $index => $staff_item) {
+            if($staff_item !== 0) {
+                if($staff_item['tenant_id'] == $mainTenantId) {
+                    $staff_ids_arr_option[$index] = $staff_item['id'];
+                } else {
+                    $staff_ids_arr_option[$index] = 0;
+                }
+            }
+        }
 
-        $calculatedPrice = $priceVenue + $mainPriceOptions;
+        $merged_staff_ids_arr = array_merge($staff_ids_arr_option, $this->staff_arr_index);
+        $merged_staff_ids_arr = array_map(function($value) {
+            return $value === null ? 'null' : $value;
+        }, $merged_staff_ids_arr);
+        $this->staff_ids = implode('|', $merged_staff_ids_arr);
+
+        //calculate staff price
+        $staffPrice_val = 0;
+        if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
+            $staffPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
+        }
+ 
+        $calculatedPrice = $priceVenue + $mainPriceOptions + $staffPrice_val;
         $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
         Quote::create([
             'contact_id' => $this->contact_id,

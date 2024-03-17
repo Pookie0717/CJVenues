@@ -209,9 +209,16 @@ class AddQuoteModal extends Component
                     $optionIds[] = $optionId;
                     $optionValues[] = $priceOptionsStringArray["optionValues"][$optionId];
                 } 
-    
+
+                //calculate staff price
+                $staffPrice_val = 0;
+                if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
+                    $staffPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
+                }
+
+                //caluclate option price
                 $priceOptions = array_sum(array_map('floatval', array_values($priceOptionsStringArray['individualPrices'])));
-                $calculatedPrice = $priceOptions;
+                $calculatedPrice = $priceOptions + $staffPrice_val;
     
                 if($mainTenantId == $priceOptionsStringArray['optionTenantId']) {
                     $mainPriceOptions = $calculatedPrice;
@@ -220,7 +227,6 @@ class AddQuoteModal extends Component
                     $mainOptionIds = $optionIds;
                     $mainOptionValues = $optionValues;
                 } else {
-    
                     try {
                         // Apply discount to the calculated price
                         $totalPrice = $this->applyDiscount($calculatedPrice, 0);
@@ -260,39 +266,6 @@ class AddQuoteModal extends Component
             }
         }
 
-        if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
-
-            $currentTenantId = Session::get('current_tenant_id');
-            $newQuoteNumber = $this->getNewQuoteNumber();
-
-            $totalPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
-
-            Quote::create([
-                'contact_id' => $this->contact_id,
-                'status' => 'Draft',
-                'version' => '1',
-                'date_from' => $this->date_from,
-                'date_to' => $this->date_to,
-                'time_from' => $timeFrom,
-                'time_to' => $timeTo,
-                'area_id' => 0,
-                'event_type' => $this->event_type,
-                'event_name' => $this->event_name,
-                'people' => $this->people,
-                'quote_number' => $newQuoteNumber, // Assign the new quote number
-                'calculated_price' => $totalPrice_val,
-                'discount' => 0,
-                'price' => $totalPrice_val,
-                'price_venue' => 0,
-                'price_options' => $mainPriceOptionsString,
-                'buffer_time_before' => $this->buffer_time_before,
-                'buffer_time_after' => $this->buffer_time_after,
-                'buffer_time_unit' => $this->buffer_time_unit,
-                'tenant_id' => $currentTenantId,
-                'staff_ids' => $this->staff_ids,
-            ]);
-            DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
-        }
         $newQuoteNumber = $this->getNewQuoteNumber();
 
         $calculatedPrice = $priceVenue + $mainPriceOptions;
@@ -321,6 +294,7 @@ class AddQuoteModal extends Component
             'buffer_time_after' => $this->buffer_time_after,
             'buffer_time_unit' => $this->buffer_time_unit,
             'tenant_id' => $mainTenantId,
+            'staff_ids' => $this->staff_ids,
         ]);
         DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
        

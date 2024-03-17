@@ -66,6 +66,10 @@ class AddQuoteModal extends Component
     public $filteredContacts = [];
     public $edit_mode = false;
 
+    public $submitedStaffCount = 0;
+    public $submitedTenantIds = [];
+
+
     protected $listeners = [
         'create_quote' => 'createQuote',
         'delete_quote' => 'deleteQuote',
@@ -116,6 +120,21 @@ class AddQuoteModal extends Component
             $this->barStaff,
             $this->other,
         ];
+
+        $selectedTenantArr = [];
+        $isTrue = false;
+        foreach($staff_item_arr as $staff_ids_arr_item) {
+            foreach($selectedTenantArr as $selectedTenant) {
+                if($staff_ids_arr_item !== 0 && $staff_ids_arr_item['tenant_id'] == $selectedTenant) {
+                    $isTrue = true;
+                }
+            }
+            if($staff_ids_arr_item !== 0 && !$isTrue) {
+                $selectedTenantArr[] = $staff_ids_arr_item['tenant_id'];
+                $this->submitedStaffCount += 1;
+                $isTrue = false;
+            }
+        }
 
         $this->eventTypes = [];
         $merged_staff_ids_arr = array_merge($staff_ids_arr, $this->staff_arr_index);
@@ -192,6 +211,7 @@ class AddQuoteModal extends Component
                 $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $optionTenantIds, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
     
                 $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $optionTenantIds, $this->people);
+
     
                 // Loop through the regular option prices
                     $newQuoteNumber = $this->getNewQuoteNumber();
@@ -235,6 +255,7 @@ class AddQuoteModal extends Component
                         if($staff_item !== 0) {
                             if($staff_item['tenant_id'] == $priceOptionsStringArray['optionTenantId']) {
                                 $staff_ids_arr_option[$index] = $staff_item['id'];
+                                $this->submitedStaffCount -= 1;
                             } else {
                                 $staff_ids_arr_option[$index] = 0;
                             }
@@ -261,7 +282,8 @@ class AddQuoteModal extends Component
                         session()->flash('error', $e->getMessage());
                         return;
                     }
-    
+
+
                     Quote::create([
                         'contact_id' => $this->contact_id,
                         'status' => 'Draft',
@@ -299,6 +321,7 @@ class AddQuoteModal extends Component
             if($staff_item !== 0) {
                 if($staff_item['tenant_id'] == $mainTenantId) {
                     $staff_ids_arr_option[$index] = $staff_item['id'];
+                    $this->submitedStaffCount -= 1;
                 } else {
                     $staff_ids_arr_option[$index] = 0;
                 }
@@ -311,6 +334,8 @@ class AddQuoteModal extends Component
         }, $merged_staff_ids_arr);
         $this->staff_ids = implode('|', $merged_staff_ids_arr);
 
+        $this->submitedTenantIds[] = $mainTenantId;
+
         //calculate staff price
         $staffPrice_val = 0;
         if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
@@ -319,6 +344,7 @@ class AddQuoteModal extends Component
  
         $calculatedPrice = $priceVenue + $mainPriceOptions + $staffPrice_val;
         $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
+
         Quote::create([
             'contact_id' => $this->contact_id,
             'status' => 'Draft',
@@ -346,7 +372,64 @@ class AddQuoteModal extends Component
             'staff_ids' => $this->staff_ids,
         ]);
         DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
-       
+        $isTenant = false;
+        while($this->submitedStaffCount > 0 ) {
+            $newQuoteNumber = $this->getNewQuoteNumber();
+            $staff_ids_arr_staff = $staff_ids_arr;
+            $currentStaffTenant = 0;
+            foreach($staff_item_arr as $index => $staff_item) {
+                foreach($this->submitedTenantIds as $submitedTenantId) {
+                    if($staff_item !== 0 && $submitedTenantId == $staff_item['tenant_id']) {
+                        $isTenant = true;
+                    }
+                }
+                if(!$isTenant) {
+                    $staff_ids_arr_staff[$index] = $staff_item ? $staff_item['id'] : 0;
+                    $isTenant = false;
+                    $this->submitedTenantIds[] = $staff_item ? $staff_item['tenant_id'] : 0;
+                    $currentStaffTenant = $staff_item ? $staff_item['tenant_id'] : 0;
+                } else {
+                    $staff_ids_arr_staff[$index] = 0;
+                }
+            }
+            $merged_staff_ids_arr = array_merge($staff_ids_arr_staff, $this->staff_arr_index);
+            $merged_staff_ids_arr = array_map(function($value) {
+                return $value === null ? 'null' : $value;
+            }, $merged_staff_ids_arr);
+            $this->staff_ids = implode('|', $merged_staff_ids_arr);
+
+            //calculate staff price
+            $staffPrice_val = 0;
+            $staffPrice_val = $this->calculateStaffPrice($this->staff_ids, $this->date_from, $this->date_to, $timeFrom, $timeTo,);
+    
+            $calculatedPrice = $staffPrice_val;
+            $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
+            Quote::create([
+                'contact_id' => $this->contact_id,
+                'status' => 'Draft',
+                'version' => '1',
+                'date_from' => $this->date_from,
+                'date_to' => $this->date_to,
+                'time_from' => $timeFrom,
+                'time_to' => $timeTo,
+                'area_id' => $this->area_id,
+                'event_type' => $this->event_type,
+                'event_name' => $this->event_name,
+                'people' => $this->people,
+                'quote_number' => $newQuoteNumber, // Assign the new quote number
+                'calculated_price' => $calculatedPrice,
+                'discount' => $this->discount,
+                'price' => $totalPrice,
+                'buffer_time_before' => $this->buffer_time_before,
+                'buffer_time_after' => $this->buffer_time_after,
+                'buffer_time_unit' => $this->buffer_time_unit,
+                'tenant_id' => 12,
+                'staff_ids' => $this->staff_ids,
+            ]);
+            $this->submitedStaffCount -= 1;
+            DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
+        }
+
         // Emit an event to notify that the quote was created successfully
         $this->emit('success', 'Quote successfully added');
 

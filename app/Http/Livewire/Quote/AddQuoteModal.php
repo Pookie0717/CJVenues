@@ -157,55 +157,62 @@ class AddQuoteModal extends Component
             foreach ($optionIds as $index => $value) {
                 $option_arr = Option::where('id', $value)->get();
                 if(($option_arr[0]['type'] == 'always') || ($optionValues[$index] !== '' && $optionValues[$index] != 0 && $optionValues[$index] !== 'no')) {
+                    $tenantId = Option::find($value)->tenant->id;
+                    if (!isset($cleanedOptionIds[$tenantId])) {
+                        $cleanedOptionIds[$tenantId] = [];
+                        $cleanedOptionValues[$tenantId] = [];
+                        $cleanedOptionTenantIds[$tenantId] = [];
+                    }
                     if($option_arr[0]['type'] == 'always') {
-                        $cleanedOptionIds[] = $value;
-                        $cleanedOptionValues[] = 'always';
-                        $cleanedOptionTenantIds[] = Option::find($value)->tenant->id;
+                        $cleanedOptionIds[$tenantId][] = $value;
+                        $cleanedOptionValues[$tenantId][] = 'always';
+                        $cleanedOptionTenantIds[$tenantId][] = Option::find($value)->tenant->id;
                     } else {
-                        $cleanedOptionIds[] = $value;
-                        $cleanedOptionValues[] = $optionValues[$index];
-                        $cleanedOptionTenantIds[] = Option::find($value)->tenant->id;
+                        $cleanedOptionIds[$tenantId][] = $value;
+                        $cleanedOptionValues[$tenantId][] = $optionValues[$index];
+                        $cleanedOptionTenantIds[$tenantId][] = Option::find($value)->tenant->id;
                     }
                 }
             }
 
-            $optionIds = implode('|', $cleanedOptionIds);
-            $optionValues = implode('|', $cleanedOptionValues);
-            $optionTenantIds = implode('|', $cleanedOptionTenantIds);
-            // Calculate regular and buffer prices for options
-            $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $optionTenantIds, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
-
-            $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $optionTenantIds, $this->people);
-
-            // Loop through the regular option prices
-            
-                $newQuoteNumber = $this->getNewQuoteNumber();
-
-                // Log::info('Option Price for ID ' . json_encode($item['totalPrice']) . ': ' . json_encode($item['individualPrices']));
-
-                // Update the total price
+            foreach($cleanedOptionTenantIds as $tenantId_val => $cleanedOptionTenantId) {
+                $optionIds = implode('|', $cleanedOptionIds[$tenantId_val]);
+                $optionValues = implode('|', $cleanedOptionValues[$tenantId_val]);
+                $optionTenantIds = implode('|', $cleanedOptionTenantId);
+                // Calculate regular and buffer prices for options
+                $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $optionTenantIds, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
+    
+                $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $optionTenantIds, $this->people);
+    
+                // Loop through the regular option prices
+                    $newQuoteNumber = $this->getNewQuoteNumber();
+    
+                    // Log::info('Option Price for ID ' . json_encode($item['totalPrice']) . ': ' . json_encode($item['individualPrices']));
+    
+                    // Update the total price
                 $priceOptionsStringArray['totalPrice'] = $priceOptionsStringArray['totalPrice'] + $priceBufferOptionsStringArray['totalPrice']; 
                 foreach($priceOptionsStringArray['individualPrices'] as $optionId => $optionTotalPrice) {
                     if (isset($priceOptionsStringArray['individualPrices'][$optionId]) && isset($priceBufferOptionsStringArray['individualPrices'][$optionId])) {
                         $priceOptionsStringArray['individualPrices'][$optionId] += $priceBufferOptionsStringArray['individualPrices'][$optionId];
-                    } else {
-                        // Handle the case where the key doesn't exist
+                    }
+                    if($priceOptionsStringArray['individualPrices'][$optionId]){
+    
                     }
                 }
-
+    
                 // Your existing code to handle the price options string and calculate the final prices
                 $priceOptionsString = implode('|', array_values($priceOptionsStringArray['individualPrices']));
-
+    
                 $optionIds = [];
                 $optionValues = [];
                 foreach( $priceOptionsStringArray['individualPrices'] as $optionId => $optionTotalPrice) {
                     $optionIds[] = $optionId;
                     $optionValues[] = $priceOptionsStringArray["optionValues"][$optionId];
                 } 
-
+    
                 $priceOptions = array_sum(array_map('floatval', array_values($priceOptionsStringArray['individualPrices'])));
                 $calculatedPrice = $priceOptions;
-
+    
                 if($mainTenantId == $priceOptionsStringArray['optionTenantId']) {
                     $mainPriceOptions = $calculatedPrice;
                     $mainTenantId = $priceOptionsStringArray['optionTenantId'];
@@ -213,7 +220,7 @@ class AddQuoteModal extends Component
                     $mainOptionIds = $optionIds;
                     $mainOptionValues = $optionValues;
                 } else {
-
+    
                     try {
                         // Apply discount to the calculated price
                         $totalPrice = $this->applyDiscount($calculatedPrice, 0);
@@ -250,7 +257,7 @@ class AddQuoteModal extends Component
                     ]);
                     DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
                 }
-            
+            }
         }
 
         if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 

@@ -834,6 +834,7 @@ class AddQuoteModal extends Component
                 $selected_date_from = explode('-', $this->date_from);
                 $selected_date_to = explode('-', $this->date_to);
                 $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
+                $selected_date_between = $selected_date_between == 0 ? 1 : $selected_date_between;
                 switch ($multiplierType) {
                     case 'daily':
                         $staff_price[0]['price'] = $staff_price[0]['price'] * $selected_date_between;
@@ -1532,6 +1533,7 @@ class AddQuoteModal extends Component
         $selected_date_from = explode('-', $this->date_from);
         $selected_date_to = explode('-', $this->date_to);
         $selected_date_between = Carbon::parse($this->date_to)->diffInDays(Carbon::parse($this->date_from));
+        $selected_date_between = $selected_date_between == 0 ? 1 : $selected_date_between;
         $calculatedPrice = 0;
         
         // Initialize the waiters, cleaners, toilet staffs, venue managers, soft drinks, and cocktails variables

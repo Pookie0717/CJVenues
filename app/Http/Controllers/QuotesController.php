@@ -141,6 +141,7 @@ class QuotesController extends Controller
                 $selected_date_from = explode('-', $quote->date_from);
                 $selected_date_to = explode('-', $quote->date_to);
                 $selected_date_between = Carbon::parse($quote->date_to)->diffInDays(Carbon::parse($quote->date_from));
+                $selected_date_between = $selected_date_between == 0 ? 1 : $selected_date_between;
                 switch ($multiplierType) {
                     case 'daily':
                         $staff_price[0]['price'] = $staff_price[0]['price'] * $selected_date_between;

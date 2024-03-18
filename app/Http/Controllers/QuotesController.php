@@ -132,6 +132,7 @@ class QuotesController extends Controller
 
         //calculate the price
         $staff_arr = explode('|', $quote->staff_ids);
+
         for($index = 0;$index < 6;$index + 1) {
             $staff_arr_val = isset($staff_arr[$index]) ? $staff_arr[$index] : null;
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();

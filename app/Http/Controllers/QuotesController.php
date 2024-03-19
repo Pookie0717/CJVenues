@@ -141,6 +141,7 @@ class QuotesController extends Controller
         // Fetch the selected options based on the extracted IDs
         $selectedOptions = Option::whereIn('id', $optionIds)->get();
         $staff_price_arr = explode('|', $quote->staff_individual_prices);
+        $staff_quantity_arr = explode('|', $quote->staff_individual_count);
         $i = 0;
         for($index = 0;$index < 6;$index + 1) {
             $staff_arr_val = isset($staff_arr[$index]) ? $staff_arr[$index] : null;
@@ -156,16 +157,22 @@ class QuotesController extends Controller
                     case 'daily':
                         if ($index == 0) {
                             $waiterPrice = $staff_price_arr[$i];
+                            $waiter[0]['quantity'] = $staff_quantity_arr[$i];
                         } else if ($index == 1) {
                             $venueManagersPrice = $staff_price_arr[$i];
+                            $venueManagers[0]['quantity'] = $staff_quantity_arr[$i];
                         } else if ($index == 2) {
                             $toiletStaffsPrice = $staff_price_arr[$i];
+                            $toiletStaffs[0]['quantity'] = $staff_quantity_arr[$i];
                         } else if ($index == 3) {
                             $cleanersPrice = $staff_price_arr[$i];
+                            $cleaners[0]['quantity'] = $staff_quantity_arr[$i];
                         } else if ($index == 4) {
                             $barStaffPrice = $staff_price_arr[$i];
+                            $barStaff[0]['quantity'] = $staff_quantity_arr[$i];
                         } else if ($index == 5) {
                             $otherPrice = $staff_price_arr[$i];
+                            $other[0]['quantity'] = $staff_quantity_arr[$i];
                         }
                         $i += 1;
                         break;
@@ -181,21 +188,27 @@ class QuotesController extends Controller
                         switch($index) {
                             case 0:
                                 $waiterPrice = $staff_price_arr[$i];
+                                $waiter[0]['quantity'] = $staff_quantity_arr[$i];
                                 break;
                             case 1:
                                 $venueManagersPrice = $staff_price_arr[$i];
+                                $venueManagers[0]['quantity'] = $staff_quantity_arr[$i];
                                 break;
                             case 2:
                                 $toiletStaffsPrice = $staff_price_arr[$i];
+                                $toiletStaffs[0]['quantity'] = $staff_quantity_arr[$i];
                                 break;
                             case 3:
                                 $cleanersPrice = $staff_price_arr[$i];
+                                $cleaners[0]['quantity'] = $staff_quantity_arr[$i];
                                 break;
                             case 4:
                                 $barStaffPrice = $staff_price_arr[$i];
+                                $barStaff[0]['quantity'] = $staff_quantity_arr[$i];
                                 break;
                             case 5:
                                 $otherPrice = $staff_price_arr[$i];
+                                $other[0]['quantity'] = $staff_quantity_arr[$i];
                                 break;
                         }
                         $i += 1;

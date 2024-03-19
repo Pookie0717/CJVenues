@@ -43,7 +43,8 @@ class Quote extends Model
         'tenant_id',
         'staff_ids',
         'staff_individual_ids',
-        'staff_individual_prices'
+        'staff_individual_prices',
+        'staff_individual_count'
     ];
     // protected static function boot() {
     //     parent::boot();

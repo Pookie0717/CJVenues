@@ -279,12 +279,14 @@ class AddQuoteModal extends Component
                     $staffPrice_arr = [];
                     $staffIndividualPrices = [];
                     $staffIndividualIds = [];
+                    $staffIndividualCount = [];
                     if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
                         $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr, $this->date_from, $this->date_to, $timeFrom, $timeTo, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
                         $staffPrice_val = $staffPrice_arr['totalPrice'];
                         foreach($staffPrice_arr as $staff_id => $staffPrice_item) {
                             $staffIndividualIds[] = $staff_id;
                             if(is_array($staffPrice_item)) {
+                                $staffIndividualCount[] = $staffPrice_item['count'];
                                 $staffIndividualPrices[] = $staffPrice_item['price'];
                             }
                         }
@@ -326,7 +328,8 @@ class AddQuoteModal extends Component
                         'tenant_id' => $priceOptionsStringArray['optionTenantId'],
                         'staff_ids' => $this->staff_ids,
                         'staff_individual_ids' => implode('|', $staffIndividualIds),
-                        'staff_individual_prices' => implode('|', $staffIndividualPrices)
+                        'staff_individual_prices' => implode('|', $staffIndividualPrices),
+                        'staff_individual_count' => implode('|', $staffIndividualCount),
                     ]);
                     DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
                 }
@@ -358,6 +361,7 @@ class AddQuoteModal extends Component
         $staffPrice_val = 0;
         $staffIndividualPrices = [];
         $staffIndividualIds = [];
+        $staffIndividualCount = [];
         if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
             $this->staff_individual_prices = [];
             $this->staff_individual_ids = [];
@@ -367,7 +371,8 @@ class AddQuoteModal extends Component
                 $staffIndividualIds[] = $staff_id;
                 if(is_array($staffPrice_item)) {
                     foreach($staffPrice_item as $staffPriceItem) {
-                        $staffIndividualPrices[] = $staffPriceItem;
+                        $staffIndividualPrices[] = $staffPrice_item['price'];
+                        $staffIndividualCount[] = $staffPrice_item['count'];
                     }
                 }
             }
@@ -402,7 +407,8 @@ class AddQuoteModal extends Component
             'tenant_id' => $mainTenantId,
             'staff_ids' => $this->staff_ids,
             'staff_individual_ids' => implode('|', $staffIndividualIds),
-            'staff_individual_prices' => implode('|', $staffIndividualPrices)
+            'staff_individual_prices' => implode('|', $staffIndividualPrices),
+            'staff_individual_count' => implode('|', $staffIndividualCount),
         ]);
 
         DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
@@ -437,11 +443,13 @@ class AddQuoteModal extends Component
             $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr, $this->date_from, $this->date_to, $timeFrom, $timeTo,  $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
             $staffIndividualPrices = [];
             $staffIndividualIds = [];
+            $staffIndividualCount = [];
             $staffPrice_val = $staffPrice_arr['totalPrice'];
             foreach($staffPrice_arr as $staff_id => $staffPrice_item) {
                 $staffIndividualIds[] = $staff_id;
                 if(is_array($staffPrice_item)) {
                     $staffIndividualPrices[] = $staffPrice_item['price'];
+                    $staffIndividualCount[] = $staffPrice_item['count'];
                 }
             }
             array_shift($staffIndividualIds);
@@ -470,7 +478,8 @@ class AddQuoteModal extends Component
                 'tenant_id' => $currentStaffTenant,
                 'staff_ids' => $this->staff_ids,
                 'staff_individual_ids' => implode('|', $staffIndividualIds),
-                'staff_individual_prices' => implode('|', $staffIndividualPrices)
+                'staff_individual_prices' => implode('|', $staffIndividualPrices),
+                'staff_individual_count' => implode('|', $staffIndividualCount),
             ]);
             $this->submitedStaffCount -= 1;
             DB::table('system_information')->where('key', 'current_quote_number')->update(['value' => $newQuoteNumber]);
@@ -967,25 +976,38 @@ class AddQuoteModal extends Component
         $staff_price_buffer_items = [];
         $staff_price_items = [];
         $extra_tier_types = [];
+        $staffCount = [];
         foreach($staff_arr as $staff_arr_val) {
             if($staff_arr_val !== 0) {
                 $staff_count = Staffs::where('id', $staff_arr_val)->get();
-                $staff_prices = Price::where('staff_id', $staff_arr_val)->get();
-                foreach($staff_prices as $staff_price) {
-                    if(isset($staff_price)){
-                        $extra_tier_types = explode(',', $staff_price['extra_tier_type']);
-                        foreach($extra_tier_types as $extra_tier_type) {
-                            if($extra_tier_type == 'buffer_before' || $extra_tier_type == 'buffer_after') {
-                                $staff_price_buffer_items[] = $staff_price;
-                            } else {
-                                $staff_price_items[] = $staff_price;
+                $duration_arr = explode(',', $staff_count[0]['duration_type']);
+                $from_arr = explode(',', $staff_count[0]['from']);
+                $to_arr = explode(',', $staff_count[0]['to']);
+                $count_arr = explode(',', $staff_count[0]['count']);
+                foreach($duration_arr as $index => $duration) {
+                    if (($duration == 'people' && $from_arr[$index] <= $this->people && $this->people <= $to_arr[$index]) ||
+                        ($duration == 'hour' && $from_arr[$index] <= $hours && $hours <= $to_arr[$index]) ||
+                        ($duration == 'days' && $from_arr[$index] <= $days && $days <= $to_arr[$index])) {
+                        $staff_prices = Price::where('staff_id', $staff_arr_val)->get();
+                        foreach($staff_prices as $staff_price) {
+                            if(isset($staff_price)){
+                                $extra_tier_types = explode(',', $staff_price['extra_tier_type']);
+                                foreach ($extra_tier_types as $extra_tier_type) {
+                                    if (($extra_tier_type == 'buffer_before' || $extra_tier_type == 'buffer_after') && !in_array($staff_price, $staff_price_buffer_items)) {
+                                        $staff_price['count'] = $count_arr[$index];
+                                        $staff_price_buffer_items[] = $staff_price;
+                                    } elseif ($extra_tier_type !== 'buffer_before' && $extra_tier_type !== 'buffer_after' && !in_array($staff_price, $staff_price_items)) {
+                                        $staff_price['count'] = $count_arr[$index];
+                                        $staff_price_items[] = $staff_price;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        foreach($staff_price_items as $staff_price_item) {
+        foreach($staff_price_items as $index => $staff_price_item) {
             $price = 0;
             $x = $staff_price_item['x'];
             $multiplierType = $staff_price_item['multiplier'];
@@ -1024,13 +1046,18 @@ class AddQuoteModal extends Component
             if (str_ends_with($multiplierType, '_x_p')) {
                 $price *= ($people / $x);
             }
-            if(!isset($priceResult[$staff_price_item['staff_id']])) {
+            if(!isset($priceResult[$staff_price_item['staff_id']]['price'])) {
                 $priceResult[$staff_price_item['staff_id']]['price'] = 0;
+                $priceResult[$staff_price_item['staff_id']]['count'] = 0;
             }
+            $price = $price * $staff_price_item['count'];
             $totalPrice += $price;
+            $priceResult[$staff_price_item['staff_id']]['count'] = $staff_price_item['count'];
             $priceResult[$staff_price_item['staff_id']]['price'] += $price;
             $priceResult['totalPrice'] = $totalPrice;
         }
+
+
 
         $totalBufferHours = 0;
         if ($bufferTimeUnit == 'days') {
@@ -1038,12 +1065,10 @@ class AddQuoteModal extends Component
         } else { // Assuming the unit is hours
             $totalBufferHours = $bufferTimeBefore + $bufferTimeAfter;
         }
-
         // Calculate days and hours from the total buffer hours
         $days = ceil($totalBufferHours / 8);
         $hours = $totalBufferHours;
-
-        foreach($staff_price_buffer_items as $staff_price_buffer_item) {
+        foreach($staff_price_buffer_items as $index => $staff_price_buffer_item) {
             $price = 0;
             $x = $staff_price_buffer_item['x'];
             $multiplierType = $staff_price_buffer_item['multiplier'];
@@ -1068,13 +1093,14 @@ class AddQuoteModal extends Component
                     $price -= $days;
                 }
             }
-            if(!isset($priceResult[$staff_price_item['staff_id']])) {
-                $priceResult[$staff_price_item['staff_id']]['price'] = 0;
+            if(!isset($priceResult[$staff_price_buffer_item['staff_id']]['price'])) {
+                $priceResult[$staff_price_buffer_item['staff_id']]['price'] = 0;
+                $priceResult[$staff_price_buffer_item['staff_id']]['count'] = 0;
             }
-            Log::info($staff_price_buffer_item['id']);
-            Log::info($price);
+            $price = $price * $staff_price_buffer_item['count'];
             $totalPrice += $price;
-            $priceResult[$staff_price_item['staff_id']]['price'] += $price;
+            $priceResult[$staff_price_buffer_item['staff_id']]['count'] = $staff_price_buffer_item['count'];
+            $priceResult[$staff_price_buffer_item['staff_id']]['price'] += $price;
             $priceResult['totalPrice'] = $totalPrice;
         }
         return $priceResult;

@@ -41,7 +41,9 @@ class Quote extends Model
         'buffer_time_after',
         'buffer_time_unit',
         'tenant_id',
-        'staff_ids'
+        'staff_ids',
+        'staff_individual_ids',
+        'staff_individual_prices'
     ];
     // protected static function boot() {
     //     parent::boot();

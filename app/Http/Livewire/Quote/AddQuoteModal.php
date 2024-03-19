@@ -57,6 +57,8 @@ class AddQuoteModal extends Component
     public $other = 0;
     public $staff_ids;
     public $staff_arr_index = [null, null, null, null, null, null];
+    public $timeFrom;
+    public $timeTo;
 
     public $isDrink = true;
 
@@ -155,6 +157,8 @@ class AddQuoteModal extends Component
 
         $timeFrom = implode('|', $timeFromArray);
         $timeTo = implode('|', $timeToArray);
+        $this->timeFrom = $timeFrom;
+        $this->timeTo = $timeTo;
 
         $priceBufferVenue = $this->calculateBufferPriceVenue($this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit, $this->area_id, $this->staff_ids);
 
@@ -211,7 +215,6 @@ class AddQuoteModal extends Component
                 $optionTenantIds = implode('|', $cleanedOptionTenantId);
                 // Calculate regular and buffer prices for options
                 $priceBufferOptionsStringArray = $this->calculateBufferPriceOptions($this->date_from, $this->date_to, $optionIds, $optionValues, $optionTenantIds, $this->people, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
-    
                 $priceOptionsStringArray = $this->calculatePriceOptions($this->date_from, $this->date_to, $timeFrom, $timeTo, $optionIds, $optionValues, $optionTenantIds, $this->people);
 
     
@@ -943,13 +946,22 @@ class AddQuoteModal extends Component
 
     private function calculateStaffPrice($staff_ids, $dateFrom, $dateTo, $timeFrom, $timeTo, $bufferTimeBefore, $bufferTimeAfter, $bufferTimeUnit)
     {
-        $dateFromC = Carbon::createFromFormat('d-m-Y', $dateFrom);
-        $dateToC = Carbon::createFromFormat('d-m-Y', $dateTo);
+        $dateFromC = Carbon::createFromFormat('d-m-Y', $this->date_from);
+        $dateToC = Carbon::createFromFormat('d-m-Y', $this->date_to);
         $currentDate = $dateFromC->copy();
 
         $staff_count = [];
         $staff_prices = [];
         
+        $priceResult = [];
+        $priceResult['totalPrice'] = 0;
+        $totalPrice = 0;
+        
+        $days = $this->calculateNumberOfDays($dateFromC, $dateToC);
+        $days = $days == 0 ? $days = 1 : $days;
+        $hours = $this->calculateNumberOfHours($dateFrom, $this->timeFrom, $dateTo, $this->timeTo);
+        $people = $this->people;
+
         $staff_arr = $staff_ids;
         $totalPrice = 0;
         $staff_price_buffer_items = [];
@@ -973,16 +985,6 @@ class AddQuoteModal extends Component
                 }
             }
         }
-
-        $priceResult = [];
-        $priceResult['totalPrice'] = 0;
-        $totalPrice = 0;
-        
-        $days = $this->calculateNumberOfDays($dateFromC, $dateToC);
-        $days = $days == 0 ? $days = 1 : $days;
-        $hours = $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-        $people = $this->people;
-
         foreach($staff_price_items as $staff_price_item) {
             $price = 0;
             $x = $staff_price_item['x'];
@@ -1069,10 +1071,11 @@ class AddQuoteModal extends Component
             if(!isset($priceResult[$staff_price_item['staff_id']])) {
                 $priceResult[$staff_price_item['staff_id']]['price'] = 0;
             }
+            Log::info($staff_price_buffer_item['id']);
+            Log::info($price);
             $totalPrice += $price;
             $priceResult[$staff_price_item['staff_id']]['price'] += $price;
             $priceResult['totalPrice'] = $totalPrice;
-            
         }
         return $priceResult;
     }
@@ -1083,8 +1086,7 @@ class AddQuoteModal extends Component
 
         $days = $this->calculateNumberOfDays($dateFrom, $dateTo);
         $days = $days == 0 ? $days = 1 : $days;
-        $hours = $this->calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo);
-
+        $hours = $this->calculateNumberOfHours($dateFrom, $this->timeFrom, $dateTo, $this->timeTo);
         switch ($multiplierType) {
             case 'daily':
             case 'daily_pp':
@@ -1113,10 +1115,7 @@ class AddQuoteModal extends Component
         }
 
         if (str_ends_with($multiplierType, '_pp')) {
-            $price = $price + ($people * $days);
-            if($multiplierType == 'daily_pp') {
-                $price -= $days;
-            }
+            $price = $price * $people;
         }
 
         if (str_ends_with($multiplierType, '_x_p')) {
@@ -1192,7 +1191,6 @@ class AddQuoteModal extends Component
             $selectedValue = $optionValue;
             $prices = explode('|', $optionPrice->price);
             $selectedValueIndex = array_search($selectedValue, $optionValues);
-
             if ($selectedValueIndex !== false && isset($prices[$selectedValueIndex])) {
                 $selectedPrice = (float)$prices[$selectedValueIndex];
                 $price = $selectedPrice * $quantity;
@@ -1209,6 +1207,8 @@ class AddQuoteModal extends Component
 
             $price = $multiplierValue * (float)$logicOptionValue * $quantity;
         
+        } else {
+            $price = $multiplierValue * $quantity;
         }
         return $price;
     }

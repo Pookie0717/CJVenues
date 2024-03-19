@@ -144,7 +144,6 @@ class QuotesController extends Controller
         $i = 0;
         for($index = 0;$index < 6;$index + 1) {
             $staff_arr_val = isset($staff_arr[$index]) ? $staff_arr[$index] : null;
-            Log::info($staff_arr_val);
             $staff_price = Price::where('staff_id', $staff_arr_val)->get();
             $staff_items = Staffs::where('id', $staff_arr_val)->get();
             if($staff_arr_val > 0) {

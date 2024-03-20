@@ -844,7 +844,7 @@
     });
 
     const linked2 = new tempusDominus.TempusDominus(document.getElementById('date_to_picker_basic'), {
-        useCurrent: false,
+        useCurrent: true,
         display: {
             viewMode: "calendar",
             components: {

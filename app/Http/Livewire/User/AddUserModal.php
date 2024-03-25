@@ -4,6 +4,7 @@ namespace App\Http\Livewire\User;
 
 use App\Models\User;
 use App\Models\Tenant;
+use App\Models\TenantUser;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
@@ -128,6 +129,9 @@ class AddUserModal extends Component
             $this->emit('error', 'User cannot be deleted');
             return;
         }
+
+        // Delete related records in the `tenant_user` table
+        TenantUser::where('user_id', $id)->delete();
 
         // Delete the user record with the specified ID
         User::destroy($id);

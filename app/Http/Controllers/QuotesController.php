@@ -50,6 +50,7 @@ class QuotesController extends Controller
         $extra_name = [];
         $extra_prices = [];
         $extra_count = [];
+        $venue_count = 0;
         if(count($updatedQuote->options) > 0) {
             foreach($updatedQuote->options as $index => $option) {
                 $options_name[] = $option[0];
@@ -64,6 +65,7 @@ class QuotesController extends Controller
                 $venues_name[] = $venue[0];
                 $venue_prices = $venue['2'];
                 $totalPrice += (int)$venue['2'];
+                $venue_count = $venue['1'];
             }
         }
         if(count($updatedQuote->staffs) > 0) {
@@ -91,7 +93,7 @@ class QuotesController extends Controller
         }
         if(count($updatedQuote->extra) > 0) {
             foreach($updatedQuote->extra as $index => $extra) {
-                if($extra) {
+                if($extra && $extra[0] && $extra['1'] && $extra['2']) {
                     $extra_name[] = $extra[0];
                     $extra_count[] = $extra['1'];
                     $extra_prices[] = $extra['2'] * $extra['1'];
@@ -101,6 +103,7 @@ class QuotesController extends Controller
         }
         if ($quote) {
             $quote->version = $quote->version + 1;
+            $quote->status = 'Draft';
             $quote->details = $details;
             $quote->options_name = $options_name ? implode('|', $options_name) : null;
             $quote->venues_name = $venues_name ? implode('|', $venues_name) : null;
@@ -119,6 +122,7 @@ class QuotesController extends Controller
             $quote->people = $people;
             $quote->price = $totalPrice;
             $quote->calculated_price = $totalPrice;
+            $quote->venue_count = $venue_count;
             $quote->save();
         }
         return response()->json(['message' => 'Quote submitted successfully!']);

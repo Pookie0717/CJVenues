@@ -222,7 +222,7 @@
                                                     {{$quote->venues_name ? $quote->venues_name : ($quote->eventType ? $quote->eventType->event_name : 'N/A').' - '.($quote->eventArea ? $quote->eventArea->name : 'N/A')}}
                                                 </td>
 
-                                                <td class="pt-6 text-end align-middle">1</td>
+                                                <td class="pt-6 text-end align-middle">{{$quote->venue_count}}</td>
                                                 <td class="pt-6 text-end align-middle">$ {{ number_format($quote->price_venue, 2) }}</td>
                                                 <td class="pt-6 text-dark fw-bolder text-end align-middle">$ {{ number_format($quote->price_venue, 2) }}</td>
                                             </tr>
@@ -251,35 +251,6 @@
                                                 // Convert the price_options string into an array
                                                 $priceOptionsArray = explode('|', $quote->price_options);
                                             @endphp
-                                            @if($quote->extra_items_name)
-                                                @foreach($extraItemsName as $index => $extraItemName)
-                                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
-                                                        <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                            {{ $extraItemName }}
-                                                        </td>
-                                                        <td class="pt-6 text-end align-middle">{{ $extraItemsCount[$index] }}</td>
-                                                        <td class="pt-6 text-end align-middle">{{$extraItemsPrice[$index]}}</td>
-                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">{{$extraItemsCount[$index] * $extraItemsPrice[$index]}}</td>
-                                                    </tr>
-                                                    <tr class="fw-bold text-gray-700 fs-5 edit-mode" style="display:none">
-                                                        <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
-                                                            <input style='width:200px' type="text" class="form-control form-control-solid" value="{{$extraItemName}}" />
-                                                        </td>
-                                                        <td class="pt-6 text-end align-middle">
-                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ $extraItemsCount[$index] }}" />
-                                                        </td>
-                                                        <td class="pt-6 text-end align-middle">
-                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{$extraItemsPrice[$index]}}" />
-                                                        </td>
-                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">{{$extraItemsCount[$index] * $extraItemsPrice[$index]}}</td>
-                                                        <td class="d-flex justify-content-end align-items-center pt-6 align-middle">
-                                                            <button type="button" class="btn btn-danger btn-sm text-right" onclick="remove_item(event)">Remove</button>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            @endif
                                             @foreach($optionsWithValues as $index => $optionWithValue)
                                                 @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
                                                 @php
@@ -401,6 +372,35 @@
                                                     </tr>
                                                 @endif
                                             @endforeach
+                                            @if($quote->extra_items_count)
+                                                @foreach($extraItemsName as $index => $extraItemName)
+                                                    <tr class="fw-bold text-gray-700 fs-5 show-mode extra-items">
+                                                        <td class="d-flex align-items-center text-left pt-6 align-middle">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            {{ $extraItemName }}
+                                                        </td>
+                                                        <td class="pt-6 text-end align-middle">{{ $extraItemsCount[$index] }}</td>
+                                                        <td class="pt-6 text-end align-middle">${{$extraItemsPrice[$index]}}</td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">${{$extraItemsCount[$index] * $extraItemsPrice[$index]}}</td>
+                                                    </tr>
+                                                    <tr class="fw-bold text-gray-700 fs-5 edit-mode extra-items" style="display:none">
+                                                        <td class="d-flex align-items-center text-left pt-6 align-middle">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            <input style='width:200px' type="text" class="form-control form-control-solid" value="{{$extraItemName}}" />
+                                                        </td>
+                                                        <td class="pt-6 text-end align-middle">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ $extraItemsCount[$index] }}" />
+                                                        </td>
+                                                        <td class="pt-6 text-end align-middle">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{$extraItemsPrice[$index]}}" />
+                                                        </td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">{{$extraItemsCount[$index] * $extraItemsPrice[$index]}}</td>
+                                                        <td class="d-flex justify-content-end align-items-center pt-6 align-middle">
+                                                            <button type="button" class="btn btn-danger btn-sm text-right" onclick="remove_item(event)">Remove</button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>

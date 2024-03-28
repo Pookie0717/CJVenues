@@ -520,7 +520,6 @@
                                                 <th class="text-end pb-2">{{ trans('general.actions') }}</th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
                                           @foreach($relatedQuotes as $key => $quoteHistory)
                                             <tr class="fw-bold text-gray-700 fs-5 text-end">

@@ -20,11 +20,109 @@ use Hashids\Hashids;
 
 class QuotesController extends Controller
 {
+
+    //public variables for edit-mode
+
+
     public function index(QuotesDataTable $dataTable)
     {
         return $dataTable->render('pages.quotes.quotes');
     }
 
+    public function update(Request $request, $id) {
+        $updatedQuote = $request;
+        Log::info($updatedQuote );
+        $options_name = [];
+        $options_id = [];
+        $venues_name = [];
+        $staffs_name = [];
+        $options_prices = [];
+        $options_count = [];
+        $staffs_prices = [];
+        $staffs_count = [];
+        $staff_ids = [];
+        $venue_prices = 0;
+        $totalPrice = 0;
+        $quote = Quote::find($id);
+        $staff_ids_arr = explode('|', $quote->staff_ids);
+        $details = $updatedQuote->details;
+        $people = $updatedQuote->people;
+        $extra_name = [];
+        $extra_prices = [];
+        $extra_count = [];
+        if(count($updatedQuote->options) > 0) {
+            foreach($updatedQuote->options as $index => $option) {
+                $options_name[] = $option[0];
+                $options_id[] = $option['id'];
+                $options_count[] = $option['1'];
+                $options_prices[] = $option['2'] * $option['1'];
+                $totalPrice += (int)$option['2'] * $option['1'];
+            }
+        }
+        if(count($updatedQuote->venues) > 0) {
+            foreach($updatedQuote->venues as $index => $venue) {
+                $venues_name[] = $venue[0];
+                $venue_prices = $venue['2'];
+                $totalPrice += (int)$venue['2'];
+            }
+        }
+        if(count($updatedQuote->staffs) > 0) {
+            foreach($updatedQuote->staffs as $index => $staff) {
+                $staffs_name[] = $staff[0];
+                $staffs_prices[] = $staff['2'] * $staff['1'];
+                $staffs_count[] = $staff['1'];
+                $staff_ids[] = $staff['id'];
+                $totalPrice += (int)$staff['2'] * $staff['1'];
+            }
+            $flag = false;
+            for ($i = 0; $i < 6; $i++) { 
+                foreach ($staff_ids as $staff_id) {
+                    if ($staff_ids_arr[$i] == $staff_id) {
+                        $flag = true;
+                        break;
+                    }
+                }
+                if(!$flag) {
+                    $staff_ids_arr[$i] = 0;
+                }
+                $flag = false;
+            }
+            // Check if the current staff ID matches any of the IDs in the range 0 to 5     
+        }
+        if(count($updatedQuote->extra) > 0) {
+            foreach($updatedQuote->extra as $index => $extra) {
+                if($extra) {
+                    $extra_name[] = $extra[0];
+                    $extra_count[] = $extra['1'];
+                    $extra_prices[] = $extra['2'] * $extra['1'];
+                    $totalPrice += (int)$extra['2'] * $extra['1'];
+                }
+            }
+        }
+        if ($quote) {
+            $quote->version = $quote->version + 1;
+            $quote->details = $details;
+            $quote->options_name = $options_name ? implode('|', $options_name) : null;
+            $quote->venues_name = $venues_name ? implode('|', $venues_name) : null;
+            $quote->staffs_name = $staffs_name ? implode('|', $staffs_name) : null;
+            $quote->options_ids = $options_id ? implode('|', $options_id) : null;
+            $quote->options_count = $options_count ? implode('|', $options_count) : null;
+            $quote->price_options = $options_prices ? implode('|', $options_prices) : null;
+            $quote->staff_individual_prices = $staffs_prices ? implode('|', $staffs_prices) : null;
+            $quote->staff_individual_count = $staffs_count ? implode('|', $staffs_count) : null;
+            $quote->staff_ids = $staff_ids_arr ? implode('|', $staff_ids_arr) : null;
+            $quote->staff_individual_ids = $staff_ids ? implode('|', $staff_ids) : null;
+            $quote->extra_items_name = $extra_name ? implode('|', $extra_name) : null;
+            $quote->extra_items_price = $extra_name ? implode('|', $extra_prices) : null;
+            $quote->extra_items_count = $extra_name ? implode('|', $extra_count) : null;
+            $quote->price_venue = $venue_prices;
+            $quote->people = $people;
+            $quote->price = $totalPrice;
+            $quote->calculated_price = $totalPrice;
+            $quote->save();
+        }
+        return response()->json(['message' => 'Quote submitted successfully!']);
+    }
 
     public function book(Request $request, $id)
     {
@@ -82,6 +180,7 @@ class QuotesController extends Controller
         // Get the date_from and date_to values from the $quote model
         $dateFrom = $quote->date_from;
         $dateTo = $quote->date_to;
+        $details = $quote->details;
 
         $discount = $quote->discount;
 
@@ -92,6 +191,10 @@ class QuotesController extends Controller
 
         $associatedContact = Contact::where('id', $contact_id)
             ->get();
+
+        $extraItemsName = explode('|', $quote->extra_items_name);
+        $extraItemsCount = explode('|', $quote->extra_items_count);
+        $extraItemsPrice = explode('|', $quote->extra_items_price);
 
         $staffIds = explode('|', $quote->staff_ids);
         if(count($staffIds) <= 1) {
@@ -270,7 +373,6 @@ class QuotesController extends Controller
             $index++;
         }
 
-
         // Combine the selected options with their values
         $optionsWithValues = [];
 
@@ -280,6 +382,12 @@ class QuotesController extends Controller
                 'value'  => $optionValues[$index] ?? null, // Using null as a default if there's no corresponding value
                 'type'   => $selectedOption->type
             ];
+        }
+
+        if($quote->options_name) {
+            foreach($optionsWithValues as $index => $optionsWithValue) {
+                $optionsWithValue['option']->name = explode('|', $quote->options_name)[$index];
+            }
         }
 
         $allSeasons = Season::orderBy('priority', 'desc')->where('tenant_id', $quote->tenant_id)->get();
@@ -301,8 +409,7 @@ class QuotesController extends Controller
 
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
-
-        return view('pages.quotes.show', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice' ), ['hashedId' => $hashedId]);
+        return view('pages.quotes.show', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details' ), ['hashedId' => $hashedId]);
     }
 
     private function calculateNumberOfHours($dateFrom, $timeFrom, $dateTo, $timeTo) //remove the date eventually
@@ -372,8 +479,6 @@ class QuotesController extends Controller
         // Fetch the selected options based on the extracted IDs
         $selectedOptions = Option::whereIn('id', $optionIds)->get();
 
-
-
         // Combine the selected options with their values
         $optionsWithValues = [];
 
@@ -422,7 +527,5 @@ class QuotesController extends Controller
 
         return view('pages.quotes.showPublic', compact('relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant'));
     }
-
-
 
 }

@@ -1,334 +1,589 @@
-<div class="modal fade" id="kt_modal_add_quote" tabindex="-1" aria-hidden="true" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered mw-850px">
-        <div class="modal-content ">
-            <div class="modal-header" id="kt_modal_add_quote_header">
-                <h2 class="fw-bold">Add Quote</h2>
-                <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
-                    {!! getIcon('cross','fs-1') !!}
-                </div>
-            </div>
-            <div class="modal-body flex-center  px-5 my-7">
-                <form class="form" novalidate="novalidate" id="kt_modal_add_quote_form" class="form" wire:submit.prevent="submit">
-        <!--begin::Group-->
-        <div class="mb-5">
-            <!--begin::Step 1-->
-            <div class="flex-column current" data-kt-stepper-element="content">
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="contactSelect" class="form-label">Select Contact:</label>
-                    <select class="form-select" id="contactSelect" wire:model="contact_id">
-                        <option value="">Select a contact</option>
-                        @foreach ($contacts as $contact)
-                            <option value="{{ $contact->id }}">{{ $contact->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <!--end::Input group-->
-            </div>
-            <!--begin::Step 1-->
+<x-default-layout>
+    @section('title')
+    {{ trans('quotes.title') }}
+    @endsection
 
-            <!--begin::Step 1-->
-            <div class="flex-column" data-kt-stepper-element="content">
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="eventSelect" class="form-label">Select Event:</label>
-                    <select class="form-select" id="eventNameSelect" wire:model="eventName" wire:change="loadEventTypes">
-                        <option value="">Select an event</option>
-                        <option value="wedding">Wedding</option>
-                        <option value="birthday">Birthday Party</option>
-                        <option value="summer">Summer Party</option>
-                        <option value="corporate">Corporate Event</option>
-                        <!-- Add more options as needed -->
-                    </select>
-                </div>
-                <!--end::Input group-->
+    <!--begin::Breadcrumb-->
+    @section('breadcrumbs')
+        {{ Breadcrumbs::render('quotes.show', $quote) }}
+    @endsection
+<!--begin::Card toolbar-->
+    <div class="d-flex flex-column flex-xl-row gap-10">
+    <div class="card flex-grow-1">
+        <!--begin::Body-->
+        <div class="card-body p-lg-20">
+            <!--begin::Layout-->
+            <div class="d-flex flex-column flex-xl-row">
+                <!--begin::Content-->
+                <div class="flex-lg-row-fluid">
+                    <!--begin::Invoice 2 content-->
+                    <div class="mt-n1">
+                        <!--begin::Top-->
+                        <div class="d-flex flex-stack pb-10">
+                            <!--begin::Logo-->
+                            <a href="#">
+                                <img alt="Logo" src="{{ image('logos/default-dark.svg') }}" class="h-25px app-sidebar-logo-default" />
+                            </a>
+                            <!--end::Logo-->
 
-                 <!--begin::Input group-->
-                 <div class="fv-row mb-10">
-                    <label for="eventSelect" class="form-label">Select Event Type:</label>
-                    <select class="form-select" id="eventSelect" wire:model="event_type">
-                        <option value="">Select an event</option>
-                        @foreach ($eventTypes as $event)
-                            <option value="{{ $event->id }}">{{ $event->event_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <!--end::Input group-->
-
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="people" class="form-label">How many people will attend?</label>
-                    <input type="number" wire:model.defer="people" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number of people"
-                    id="people" min="{{$selectedEvent? $selectedEvent->min_people: 0}}" max="{{$selectedEvent? $selectedEvent->max_people: 0}}"
-                    />
-
-                </div>
-                <!--end::Input group-->
-
-                <!--begin::Step 1-->
-                <div class="flex-column mb-10" data-kt-stepper-element="content">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-10">
-                        <div class="row">
-                        <div class="col">
-                            <label class="required fw-semibold fs-6 mb-2">Date From</label>
-                            <div class="input-group" id="date_from_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                <input id="date_from_picker_input" type="text"  wire:model.defer="date_from" class="form-control" data-td-target="#date_from_picker"/>
-                                <span class="input-group-text" data-td-target="#date_from_picker" data-td-toggle="datetimepicker">
-                                    <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                </span>
+                            <!--begin::Action-->
+                            <div>
+                                <button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}">
+                                    {{ trans('quotes.book') }}
+                                </button>
+                                <button class="btn btn-sm btn-primary show-mode" id="edit-quote" data-quote-id="{{ $quote->id }}">
+                                    {{ trans('quotes.edit') }}
+                                </button>
+                                <button 
+                                    style="display:none" 
+                                    class="btn btn-sm btn-primary edit-mode" 
+                                    id="submit-quote" data-quote-id="{{ $quote->id }}" 
+                                    type="submit"
+                                    data-kt-stepper-action="submit"
+                                >
+                                    <span class="indicator-label" wire:loading.remove wire:target="submit">
+                                        {{ trans('quotes.submit') }}
+                                    </span>
+                                    <span class="indicator-progress" wire:loading wire:target="submit">
+                                        Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                    </span>
+                                </button>
                             </div>
-                            @error('date_from')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <!--end::Action-->
+                            
                         </div>
+                        <!--end::Top-->
 
-                        <div class="col">
-                            <label class="required fw-semibold fs-6 mb-2">Date To</label>
-                            <div class="input-group" id="date_to_picker_basic" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                <input id="date_to_picker_input" type="text"  wire:model.defer="date_to" class="form-control" data-td-target="#date_to_picker"/>
-                                <span class="input-group-text" data-td-target="#date_to_picker" data-td-toggle="datetimepicker">
-                                    <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                </span>
-                            </div>
-                            @error('date_to')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
+                        <!--begin::Wrapper-->
+                        <div class="m-0">
+                            <!--begin::Label-->
+                            <div class="fw-bold fs-3 text-gray-800 mb-8">{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}</div>
+                            <!--end::Label-->
 
-                    <!-- Add this code inside your Blade template -->
-                    @foreach ($time_ranges as $date => $time_range)
-                        <div class="fv-row mb-10 d-none">
-                            <div class="row">
-                                <div class="col">
-                                    <label class="required fw-semibold fs-6 mb-2">Time From ({{ $date }})</label>
-                                    <div class="input-group" id="time_from_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                        <input id="time_from_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_from" class="form-control" data-td-target="#time_from_picker_{{ $loop->index }}"/>
-                                        <span class="input-group-text" data-td-target="#time_from_picker_{{ $loop->index }}" data-td-toggle="datetimepicker">
-                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
+                            <!--begin::Row-->
+                            <div class="row g-5 mb-11">
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.createdon') }}:</div>
+                                    <!--end::Label-->
+
+                                    <!--end::Col-->
+                                    <div class="fw-bold fs-6 text-gray-800">{{ \Carbon\Carbon::parse($quote->created_at)->format('d F Y') }}</div>
+                                    <!--end::Col-->
+                                </div>
+                                <!--end::Col-->
+
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.senton') }}:</div>
+                                    <!--end::Label-->
+
+                                    <!--end::Info-->
+                                    <div
+                                        class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
+                                        <span class="pe-2">dd/mm/yyyy</span>
+
+                                        <span class="fs-7 text-danger d-flex align-items-center">
+                                            <span class="bullet bullet-dot bg-danger me-2"></span>
+
+                                            {{ trans('quotes.expiring_in_days' , ['days' => "123"]) }}
                                         </span>
                                     </div>
-                                    @error("time_ranges.$date.time_from")
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                    <!--end::Info-->
                                 </div>
-
-                                <div class="col">
-                                    <label class="required fw-semibold fs-6 mb-2">Time To ({{ $date }})</label>
-                                    <div class="input-group" id="time_to_picker_basic_{{ $loop->index }}" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                                        <input id="time_to_picker_input_{{ $loop->index }}" type="text" wire:model.defer="time_ranges.{{ $date }}.time_to" class="form-control" data-td-target="#time_to_picker_{{ $loop->index }}"/>
-                                        <span class="input-group-text" data-td-target="#time_to_picker_{{ $loop->index }}" data-td-toggle="datetimepicker">
-                                            <i class="ki-duotone ki-calendar fs-2"><span class="path1"></span><span class="path2"></span></i>
-                                        </span>
-                                    </div>
-                                    @error("time_ranges.$date.time_to")
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                <!--end::Col-->
                             </div>
-                        </div>
+                            <!--end::Row-->
 
-                        <div class="mx-10">
-                            <label class="fw-semibold fs-6 mb-4 pb-5">@if(sizeof($time_ranges) !== 1){{ $date }}@endif</label>
-                            <div id="event_time_slider_{{ $loop->index }}" class="my-4"></div>
-                        </div>
-                    @endforeach
+                            <!--begin::Row-->
+                            <div class="row g-5 mb-12">
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.issuedfor') }}:</div>
+                                    <!--end::Label-->
 
-                </div>
-                <!--begin::Step 1-->
+                                    @foreach ($associatedContact as $contact)
+                                    <!--start::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $contact->name }}</div>
+                                    <!--end::Text-->
 
-                <div class="fv-row mb-10">
-                    <div class="row">
-                        <!-- Buffer Time Before the Event Start -->
-                        <div class="col">
-                            <label for="buffer_time_before" class="form-label">Buffer Time Before the Event Start:</label>
-                            <input type="number" id="buffer_time_before"
-                            @if($selectedEvent && $selectedEvent->duration_type === "hours")
-                            min="{{($selectedEvent->min_buffer_before)? ($buffer_time_unit === "days"? floor($selectedEvent->min_buffer_before / 8): ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_before: 0)): 0}}" 
-                            max="{{($selectedEvent->max_buffer_before)? ($buffer_time_unit === "days"? floor($selectedEvent->max_buffer_before / 8): ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_before: 0)): 0}}" 
-                            @elseif($selectedEvent && $selectedEvent->duration_type === "days")
-                            min="{{($selectedEvent->min_buffer_before)? ($buffer_time_unit === "days"? $selectedEvent->min_buffer_before: ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_before * 8: 0)): 0}}" 
-                            max="{{($selectedEvent->max_buffer_before)? ($buffer_time_unit === "days"? $selectedEvent->max_buffer_before: ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_before * 8: 0)): 0}}" 
-                            @else
-                            min="0" max="0"
-                            @endif
-                            wire:model.defer="buffer_time_before" class="form-control form-control-solid" placeholder="Buffer Time" />
-                            @error('buffer_time_before')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Buffer Time After the Event End -->
-                        <div class="col">
-                            <label for="buffer_time_after" class="form-label">Buffer Time After the Event End:</label>
-                            <input type="number" id="buffer_time_after"
-                            @if($selectedEvent && $selectedEvent->duration_type === "hours")
-                            min="{{($selectedEvent->min_buffer_after)? ($buffer_time_unit === "days"? floor($selectedEvent->min_buffer_after / 8): ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_after: 0)): 0}}" 
-                            max="{{($selectedEvent->max_buffer_after)? ($buffer_time_unit === "days"? floor($selectedEvent->max_buffer_after / 8): ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_after: 0)): 0}}" 
-                            @elseif($selectedEvent && $selectedEvent->duration_type === "days")
-                            min="{{($selectedEvent->min_buffer_after)? ($buffer_time_unit === "days"? $selectedEvent->min_buffer_after: ($buffer_time_unit === "hours"? $selectedEvent->min_buffer_after * 8: 0)): 0}}" 
-                            max="{{($selectedEvent->max_buffer_after)? ($buffer_time_unit === "days"? $selectedEvent->max_buffer_after: ($buffer_time_unit === "hours"? $selectedEvent->max_buffer_after * 8: 0)): 0}}" 
-                            @else
-                            min="0" max="0"
-                            @endif
-                            wire:model.defer="buffer_time_after" class="form-control form-control-solid" placeholder="Buffer Time"/>
-                            @error('buffer_time_after')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Buffer Time Unit -->
-                        <div class="col">
-                            <label for="buffer_time_unit" class="form-label">Buffer Time Unit:</label>
-                            <select class="form-select" id="buffer_time_unit" wire:model="buffer_time_unit">
-                                <option value="">Select Unit</option>
-                                <option value="hours">Hours</option>
-                                <option value="days">Days</option>
-                            </select>
-                            @error('buffer_time_unit')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="selectedVenueId" class="form-label">Select Venue:</label>
-                                <select class="form-select" wire:model="selectedVenueId" id="selectedVenueId">
-                                    <option value="">Select a Venue</option>
-                                    @foreach ($venues as $venue)
-                                        <option value="{{ $venue->id }}">{{ $venue->name }}</option>
+                                    <!--start::Description-->
+                                    <div class="fw-semibold fs-7 text-gray-600">
+                                        {{$contact->address}} <br>
+                                        {{$contact->postcode}} {{$contact->city}} <br>
+                                        {{$contact->state}}, {{$contact->country}}
+                                    </div>
+                                    <!--end::Description-->
                                     @endforeach
-                                </select>
-                </div>
-                <!--end::Input group-->
 
-                <!--begin::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="areaSelect" class="form-label">Select Areas:</label>
-                    <select class="form-select" id="areaSelect" wire:model="area_id">
-                        <option value="">Select an area</option>
-                        @foreach ($filteredAreas as $area)
-                            <option value="{{ $area->id }}">{{ $area->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <!--end::Input group-->
-                
-            </div>
-            <!--begin::Step 1-->
-
-            
-
-            <!--begin::Step 1-->
-            <div class="flex-column" data-kt-stepper-element="content">
-                <!--begin::Input group-->
-                <!-- Loop through each option and render based on kind -->
-                @foreach ($options as $option)
-                    <div class="fv-row mb-10">
-                        <!-- For 'yes_no', show a select dropdown with Yes and No options -->
-                        @if($option->type === 'yes_no')
-                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                            <select class="form-select" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
-                                <option value="">Select Yes/No</option>
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                        @endif
-
-                        <!-- For 'check', show checkboxes for each value -->
-                        @if($option->type === 'check')
-                            <label class="form-label">{{ $option->name }}:</label>
-                            @foreach(explode('|', $option->values) as $value)
-                                <div>
-                                    <input type="checkbox" wire:change="updateCheckboxOption({{ $option->id }}, '{{ $value }}', $event.target.checked)">
-                                    <label>{{ $value }}</label>
                                 </div>
-                            @endforeach
-                        @endif
+                                <!--end::Col-->
 
-                        <!-- For 'radio', show radio buttons for each value -->
-                        @if($option->type === 'radio')
-                            <label class="form-label mb-5">{{ $option->name }}:</label>
-                            @foreach(explode('|', $option->values) as $value)
-                                <div class="form-check form-check-custom form-check-solid mb-5">
-                                    <input class="form-check-input" type="radio"  wire:change="updateSelectedOption({{ $option->id }}, '{{ $value }}')" id="selectedOptions{{ $option->id }}" name="selectedOptions{{ $option->id }}"/>
-                                    <label class="form-check-label" for="selectedOptions{{ $option->id }}">
-                                        {{ $value }}
-                                    </label>
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.issuedby') }}:</div>
+                                    <!--end::Label-->
+
+                                    <!--end::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $tenant->name }}</div>
+                                    <!--end::Text-->
+
+                                    <!--start::Description-->
+                                    <div class="fw-semibold fs-7 text-gray-600">
+                                        {{$tenant->address}} <br>
+                                        {{$tenant->postcode}} {{$tenant->city}} <br>
+                                        {{$tenant->stateprovince}}, {{$tenant->country}}
+                                    </div>
+                                    <!--end::Description-->
                                 </div>
-                            @endforeach
-                        @endif
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row--> 
 
-                        <!-- For 'dropdown', show dropdown for each value -->
-                        @if($option->type === 'dropdown')
-                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                            <select class="form-select" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)">
-                                @foreach(explode('|', $option->values) as $value)
-                                    <option value="{{$value}}">{{$value}}</option>
-                                @endforeach
-                            </select>
-                        @endif
+                            <!--begin::Row-->
+                            <div class="row g-5 mb-12">
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.event_date') }}:</div>
+                                    <!--end::Label-->
 
-                        <!-- For 'number', show number input -->
-                        @if($option->type === 'number')
-                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                            <input type="number" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
-                        @endif
+                                    <!--end::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">
+                                        {{ $quote->date_from }}
+                                        @if($quote->date_from != $quote->date_to)
+                                            - {{ $quote->date_to }}
+                                        @endif
+                                        <br>
+                                        {{$quote->time_from}} - {{$quote->time_to}}
+                                    </div>
+                                    <!--end::Text-->
 
-                        <!-- For 'number', show number input -->
-                        @if($option->type === 'hidden')
-                            <label for="option{{ $option->id }}" class="form-label">{{ $option->name }}:</label>
-                            <input type="hidden" wire:change="updateSelectedOption({{ $option->id }}, $event.target.value)" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Number"/>
-                        @endif
+                                    <!--start::Description-->
+                                    <div class="fw-semibold fs-7 text-gray-600">
+                                        {{ trans('quotes.buffer_time') }} ({{$quote->buffer_time_unit}}): {{$quote->buffer_time_before}} {{ trans('quotes.before') }} {{ trans('quotes.and') }} {{$quote->buffer_time_after}} {{ trans('quotes.after') }}
+                                    </div>
+                                    <!--end::Description-->
+                                </div>
+                                <!--end::Col-->
 
-                        <!-- For 'logic', show number input -->
-                        @if($option->type === 'logic')
-                            <input type="hidden" wire:model="selectedOptions.{{ $option->id }}" class="form-control form-control-solid mb-3 mb-lg-0" value="{{ $option->value }}" />
-                        @endif
+                                <!--end::Col-->
+                                <div class="col-sm-6">
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.people') }}:</div>
+                                    <!--end::Label-->
 
+                                    <!--end::Text-->
+                                    <input style="display:none" type="text" class="form-control form-control-solid edit-mode" value="{{ $quote->people }}"/>
+                                    <div class="fw-bold fs-6 text-gray-800 show-mode">{{ $quote->people }}</div>
+                                    <!--end::Text-->
+
+                                    <!--end::Label-->
+                                    <div class="fw-semibold fs-7 text-gray-600">{{ trans('quotes.event_kind') }}:</div>
+                                    <!--end::Label-->
+
+                                    <!--end::Text-->
+                                    <div class="fw-bold fs-6 text-gray-800">{{ $quote->event_name ? $quote->event_name : 'N/A' }} </div>
+                                    <!--end::Text-->
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+
+                            <!--begin::Content-->
+                            <div class="flex-grow-1">
+                                <!--begin::Table-->
+                                <div class="table-responsive border-bottom mb-9">   
+                                    <table class="table mb-3">
+
+                                        <thead>
+                                            <tr class="border-bottom fs-6 fw-bold text-muted">
+                                                <th colspan="4" class="min-w-175px pb-2">{{ trans('quotes.details') }}</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr style="display:none" class="fw-bold text-gray-700 fs-5 edit-mode">
+                                                <td colspan="4" class="text-left pt-6" style="font-size: 80%;">
+                                                    <textarea type="text" class="form-control form-control-solid" rows="5" cols="30" style="resize: none">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</textarea>
+                                                </td>
+                                            </tr>
+                                            <tr class="fw-bold text-gray-700 fs-5">
+                                                <td colspan="4" class="text-left pt-6 show-mode" style="font-size: 80%;">
+                                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+
+                                        <thead>
+                                            <tr class="border-bottom fs-6 fw-bold text-muted">
+                                                <th class="min-w-175px pb-2">{{ trans('quotes.description') }}</th>
+                                                <th class="min-w-100px text-end pb-2">{{ trans('quotes.quantity') }}</th>
+                                                <th class="min-w-100px text-end pb-2">{{ trans('quotes.unit') }}</th>
+                                                <th class="min-w-100px text-end pb-2">{{ trans('quotes.price') }}</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @if($quote->price_venue != 0)
+                                            <tr class="fw-bold text-gray-700 fs-5 show-mode">
+                                                <td class="d-flex align-items-center text-left pt-6">
+                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                    {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
+                                                </td>
+
+                                                <td class="pt-6 text-end">1</td>
+                                                <td class="pt-6 text-end">$ {{ number_format($quote->price_venue, 2) }}</td>
+                                                <td class="pt-6 text-dark fw-bolder text-end">$ {{ number_format($quote->price_venue, 2) }}</td>
+                                            </tr>
+                                            <tr class="fw-bold text-gray-700 fs-5 edit-mode" style="display:none">
+                                                <td class="d-flex align-items-center text-left pt-6">
+                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                    <input style='width:200px' wire-model.defer="eventArea" type="text" class="form-control form-control-solid" value="{{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}" />
+                                                </td>
+                                                <td class="pt-6 text-end">
+                                                    <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="1" />
+                                                </td>
+                                                <td class="pt-6 text-end">
+                                                    <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ number_format($quote->price_venue, 2) }}" />
+                                                </td>
+                                                <td class="pt-6 text-dark fw-bolder text-end">
+                                                    <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{  number_format($quote->price_venue, 2)  }}" />
+                                                </td>
+                                            </tr>
+                                            @endif
+                                            <!-- Additional row for options and priceOption -->
+                                            @php
+                                                // Convert the price_options string into an array
+                                                $priceOptionsArray = explode('|', $quote->price_options);
+                                            @endphp
+
+                                            @foreach($optionsWithValues as $index => $optionWithValue)
+                                                @if(!($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'no'))
+                                                @php
+                                                    $price = floatval($priceOptionsArray[$index]);
+                                                    if($optionWithValue['type'] == 'radio' || $optionWithValue['type'] == 'always' || $optionWithValue['value'] == 'yes') {
+                                                        $value = 1;
+                                                    } else {
+                                                        $value = floatval($optionWithValue['value']);
+                                                    }
+                                                @endphp
+                                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
+                                                        <td class="d-flex align-items-center text-left pt-6">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
+                                                                {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
+                                                            @else
+                                                                {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
+                                                            @endif
+                                                        </td>
+                                                        <td class="pt-6 text-end">{{ $value }}</td>
+                                                        <td class="pt-6 text-end">
+                                                            @if($value != 0)
+                                                                ${{ number_format((float) $priceOptionsArray[$index] / (float) $value, 2) }}
+                                                            @else
+                                                                <!-- Handle the case where $value is zero -->
+                                                                N/A
+                                                            @endif
+                                                        </td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end">
+                                                            $ {{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="fw-bold text-gray-700 fs-5 edit-mode" style="display:none">
+                                                        <td class="d-flex align-items-center text-left pt-6">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            <input style='width:200px' type="text" class="form-control form-control-solid" value="{{ $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes' ? ($quote->eventType ? $quote->eventType->event_name : 'N/A') . ' - ' . $optionWithValue['option']->name : ($quote->eventType ? $quote->eventType->event_name : 'N/A') . ' - ' . $optionWithValue['option']->name }}" />
+                                                        </td>
+                                                        <td class="pt-6 text-end">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ $value }}" />
+                                                        </td>
+                                                        <td class="pt-6 text-end">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ $value != 0 ?  number_format((float) $priceOptionsArray[$index] / (float) $value, 2) : N/A}}" />
+                                                        </td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ isset($priceOptionsArray[$index]) ? number_format($priceOptionsArray[$index], 2) : 'N/A' }}" />
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+                                            @php
+                                                $value = 1;
+                                                $staffTypes = [
+                                                    'waiter' => ['data' => $waiter, 'price' => $waiterPrice],
+                                                    'venueManager' => ['data' => $venueManagers, 'price' => $venueManagersPrice],
+                                                    'toiletStaff' => ['data' => $toiletStaffs, 'price' => $toiletStaffsPrice],
+                                                    'cleaner' => ['data' => $cleaners, 'price' => $cleanersPrice],
+                                                    'barStaff' => ['data' => $barStaff, 'price' => $barStaffPrice],
+                                                    'other' => ['data' => $other, 'price' => $otherPrice],
+                                                ];
+                                            @endphp
+                                            @foreach ($staffTypes as $staffType => $staffData)
+                                                @if (count($staffData['data']) !== 0)
+                                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
+                                                        <td class="d-flex align-items-center text-left pt-6">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            {{ $staffData['data'][0]['name'] }}
+                                                        </td>
+                                                        <td class="pt-6 text-end">{{ $staffData['data'][0]['quantity'] }}</td>
+                                                        <td class="pt-6 text-end">
+                                                            @if($staffData['data'][0]['quantity'] != 0)
+                                                                ${{ number_format((float) $staffData['price'] / (float) $staffData['data'][0]['quantity'], 2) }}
+                                                            @else
+                                                                N/A
+                                                            @endif
+                                                        </td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end">
+                                                            $ {{ isset($staffData['price']) ? number_format($staffData['price'], 2) : 'N/A' }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="fw-bold text-gray-700 fs-5 edit-mode" style="display:none">
+                                                        <td class="d-flex align-items-center text-left pt-6">
+                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                            <input style='width:200px;display:inline-block' type="text" class="form-control form-control-solid" value="{{ $staffData['data'][0]['name'] }}" />
+                                                        </td>
+                                                        <td class="pt-6 text-end">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ $staffData['data'][0]['quantity'] }}" />
+                                                        </td>
+                                                        <td class="pt-6 text-end">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ $staffData['data'][0]['quantity'] != 0 ? number_format((float) $staffData['price'] / (float) $staffData['data'][0]['quantity'], 2) :  N/A}}" />
+                                                        </td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end">
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ isset($staffData['price']) ? number_format($staffData['price'], 2) : 'N/A' }}" />
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--end::Table-->
+
+                                <!--begin::Container-->
+                                <div class="d-flex justify-content-end">
+                                    <!--begin::Section-->
+                                    <div class="mw-300px">
+                                        <!--begin::Item-->
+                                        <div class="d-flex flex-stack mb-3">
+                                            <!--begin::Accountname-->
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.subtotal') }}:</div>
+                                            <!--end::Accountname-->
+
+                                            <!--begin::Label-->
+                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ number_format($quote->calculated_price, 2) }}</div>
+                                            <!--end::Label-->
+                                        </div>
+                                        <!--end::Item-->
+                                        @if($discount)
+                                        <!--begin::Item-->
+                                        <div class="d-flex flex-stack mb-3">
+                                            <!--begin::Accountname-->
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.discount') }}</div>
+                                            <!--end::Accountname-->
+
+                                            <!--begin::Label-->
+                                            <div class="text-end fw-bold fs-6 text-gray-800">{{$quote->discount}}</div>
+                                            <!--end::Label-->
+                                        </div>
+                                        <!--end::Item-->
+                                        @endif
+                                        <!--begin::Item-->
+                                        <div class="d-flex flex-stack mb-3">
+                                            <!--begin::Accountname-->
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.vat') }}:</div>
+                                            <!--end::Accountname-->
+
+                                            <!--begin::Label-->
+                                            <div class="text-end fw-bold fs-6 text-gray-800">0</div>
+                                            <!--end::Label-->
+                                        </div>
+                                        <!--end::Item-->
+
+                                        <!--begin::Item-->
+                                        <div class="d-flex flex-stack">
+                                            <!--begin::Code-->
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">{{ trans('quotes.total') }}:</div>
+                                            <!--end::Code-->
+
+                                            <!--begin::Label-->
+                                            <div class="text-end fw-bold fs-6 text-gray-800">$ {{ number_format($quote->price, 2) }}</div>
+                                            <!--end::Label-->
+                                        </div>
+                                        <!--end::Item-->
+                                    </div>
+                                    <!--end::Section-->
+                                </div>
+                                <!--end::Container-->
+                            </div>
+                            <!--end::Content-->
+                        </div>
+                        <!--end::Wrapper-->
                     </div>
-                @endforeach
-                <!--end::Input group-->
-                <div class="fv-row mb-10">
-                    <label for="discountField" class="form-label">Discount:</label>
-                    <input type="text" wire:model.defer="discount" class="form-control form-control-solid" placeholder="Enter a number or a percentage (e.g., 20 or 15%)" id="discountField" />
-                    @error('discount')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
+                    <!--end::Invoice 2 content-->
                 </div>
-            </div>
-            <!--begin::Step 1-->
-        </div>
-        <!--end::Group-->
-
-        <!--begin::Actions-->
-        <div class="d-flex flex-stack justify-content-center ">
-
-            <!--begin::Wrapper-->
-            <div class="text-center pt-15">
-                <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal" aria-label="Close" wire:loading.attr="disabled">Discard</button>
-                <button type="submit" id="submit_button" class="btn btn-primary" @if(sizeof($time_ranges) === 0 || !$selectedEvent) disabled @endif>
-                    <span class="indicator-label" wire:loading.remove wire:target="submit">Submit</span>
-                    <span class="" wire:loading wire:target="submit">
-                        Please wait...
-                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                    </span>
-                </button>
-            </div>
-            <!--end::Wrapper-->
-        </div>
-        <!--end::Actions-->
-    </form>
+                <!--end::Content-->
             </div>
         </div>
     </div>
-</div>
+    <div class="card h-lg-100 min-w-md-400px">
+         <!--begin::Body-->
+        <div class="card-body">
+            <!--begin::Layout-->
+            <div class="d-flex flex-column flex-xl-row">
+                <!--begin::Sidebar-->
+                <div class="m-0">
+                    <!--begin::Invoice 2 sidebar-->
+                    <div class="d-print-none border border-dashed border-gray-300 card-rounded p-9 bg-lighten">
 
+                       
+                        <!--begin::Title-->
+                        <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">{{ trans('quotes.status') }}</h6>
+                        <!--end::Title-->
 
-@push('scripts')
-@endpush
+                        <div class="mb-8">
+                            @switch($quote->status)
+                                @case('Sent')
+                                    <span class="badge badge-primary">{{ $quote->status }}</span>
+                                    @break
+                                @case('Approved')
+                                    <span class="badge badge-success">{{ $quote->status }}</span>
+                                    @break
+                                @case('Rejected')
+                                    <span class="badge badge-danger">{{ $quote->status }}</span>
+                                    @break
+                                @default
+                                    <span class="badge badge-secondary">{{ $quote->status }}</span>
+                            @endswitch
+                        </div>
+                        <!--end::Labels-->
+
+                        <!--begin::Title-->
+                        <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">{{ trans('quotes.versionhistory') }}</h6>
+                        <!--end::Title-->
+
+                        <!--begin::Item-->
+                        <div class="mb-6">
+                            <!--begin::Table-->
+                                <div class="table-responsive border-bottom mb-9">
+                                    <table class="table mb-3">
+                                        <thead>
+                                            <tr class="border-bottom fs-6 fw-bold text-muted">
+                                                <th class="pb-2">{{ trans('quotes.version') }}</th>
+                                                <th class="text-center pb-2">{{ trans('quotes.date') }}</th>
+                                                <th class="text-end pb-2">{{ trans('general.actions') }}</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                          @foreach($relatedQuotes as $key => $quoteHistory)
+                                            <tr class="fw-bold text-gray-700 fs-5 text-end">
+                                                <td class="d-flex align-items-center pt-6">
+                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
+                                                    {{ $quoteHistory->version }}
+                                                </td>
+                                                <td class="pt-6 text-dark text-center fw-bolder">
+                                                    @if ($key == 0)
+                                                        <!-- Handle the first item (shifted from the last) -->
+                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d/m/Y H:i') }}
+                                                    @else
+                                                        {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y') }}
+                                                    @endif
+                                                </td>
+                                                <td class="pt-6 text-dark fw-bolder">
+                                                    <a href="{{ route('quotes.show', $quoteHistory) }}">{{ trans('general.view') }}</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                            <tr>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--end::Table-->
+                        </div>
+                        <!--end::Item-->
+                    </div>
+                    <!--end::Invoice 2 sidebar-->
+                </div>
+                <!--end::Sidebar-->
+            </div>
+            <!--end::Layout-->
+        </div>
+        <!--end::Body-->
+    </div>
+    </div>
+    @push('scripts')
+        <script>
+            document.querySelectorAll('[data-kt-action="update_row"]').forEach(function (element) {
+                element.addEventListener('click', function () {
+                    Livewire.emit('update_quote', this.getAttribute('data-kt-quote-id'));
+                });
+            });
+            document.addEventListener('livewire:load', function () {
+                Livewire.on('success', function () {
+                    $('#kt_modal_edit_quote').modal('hide'); 
+                    location.reload();
+                });
+            });
+            document.addEventListener('DOMContentLoaded', function() {
+            const bookButton = document.getElementById('book-quote');
+            const eidtButton = document.getElementById('edit-quote');
+            const submitButton = document.getElementById('submit-quote');
+
+            if(eidtButton) {
+                eidtButton.addEventListener('click', function() {
+                    var editElements = document.getElementsByClassName("edit-mode");
+                    var showElements = document.getElementsByClassName("show-mode");
+                    for (var i = 0; i < editElements.length; i++) {
+                        console.log(editElements[i]);
+                        editElements[i].style.display = ""; 
+                        showElements[i].style.display = "none"; 
+                    }
+                });
+            }
+
+            if(submitButton) {
+                submitButton.addEventListener('click', function() {
+                    var editElements = document.getElementsByClassName("edit-mode");
+                    var showElements = document.getElementsByClassName("show-mode");
+                    for (var i = 0; i < editElements.length; i++) {
+                        editElements[i].style.display = "none"; 
+                        showElements[i].style.display = ""; 
+                    }
+                });
+            }
+
+            if (bookButton) {
+                bookButton.addEventListener('click', function() {
+                    const quoteId = bookButton.getAttribute('data-quote-id');
+                    axios.post(`/quotes/${quoteId}/book`)
+                        .then(function(response) {
+                            if(response.status === 200) {
+                                toastr.success(response.data.message);
+                            } else {
+                                // If status is not 200, handle it as an error
+                                toastr.error('Something went wrong. Please try again.');
+                            }
+                        })
+                        .catch(function(error) {
+                            if (error.response && error.response.data && error.response.data.error) {
+                                toastr.error(error.response.data.error);
+                            } else {
+                                // Generic error message for other types of errors
+                                toastr.error('An error occurred. Please try again.');
+                            }
+                        });
+                });
+            }
+        });
+
+            
+        </script>
+    @endpush
+</x-default-layout>

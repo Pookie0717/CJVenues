@@ -70,7 +70,9 @@
 @stack('scripts')
 <!--end::Javascript-->
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     document.addEventListener('livewire:load', () => {
         Livewire.on('success', (message) => {
             toastr.success(message);

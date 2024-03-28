@@ -14,6 +14,9 @@ return [
     */
 
     'book' => 'Book',
+    'edit' => 'Edit',
+    'submit' => 'Submit',
+    'action' => 'Action',
     'export' => 'Export',
     'title' => 'Quote' ,
     'quote_label' => 'Quote #:number v:version',

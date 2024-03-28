@@ -531,7 +531,7 @@
                                                 <td class="pt-6 text-dark text-center fw-bolder">
                                                     @if ($key == 0)
                                                         <!-- Handle the first item (shifted from the last) -->
-                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d/m/Y H:i') }}
+                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d-m-Y') }}
                                                     @else
                                                         {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y') }}
                                                     @endif
@@ -716,7 +716,7 @@
             newInput1.className = 'form-control form-control-solid';
             newInput1.style.width = '200px';
             newInput1.style.display = 'inline-block';
-            newInput1.style.textAlign = 'right';
+            newInput1.style.textAlign = 'left';
             newInput1.type = 'text';
 
             var newInput2 = document.createElement('input');
@@ -747,7 +747,7 @@
             var removeButton = document.createElement('button');
             removeButton.type = "button";
             removeButton.className = "btn btn-danger btn-sm text-right";
-            removeButton.textContent = "Remove";
+            removeButton.textContent = "X";
             removeButton.onclick = function(event) {
                 remove_item(event);
             };

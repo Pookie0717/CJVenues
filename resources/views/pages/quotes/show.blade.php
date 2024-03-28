@@ -374,8 +374,8 @@
                                                             {{ $extraItemName }}
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">{{ $extraItemsCount[$index] }}</td>
-                                                        <td class="pt-6 text-end align-middle">${{$extraItemsPrice[$index] / $extraItemsCount[$index]}}</td>
-                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">${{$extraItemsPrice[$index]}}</td>
+                                                        <td class="pt-6 text-end align-middle">${{number_format($extraItemsPrice[$index] / $extraItemsCount[$index], 2)}}</td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">${{ number_format($extraItemsPrice[$index], 2)}}</td>
                                                     </tr>
                                                     <tr class="fw-bold text-gray-700 fs-5 edit-mode extra-items" style="display:none">
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
@@ -656,8 +656,9 @@
                         },
                     })
                     .then(function (response) {
-                        console.log(response.data);
-                        location.reload();
+                        console.log(response.data.quoteId);
+                        window.location.href = `https://dashboard.cjvenues.com/quotes/${response.data.quoteId}`;
+                        // window.location.href = `http://localhost:8000/quotes/${response.data.quoteId}`;
                     })
                     .catch(function (error) {
                         console.log(error);

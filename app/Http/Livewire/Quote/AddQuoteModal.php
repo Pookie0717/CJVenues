@@ -281,7 +281,7 @@ class AddQuoteModal extends Component
                     $staffIndividualIds = [];
                     $staffIndividualCount = [];
                     if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
-                        $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr, $this->date_from, $this->date_to, $timeFrom, $timeTo, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
+                        $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr_option, $this->date_from, $this->date_to, $timeFrom, $timeTo, $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
                         $staffPrice_val = $staffPrice_arr['totalPrice'];
                         foreach($staffPrice_arr as $staff_id => $staffPrice_item) {
                             $staffIndividualIds[] = $staff_id;
@@ -353,7 +353,7 @@ class AddQuoteModal extends Component
         $merged_staff_ids_arr = array_map(function($value) {
             return $value === null ? 'null' : $value;
         }, $merged_staff_ids_arr);
-        $this->staff_ids = implode('|', $merged_staff_ids_arr);
+        // $this->staff_ids = implode('|', $merged_staff_ids_arr);
 
         $this->submitedTenantIds[] = $mainTenantId;
 
@@ -365,7 +365,7 @@ class AddQuoteModal extends Component
         if($this->waiters || $this->venueManagers || $this->toiletStaffs || $this->cleaners) { 
             $this->staff_individual_prices = [];
             $this->staff_individual_ids = [];
-            $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr, $this->date_from, $this->date_to, $timeFrom, $timeTo,  $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
+            $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr_option, $this->date_from, $this->date_to, $timeFrom, $timeTo,  $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
             $staffPrice_val = $staffPrice_arr['totalPrice'];
             foreach($staffPrice_arr as $staff_id => $staffPrice_item) {
                 $staffIndividualIds[] = $staff_id;
@@ -377,12 +377,10 @@ class AddQuoteModal extends Component
                 }
             }
         }
-        Log::info($staffIndividualPrices);
 
         array_shift($staffIndividualIds);
-        $calculatedPrice = $priceVenue + $mainPriceOptions + $staffPrice_val;
+        $calculatedPrice = $priceVenue + $staffPrice_val + $mainPriceOptions;
         $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);
-
         Quote::create([
             'contact_id' => $this->contact_id,
             'status' => 'Draft',
@@ -408,7 +406,7 @@ class AddQuoteModal extends Component
             'buffer_time_after' => $this->buffer_time_after,
             'buffer_time_unit' => $this->buffer_time_unit,
             'tenant_id' => $mainTenantId,
-            'staff_ids' => $this->staff_ids,
+            'staff_ids' => implode("|", $merged_staff_ids_arr),
             'staff_individual_ids' => implode('|', $staffIndividualIds),
             'staff_individual_prices' => implode('|', $staffIndividualPrices),
             'staff_individual_count' => implode('|', $staffIndividualCount),
@@ -443,7 +441,7 @@ class AddQuoteModal extends Component
 
             //calculate staff price
             $staffPrice_val = 0;
-            $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr, $this->date_from, $this->date_to, $timeFrom, $timeTo,  $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
+            $staffPrice_arr = $this->calculateStaffPrice($staff_ids_arr_staff, $this->date_from, $this->date_to, $timeFrom, $timeTo,  $this->buffer_time_before, $this->buffer_time_after, $this->buffer_time_unit);
             $staffIndividualPrices = [];
             $staffIndividualIds = [];
             $staffIndividualCount = [];

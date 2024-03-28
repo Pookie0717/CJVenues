@@ -79,7 +79,6 @@ class QuotesController extends Controller
             }
             $flag = false;
             for ($i = 0; $i < 6; $i++) { 
-                Log::info($staff_ids_arr[$i]);
                 foreach ($staff_ids as $staff_id) {
                     if ($staff_ids_arr[$i] == $staff_id) {
                         $flag = true;
@@ -103,7 +102,7 @@ class QuotesController extends Controller
                 }
             }
         }
-        Log::info($extra_prices);
+        $newId = 0;
         if ($quote) {
             $quote->status = 'Draft';
             $quote->contact_id = $original_quote->contact_id;
@@ -144,8 +143,14 @@ class QuotesController extends Controller
             $quote->buffer_time_unit = $original_quote->buffer_time_unit;
             $quote->tenant_id = $original_quote->tenant_id;
             $quote->save();
+            $newId = $quote->id;
         }
-        return response()->json(['message' => 'Quote submitted successfully!']);
+        return response()->json(
+            [
+                'message' => 'Quote submitted successfully!',
+                'quoteId' => $newId
+            ]
+        );
     }
 
     private function applyDiscount($calculatedPrice, $discount)

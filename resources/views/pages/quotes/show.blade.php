@@ -380,8 +380,8 @@
                                                             {{ $extraItemName }}
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">{{ $extraItemsCount[$index] }}</td>
-                                                        <td class="pt-6 text-end align-middle">${{$extraItemsPrice[$index]}}</td>
-                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">${{$extraItemsCount[$index] * $extraItemsPrice[$index]}}</td>
+                                                        <td class="pt-6 text-end align-middle">${{$extraItemsPrice[$index] / $extraItemsCount[$index]}}</td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">${{$extraItemsPrice[$index]}}</td>
                                                     </tr>
                                                     <tr class="fw-bold text-gray-700 fs-5 edit-mode extra-items" style="display:none">
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
@@ -392,9 +392,9 @@
                                                             <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{ $extraItemsCount[$index] }}" />
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">
-                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{$extraItemsPrice[$index]}}" />
+                                                            <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="{{$extraItemsPrice[$index] / $extraItemsCount[$index]}}" />
                                                         </td>
-                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">{{$extraItemsCount[$index] * $extraItemsPrice[$index]}}</td>
+                                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">{{$extraItemsPrice[$index]}}</td>
                                                         <td class="d-flex justify-content-end align-items-center pt-6 align-middle">
                                                             <button type="button" class="btn btn-danger btn-sm text-right" onclick="remove_item(event)">Remove</button>
                                                         </td>

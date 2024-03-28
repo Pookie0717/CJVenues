@@ -101,6 +101,7 @@ class QuotesController extends Controller
                 }
             }
         }
+        Log::info($extra_prices);
         if ($quote) {
             $quote->version = $quote->version + 1;
             $quote->status = 'Draft';

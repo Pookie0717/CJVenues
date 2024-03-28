@@ -19,6 +19,7 @@ class Quote extends Model
     protected $fillable = [
         'contact_id',
         'status',
+        'details',
         'quote_number',
         'version',
         'date_from',

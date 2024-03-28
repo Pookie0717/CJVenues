@@ -43,8 +43,9 @@ class QuotesController extends Controller
         $staff_ids = [];
         $venue_prices = 0;
         $totalPrice = 0;
-        $quote = Quote::find($id);
-        $staff_ids_arr = explode('|', $quote->staff_ids);
+        $original_quote = Quote::find($id);
+        $quote = new Quote;
+        $staff_ids_arr = explode('|', $original_quote->staff_ids);
         $details = $updatedQuote->details;
         $people = $updatedQuote->people;
         $extra_name = [];
@@ -78,6 +79,7 @@ class QuotesController extends Controller
             }
             $flag = false;
             for ($i = 0; $i < 6; $i++) { 
+                Log::info($staff_ids_arr[$i]);
                 foreach ($staff_ids as $staff_id) {
                     if ($staff_ids_arr[$i] == $staff_id) {
                         $flag = true;
@@ -103,7 +105,18 @@ class QuotesController extends Controller
         }
         Log::info($extra_prices);
         if ($quote) {
-            $quote->version = $quote->version + 1;
+            $quote->status = 'Draft';
+            $quote->contact_id = $original_quote->contact_id;
+            $quote->details = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+            $quote->date_from = $original_quote->date_from;
+            $quote->date_to = $original_quote->date_to;
+            $quote->time_from = $original_quote->time_from;
+            $quote->time_to = $original_quote->time_to;
+            $quote->version = $original_quote->version + 1;
+            $quote->area_id = $original_quote->area_id;
+            $quote->event_type = $original_quote->event_type;
+            $quote->event_name = $original_quote->event_name;
+            $quote->quote_number = $original_quote->quote_number;
             $quote->status = 'Draft';
             $quote->details = $details;
             $quote->options_name = $options_name ? implode('|', $options_name) : null;
@@ -122,11 +135,44 @@ class QuotesController extends Controller
             $quote->price_venue = $venue_prices;
             $quote->people = $people;
             $quote->price = $totalPrice;
+            $quote->calculated_price = $this->applyDiscount($totalPrice, $original_quote->discount);
+            $quote->discount = $original_quote->discount;
             $quote->calculated_price = $totalPrice;
             $quote->venue_count = $venue_count;
+            $quote->buffer_time_before = $original_quote->buffer_time_before;
+            $quote->buffer_time_after = $original_quote->buffer_time_after;
+            $quote->buffer_time_unit = $original_quote->buffer_time_unit;
+            $quote->tenant_id = $original_quote->tenant_id;
             $quote->save();
         }
         return response()->json(['message' => 'Quote submitted successfully!']);
+    }
+
+    private function applyDiscount($calculatedPrice, $discount)
+    {
+        // Remove whitespace and parse discount
+        $discount = trim($discount);
+
+        // Check if the discount is a percentage
+        if (str_ends_with($discount, '%')) {
+            $percentage = rtrim($discount, '%');
+            if (is_numeric($percentage)) {
+                // Calculate the discount as a percentage of the calculated price
+                $discountAmount = ($percentage / 100) * $calculatedPrice;
+            } else {
+                // Handle invalid percentage format
+                throw new \Exception("Invalid discount percentage format");
+            }
+        } else if (is_numeric($discount)) {
+            // If the discount is a numeric value, treat it as a flat amount
+            $discountAmount = $discount;
+        } else {
+            // Handle invalid discount format
+            throw new \Exception("Invalid discount format");
+        }
+
+        // Subtract the discount amount from the calculated price
+        return max($calculatedPrice - $discountAmount, 0); // Ensure the total doesn't go below 0
     }
 
     public function book(Request $request, $id)

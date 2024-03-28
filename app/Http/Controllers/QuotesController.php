@@ -199,10 +199,23 @@ class QuotesController extends Controller
         $extraItemsName = explode('|', $quote->extra_items_name);
         $extraItemsCount = explode('|', $quote->extra_items_count);
         $extraItemsPrice = explode('|', $quote->extra_items_price);
+        $staff_individual_ids = explode('|', $quote->staff_individual_ids);
 
         $staffIds = explode('|', $quote->staff_ids);
         if(count($staffIds) <= 1) {
             $staffIds = [0, 0, 0, 0, 0, 0];
+        }
+        $useFlag = false;
+        foreach($staffIds as $index => $staffId) {
+            foreach($staff_individual_ids as $staff_individual_id) {
+                if($staff_individual_id == $staffId){
+                    $useFlag = true;
+                }
+            }
+            if($useFlag == false) {
+                $staffIds[$index] = 0;
+            }
+            $useFlag = false;
         }
         $waiter = Staffs::where('id', $staffIds[0])->get();
         $venueManagers = Staffs::where('id', $staffIds[1])->get();
@@ -250,131 +263,160 @@ class QuotesController extends Controller
         $staff_price_arr = explode('|', $quote->staff_individual_prices);
         $staff_quantity_arr = explode('|', $quote->staff_individual_count);
         $i = 0;
+        $flag = false;
         for($index = 0;$index < 6;$index + 1) {
             $staff_arr_val = isset($staff_arr[$index]) ? $staff_arr[$index] : null;
-            $staff_price = Price::where('staff_id', $staff_arr_val)->get();
-            $staff_items = Staffs::where('id', $staff_arr_val)->get();
-            if($staff_arr_val > 0) {
-                $multiplierType = $staff_price[0]['multiplier'];
-                $selected_date_from = explode('-', $quote->date_from);
-                $selected_date_to = explode('-', $quote->date_to);
-                $selected_date_between = Carbon::parse($quote->date_to)->diffInDays(Carbon::parse($quote->date_from));
-                $selected_date_between = $selected_date_between == 0 ? 1 : $selected_date_between;
-                switch ($multiplierType) {
-                    case 'daily':
-                        if ($index == 0) {
-                            $waiterPrice = $staff_price_arr[$i];
-                            $waiter[0]['quantity'] = $staff_quantity_arr[$i];
-                        } else if ($index == 1) {
-                            $venueManagersPrice = $staff_price_arr[$i];
-                            $venueManagers[0]['quantity'] = $staff_quantity_arr[$i];
-                        } else if ($index == 2) {
-                            $toiletStaffsPrice = $staff_price_arr[$i];
-                            $toiletStaffs[0]['quantity'] = $staff_quantity_arr[$i];
-                        } else if ($index == 3) {
-                            $cleanersPrice = $staff_price_arr[$i];
-                            $cleaners[0]['quantity'] = $staff_quantity_arr[$i];
-                        } else if ($index == 4) {
-                            $barStaffPrice = $staff_price_arr[$i];
-                            $barStaff[0]['quantity'] = $staff_quantity_arr[$i];
-                        } else if ($index == 5) {
-                            $otherPrice = $staff_price_arr[$i];
-                            $other[0]['quantity'] = $staff_quantity_arr[$i];
-                        }
-                        $i += 1;
-                        break;
-                    case 'hourly':
-                        $dateFromC = Carbon::createFromFormat('d-m-Y', $quote->date_from);
-                        $currentDate = $dateFromC->copy();
-                        $dateFrom = Carbon::createFromFormat('d-m-Y', $quote->date_from);
-                        $dateTo = Carbon::createFromFormat('d-m-Y', $quote->date_to);
-
-                        $timeFrom = $quote->time_from;
-                        $timeTo = $quote->time_to;
-                        $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
-                        switch($index) {
-                            case 0:
+            foreach($staff_individual_ids as $staff_individual_id) {
+                if($staff_arr_val == $staff_individual_id) {
+                    $flag = true;
+                }
+            }
+            if($flag) {
+                $staff_price = Price::where('staff_id', $staff_arr_val)->get();
+                $staff_items = Staffs::where('id', $staff_arr_val)->get();
+                if($staff_arr_val > 0) {
+                    $multiplierType = $staff_price[0]['multiplier'];
+                    $selected_date_from = explode('-', $quote->date_from);
+                    $selected_date_to = explode('-', $quote->date_to);
+                    $selected_date_between = Carbon::parse($quote->date_to)->diffInDays(Carbon::parse($quote->date_from));
+                    $selected_date_between = $selected_date_between == 0 ? 1 : $selected_date_between;
+                    switch ($multiplierType) {
+                        case 'daily':
+                            if ($index == 0) {
                                 $waiterPrice = $staff_price_arr[$i];
                                 $waiter[0]['quantity'] = $staff_quantity_arr[$i];
-                                break;
-                            case 1:
+                                $i += 1;
+                            } else if ($index == 1) {
                                 $venueManagersPrice = $staff_price_arr[$i];
                                 $venueManagers[0]['quantity'] = $staff_quantity_arr[$i];
-                                break;
-                            case 2:
+                                $i += 1;
+                            } else if ($index == 2) {
                                 $toiletStaffsPrice = $staff_price_arr[$i];
                                 $toiletStaffs[0]['quantity'] = $staff_quantity_arr[$i];
-                                break;
-                            case 3:
+                                $i += 1;
+                            } else if ($index == 3) {
                                 $cleanersPrice = $staff_price_arr[$i];
                                 $cleaners[0]['quantity'] = $staff_quantity_arr[$i];
-                                break;
-                            case 4:
+                                $i += 1;
+                            } else if ($index == 4) {
                                 $barStaffPrice = $staff_price_arr[$i];
                                 $barStaff[0]['quantity'] = $staff_quantity_arr[$i];
-                                break;
-                            case 5:
+                                $i += 1;
+                            } else if ($index == 5) {
                                 $otherPrice = $staff_price_arr[$i];
                                 $other[0]['quantity'] = $staff_quantity_arr[$i];
-                                break;
-                        }
-                        $i += 1;
-                        break;
-                    case 'event':
-                        switch($index) {
-                            case 0:
+                                $i += 1;
+                            }
+                            break;
+                        case 'hourly':
+                            $dateFromC = Carbon::createFromFormat('d-m-Y', $quote->date_from);
+                            $currentDate = $dateFromC->copy();
+                            $dateFrom = Carbon::createFromFormat('d-m-Y', $quote->date_from);
+                            $dateTo = Carbon::createFromFormat('d-m-Y', $quote->date_to);
+    
+                            $timeFrom = $quote->time_from;
+                            $timeTo = $quote->time_to;
+                            $hours = $this->calculateNumberOfHours($currentDate, $timeFrom, $currentDate, $timeTo);
+                            switch($index) {
+                                case 0:
+                                    $waiterPrice = $staff_price_arr[$i];
+                                    $waiter[0]['quantity'] = $staff_quantity_arr[$i];
+                                    $i += 1;
+                                    break;
+                                case 1:
+                                    $venueManagersPrice = $staff_price_arr[$i];
+                                    $venueManagers[0]['quantity'] = $staff_quantity_arr[$i];
+                                    $i += 1;
+                                    break;
+                                case 2:
+                                    $toiletStaffsPrice = $staff_price_arr[$i];
+                                    $toiletStaffs[0]['quantity'] = $staff_quantity_arr[$i];
+                                    $i += 1;
+                                    break;
+                                case 3:
+                                    $cleanersPrice = $staff_price_arr[$i];
+                                    $cleaners[0]['quantity'] = $staff_quantity_arr[$i];
+                                    $i += 1;
+                                    break;
+                                case 4:
+                                    $barStaffPrice = $staff_price_arr[$i];
+                                    $barStaff[0]['quantity'] = $staff_quantity_arr[$i];
+                                    $i += 1;
+                                    break;
+                                case 5:
+                                    $otherPrice = $staff_price_arr[$i];
+                                    $other[0]['quantity'] = $staff_quantity_arr[$i];
+                                    $i += 1;
+                                    break;
+                            }
+                            break;
+                        case 'event':
+                            switch($index) {
+                                case 0:
+                                    $waiterPrice = $staff_price_arr[$i];
+                                    $waiter[0]['quantity'] = 1;
+                                    $i += 1;
+                                    break;
+                                case 1:
+                                    $venueManagersPrice = $staff_price_arr[$i];
+                                    if($venueManagersPrice > 0) $venueManagers[0]['quantity'] = 1;
+                                    $i += 1;
+                                    break;
+                                case 2:
+                                    $toiletStaffsPrice = $staff_price_arr[$i];
+                                    if($toiletStaffsPrice > 0) $toiletStaffs[0]['quantity'] = 1;
+                                    $i += 1;
+                                    break;
+                                case 3:
+                                    $cleanersPrice = $staff_price_arr[$i];
+                                    if($cleanersPrice > 0) $cleaners[0]['quantity'] = 1;
+                                    $i += 1;
+                                    break;
+                                case 4:
+                                    $barStaffPrice = $staff_price_arr[$i];
+                                    if($barStaffPrice > 0) $barStaff[0]['quantity'] = 1;
+                                    $i += 1;
+                                    break;
+                                case 5:
+                                    $otherPrice = $staff_price_arr[$i];
+                                    if($otherPrice > 0) $other[0]['quantity'] = 1;
+                                    $i += 1;
+                                    break;
+                            }
+                            break;
+                        case 'event_pp':
+                            $people = $quote->people;
+                            if ($index == 0 && $staff_arr[$index + 6] !== 'null') {
                                 $waiterPrice = $staff_price_arr[$i];
-                                $waiter[0]['quantity'] = 1;
-                                break;
-                            case 1:
-                                $venueManagersPrice = $staff_price_arr[$i];
-                                if($venueManagersPrice > 0) $venueManagers[0]['quantity'] = 1;
-                                break;
-                            case 2:
+                                $waiter[0]['quantity'] = explode(',', $staff_items[0]['count'])[$staff_arr[$index + 6]];
+                                $i += 1;
+                            } else if ($index == 1 && $staff_arr[$index + 6] !== 'null') {
+                                $venueManagersPrice = $staff_price_arr[$i]; 
+                                $venueManagers[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
+                                $i += 1;
+                            } else if ($index == 2 && $staff_arr[$index + 6] !== 'null') {
                                 $toiletStaffsPrice = $staff_price_arr[$i];
-                                if($toiletStaffsPrice > 0) $toiletStaffs[0]['quantity'] = 1;
-                                break;
-                            case 3:
+                                $toiletStaffs[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
+                                $i += 1;
+                            } else if($index == 3 && $staff_arr[$index + 6] !== 'null') {
                                 $cleanersPrice = $staff_price_arr[$i];
-                                if($cleanersPrice > 0) $cleaners[0]['quantity'] = 1;
-                                break;
-                            case 4:
+                                $cleaners[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
+                                $i += 1;
+                            } else if($index == 4 && $staff_arr[$index + 5] !== 'null') {
                                 $barStaffPrice = $staff_price_arr[$i];
-                                if($barStaffPrice > 0) $barStaff[0]['quantity'] = 1;
-                                break;
-                            case 5:
+                                $barStaff[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
+                                $i += 1;
+                            } else if($index == 5 && $staff_arr[$index + 6] !== 'null') {
                                 $otherPrice = $staff_price_arr[$i];
-                                if($otherPrice > 0) $other[0]['quantity'] = 1;
-                                break;
-                        }
-                        $i += 1;
-                        break;
-                    case 'event_pp':
-                        $people = $quote->people;
-                        if ($index == 0 && $staff_arr[$index + 6] !== 'null') {
-                            $waiterPrice = $staff_price_arr[$i];
-                            $waiter[0]['quantity'] = explode(',', $staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if ($index == 1 && $staff_arr[$index + 6] !== 'null') {
-                            $venueManagersPrice = $staff_price_arr[$i]; 
-                            $venueManagers[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if ($index == 2 && $staff_arr[$index + 6] !== 'null') {
-                            $toiletStaffsPrice = $staff_price_arr[$i];
-                            $toiletStaffs[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if($index == 3 && $staff_arr[$index + 6] !== 'null') {
-                            $cleanersPrice = $staff_price_arr[$i];
-                            $cleaners[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if($index == 4 && $staff_arr[$index + 5] !== 'null') {
-                            $barStaffPrice = $staff_price_arr[$i];
-                            $barStaff[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        } else if($index == 5 && $staff_arr[$index + 6] !== 'null') {
-                            $otherPrice = $staff_price_arr[$i];
-                            $other[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
-                        }
-                        $i += 1;
-                        break;
+                                $other[0]['quantity'] = explode(',',$staff_items[0]['count'])[$staff_arr[$index + 6]];
+                                $i += 1;
+                            }
+                            break;
+                    }
                 }
             }
             $index++;
+            $flag = false;
         }
 
         // Combine the selected options with their values

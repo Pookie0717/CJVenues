@@ -301,7 +301,6 @@ class AddQuoteModal extends Component
                         session()->flash('error', $e->getMessage());
                         return;
                     }
-
                     Quote::create([
                         'contact_id' => $this->contact_id,
                         'status' => 'Draft',
@@ -377,6 +376,8 @@ class AddQuoteModal extends Component
                 }
             }
         }
+        Log::info($staffIndividualPrices);
+
         array_shift($staffIndividualIds);
         $calculatedPrice = $priceVenue + $mainPriceOptions + $staffPrice_val;
         $totalPrice = $this->applyDiscount($calculatedPrice, $this->discount);

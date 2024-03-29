@@ -63,23 +63,50 @@ class QuotesDataTable extends DataTable
             });
     }
 
-    public function query(Quote $model)
-    {
-            // Get the current tenant_id from the session
-            $currentTenantId = Session::get('current_tenant_id');
-            $tenant = Tenant::find($currentTenantId);
-            $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-            $tenantIds[] = $currentTenantId;
+    // public function query(Quote $model)
+    // {
+    //         // Get the current tenant_id from the session
+    //         $currentTenantId = Session::get('current_tenant_id');
+    //         $tenant = Tenant::find($currentTenantId);
+    //         $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+    //         $tenantIds[] = $currentTenantId;
 
-            // Query the VenueArea records, filter by tenant_id, and select specific columns
-            return $model->newQuery()->with('tenant')
-                ->whereIn('tenant_id', $tenantIds)
-                ->where('status', '<>', 'Archived')
-                ->select([
-                    'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
-                ]);
+    //         // Query the VenueArea records, filter by tenant_id, and select specific columns
+    //         return $model->newQuery()->with('tenant')
+    //             ->whereIn('tenant_id', $tenantIds)
+    //             ->where('status', '<>', 'Archived')
+    //             ->select([
+    //                 'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
+    //             ]);
+    // }
 
+
+    public function query(Quote $model) {
+        $currentTenantId = Session::get('current_tenant_id');
+        $tenant = Tenant::find($currentTenantId);
+        $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
+        $tenantIds[] = $currentTenantId;
+        
+        // Subquery to get the latest id for each quote_number
+        $latestQuotesSubquery = $model->newQuery()
+            ->whereIn('tenant_id', $tenantIds)
+            ->where('status', '<>', 'Archived')
+            ->selectRaw('MAX(id) as latest_id')
+            ->groupBy('quote_number');
+
+        // Main query that joins the subquery to ensure only the latest quotes are selected
+        return $model->newQuery()
+            ->joinSub($latestQuotesSubquery, 'latest_quotes', function ($join) {
+                $join->on('quotes.id', '=', 'latest_quotes.latest_id');
+            })
+            ->with('tenant')
+            ->select([
+                'quotes.id', 'quotes.quote_number', 'quotes.version', 'quotes.status',
+                'quotes.contact_id', 'quotes.event_type', 'quotes.area_id',
+                'quotes.created_at', 'quotes.updated_at', 'quotes.tenant_id'
+            ]);
     }
+
 
     public function html(): HtmlBuilder
     {

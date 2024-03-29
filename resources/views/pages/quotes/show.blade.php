@@ -521,19 +521,21 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                          @foreach($relatedQuotes as $key => $quoteHistory)
+                                        @foreach($relatedQuotes as $key => $quoteHistory)
                                             <tr class="fw-bold text-gray-700 fs-5 text-end">
                                                 <td class="d-flex align-items-center pt-6">
                                                     <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                     {{ $quoteHistory->version }}
                                                 </td>
                                                 <td class="pt-6 text-dark text-center fw-bolder">
+                                                    {{ $relatedQuotes[$key]->created_at->format('d-m-Y-h:i') }}
+                                                    <!-- Handle the first item (shifted from the last) 
                                                     @if ($key == 0)
-                                                        <!-- Handle the first item (shifted from the last) -->
-                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d-m-Y') }}
+                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d-m-Y-h:i') }}
                                                     @else
-                                                        {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y') }}
+                                                        {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y-h:i') }}
                                                     @endif
+                                                    !-->
                                                 </td>
                                                 <td class="pt-6 text-dark fw-bolder">
                                                     <a href="{{ route('quotes.show', $quoteHistory) }}">{{ trans('general.view') }}</a>
@@ -656,8 +658,8 @@
                     })
                     .then(function (response) {
                         console.log(response.data.quoteId);
-                        window.location.href = `https://dashboard.cjvenues.com/quotes/${response.data.quoteId}`;
-                        // window.location.href = `http://localhost:8000/quotes/${response.data.quoteId}`;
+                        // window.location.href = `https://dashboard.cjvenues.com/quotes/${response.data.quoteId}`;
+                        window.location.href = `http://localhost:8000/quotes/${response.data.quoteId}`;
                     })
                     .catch(function (error) {
                         console.log(error);

@@ -144,6 +144,8 @@ class QuotesController extends Controller
             $quote->tenant_id = $original_quote->tenant_id;
             $quote->save();
             $newId = $quote->id;
+            $created_at = date('Y-m-d H:i:s');
+            $updated_at = date('Y-m-d H:i:s');
         }
         return response()->json(
             [

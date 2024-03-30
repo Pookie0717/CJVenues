@@ -41,7 +41,7 @@ return [
     'details' => 'Details',
     'description' => 'Description',
     'quantity' => 'Quantity',
-    'unit' => 'Unit',
+    'unit' => 'Unit Price',
     'price' => 'Price',
     'event' => 'Event',
     'quote' => 'Quote',
@@ -60,6 +60,8 @@ return [
     'waiter' => 'Waiter',
     'cleaner' => 'Cleaner',
     'venue_manager' => 'Venue Manager',
-    'toilet_staff' => 'Toilet Staff'
-
+    'toilet_staff' => 'Toilet Staff',
+    'date_from' => 'Event Start',
+    'date_to' => 'Event End',
+    'createdupdated' =>  'Created/Updated'
 ];

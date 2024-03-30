@@ -755,7 +755,7 @@
             newInput3.type = 'text';
 
             // Set the value of newInput1 based on your logic or leave it as an exercise
-            ✅newTd1.appendChild(newInput1);
+            newTd1.appendChild(newInput1);
             newTd2.appendChild(newInput2);
             newTd3.appendChild(newInput3);
             

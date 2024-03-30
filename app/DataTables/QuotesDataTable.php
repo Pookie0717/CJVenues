@@ -54,7 +54,7 @@ class QuotesDataTable extends DataTable
                     case 'Sent':
                         $badgeClass = 'badge-primary';
                         break;
-                    case 'Booking':
+                    case 'booked':
                         $badgeClass = 'badge-success';
                         break;
                     case 'Rejected':
@@ -74,7 +74,7 @@ class QuotesDataTable extends DataTable
                         break;
                 }
 
-                return new HtmlString('<span class="badge ' . $badgeClass . '">' . $status . '</span>');
+                return new HtmlString('<span class="badge ' . $badgeClass . '">' . ucwords($status) . '</span>');
             });
     }
 

@@ -37,8 +37,14 @@ class QuotesDataTable extends DataTable
             $area = $quote->eventArea;
             return $area ? $area->name : 'N/A';
         })
+        ->editColumn('date_from', function ($quote) {
+            return $quote->date_from;
+        })
         ->editColumn('updated_at', function ( $quote) {
             return max($quote->updated_at, $quote->created_at)->format('d-m-Y H:i:s');
+        })
+        ->editColumn('price', function ($quote) {
+            return $quote->price;
         })
         ->editColumn('status', function ( $quote) {
             $status = $quote->status;
@@ -48,11 +54,20 @@ class QuotesDataTable extends DataTable
                     case 'Sent':
                         $badgeClass = 'badge-primary';
                         break;
-                    case 'Approved':
+                    case 'Booking':
                         $badgeClass = 'badge-success';
                         break;
                     case 'Rejected':
                         $badgeClass = 'badge-danger';
+                        break;
+                    case 'Draft':
+                        $badgeClass = 'badge-secondary';
+                        break;
+                    case 'Follow-Up':
+                        $badgeClass = 'badge-info';
+                        break;
+                    case 'Processing':
+                        $badgeClass = 'badge-light-info';
                         break;
                     default:
                         $badgeClass = 'badge-secondary';
@@ -62,24 +77,6 @@ class QuotesDataTable extends DataTable
                 return new HtmlString('<span class="badge ' . $badgeClass . '">' . $status . '</span>');
             });
     }
-
-    // public function query(Quote $model)
-    // {
-    //         // Get the current tenant_id from the session
-    //         $currentTenantId = Session::get('current_tenant_id');
-    //         $tenant = Tenant::find($currentTenantId);
-    //         $tenantIds = Tenant::where('parent_id', $currentTenantId)->pluck('id')->toArray();
-    //         $tenantIds[] = $currentTenantId;
-
-    //         // Query the VenueArea records, filter by tenant_id, and select specific columns
-    //         return $model->newQuery()->with('tenant')
-    //             ->whereIn('tenant_id', $tenantIds)
-    //             ->where('status', '<>', 'Archived')
-    //             ->select([
-    //                 'id', 'quote_number', 'version', 'status', 'contact_id', 'event_type', 'area_id', 'created_at', 'updated_at', 'tenant_id'
-    //             ]);
-    // }
-
 
     public function query(Quote $model) {
         $currentTenantId = Session::get('current_tenant_id');
@@ -102,7 +99,7 @@ class QuotesDataTable extends DataTable
             ->with('tenant')
             ->select([
                 'quotes.id', 'quotes.quote_number', 'quotes.version', 'quotes.status',
-                'quotes.contact_id', 'quotes.event_type', 'quotes.area_id',
+                'quotes.contact_id', 'quotes.event_type', 'quotes.area_id', 'quotes.date_from', 'quotes.price',
                 'quotes.created_at', 'quotes.updated_at', 'quotes.tenant_id'
             ]);
     }
@@ -125,12 +122,13 @@ class QuotesDataTable extends DataTable
     {
         return [
             Column::make('quote_number')->title(trans('quotes.quote').' #')->addClass('text-nowrap'),
+            Column::make('updated_at')->title(trans('quotes.createdupdated'))->addClass('text-nowrap'),
             Column::make('contact_id')->title(trans('quotes.contact'))->addClass('text-nowrap'),
-            Column::make('tenant.name')->title(trans('quotes.tenantname'))->addClass('text-nowrap'),
-            Column::make('status')->title(trans('quotes.status'))->addClass('text-nowrap'),
             Column::make('event_type')->title(trans('quotes.event'))->addClass('text-nowrap'),
             Column::make('area_id')->title(trans('quotes.area'))->addClass('text-nowrap'),
-            Column::make('updated_at')->title(trans('quotes.createdupdated'))->addClass('text-nowrap'),
+            Column::make('date_from')->title(trans('quotes.date_from'))->addClass('text-nowrap'),
+            Column::make('status')->title(trans('quotes.status'))->addClass('text-nowrap'),
+            Column::make('price')->title(trans('quotes.price'))->addClass('text-nowrap'),
             Column::computed('action')
                 ->addClass('text-end text-nowrap')
                 ->exportable(false)

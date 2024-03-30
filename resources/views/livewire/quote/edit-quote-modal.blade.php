@@ -233,7 +233,6 @@
                                             @if($quote->price_venue != 0)
                                             <tr class="fw-bold text-gray-700 fs-5 show-mode">
                                                 <td class="d-flex align-items-center text-left pt-6">
-                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                     {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}
                                                 </td>
 
@@ -243,7 +242,6 @@
                                             </tr>
                                             <tr class="fw-bold text-gray-700 fs-5 edit-mode" style="display:none">
                                                 <td class="d-flex align-items-center text-left pt-6">
-                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                     <input style='width:200px' wire-model.defer="eventArea" type="text" class="form-control form-control-solid" value="{{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $quote->eventArea ? $quote->eventArea->name : 'N/A' }}" />
                                                 </td>
                                                 <td class="pt-6 text-end">
@@ -275,7 +273,6 @@
                                                 @endphp
                                                     <tr class="fw-bold text-gray-700 fs-5 show-mode">
                                                         <td class="d-flex align-items-center text-left pt-6">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
                                                                 {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
                                                             @else
@@ -297,7 +294,6 @@
                                                     </tr>
                                                     <tr class="fw-bold text-gray-700 fs-5 edit-mode" style="display:none">
                                                         <td class="d-flex align-items-center text-left pt-6">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             <input style='width:200px' type="text" class="form-control form-control-solid" value="{{ $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes' ? ($quote->eventType ? $quote->eventType->event_name : 'N/A') . ' - ' . $optionWithValue['option']->name : ($quote->eventType ? $quote->eventType->event_name : 'N/A') . ' - ' . $optionWithValue['option']->name }}" />
                                                         </td>
                                                         <td class="pt-6 text-end">
@@ -327,7 +323,6 @@
                                                 @if (count($staffData['data']) !== 0)
                                                     <tr class="fw-bold text-gray-700 fs-5 show-mode">
                                                         <td class="d-flex align-items-center text-left pt-6">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             {{ $staffData['data'][0]['name'] }}
                                                         </td>
                                                         <td class="pt-6 text-end">{{ $staffData['data'][0]['quantity'] }}</td>
@@ -344,7 +339,6 @@
                                                     </tr>
                                                     <tr class="fw-bold text-gray-700 fs-5 edit-mode" style="display:none">
                                                         <td class="d-flex align-items-center text-left pt-6">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             <input style='width:200px;display:inline-block' type="text" class="form-control form-control-solid" value="{{ $staffData['data'][0]['name'] }}" />
                                                         </td>
                                                         <td class="pt-6 text-end">

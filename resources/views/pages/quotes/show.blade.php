@@ -139,24 +139,32 @@
                                 <div class="col-sm-6">
                                     <!--end::Label-->
                                     <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.event_date') }}:</div>
-                                    <!--end::Label-->
 
-                                    <!--end::Text-->
-                                    <div class="fw-bold fs-6 text-gray-800">
-                                        {{ $quote->date_from }}
-                                        @if($quote->date_from != $quote->date_to)
-                                            - {{ $quote->date_to }}
-                                        @endif
-                                        <br>
-                                        {{$quote->time_from}} - {{$quote->time_to}}
-                                    </div>
-                                    <!--end::Text-->
+<div class="fw-bold fs-6 text-gray-800">
+    @php
+        $dateFrom = \Carbon\Carbon::parse($quote->date_from);
+        $dateTo = \Carbon\Carbon::parse($quote->date_to);
+        $timesFrom = explode('|', $quote->time_from);
+        $timesTo = explode('|', $quote->time_to);
+        $dateInterval = $dateFrom->diffInDays($dateTo) + 1; // +1 to include both start and end dates
+    @endphp
 
-                                    <!--start::Description-->
-                                    <div class="fw-semibold fs-7 text-gray-600">
-                                        {{ trans('quotes.buffer_time') }} ({{$quote->buffer_time_unit}}): {{$quote->buffer_time_before}} {{ trans('quotes.before') }} {{ trans('quotes.and') }} {{$quote->buffer_time_after}} {{ trans('quotes.after') }}
-                                    </div>
-                                    <!--end::Description-->
+    @for ($i = 0; $i < $dateInterval; $i++)
+        @php
+            $currentDate = $dateFrom->copy()->addDays($i);
+            $timeFrom = isset($timesFrom[$i]) ? \Carbon\Carbon::createFromFormat('H:i:s', trim($timesFrom[$i]))->format('H:i') : 'Start Time Not Set';
+            $timeTo = isset($timesTo[$i]) ? \Carbon\Carbon::createFromFormat('H:i:s', trim($timesTo[$i]))->format('H:i') : 'End Time Not Set';
+        @endphp
+
+        {{ $currentDate->format('d-m-Y') }} from {{ $timeFrom }} to {{ $timeTo }}<br>
+    @endfor
+</div>
+
+<div class="fw-semibold fs-7 text-gray-600">
+    {{ trans('quotes.buffer_time') }} ({{$quote->buffer_time_unit}}): 
+    {{$quote->buffer_time_before}} {{ trans('quotes.before') }} {{ trans('quotes.and') }} {{$quote->buffer_time_after}} {{ trans('quotes.after') }}
+</div>
+
                                 </div>
                                 <!--end::Col-->
 
@@ -212,7 +220,6 @@
                                             @if($quote->price_venue != 0)
                                             <tr class="fw-bold text-gray-700 fs-5 show-mode">
                                                 <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                     {{$quote->venues_name ? $quote->venues_name : ($quote->eventType ? $quote->eventType->event_name : 'N/A').' - '.($quote->eventArea ? $quote->eventArea->name : 'N/A')}}
                                                 </td>
 
@@ -222,7 +229,6 @@
                                             </tr>
                                             <tr class="fw-bold text-gray-700 fs-5 edit-mode venue-items" style="display:none">
                                                 <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                    <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                     <input style='width:200px' type="text" class="form-control form-control-solid" value="{{$quote->venues_name ? $quote->venues_name : ($quote->eventType ? $quote->eventType->event_name : 'N/A').' - '.($quote->eventArea ? $quote->eventArea->name : 'N/A')}}" />
                                                 </td>
                                                 <td class="pt-6 text-end align-middle">
@@ -260,7 +266,6 @@
                                                 @endphp
                                                     <tr class="fw-bold text-gray-700 fs-5 show-mode">
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes' && $quote->options_name)
                                                                 {{ $optionWithValue['option']->name }}
                                                             @elseif($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
@@ -285,7 +290,6 @@
                                                     </tr>
                                                     <tr class="fw-bold text-gray-700 fs-5 option-items edit-mode" style="display:none" data-option-id="{{$optionWithValue['option']['id']}}" data-option-value="{{$optionWithValue['value']}}">
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             <input style='width:200px' type="text" class="form-control form-control-solid" value="{{
                                                                 $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes' && $quote->options_name
                                                                     ? $optionWithValue['option']->name
@@ -331,7 +335,6 @@
                                                 @if (count($staffData['data']) !== 0)
                                                     <tr class="fw-bold text-gray-700 fs-5 show-mode" >
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             {{ $staffData['data'][0]['name'] }}
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">{{ $staffData['data'][0]['quantity'] }}</td>
@@ -348,7 +351,6 @@
                                                     </tr>
                                                     <tr class="fw-bold text-gray-700 fs-5 edit-mode staff-items" style="display:none" data-staff-id="{{ $staffData['data'][0]['id'] }}">
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             <input style='width:200px;display:inline-block' type="text" class="form-control form-control-solid" value="{{ $staffData['data'][0]['name'] }}" />
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">
@@ -370,7 +372,6 @@
                                                 @foreach($extraItemsName as $index => $extraItemName)
                                                     <tr class="fw-bold text-gray-700 fs-5 show-mode extra-items">
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             {{ $extraItemName }}
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">{{ $extraItemsCount[$index] }}</td>
@@ -379,7 +380,6 @@
                                                     </tr>
                                                     <tr class="fw-bold text-gray-700 fs-5 edit-mode extra-items" style="display:none">
                                                         <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                            <i class="fa fa-genderless text-danger fs-2 me-2"></i>
                                                             <input style='width:200px' type="text" class="form-control form-control-solid" value="{{$extraItemName}}" />
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">
@@ -711,8 +711,7 @@
             var newTd4 = document.createElement('td');
             newTd4.className = "pt-6 text-dark fw-bolder text-end align-middle";
             
-            var newItag = document.createElement('i');
-            newItag.className = "fa fa-genderless text-danger fs-2 me-2";
+           
 
             var newInput1 = document.createElement('input');
             newInput1.className = 'form-control form-control-solid';
@@ -737,7 +736,6 @@
 
             // Set the value of newInput1 based on your logic or leave it as an exercise
             
-            newTd1.appendChild(newItag);
             newTd1.appendChild(newInput1);
             newTd2.appendChild(newInput2);
             newTd3.appendChild(newInput3);

@@ -220,7 +220,7 @@
                                             @if($quote->price_venue != 0)
                                             <tr class="fw-bold text-gray-700 fs-5 show-mode">
                                                 <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                    {{$quote->venues_name ? $quote->venues_name : ($quote->eventType ? $quote->eventType->event_name : 'N/A').' - '.($quote->eventArea ? $quote->eventArea->name : 'N/A')}}
+                                                    {{($quote->eventArea ? $quote->eventArea->name : 'N/A')}}
                                                 </td>
 
                                                 <td class="pt-6 text-end align-middle">{{$quote->venue_count}}</td>
@@ -229,7 +229,7 @@
                                             </tr>
                                             <tr class="fw-bold text-gray-700 fs-5 edit-mode venue-items" style="display:none">
                                                 <td class="d-flex align-items-center text-left pt-6 align-middle">
-                                                    <input style='width:200px' type="text" class="form-control form-control-solid" value="{{$quote->venues_name ? $quote->venues_name : ($quote->eventType ? $quote->eventType->event_name : 'N/A').' - '.($quote->eventArea ? $quote->eventArea->name : 'N/A')}}" />
+                                                    <input style='width:200px' type="text" class="form-control form-control-solid" value="{{($quote->eventArea ? $quote->eventArea->name : 'N/A')}}" />
                                                 </td>
                                                 <td class="pt-6 text-end align-middle">
                                                     <input style='width:100px;display:inline-block;text-align:right' type="text" class="form-control form-control-solid" value="1" />
@@ -269,11 +269,11 @@
                                                             @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes' && $quote->options_name)
                                                                 {{ $optionWithValue['option']->name }}
                                                             @elseif($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes')
-                                                                {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
+                                                                {{ $optionWithValue['option']->name }}
                                                             @elseif($quote->options_name)
                                                                 {{ $optionWithValue['option']->name }}
                                                             @else
-                                                                {{ $quote->eventType ? $quote->eventType->event_name : 'N/A' }} - {{ $optionWithValue['option']->name }}
+                                                                {{ $optionWithValue['option']->name }}
                                                             @endif
                                                         </td>
                                                         <td class="pt-6 text-end align-middle">{{ $value }}</td>
@@ -295,11 +295,9 @@
                                                                     ? $optionWithValue['option']->name
                                                                     : (
                                                                         $optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes'
-                                                                        ? ($quote->eventType ? $quote->eventType->event_name : 'N/A') . ' - ' . $optionWithValue['option']->name
+                                                                        ? $optionWithValue['option']->name
                                                                         : (
-                                                                            $quote->options_name
-                                                                            ? $optionWithValue['option']->name
-                                                                            : ($quote->eventType ? $quote->eventType->event_name : 'N/A') . ' - ' . $optionWithValue['option']->name
+                                                                            $optionWithValue['option']->name
                                                                         )
                                                                     )
                                                             }}" />
@@ -735,8 +733,7 @@
             newInput3.type = 'text';
 
             // Set the value of newInput1 based on your logic or leave it as an exercise
-            
-            newTd1.appendChild(newInput1);
+            ✅newTd1.appendChild(newInput1);
             newTd2.appendChild(newInput2);
             newTd3.appendChild(newInput3);
             

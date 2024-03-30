@@ -140,30 +140,52 @@
                                     <!--end::Label-->
                                     <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.event_date') }}:</div>
 
-<div class="fw-bold fs-6 text-gray-800">
-    @php
-        $dateFrom = \Carbon\Carbon::parse($quote->date_from);
-        $dateTo = \Carbon\Carbon::parse($quote->date_to);
-        $timesFrom = explode('|', $quote->time_from);
-        $timesTo = explode('|', $quote->time_to);
-        $dateInterval = $dateFrom->diffInDays($dateTo) + 1; // +1 to include both start and end dates
-    @endphp
+                                    <div class="fw-bold fs-6 text-gray-800">
+                                        @php
+                                            $dateFromString = $quote->date_from; // Assuming this is in dd-mm-yyyy format
+                                            $dateToString = $quote->date_to; // Assuming this is also in dd-mm-yyyy format
 
-    @for ($i = 0; $i < $dateInterval; $i++)
-        @php
-            $currentDate = $dateFrom->copy()->addDays($i);
-            $timeFrom = isset($timesFrom[$i]) ? \Carbon\Carbon::createFromFormat('H:i:s', trim($timesFrom[$i]))->format('H:i') : 'Start Time Not Set';
-            $timeTo = isset($timesTo[$i]) ? \Carbon\Carbon::createFromFormat('H:i:s', trim($timesTo[$i]))->format('H:i') : 'End Time Not Set';
-        @endphp
+                                            $dateFrom = DateTime::createFromFormat('d-m-Y', $dateFromString);
+                                            $dateTo = DateTime::createFromFormat('d-m-Y', $dateToString);
 
-        {{ $currentDate->format('d-m-Y') }} from {{ $timeFrom }} to {{ $timeTo }}<br>
-    @endfor
-</div>
+                                            $diff = $dateFrom->diff($dateTo);
 
-<div class="fw-semibold fs-7 text-gray-600">
-    {{ trans('quotes.buffer_time') }} ({{$quote->buffer_time_unit}}): 
-    {{$quote->buffer_time_before}} {{ trans('quotes.before') }} {{ trans('quotes.and') }} {{$quote->buffer_time_after}} {{ trans('quotes.after') }}
-</div>
+                                            $dateInterval = $diff->days + 1;
+
+                                            $timesFrom = explode('|', $quote->time_from);
+                                            $timesTo = explode('|', $quote->time_to);
+                                        @endphp
+
+                                        @for ($i = 0; $i < $dateInterval; $i++)
+                                            @php
+                                                $currentDate = clone $dateFrom;
+                                                $currentDate->modify("+{$i} day");
+                                                $displayDate = $currentDate->format('d-m-Y');
+
+                                                $formatTime = function($time) {
+                                                    // Attempt to parse the time string with seconds
+                                                    $dateTime = DateTime::createFromFormat('H:i:s', $time);
+                                                    if (!$dateTime) {
+                                                        // If parsing fails, try without seconds
+                                                        $dateTime = DateTime::createFromFormat('H:i', $time);
+                                                    }
+                                                    // Format and return the time without seconds, default to 'Not Set' if parsing fails
+                                                    return $dateTime ? $dateTime->format('H:i') : 'Not Set';
+                                                };
+
+                                                $timeFrom = $formatTime($timesFrom[$i] ?? '');
+                                                $timeTo = $formatTime($timesTo[$i] ?? '');
+                                            @endphp
+
+                                            <div>{{ $displayDate }} from {{ $timeFrom }} to {{ $timeTo }}</div>
+                                        @endfor
+
+                                    </div>
+
+                                    <div class="fw-semibold fs-7 text-gray-600">
+                                        {{ trans('quotes.buffer_time') }} ({{$quote->buffer_time_unit}}): 
+                                        {{$quote->buffer_time_before}} {{ trans('quotes.before') }} {{ trans('quotes.and') }} {{$quote->buffer_time_after}} {{ trans('quotes.after') }}
+                                    </div>
 
                                 </div>
                                 <!--end::Col-->

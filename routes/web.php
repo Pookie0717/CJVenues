@@ -93,7 +93,7 @@ Route::get('setlocale/{locale}', 'App\Http\Controllers\LocalizationController@se
     Route::get('quotes/{quote}', [QuotesController::class, 'show'])->name('quotes.show');
     Route::post('/quotes/{id}/book', [QuotesController::class, 'book'])->name('quotes.book');
     Route::post('/quotes/{id}/update', [QuotesController::class, 'update'])->name('quotes.update');
-
+    Route::post('/quotes/{id}/export', [QuotesController::class, 'export'])->name('quotes.export');
 });
 
 Route::get('/error', function () {

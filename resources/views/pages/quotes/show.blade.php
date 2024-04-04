@@ -1,6 +1,6 @@
 <x-default-layout>
     @section('title')
-    {{ trans('quotes.title') }}
+        {{ trans('quotes.title') }}
     @endsection
 
     <!--begin::Breadcrumb-->
@@ -36,6 +36,9 @@
                                 </button>
                                 <button style="display:none" class="btn btn-sm btn-primary edit-mode" id="submit-quote" data-quote-id="{{ $quote->id }}" >
                                     {{ trans('quotes.submit') }}
+                                </button>
+                                <button class="btn btn-sm btn-danger " id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF()' >
+                                    <i class="ki-duotone ki-exit-down fs-2" style="padding: 0"><span class="path1"></span><span class="path2"></span></i>
                                 </button>
                             </div>
                             <!--end::Action-->
@@ -549,22 +552,12 @@
                                                 </td>
                                                 <td class="pt-6 text-dark text-center fw-bolder">
                                                     {{ $relatedQuotes[$key]->created_at->format('d-m-Y-h:i') }}
-                                                    <!-- Handle the first item (shifted from the last) 
-                                                    @if ($key == 0)
-                                                        {{ $relatedQuotes[count($relatedQuotes) - 1]->created_at->format('d-m-Y-h:i') }}
-                                                    @else
-                                                        {{ $relatedQuotes[$key - 1]->created_at->format('d-m-Y-h:i') }}
-                                                    @endif
-                                                    !-->
                                                 </td>
                                                 <td class="pt-6 text-dark fw-bolder">
                                                     <a href="{{ route('quotes.show', $quoteHistory) }}">{{ trans('general.view') }}</a>
                                                 </td>
                                             </tr>
                                         @endforeach
-                                            <tr>
-                                                
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -580,7 +573,15 @@
         </div>
         <!--end::Body-->
     </div>
-    </div>
+</div>
+<!--begin::Page loading(append to body)-->
+<div class="page-loader">
+    Downloading...
+    <span class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Downloading...</span>
+    </span>
+</div>
+<!--end::Page loading-->
     @push('scripts')
         <script>
             document.querySelectorAll('[data-kt-action="update_row"]').forEach(function (element) {
@@ -601,6 +602,7 @@
 
             if(eidtButton) {
                 eidtButton.addEventListener('click', function() {
+                    document.getElementById('export-quote').style.display = 'none';
                     var editElements = document.getElementsByClassName("edit-mode");
                     console.log(editElements);
                     var showElements = document.getElementsByClassName("show-mode");
@@ -629,7 +631,6 @@
                     var staffElements = document.getElementsByClassName("staff-items");
                     var extraElements = document.getElementsByClassName("extra-items");
                     updatedData['options'] = {};
-                    console.log(optionElements);
                     for(var i = 0;i < optionElements.length;i++) {
                         updatedData['options'][i] = {};
                         for (var j = 0; j < optionElements[i].children.length; j++) {
@@ -678,8 +679,8 @@
                     })
                     .then(function (response) {
                         console.log(response.data.quoteId);
-                        // window.location.href = `https://dashboard.cjvenues.com/quotes/${response.data.quoteId}`;
-                        window.location.href = `http://localhost:8000/quotes/${response.data.quoteId}`;
+                        window.location.href = `https://dashboard.cjvenues.com/quotes/${response.data.quoteId}`;
+                        // window.location.href = `http://localhost:8000/quotes/${response.data.quoteId}`;
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -730,9 +731,9 @@
 
             var newTd4 = document.createElement('td');
             newTd4.className = "pt-6 text-dark fw-bolder text-end align-middle";
-            
-           
 
+           
+            
             var newInput1 = document.createElement('input');
             newInput1.className = 'form-control form-control-solid';
             newInput1.style.width = '200px';
@@ -786,13 +787,12 @@
             document.getElementById('parentTable').appendChild(newRow);
         }
 
-        // Example remove_item function
-        function remove_item(event) {
-            event.target.closest('tr').remove();
-        }
+        // // Example remove_item function
+        // function remove_item(event) {
+        //     event.target.closest('tr').remove();
+        // }
 
         function remove_item(event) {
-            console.log(event);
             // Prevent the default button action
             event.preventDefault();
             
@@ -806,6 +806,37 @@
             if (parentRow) {
                 parentRow.remove();
             }
+        }
+        function exportPDF() {
+            const quoteId = document.getElementById('export-quote').getAttribute('data-quote-id');
+            KTApp.showPageLoading();
+            axios.post(`/quotes/${quoteId}/export`, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                }
+            }, { responseType: 'blob' })
+            .then(function (response) {
+                console.log(response.data);
+                KTApp.hidePageLoading();
+                // Handle the response
+                const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf'}));
+                const link = document.createElement('a');
+                link.href = url;
+                var filename = document.getElementById('export-quote').getAttribute('data-quote-number');
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                //Remove the link element
+                var elements = document.querySelectorAll('[download]');
+                elements.forEach(function(element) {
+                    element.parentNode.removeChild(element);
+                });
+            })
+            .catch(function (error) {
+                KTApp.hidePageLoading();
+                console.log(error);
+            });
         }
     </script>
     @endpush

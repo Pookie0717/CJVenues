@@ -11,14 +11,6 @@
         </a>
     </div>
     <!--end::Menu item-->
-    <!--begin::Menu item
-    <div class="menu-item px-3">
-        <a href="#" class="menu-link px-3" data-kt-quote-id="{{ $quote->id }}" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_quote" data-kt-action="update_row">
-            Edit
-        </a>
-    </div>
-    end::Menu item-->
-
     <!--begin::Menu item-->
     <div class="menu-item px-3">
         <a href="#" class="menu-link px-3" data-kt-quote-id="{{ $quote->id }}" data-kt-action="delete_row">

@@ -17,7 +17,7 @@
             <div class="d-flex flex-stack pb-10">
                 <!--begin::Logo-->
                 <a href="#">
-                    <img alt="Logo" src="pdf/default-dark.png" class="h-25px app-sidebar-logo-default" />
+                    <img alt="Logo" style="width: 25px; height: 18px!important" src="pdf/default-dark.png" class="h-25px app-sidebar-logo-default" />
                 </a>
             </div>
             <!--end::Logo-->
@@ -166,7 +166,7 @@
                                         <th class="min-w-175px pb-2">{{ trans('quotes.details') }}</th>
                                     </tr>
                                 </thead>
-
+                                <div style='width: 100%;border-bottom:1px solid #b7b7b7;padding-bottom: 15px'></div>
                                 <tbody>
                                     <tr class="fw-bold text-gray-700 fs-5 show-mode">
                                         <td  class="text-left pt-6 " style="font-size: 80%;">
@@ -175,13 +175,13 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <table class="table" style="margin-bottom: 50px">
+                            <table class="table" style="padding-top: 30px;width: 100%">
                                 <thead>
                                     <tr class="border-bottom fs-6 fw-bold text-muted">
-                                        <th class="min-w-175px pb-2">{{ trans('quotes.description') }}</th>
-                                        <th class="min-w-100px text-end pb-2">{{ trans('quotes.quantity') }}</th>
-                                        <th class="min-w-100px text-end pb-2">{{ trans('quotes.unit') }}</th>
-                                        <th class="min-w-100px text-end pb-2">{{ trans('quotes.price') }}</th>
+                                        <th class="min-w-175px pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.description') }}</th>
+                                        <th class="min-w-100px text-end pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.quantity') }}</th>
+                                        <th class="min-w-100px text-end pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.unit') }}</th>
+                                        <th class="min-w-100px text-end pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.price') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="parentTable">
@@ -195,6 +195,7 @@
                                         <td class="pt-6 text-end align-middle">$ {{ number_format($quote->price_venue, 2) }}</td>
                                         <td class="pt-6 text-dark fw-bolder text-end align-middle">$ {{ number_format($quote->price_venue, 2) }}</td>
                                     </tr>
+                                    <div style='width: 100%;border-bottom:1px solid ##e3e2e2;padding-bottom: 15px'></div>
                                     @endif
                                     <!-- Additional row for options and priceOption -->
                                     @php
@@ -238,6 +239,7 @@
                                                     $ {{ isset($priceOptionsArray[$index]) ? number_format((float) $priceOptionsArray[$index], 2) : 'N/A' }}
                                                 </td>
                                             </tr>
+                                            <div style='width: 100%;border-bottom:1px solid ##e3e2e2;padding-bottom: 15px'></div>
                                         @endif
                                     @endforeach
                                     @php
@@ -269,6 +271,7 @@
                                                     $ {{ isset($staffData['price']) ? number_format((float) $staffData['price'], 2) : 'N/A' }}
                                                 </td>
                                             </tr>
+                                            <div style='width: 100%;border-bottom:1px solid ##e3e2e2;padding-bottom: 15px'></div>
                                         @endif
                                     @endforeach
                                     @if($quote->extra_items_count)
@@ -281,9 +284,10 @@
                                                 <td class="pt-6 text-end align-middle">${{number_format($extraItemsPrice[$index] / $extraItemsCount[$index], 2)}}</td>
                                                 <td class="pt-6 text-dark fw-bolder text-end align-middle">${{ number_format($extraItemsPrice[$index], 2)}}</td>
                                             </tr>
+                                            <div style='width: 100%;border-bottom:1px solid ##e3e2e2;padding-bottom: 15px'></div>
                                         @endforeach
                                     @endif
-                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
+                                    <tr class="fw-bold text-gray-700 fs-5 show-mode" style='border-top:1px solid #b7b7b7'>
                                         <td></td>
                                         <td></td>
                                         <td class='pt-12 text-end align-middle'><span>{{ trans('quotes.subtotal') }}:</span></td>

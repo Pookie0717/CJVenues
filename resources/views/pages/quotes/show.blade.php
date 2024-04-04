@@ -37,8 +37,8 @@
                                 <button style="display:none" class="btn btn-sm btn-primary edit-mode" id="submit-quote" data-quote-id="{{ $quote->id }}" >
                                     {{ trans('quotes.submit') }}
                                 </button>
-                                <button class="btn btn-sm btn-danger " id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF()' >
-                                    <i class="ki-duotone ki-exit-down fs-2" style="padding: 0"><span class="path1"></span><span class="path2"></span></i>
+                                <button class="btn btn-sm btn-bg-secondary" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF()' >
+                                    <i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
                                 </button>
                             </div>
                             <!--end::Action-->

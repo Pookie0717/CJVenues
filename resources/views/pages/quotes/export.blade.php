@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="assets/css/style.bundle.css" type="text/css">
     <style>
         * {
-            font-family: Arial;!important
+            font-family: Arial!important;
         }
     </style>
 </head>

@@ -576,9 +576,8 @@
 </div>
 <!--begin::Page loading(append to body)-->
 <div class="page-loader">
-    Downloading...
+    <span style='padding-right: 30px'>Downloading...</span>
     <span class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Downloading...</span>
     </span>
 </div>
 <!--end::Page loading-->

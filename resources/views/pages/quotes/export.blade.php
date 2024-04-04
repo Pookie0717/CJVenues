@@ -6,8 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}</title>
  
-    <link rel="stylesheet" href="pdf/plugins.bundle.css" type="text/css"> 
+    <link rel="stylesheet" href="pdf/plugins.bundle.css" type="text/css">
     <link rel="stylesheet" href="assets/css/style.bundle.css" type="text/css">
+    <style>
+        * {
+            font-family: Arial;!important
+        }
+    </style>
 </head>
 
 <body>
@@ -17,7 +22,7 @@
             <div class="d-flex flex-stack pb-10">
                 <!--begin::Logo-->
                 <a href="#">
-                    <img alt="Logo" style="width: 25px; height: 18px!important" src="pdf/default-dark.png" class="h-25px app-sidebar-logo-default" />
+                    <img alt="Logo" style="width: 25px; height: 20px!important" src="pdf/default-dark.png" class="h-25px app-sidebar-logo-default" />
                 </a>
             </div>
             <!--end::Logo-->

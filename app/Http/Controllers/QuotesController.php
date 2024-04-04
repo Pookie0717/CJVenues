@@ -910,9 +910,10 @@ class QuotesController extends Controller
         // $data = ['title' => 'Welcome to Laravel 10 PDF generation'];
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
-
-
+        
         $pdf = PDF::loadView('pages.quotes.export', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details' ), ['hashedId' => $hashedId]);
+        $pdf->getOptions()->setFontDir('https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700');
+        $pdf->getOptions()->setDefaultFont('Inter, Helvetica, "sans-serif"');
         // $pdf->save(storage_path('app/public/Quote#'.$quote->quote_number.'v'.$quote->version.'.pdf'));
         return $pdf->download();
     }

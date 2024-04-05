@@ -14,26 +14,26 @@
         	-->
 	        <!--begin::Action-->
 			<div>
-				<button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}">
+				<button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}" style='min-width: 80px;height: 35px'>
 					{{ trans('quotes.book') }}
 				</button>
-				<button class="btn btn-sm btn-primary show-mode" id="edit-quote" data-quote-id="{{ $quote->id }}">
+				<button class="btn btn-sm btn-primary show-mode" id="edit-quote" data-quote-id="{{ $quote->id }}" style='min-width: 80px;height: 35px'>
 					{{ trans('quotes.edit') }}
 				</button>
-				<button style="display:none" class="btn btn-sm btn-primary edit-mode" id="submit-quote" data-quote-id="{{ $quote->id }}" >
+				<button style="display:none" class="btn btn-sm btn-primary edit-mode" id="submit-quote" data-quote-id="{{ $quote->id }}" style='min-width: 80px;height: 35px'>
 					{{ trans('quotes.submit') }}
 				</button>                                
 			</div>
 			<!--end::Action-->
-			<button class="btn btn-sm  btn-light-secondary p-3" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("invoice")'>
-				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
-				<span style='color: black'>Invoice</span>
+			<button class="btn btn-sm btn-light-secondary p-2" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("invoice")' style='min-width: 80px;height: 35px;display: flex'>
+				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black;height: 35px"><span class="path1"></span><span class="path2"></span></i>
+				<span style='color: black;font-size: 12px'>Invoice</span>
 			</button>
-			<button class="btn btn-sm btn-light-secondary p-3" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("contract")'>
-				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
-				<span style='color: black'>Contract</span>
+			<button class="btn btn-sm btn-light-secondary p-2" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("contract")' style='min-width: 80px;height: 35px;display: flex'>
+				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black;height: 35px"><span class="path1"></span><span class="path2"></span></i>
+				<span style='color: black;font-size: 12px'>Contract</span>
 			</button>
-	        <a class="btn btn-primary p-3" style="font-size: 12px" href="{{ route('quotes.showPublic', $hashedId) }}" >Share Link</a>
+	        <a class="btn btn-primary" style="font-size: 12px;min-width: 80px;height: 35px;padding: 7.5px" href="{{ route('quotes.showPublic', $hashedId) }}" >Share Link</a>
 	        <!--end::Action-->
             	@endif
 		</div>

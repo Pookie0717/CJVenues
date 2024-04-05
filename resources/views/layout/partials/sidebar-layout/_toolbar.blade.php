@@ -29,13 +29,13 @@
 				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black;height: 35px"><span class="path1"></span><span class="path2"></span></i>
 				<span style='color: black;font-size: 12px'>Invoice</span>
 			</button>
-			<button class="btn btn-sm btn-light-secondary p-2" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("contract")' style='min-width: 80px;height: 35px;display: flex'>
+			<button class="btn btn-sm btn-light-secondary p-2" id="export-contract" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("contract")' style='min-width: 80px;height: 35px;display: flex'>
 				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black;height: 35px"><span class="path1"></span><span class="path2"></span></i>
 				<span style='color: black;font-size: 12px'>Contract</span>
 			</button>
 	        <a class="btn btn-primary" style="font-size: 12px;min-width: 80px;height: 35px;padding: 7.5px" href="{{ route('quotes.showPublic', $hashedId) }}" >Share Link</a>
 	        <!--end::Action-->
-            	@endif
+		@endif
 		</div>
 		<!--end::Actions-->
 	</div>

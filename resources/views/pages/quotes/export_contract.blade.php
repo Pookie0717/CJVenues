@@ -9,8 +9,14 @@
     <link rel="stylesheet" href="pdf/plugins.bundle.css" type="text/css">
     <link rel="stylesheet" href="assets/css/style.bundle.css" type="text/css">
     <style>
+        @font-face {
+            font-family: 'MyCustomFont';
+            font-style: normal;
+            font-weight: normal;
+            src: url('{{ storage_path('fonts/Inter-Regular.ttf') }}') format('truetype');
+        }
         * {
-            font-family: Arial!important;
+            font-family: 'MyCustomFont'!important;
         }
         body {
             margin: 40px 50px;
@@ -42,7 +48,7 @@
                 <br/>
             </p>
             <div>
-                <b class='title'>§1 Leased Property</b>
+                <p>§1 Leased Property</p>
                 <p>
                 <br/>
                 (1) The leased property is located on the premises {{($quote->eventArea ? $quote->eventArea->name : 'N/A')}}. <br/>
@@ -52,7 +58,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§2 Purpose of Lease</b>
+                <p>§2 Purpose of Lease</p>
                 <br/>
                 <p>
                     <br/>
@@ -73,7 +79,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§3 Commencement, Duration of Lease, and Termination</b>
+                <p>§3 Commencement, Duration of Lease, and Termination</p>
                 <p>
                     <br/>
                     (1) The lease begins on {{$dateFrom}} and ends on {{$dateTo}}. <br/>
@@ -83,7 +89,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§4 Handover</b>
+                <p>§4 Handover</p>
                 <p>
                     <br/>
                     (1) The handover takes place on {{$quote->buffer_time_before}}. <br/>
@@ -95,7 +101,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§5 Rent</b>
+                <p>§5 Rent</p>
                 <p>
                     <br/>
                     (1) The rent, including a service charge flat rate, amounts to: $ {{ number_format($quote->calculated_price, 2) }} plus statutory VAT.<br/>
@@ -107,7 +113,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§6 Payment</b>
+                <p>§6 Payment</p>
                 <p>
                     <br/>
                     The rent is to be paid after signing the contract, but no later than 14 days after invoicing, by transfer to the following account:<br/>
@@ -117,7 +123,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§7 Security Deposit</b>
+                <p>§7 Security Deposit</p>
                 <p>
                     <br/>
                     The Tenant undertakes to provide a security deposit of €4,000.00 to the Landlord as security for all claims against them, especially for the payment of additional services, fulfillment of the obligation to restore the property to its original condition, and compensation for any damages that may arise. The security deposit is due with the rental invoice and must be transferred separately.<br/>
@@ -125,7 +131,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§8 Set-off, Retention, and Rent Reduction</b>
+                <p>§8 Set-off, Retention, and Rent Reduction</p>
                 <p>
                     <br/>
                     (1) The Tenant is not entitled to offset claims from the Landlord arising from this contract with counterclaims, nor to assert a right of retention or a rent reduction, unless the counterclaim, the right of retention, or the rent reduction right is undisputed or has been legally established.<br/>
@@ -135,7 +141,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§9 Subletting</b>
+                <p>§9 Subletting</p>
                 <p>
                     <br/>
                     (1) Subletting or any other temporary transfer of use is not permitted.<br/>
@@ -147,7 +153,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§10 Duty of Care</b>
+                <p>§10 Duty of Care</p>
                 <p>
                     <br/>
                     (1) The Tenant is responsible for the duty of care related to the leased property. The Tenant indemnifies the Landlord from all third-party claims resulting from a breach of their duty of care.<br/>
@@ -157,7 +163,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§11 Permits</b>
+                <p>§11 Permits</p>
                 <p>
                     <br/>
                     The Tenant is responsible, at their own expense, for creating the actual and legal conditions for the operation of their business on the leased property, including obtaining all necessary official and possibly further permits. All official requirements or demands related to the operation and use of the leased property are to be fulfilled by the Tenant at their own expense. The Landlord is not liable for the granting or renewal of necessary official permits for the operation, as far as they lie within the Tenant's sphere. The Landlord is not liable for the absence or loss of commercial legal requirements for the person or the business of the Tenant. A change in the use of the property is only permissible with the prior written consent of the Landlord.<br/>
@@ -165,7 +171,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§12 Landlord's Liability</b>
+                <p>§12 Landlord's Liability</p>
                 <p>
                     <br/>
                     (1) Claims for damages due to defects in the leased property are only available to the Tenant if the Landlord is responsible for the defect intentionally or due to gross negligence or if the Landlord is intentionally or grossly negligently delayed in remedying the defect.<br/>
@@ -181,7 +187,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§13 Tenant's Liability</b>
+                <p>§13 Tenant's Liability</p>
                 <p>
                     <br/>
                     (1) The Tenant must treat the leased property with care, keep it clean, and free from pests and rodents.<br/>
@@ -199,7 +205,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§14 Access to the Leased Property</b>
+                <p>§14 Access to the Leased Property</p>
                 <p>
                     <br/>
                     The Landlord or their agents and authorized representatives are allowed to enter the leased property, especially to verify the contractual use and to terminate the event in case of significant breaches of this contract. In case of emergencies, the Landlord, their agents, and accompanying third parties must be granted access at any time.<br/>
@@ -207,7 +213,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§15 Event Technology and Furniture</b>
+                <p>§15 Event Technology and Furniture</p>
                 <p>
                     <br/>
                     The Tenant is obliged to rent the beverage gastronomy, event technology, and furniture from a partner named by the Landlord. The partners are as follows: Event technology: Lautwerfer Veranstaltungstechnik GmbH Event equipment: PHOENIX Entertainment Veranstaltungs GmbH Beverage gastronomy: Riedel and Nguyen GbR<br/>
@@ -215,7 +221,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§16 Termination of the Lease</b>
+                <p>§16 Termination of the Lease</p>
                 <p>
                     <br/>
                     Upon termination of the lease, the Tenant is obliged to return the leased property in faultless (original) condition to the Landlord.<br/>
@@ -223,7 +229,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§17 Joint and Several Liability, Authorization to Receive</b>
+                <p>§17 Joint and Several Liability, Authorization to Receive</p>
                 <p>
                     <br/>
                     (1) If several natural or legal persons are Tenants, they are jointly and severally liable for fulfilling the obligations arising from this contract.<br/>
@@ -233,7 +239,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§18 Consent Declarations of the Landlord</b>
+                <p>§18 Consent Declarations of the Landlord</p>
                 <p>
                     <br/>
                     Any consent declarations by the Landlord are always granted, even if this is not expressly stated in the consent declaration, subject to any necessary official permission.<br/>
@@ -241,7 +247,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§19 Written Form</b>
+                <p>§19 Written Form</p>
                 <p>
                     <br/>
                     All agreements made between the parties are contained in this contract. Previous written or oral lease agreements are nullified by the effectiveness of this contract. Subsequent changes and additions to this contract require written form. This also applies to a change/cancellation of the written form requirement. The parties are aware of the special legal written form requirements of §§ 126, 550, 578 BGB. They hereby mutually oblige themselves to perform all actions and make all declarations necessary at any time upon request by one party to meet the legal written form requirement and not to terminate the lease prematurely on the grounds of non-compliance with the legal written form. This not only applies to the conclusion of the original contract but also to supplementary, amendment, and supplementary contracts.<br/>
@@ -249,7 +255,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§20 Severability Clause</b>
+                <p>§20 Severability Clause</p>
                 <p>
                     <br/>
                     Should one or more provisions of this contract be or become invalid for any reason, or should there be any gaps in this contract, this shall not affect the validity of the rest of the lease. The contracting parties commit to replacing the invalid provision with a valid one that most closely approximates the purpose of the omitted provision.<br/>
@@ -257,7 +263,7 @@
                 <br/>
             </div>
             <div>
-                <b class='title'>§21 Other Agreements</b>
+                <p>§21 Other Agreements</p>
                 <p>
                     <br/>
                     If the invalidity of the contract arises from a legally impermissible measure of performance or time (deadline or date) contained therein, a measure of performance or time (deadline or date) that comes as close as possible to this, but is legally permissible, shall be deemed agreed upon from the outset.<br/>

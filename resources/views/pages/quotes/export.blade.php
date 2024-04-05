@@ -6,13 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }} Invoice</title>
  
-    <link rel="stylesheet" href="pdf/plugins.bundle.css" type="text/css">
-    <link rel="stylesheet" href="assets/css/style.bundle.css" type="text/css">
+    <link rel="stylesheet" href="pdf/style.bundle.css" type="text/css">
     <style>
+       @font-face {
+            font-family: 'MyCustomFont';
+            font-style: normal;
+            font-weight: normal;
+            src: url('{{ storage_path('fonts/Inter-Regular.ttf') }}') format('truetype');
+        }
         * {
-            font-family: Arial!important;
+            font-family: 'MyCustomFont'!important;
+        }
+        body {
+            margin: 20px 30px;
         }
     </style>
+    
+    
 </head>
 
 <body>
@@ -35,41 +45,41 @@
                         <!--begin::Wrapper-->
                         <div class="m-0">
                             <!--begin::Label-->
-                            <div class="fw-bold fs-3 text-gray-800 mb-8">{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}</div>
+                            <div>{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}</div>
                             <!--end::Label-->
                             <!--begin::Row-->
                             <div class="row g-5 mb-11">
                                 <!--end::Col-->
-                                <table class='table'>
-                                    <tr class='mb-8 fw-bold text-gray-700 fs-5'>
+                                <table>
+                                    <tr>
                                         <td>
                                             <!--end::Label-->
-                                            <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.createdon') }}:</div>
+                                            <div style='font-size: 11px'>{{ trans('quotes.createdon') }}:</div>
                                             <!--end::Label-->
     
                                             <!--end::Col-->
-                                            <div class="fw-bold fs-6 text-gray-800">{{ \Carbon\Carbon::parse($quote->created_at)->format('d F Y') }}</div>
+                                            <div>{{ \Carbon\Carbon::parse($quote->created_at)->format('d F Y') }}</div>
                                             <!--end::Col-->
                                         </td>
                                         <td>
-                                            <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.senton') }}:</div>
-                                            <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
-                                                <span class="pe-2">dd/mm/yyyy</span>
+                                            <div style='font-size: 11px'>{{ trans('quotes.senton') }}:</div>
+                                            <div>
+                                                <span>dd/mm/yyyy</span>
                                                 <span class="fs-7 text-danger d-flex align-items-center">
-                                                    <span class="bullet bullet-dot bg-danger me-2"></span>
+                                                    <span></span>
                                                     {{ trans('quotes.expiring_in_days' , ['days' => "123"]) }}
                                                 </span>
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr class='mb-8 fw-bold text-gray-700 fs-5 pt-6'>
+                                    <tr>
                                         <td >
-                                            <div class="col-sm-6 pt-6">
-                                                <div class="fw-semibold fs-7 text-gray-600 mb-1">{{ trans('quotes.issuedfor') }}:</div>
+                                            <div >
+                                                <div style='font-size: 11px'>{{ trans('quotes.issuedfor') }}:</div>
                                                     @foreach ($associatedContact as $contact)
-                                                <div class="fw-bold fs-6 text-gray-800">{{ $contact->name }}</div>
+                                                <div>{{ $contact->name }}</div>
 
-                                                <div class="fw-semibold fs-7 text-gray-600">
+                                                <div>
                                                     {{$contact->address}} <br>
                                                     {{$contact->postcode}} {{$contact->city}} <br>
                                                     {{$contact->state}}, {{$contact->country}}
@@ -80,15 +90,15 @@
                                         <td>
                                             <div class="col-sm-6 pt-6">
                                                 <!--end::Label-->
-                                                <div class="fw-semibold fs-7 text-gray-600">{{ trans('quotes.issuedby') }}:</div>
+                                                <div style='font-size: 11px'>{{ trans('quotes.issuedby') }}:</div>
                                                 <!--end::Label-->
 
                                                 <!--end::Text-->
-                                                <div class="fw-bold fs-6 text-gray-800">{{ $tenant->name }}</div>
+                                                <div>{{ $tenant->name }}</div>
                                                 <!--end::Text-->
 
                                                 <!--start::Description-->
-                                                <div class="fw-semibold fs-7 text-gray-600">
+                                                <div>
                                                     {{$tenant->address}} <br>
                                                     {{$tenant->postcode}} {{$tenant->city}} <br>
                                                     {{$tenant->stateprovince}}, {{$tenant->country}}
@@ -98,12 +108,12 @@
                                             <!--end::Col-->
                                         </td>
                                     </tr>
-                                    <tr class="mb-8 fw-bold text-gray-700 fs-5 pt-6">
+                                    <tr>
                                         <td>
                                             <div class="col-sm-6">
                                                 <!--end::Label-->
-                                                <div class="fw-semibold fs-7 text-gray-600 pt-6">{{ trans('quotes.event_date') }}:</div>
-                                                <div class="fw-bold fs-6 text-gray-800">
+                                                <div style='font-size: 11px'>{{ trans('quotes.event_date') }}:</div>
+                                                <div>
                                                     @php
                                                         $dateFromString = $quote->date_from; // Assuming this is in dd-mm-yyyy format
                                                         $dateToString = $quote->date_to; // Assuming this is also in dd-mm-yyyy format
@@ -143,7 +153,7 @@
                                                     @endfor
                                                 </div>
     
-                                                <div class="fw-semibold fs-7 text-gray-600 pt-3">
+                                                <div style='font-size: 11px'>
                                                     {{ trans('quotes.buffer_time') }} ({{$quote->buffer_time_unit}}): 
                                                     {{$quote->buffer_time_before}} {{ trans('quotes.before') }} {{ trans('quotes.and') }} {{$quote->buffer_time_after}} {{ trans('quotes.after') }}
                                                 </div>
@@ -151,53 +161,59 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="col-sm-6">
+                                            <div>
                                                 <!--people show-->
-                                                <div class="fw-semibold fs-7 text-gray-600 mb-1 pt-6">{{ trans('quotes.people') }}:</div>
+                                                <div style='font-size: 11px'>{{ trans('quotes.people') }}:</div>
                                                 <!--people input-->
-                                                <div class="fw-bold fs-6 text-gray-800 show-mode">{{ $quote->people }}</div>
+                                                <div>{{ $quote->people }}</div>
                                                 <!--end people show-->
-                                                <div class="fw-semibold fs-7 text-gray-600 pt-6">{{ trans('quotes.event_kind') }}:</div>
-                                                <div class="fw-bold fs-6 text-gray-800">{{ $quote->event_name ? $quote->event_name : 'N/A' }} </div>
+                                                <div style='font-size: 11px'>{{ trans('quotes.event_kind') }}:</div>
+                                                <div>{{ $quote->event_name ? $quote->event_name : 'N/A' }} </div>
                                             </div>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
                             <table class="table">
-                                <thead>
-                                    <tr class="border-bottom fs-6 fw-bold text-muted">
-                                        <th class="min-w-175px pb-2">{{ trans('quotes.details') }}</th>
-                                    </tr>
-                                </thead>
-                                <div style='width: 100%;border-bottom:1px solid #b7b7b7;padding-bottom: 15px'></div>
+                                <thead></thead>
                                 <tbody>
-                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
-                                        <td  class="text-left pt-6 " style="font-size: 80%;">
+                                    <tr>
+                                        <td style='font-size: 11px'>{{ trans('quotes.details') }}</td>
+                                    </tr>
+                                    <div style='width: 100%;border-bottom:1px solid #b7b7b7;padding-bottom: 15px'></div>
+                                    <tr>
+                                        <td>
                                             {{ $details }}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <table class="table" style="padding-top: 30px;width: 100%">
+                            <table class="table" style="padding-top: 20px;width: 100%">
                                 <thead>
                                     <tr class="border-bottom fs-6 fw-bold text-muted">
-                                        <th class="min-w-175px pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.description') }}</th>
-                                        <th class="min-w-100px text-end pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.quantity') }}</th>
-                                        <th class="min-w-100px text-end pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.unit') }}</th>
-                                        <th class="min-w-100px text-end pb-2" style="border-bottom:1px solid #b7b7b7;">{{ trans('quotes.price') }}</th>
+                                        <th class="min-w-175px pb-2"></th>
+                                        <th class="min-w-100px text-end pb-2"></th>
+                                        <th class="min-w-100px text-end pb-2"></th>
+                                        <th class="min-w-100px text-end pb-2"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="parentTable">
+                                    <tr>
+                                        <td>{{ trans('quotes.description') }}</td>
+                                        <td style='text-align: right'>{{ trans('quotes.quantity') }}</td>
+                                        <td style='text-align: right'>{{ trans('quotes.unit') }}</td>
+                                        <td style='text-align: right'>{{ trans('quotes.price') }}</td>
+                                    </tr>
+                                    <div style='padding-bottom: 15px'></div>
                                     @if($quote->price_venue != 0)
-                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
-                                        <td class="d-flex align-items-center text-left pt-6 align-middle">
+                                    <tr>
+                                        <td>
                                             {{($quote->eventArea ? $quote->eventArea->name : 'N/A')}}
                                         </td>
 
-                                        <td class="pt-6 text-end align-middle">{{$quote->venue_count}}</td>
-                                        <td class="pt-6 text-end align-middle">$ {{ number_format($quote->price_venue, 2) }}</td>
-                                        <td class="pt-6 text-dark fw-bolder text-end align-middle">$ {{ number_format($quote->price_venue, 2) }}</td>
+                                        <td style='text-align: right'>{{$quote->venue_count}}</td>
+                                        <td style='text-align: right'>$ {{ number_format($quote->price_venue, 2) }}</td>
+                                        <td style='text-align: right'>$ {{ number_format($quote->price_venue, 2) }}</td>
                                     </tr>
                                     <div style='width: 100%;border-bottom:1px solid ##e3e2e2;padding-bottom: 15px'></div>
                                     @endif
@@ -219,7 +235,7 @@
                                                 $value = explode('|', $quote->options_count)[$index];
                                             }
                                         @endphp
-                                            <tr class="fw-bold text-gray-700 fs-5 show-mode">
+                                            <tr>
                                                 <td class="d-flex align-items-center text-left pt-6 align-middle">
                                                     @if($optionWithValue['type'] == 'yes_no' && $optionWithValue['value'] == 'yes' && $quote->options_name)
                                                         {{ $optionWithValue['option']->name }}
@@ -231,15 +247,15 @@
                                                         {{ $optionWithValue['option']->name }}
                                                     @endif
                                                 </td>
-                                                <td class="pt-6 text-end align-middle">{{ $value }}</td>
-                                                <td class="pt-6 text-end align-middle">
+                                                <td style='text-align: right'>{{ $value }}</td>
+                                                <td style='text-align: right'>
                                                     @if($value != 0)
                                                         ${{ number_format((float) $priceOptionsArray[$index] / (float) $value, 2) }}
                                                     @else
                                                         N/A
                                                     @endif
                                                 </td>
-                                                <td class="pt-6 text-dark fw-bolder text-end align-middle">
+                                                <td style='text-align: right'>
                                                     $ {{ isset($priceOptionsArray[$index]) ? number_format((float) $priceOptionsArray[$index], 2) : 'N/A' }}
                                                 </td>
                                             </tr>
@@ -260,18 +276,18 @@
                                     @foreach ($staffTypes as $staffType => $staffData)
                                         @if (count($staffData['data']) !== 0)
                                             <tr class="fw-bold text-gray-700 fs-5 show-mode" >
-                                                <td class="d-flex align-items-center text-left pt-6 align-middle">
+                                                <td>
                                                     {{ $staffData['data'][0]['name'] }}
                                                 </td>
-                                                <td class="pt-6 text-end align-middle">{{ $staffData['data'][0]['quantity'] }}</td>
-                                                <td class="pt-6 text-end align-middle">
+                                                <td style='text-align: right'>{{ $staffData['data'][0]['quantity'] }}</td>
+                                                <td style='text-align: right'>
                                                     @if($staffData['data'][0]['quantity'] != 0)
                                                         ${{ number_format((float) $staffData['price'] / (float) $staffData['data'][0]['quantity'], 2) }}
                                                     @else
                                                         N/A
                                                     @endif
                                                 </td>
-                                                <td class="pt-6 text-dark fw-bolder text-end align-middle">
+                                                <td style='text-align: right'>
                                                     $ {{ isset($staffData['price']) ? number_format((float) $staffData['price'], 2) : 'N/A' }}
                                                 </td>
                                             </tr>
@@ -280,48 +296,50 @@
                                     @endforeach
                                     @if($quote->extra_items_count)
                                         @foreach($extraItemsName as $index => $extraItemName)
-                                            <tr class="fw-bold text-gray-700 fs-5 show-mode extra-items">
-                                                <td class="d-flex align-items-center text-left pt-6 align-middle">
+                                            <tr>
+                                                <td>
                                                     {{ $extraItemName }}
                                                 </td>
-                                                <td class="pt-6 text-end align-middle">{{ $extraItemsCount[$index] }}</td>
-                                                <td class="pt-6 text-end align-middle">${{number_format($extraItemsPrice[$index] / $extraItemsCount[$index], 2)}}</td>
-                                                <td class="pt-6 text-dark fw-bolder text-end align-middle">${{ number_format($extraItemsPrice[$index], 2)}}</td>
+                                                <td style='text-align: right'>{{ $extraItemsCount[$index] }}</td>
+                                                <td style='text-align: right'>${{number_format($extraItemsPrice[$index] / $extraItemsCount[$index], 2)}}</td>
+                                                <td style='text-align: right'>${{ number_format($extraItemsPrice[$index], 2)}}</td>
                                             </tr>
-                                            <div style='width: 100%;border-bottom:1px solid ##e3e2e2;padding-bottom: 15px'></div>
+                                            <div style='width: 100%;border-top:1px solid ##e3e2e2;padding-bottom: 15px'></div>
                                         @endforeach
                                     @endif
-                                    <tr class="fw-bold text-gray-700 fs-5 show-mode" style='border-top:1px solid #b7b7b7'>
+                                    <tr style='border-top:1px solid #b7b7b7;'>
                                         <td></td>
                                         <td></td>
-                                        <td class='pt-12 text-end align-middle'><span>{{ trans('quotes.subtotal') }}:</span></td>
-                                        <td class='pt-12 text-end align-middle'>
+                                        <td style='text-align: right'><span>{{ trans('quotes.subtotal') }}:</span></td>
+                                        <td style='text-align: right'>
                                             <span class='text-end'>$ {{ number_format($quote->calculated_price, 2) }}</span>
                                         </td>
                                     </tr>
-                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
+                                    <div style='padding-bottom: 15px'></div>
+                                    <tr>
                                         <td></td>
                                         <td></td>
-                                        <td class='pt-6 text-end align-middle'>
+                                        <td style='text-align: right'>
                                             @if($discount)
                                                 <span>{{ trans('quotes.discount') }}:</span>
                                             @endif
                                                 <span>{{ trans('quotes.vat') }}:</span>
                                         </td>
-                                        <td class='pt-6 text-end align-middle'>
+                                        <td style='text-align: right'>
                                             @if($discount)
                                                 <span>{{ trans('quotes.discount') }}:</span>
                                             @endif
                                                 <span class='text-end'> 0</span>
                                         </td>
                                     </tr>
-                                    <tr class="fw-bold text-gray-700 fs-5 show-mode">
+                                    <div style='padding-bottom: 15px'></div>
+                                    <tr>
                                         <td></td>
                                         <td></td>
-                                        <td class='pt-6 text-end align-middle'>
+                                        <td style='text-align: right'>
                                             <span>{{ trans('quotes.total') }}:</span> 
                                         </td>
-                                        <td class='pt-6 text-end align-middle'>
+                                        <td style='text-align: right'>
                                            <span >$ {{ number_format($quote->price, 2) }}</span>
                                         </td>
                                     </tr>

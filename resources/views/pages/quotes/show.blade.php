@@ -584,6 +584,7 @@
             if(eidtButton) {
                 eidtButton.addEventListener('click', function() {
                     document.getElementById('export-quote').style.display = 'none';
+                    document.getElementById('export-contract').style.display = 'none';
                     var editElements = document.getElementsByClassName("edit-mode");
                     console.log(editElements);
                     var showElements = document.getElementsByClassName("show-mode");

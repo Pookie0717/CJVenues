@@ -24,22 +24,7 @@
                             <a href="#">
                                 <img alt="Logo" src="{{ image('logos/default-dark.svg') }}" class="h-25px app-sidebar-logo-default" />
                             </a>
-                            <!--end::Logo-->
-
-                            <!--begin::Action-->
-                            <div>
-                                <button class="btn btn-sm btn-success" id="book-quote" data-quote-id="{{ $quote->id }}">
-                                    {{ trans('quotes.book') }}
-                                </button>
-                                <button class="btn btn-sm btn-primary show-mode" id="edit-quote" data-quote-id="{{ $quote->id }}">
-                                    {{ trans('quotes.edit') }}
-                                </button>
-                                <button style="display:none" class="btn btn-sm btn-primary edit-mode" id="submit-quote" data-quote-id="{{ $quote->id }}" >
-                                    {{ trans('quotes.submit') }}
-                                </button>                                
-                            </div>
-                            <!--end::Action-->
-                            
+                            <!--end::Logo-->                           
                         </div>
                         <!--end::Top-->
 

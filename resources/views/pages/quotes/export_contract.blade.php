@@ -98,7 +98,7 @@
                 <b class='title'>§5 Rent</b>
                 <p>
                     <br/>
-                    (1) The rent, including a service charge flat rate, amounts to: {{ number_format($quote->calculated_price, 2) }} plus statutory VAT.<br/>
+                    (1) The rent, including a service charge flat rate, amounts to: $ {{ number_format($quote->calculated_price, 2) }} plus statutory VAT.<br/>
                     <br/>
                     (2) This contract serves as an invoice in the sense of § 14 UStG in conjunction with section 14.1 paragraph 2 UStAE. Information required by VAT law not contained in this contract must be clearly, easily, and unambiguously ascertainable from other documents. In particular, the reason for payment and the billing period for which the payment is made must be clearly identifiable from the payment or bank documents.<br/>
                     <br/>
@@ -265,9 +265,7 @@
                 <br/>
             </div>
             <div class='container-fluid p-t-80'>
-                <p>
-                    Berlin, dated -----TodayDate
-                </p>
+                <p id="datePlaceholder">Berlin, dated {{$today}}</p>
                 <table class='table'>
                     <tbody>
                         <tr style='container-fluid'>

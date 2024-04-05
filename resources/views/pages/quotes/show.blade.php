@@ -36,22 +36,7 @@
                                 </button>
                                 <button style="display:none" class="btn btn-sm btn-primary edit-mode" id="submit-quote" data-quote-id="{{ $quote->id }}" >
                                     {{ trans('quotes.submit') }}
-                                </button>
-                                <span class="dropdown btn-bg-secondary">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 7px">
-                                        <i class="ki-duotone ki-exit-down fs-2" style="color: black"><span class="path1"></span><span class="path2"></span></i>
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="margin-left: 50px">
-                                        <button class="dropdown-item" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("invoice")' style="display:flex">
-                                            <i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
-                                            <span style='padding-left: 5px'> Invoice</span>
-                                        </button>
-                                        <button class="dropdown-item" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("contract")' style="display:flex">
-                                            <i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
-                                            <span style='padding-left: 5px'> Contract</span>
-                                        </button>
-                                    </div>
-                                </span>
+                                </button>                                
                             </div>
                             <!--end::Action-->
                             
@@ -851,43 +836,6 @@
             });
         }
         // Wait for the document to be fully loaded
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get the dropdown toggles
-        var dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-
-        // Loop through each dropdown toggle
-        dropdownToggles.forEach(function(toggle) {
-            // Add click event listener to each toggle
-            toggle.addEventListener('click', function(event) {
-                // Prevent default behavior (e.g., following a link)
-                event.preventDefault();
-
-                // Get the parent dropdown container
-                var dropdownParent = this.closest('.dropdown');
-
-                // Toggle the 'show' class on the dropdown menu
-                dropdownParent.querySelector('.dropdown-menu').classList.toggle('show');
-            });
-        });
-
-        // Close dropdown when clicking outside of it
-        window.addEventListener('click', function(event) {
-            // Get the target element that was clicked
-            var target = event.target;
-
-            // Check if the clicked element is a dropdown toggle or dropdown menu
-            var isDropdownToggle = target.matches('.dropdown-toggle');
-            var isDropdownMenu = target.matches('.dropdown-menu');
-
-            // If the clicked element is neither a dropdown toggle nor dropdown menu, close all dropdowns
-            if (!isDropdownToggle && !isDropdownMenu) {
-                var dropdownMenus = document.querySelectorAll('.dropdown-menu');
-                dropdownMenus.forEach(function(menu) {
-                    menu.classList.remove('show');
-                });
-            }
-        });
-    });
     </script>
     @endpush
 </x-default-layout>

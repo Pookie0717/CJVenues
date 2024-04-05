@@ -13,6 +13,14 @@
                 </button>
         	-->
 	        <!--begin::Action-->
+			<button class="btn btn-sm  btn-light-secondary p-4" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("invoice")'>
+				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
+				<span style='color: black'>Invoice</span>
+			</button>
+			<button class="btn btn-sm btn-light-secondary p-4" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("contract")'>
+				<i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
+				<span style='color: black'>Contract</span>
+			</button>
 	        <a class="btn btn-primary" href="{{ route('quotes.showPublic', $hashedId) }}">Share Link</a>
 	        <!--end::Action-->
             	@endif

@@ -908,15 +908,15 @@ class QuotesController extends Controller
 
         $hashids = new Hashids('em-and-georg-are-supercool');
         $hashedId = $hashids->encode($quote->id);
-        // $data = ['title' => 'Welcome to Laravel 10 PDF generation'];
+        $today = date("Y-m-d");
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
         if($export_type[0] == 'invoice') {
-            $pdf = PDF::loadView('pages.quotes.export', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details' ), ['hashedId' => $hashedId]);
+            $pdf = PDF::loadView('pages.quotes.export', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details', 'today' ), ['hashedId' => $hashedId]);
             return $pdf->download();
         } elseif($export_type[0] == 'contract') {
             Log::info($dateFrom);
-            $pdf = PDF::loadView('pages.quotes.export_contract', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details', 'dateFrom', 'dateTo' ), ['hashedId' => $hashedId]);
+            $pdf = PDF::loadView('pages.quotes.export_contract', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details', 'dateFrom', 'dateTo', 'today' ), ['hashedId' => $hashedId]);
             return $pdf->download();
         } else {
             return 'Error';

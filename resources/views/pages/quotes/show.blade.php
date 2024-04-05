@@ -37,9 +37,21 @@
                                 <button style="display:none" class="btn btn-sm btn-primary edit-mode" id="submit-quote" data-quote-id="{{ $quote->id }}" >
                                     {{ trans('quotes.submit') }}
                                 </button>
-                                <button class="btn btn-sm btn-bg-secondary" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF()' >
-                                    <i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
-                                </button>
+                                <span class="dropdown btn-bg-secondary">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 7px">
+                                        <i class="ki-duotone ki-exit-down fs-2" style="color: black"><span class="path1"></span><span class="path2"></span></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="margin-left: 50px">
+                                        <button class="dropdown-item" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("invoice")' style="display:flex">
+                                            <i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
+                                            <span style='padding-left: 5px'> Invoice</span>
+                                        </button>
+                                        <button class="dropdown-item" id="export-quote" data-quote-id="{{ $quote->id }}" data-quote-number="{{ trans('quotes.title') }} #{{ $quote->quote_number }}v{{ $quote->version }}" onclick='exportPDF("contract")' style="display:flex">
+                                            <i class="ki-duotone ki-exit-down fs-2" style="padding: 0;color: black"><span class="path1"></span><span class="path2"></span></i>
+                                            <span style='padding-left: 5px'> Contract</span>
+                                        </button>
+                                    </div>
+                                </span>
                             </div>
                             <!--end::Action-->
                             
@@ -806,15 +818,16 @@
                 parentRow.remove();
             }
         }
-        function exportPDF() {
+        function exportPDF(info) {
             const quoteId = document.getElementById('export-quote').getAttribute('data-quote-id');
             KTApp.showPageLoading();
-            axios.post(`/quotes/${quoteId}/export`, {
+            const export_info = info;
+            axios.post(`/quotes/${quoteId}/export`, export_info, {
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     'Content-Type': 'application/json',
-                }
-            }, { responseType: 'blob' })
+                }, responseType: 'blob'
+            })
             .then(function (response) {
                 console.log(response.data);
                 KTApp.hidePageLoading();
@@ -822,7 +835,7 @@
                 const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf'}));
                 const link = document.createElement('a');
                 link.href = url;
-                var filename = document.getElementById('export-quote').getAttribute('data-quote-number');
+                var filename = document.getElementById('export-quote').getAttribute('data-quote-number') + '_' + info;
                 link.setAttribute('download', filename);
                 document.body.appendChild(link);
                 link.click();
@@ -837,6 +850,44 @@
                 console.log(error);
             });
         }
+        // Wait for the document to be fully loaded
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the dropdown toggles
+        var dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+        // Loop through each dropdown toggle
+        dropdownToggles.forEach(function(toggle) {
+            // Add click event listener to each toggle
+            toggle.addEventListener('click', function(event) {
+                // Prevent default behavior (e.g., following a link)
+                event.preventDefault();
+
+                // Get the parent dropdown container
+                var dropdownParent = this.closest('.dropdown');
+
+                // Toggle the 'show' class on the dropdown menu
+                dropdownParent.querySelector('.dropdown-menu').classList.toggle('show');
+            });
+        });
+
+        // Close dropdown when clicking outside of it
+        window.addEventListener('click', function(event) {
+            // Get the target element that was clicked
+            var target = event.target;
+
+            // Check if the clicked element is a dropdown toggle or dropdown menu
+            var isDropdownToggle = target.matches('.dropdown-toggle');
+            var isDropdownMenu = target.matches('.dropdown-menu');
+
+            // If the clicked element is neither a dropdown toggle nor dropdown menu, close all dropdowns
+            if (!isDropdownToggle && !isDropdownMenu) {
+                var dropdownMenus = document.querySelectorAll('.dropdown-menu');
+                dropdownMenus.forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+    });
     </script>
     @endpush
 </x-default-layout>

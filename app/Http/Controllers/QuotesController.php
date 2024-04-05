@@ -632,6 +632,7 @@ class QuotesController extends Controller
 
     public function export(Request $request, $id)
     {
+        $export_type = $request;
         $quote = Quote::findOrFail($id);
         // Get the quote_number from the current $quote object
         $quote_number = $quote->quote_number;
@@ -910,11 +911,18 @@ class QuotesController extends Controller
         // $data = ['title' => 'Welcome to Laravel 10 PDF generation'];
         view()->share('quote', $quote);
         view()->share('hashedId', $hashedId);
-        
-        $pdf = PDF::loadView('pages.quotes.export', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details' ), ['hashedId' => $hashedId]);
-        $pdf->getOptions()->setFontDir('https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700');
-        $pdf->getOptions()->setDefaultFont('Inter, Helvetica, "sans-serif"');
+        if($export_type[0] == 'invoice') {
+            $pdf = PDF::loadView('pages.quotes.export', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details' ), ['hashedId' => $hashedId]);
+            return $pdf->download();
+        } elseif($export_type[0] == 'contract') {
+            Log::info($dateFrom);
+            $pdf = PDF::loadView('pages.quotes.export_contract', compact('extraItemsName', 'extraItemsCount', 'extraItemsPrice', 'relatedQuotes', 'discount', 'associatedContact', 'associatedSeason', 'optionsWithValues', 'tenant', 'waiter', 'venueManagers', 'toiletStaffs', 'cleaners', 'waiterPrice', 'venueManagersPrice', 'toiletStaffsPrice', 'cleanersPrice', 'barStaff', 'barStaffPrice', 'other', 'otherPrice', 'details', 'dateFrom', 'dateTo' ), ['hashedId' => $hashedId]);
+            return $pdf->download();
+        } else {
+            return 'Error';
+        }
+        // $pdf->getOptions()->setFontDir('https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700');
+        // $pdf->getOptions()->setDefaultFont('Inter, Helvetica, "sans-serif"');
         // $pdf->save(storage_path('app/public/Quote#'.$quote->quote_number.'v'.$quote->version.'.pdf'));
-        return $pdf->download();
     }
 }

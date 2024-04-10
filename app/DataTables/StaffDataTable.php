@@ -82,6 +82,7 @@ class StaffDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::make('id')->title(trans('staff.id')),
             Column::make('name')->title(trans('staff.name'))->addClass('text-nowrap'),
             Column::make('type')->title(trans('staff.type')),
             Column::make('area_ids')->title(trans('venue.area')),

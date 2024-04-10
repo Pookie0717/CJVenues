@@ -44,5 +44,5 @@ return [
     'soft_drinks' => 'Soft Drinks',
     'cocktails' => 'Cocktails',
     'option' => 'Option',
-    'option_value' => 'Option Value'
+    'id' => 'ID'
 ];

@@ -65,6 +65,7 @@ class TenantsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::make('id')->title(trans('tenants.id'))->addClass('text-nowrap'),
             Column::make('name')->title(trans('tenants.name'))->addClass('text-nowrap'),
             Column::make('parent_name')->title(trans('tenants.parent'))->addClass('text-nowrap'),
             Column::computed('actions')

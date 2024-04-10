@@ -78,6 +78,7 @@ class OptionsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::make('id')->title(trans('options.id'))->addClass('text-nowrap'),
             Column::make('name')->title(trans('options.name'))->addClass('text-nowrap'),
             Column::make('tenant_id')->title(trans('fields.tenant')),
             Column::make('position')->title(trans('fields.position')),

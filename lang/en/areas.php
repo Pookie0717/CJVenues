@@ -22,6 +22,7 @@ return [
     'capacity_tables' => 'Seating Tables',
     'selectvenue' => 'Select venue',
     'venue' => 'Venue',
+    'id' => 'ID',
     '' => '',
 
 

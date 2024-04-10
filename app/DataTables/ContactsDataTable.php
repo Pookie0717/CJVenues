@@ -58,6 +58,7 @@ public function html(): HtmlBuilder
     public function getColumns(): array
     {
         return [
+            Column::make('id')->title(trans('fields.id')),
             Column::make('name')->title(trans('fields.name')),
             Column::make('email')->title(trans('fields.email')),
             Column::make('tenant_id')->title(trans('fields.tenant')),

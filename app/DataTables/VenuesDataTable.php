@@ -82,6 +82,7 @@ class VenuesDataTable extends DataTable
     protected function getColumns()
     {
         return [
+            Column::make('id')->title(trans('venues.id')),
             Column::make('name')->title(trans('venues.name')),
             Column::make('tenant_id')->title(trans('venues.tenant')),
             Column::make('type')->title(trans('venues.type')),

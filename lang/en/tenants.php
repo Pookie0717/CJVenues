@@ -16,7 +16,7 @@ return [
     'updateorganisation' => 'Update organisation',
     'organisationname' => 'Organisation name',
     'enteranorganisationname' => 'Enter an organisation name',
-    '' => '',
+    'id' => 'ID',
     '' => '',
     '' => '',
     '' => '',

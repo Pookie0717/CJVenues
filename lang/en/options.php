@@ -26,5 +26,6 @@ return [
     'addcondition' => 'Add Condition',
     'logic' => 'Logic',
     'name' => 'Name',
+    'id' => 'ID',
 
 ];

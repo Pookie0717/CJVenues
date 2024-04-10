@@ -21,4 +21,5 @@ return [
     'addarea' => 'Add area',
     'type' => 'Type',
     'name' => 'Name',
+    'id' => 'ID',
 ];

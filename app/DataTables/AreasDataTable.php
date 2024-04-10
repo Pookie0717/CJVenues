@@ -83,6 +83,7 @@ class AreasDataTable extends DataTable
     protected function getColumns()
     {
         return [
+            Column::make('id')->title(trans('areas.id')),
             Column::make('venue_id')->title(trans('areas.venue')),
             Column::make('tenant_id')->title(trans('areas.tenant')),
             Column::make('name')->title(trans('areas.name')),
